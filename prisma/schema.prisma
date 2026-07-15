@@ -1,0 +1,542 @@
+// EthioMLS — Prisma schema
+// PostgreSQL + PostGIS foundation for listings, escrow (Proc. 1357/2024),
+// and foreign investor clearance (Proc. 1388/2025).
+
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["postgresqlExtensions"]
+}
+
+datasource db {
+  provider   = "postgresql"
+  url        = env("DATABASE_URL")
+  extensions = [postgis]
+}
+
+// ---------------------------------------------------------------------------
+// Enums
+// ---------------------------------------------------------------------------
+
+enum UserRole {
+  BUYER_RENTER
+  INDEPENDENT_DELALA
+  CORPORATE_DEVELOPER
+  ADMIN
+}
+
+/// Progressive construction milestones used for escrow fund release
+/// under Proclamation 1357/2024.
+enum ConstructionStage {
+  EARTHWORKS_FOUNDATION
+  SUBSTRUCTURE
+  SUPERSTRUCTURE
+  ROOFING_ENVELOPE
+  MEP_INSTALLATION
+  INTERIOR_FINISHING
+  EXTERNAL_WORKS
+  FULLY_COMPLETED
+}
+
+enum ListingStatus {
+  DRAFT
+  PENDING_REVIEW
+  PUBLISHED
+  UNDER_OFFER
+  SOLD
+  RENTED
+  ARCHIVED
+}
+
+enum ListingType {
+  SALE
+  RENT
+  OFF_PLAN
+}
+
+enum PropertyCategory {
+  RESIDENTIAL
+  COMMERCIAL
+  MIXED_USE
+  LAND
+}
+
+enum EscrowStatus {
+  NOT_REQUIRED
+  PENDING_SETUP
+  ACTIVE
+  FUNDS_LOCKED
+  PARTIALLY_RELEASED
+  FULLY_RELEASED
+  DISPUTED
+  CLOSED
+}
+
+enum ForeignClearanceStatus {
+  NOT_APPLICABLE
+  PENDING
+  UNDER_REVIEW
+  CLEARED
+  CONDITIONAL
+  REJECTED
+  EXPIRED
+}
+
+enum CurrencyCode {
+  ETB
+  USD
+}
+
+enum BillingProvider {
+  TELEBIRR
+  CBE_BIRR
+}
+
+enum SubscriptionStatus {
+  TRIAL
+  ACTIVE
+  PAST_DUE
+  EXEMPT
+  CANCELLED
+}
+
+enum LeadStatus {
+  CAPTURED
+  ROUTED
+  CONTACTED
+  CLOSED
+}
+
+// ---------------------------------------------------------------------------
+// Core identity
+// ---------------------------------------------------------------------------
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  phone        String?  @unique
+  passwordHash String
+  fullName     String
+  role         UserRole @default(BUYER_RENTER)
+  isActive     Boolean  @default(true)
+  /// Preferred UI languages, e.g. ["am","en","om"]
+  localePrefs  String[] @default(["am", "en"])
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  developerProfile DeveloperProfile?
+  delalaProfile    DelalaProfile?
+  listings         Listing[]              @relation("ListingOwner")
+  clearanceApps    ForeignInvestorClearance[]
+  escrowAsBuyer    EscrowAccount[]        @relation("EscrowBuyer")
+  faydaIdentity    FaydaIdentity?
+  subscription     Subscription?
+  leadsRequested   Lead[]                 @relation("LeadRequester")
+  leadsAsBroker    Lead[]                 @relation("LeadBroker")
+  billingEvents    BillingWebhookEvent[]
+
+  @@index([role])
+  @@map("users")
+}
+
+/// Licensed corporate real-estate developer (UserRole.CORPORATE_DEVELOPER).
+model DeveloperProfile {
+  id                   String   @id @default(cuid())
+  userId               String   @unique
+  tradeName            String
+  /// Multi-language display name: { "en": "...", "am": "...", "om": "..." }
+  displayName          Json
+  registrationNumber   String   @unique
+  tin                  String?
+  licenseNumber        String?
+  licenseExpiresAt     DateTime?
+  headquartersSubCityId String?
+  website              String?
+  isVerified           Boolean  @default(false)
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+
+  user               User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  headquartersSubCity SubCity?       @relation(fields: [headquartersSubCityId], references: [id])
+  projects           Project[]
+  listings           Listing[]
+
+  @@index([isVerified])
+  @@map("developer_profiles")
+}
+
+/// Independent broker / delala (UserRole.INDEPENDENT_DELALA).
+model DelalaProfile {
+  id                 String   @id @default(cuid())
+  userId             String   @unique
+  displayName        Json
+  licenseNumber      String?
+  operatingSubCityId String?
+  isVerified         Boolean  @default(false)
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  operatingSubCity SubCity? @relation(fields: [operatingSubCityId], references: [id])
+  listings         Listing[]
+  leads            Lead[]
+
+  @@map("delala_profiles")
+}
+
+// ---------------------------------------------------------------------------
+// Geographic metadata (Addis Ababa focus)
+// ---------------------------------------------------------------------------
+
+model SubCity {
+  id          String   @id @default(cuid())
+  /// Stable slug key, e.g. "bole", "lemi-kura"
+  code        String   @unique
+  /// Multi-language name: { "en": "Bole", "am": "ቦሌ", "om": "Boolee" }
+  name        Json
+  /// Optional short blurb for SEO / filters
+  description Json?
+  city        String   @default("Addis Ababa")
+  region      String   @default("Addis Ababa")
+  /// Admin sort order (1–11 for Addis Ababa sub-cities)
+  sortOrder   Int      @default(0)
+  isActive    Boolean  @default(true)
+  /// Approximate centroid for map defaults (PostGIS Point, SRID 4326)
+  centroid    Unsupported("geometry(Point,4326)")?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  developers DeveloperProfile[]
+  delalas    DelalaProfile[]
+  projects   Project[]
+  listings   Listing[]
+
+  @@index([city, sortOrder])
+  @@map("sub_cities")
+}
+
+// ---------------------------------------------------------------------------
+// Development projects & listings
+// ---------------------------------------------------------------------------
+
+model Project {
+  id                    String            @id @default(cuid())
+  developerId           String
+  subCityId             String?
+  /// Multi-language project title
+  title                 Json
+  /// Multi-language long description
+  description           Json
+  status                ListingStatus     @default(DRAFT)
+  constructionStage     ConstructionStage @default(EARTHWORKS_FOUNDATION)
+  /// Verified % complete (0–100); Proc. 1357 uses ~80% transfer threshold
+  completionPercent     Decimal           @default(0) @db.Decimal(5, 2)
+  location              Unsupported("geometry(Point,4326)")?
+  addressLine           String?
+  /// 360° walkthrough configuration: ordered panoramic image URLs
+  panoramicImageUrls    String[]          @default([])
+  /// Optional per-hotspot / scene metadata for the viewer
+  virtualWalkthroughConfig Json?
+  coverImageUrl         String?
+  galleryImageUrls      String[]          @default([])
+  /// Proc. 1357/2024 — whether this off-plan project requires escrow
+  requiresEscrow        Boolean           @default(true)
+  createdAt             DateTime          @default(now())
+  updatedAt             DateTime          @updatedAt
+
+  developer DeveloperProfile @relation(fields: [developerId], references: [id], onDelete: Cascade)
+  subCity   SubCity?         @relation(fields: [subCityId], references: [id])
+  listings  Listing[]
+  escrow    EscrowAccount?
+
+  @@index([developerId])
+  @@index([constructionStage])
+  @@map("projects")
+}
+
+model Listing {
+  id                 String            @id @default(cuid())
+  ownerId            String
+  developerId        String?
+  delalaId           String?
+  projectId          String?
+  subCityId          String?
+  /// Multi-language listing title
+  title              Json
+  /// Multi-language listing description
+  description        Json
+  listingType        ListingType
+  category           PropertyCategory  @default(RESIDENTIAL)
+  status             ListingStatus     @default(DRAFT)
+  priceAmount        Decimal           @db.Decimal(18, 2)
+  priceCurrency      CurrencyCode      @default(ETB)
+  bedrooms           Int?
+  bathrooms          Int?
+  /// Gross internal area in m² (API field: sizeM2)
+  floorAreaSqm       Decimal?          @db.Decimal(12, 2)
+  plotAreaSqm        Decimal?          @db.Decimal(12, 2)
+  constructionStage  ConstructionStage?
+  completionPercent  Decimal?          @db.Decimal(5, 2)
+  /// PostGIS Point, SRID 4326 — property geolocation for map / proximity queries
+  geoPoint           Unsupported("geometry(Point,4326)")?
+  addressLine        String?
+  /// Non-empty amenity / feature tags supplied at creation
+  metadataTags       String[]          @default([])
+  /// 360° virtual walkthrough — panoramic equirectangular image URLs
+  panoramicImageUrls String[]          @default([])
+  /// Viewer config: start yaw/pitch, scene links, hotspots, etc.
+  virtualWalkthroughConfig Json?
+  coverImageUrl      String?
+  galleryImageUrls   String[]          @default([])
+  /// Unfinished / under-construction stock (triggers Proc. 1357 escrow rules)
+  isUnfinished       Boolean           @default(false)
+  /// Verified municipal / MUD construction permit reference
+  constructionPermitId String?
+  constructionPermitVerified Boolean   @default(false)
+  /// True when sale price meets Proc. 1388/2025 foreign-buyer clearance threshold
+  foreignerEligible  Boolean           @default(false)
+  /// USD equivalent used for foreigner eligibility (NBE day-rate proxy)
+  priceUsdEquivalent Decimal?          @db.Decimal(18, 2)
+  nbeUsdEtbRateUsed  Decimal?          @db.Decimal(12, 4)
+  /// True when the listing targets or involves a foreign buyer under Proc. 1388/2025
+  openToForeignBuyers Boolean          @default(false)
+  /// Amenity reliability flags used in SMS / Telegram broadcasts
+  waterAvailable     Boolean           @default(false)
+  powerBackup        Boolean           @default(false)
+  /// Last seller refresh — drives 30-day stale archival + day-25 SMS reminder
+  lastRefreshDate    DateTime          @default(now())
+  expiryReminderSentAt DateTime?
+  telegramBroadcastAt DateTime?
+  publishedAt        DateTime?
+  createdAt          DateTime          @default(now())
+  updatedAt          DateTime          @updatedAt
+
+  owner     User              @relation("ListingOwner", fields: [ownerId], references: [id], onDelete: Cascade)
+  developer DeveloperProfile? @relation(fields: [developerId], references: [id])
+  delala    DelalaProfile?    @relation(fields: [delalaId], references: [id])
+  project   Project?          @relation(fields: [projectId], references: [id])
+  subCity   SubCity?          @relation(fields: [subCityId], references: [id])
+  escrow    EscrowAccount?
+  clearances ForeignInvestorClearance[]
+  adminAlerts AdminAlert[]
+  leads       Lead[]
+
+  @@index([status, listingType])
+  @@index([subCityId])
+  @@index([ownerId])
+  @@index([subCityId, priceAmount, bedrooms, category])
+  @@index([status, lastRefreshDate])
+  @@map("listings")
+}
+
+/// Dashboard alerts for admins (duplicate collisions, compliance flags, etc.).
+model AdminAlert {
+  id          String    @id @default(cuid())
+  type        String
+  severity    String    @default("WARNING")
+  title       String
+  message     String
+  payload     Json
+  listingId   String?
+  isRead      Boolean   @default(false)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  listing Listing? @relation(fields: [listingId], references: [id], onDelete: SetNull)
+
+  @@index([isRead, createdAt])
+  @@index([type, createdAt])
+  @@map("admin_alerts")
+}
+
+// ---------------------------------------------------------------------------
+// Proclamation 1357/2024 — escrow & staged fund release
+// ---------------------------------------------------------------------------
+
+/// Escrow components for buyer deposits held until verified construction stages.
+model EscrowAccount {
+  id                         String            @id @default(cuid())
+  projectId                  String?           @unique
+  listingId                  String?           @unique
+  buyerId                    String?
+  status                     EscrowStatus      @default(PENDING_SETUP)
+  /// Licensed bank holding the closed/locked account
+  escrowBankName             String
+  escrowAccountNumber        String
+  /// Approval reference from the competent urban/infrastructure authority
+  authorityApprovalRef       String?
+  authorityApprovedAt        DateTime?
+  /// Currency of funds held (banking-channel payments required by Proc. 1357)
+  currency                   CurrencyCode      @default(ETB)
+  totalDeposited             Decimal           @default(0) @db.Decimal(18, 2)
+  totalReleased              Decimal           @default(0) @db.Decimal(18, 2)
+  /// Current stage unlocking the next release tranche
+  fundsLockedUntilStage      ConstructionStage @default(EARTHWORKS_FOUNDATION)
+  lastVerifiedStage          ConstructionStage?
+  lastStageVerifiedAt        DateTime?
+  /// JSON map of ConstructionStage → release percent of total, e.g.
+  /// { "EARTHWORKS_FOUNDATION": 10, "SUPERSTRUCTURE": 25, ..., "FULLY_COMPLETED": 15 }
+  releaseSchedule            Json
+  /// Statutory default: units generally transfer at ≥80% completion
+  transferCompletionThreshold Int              @default(80)
+  /// Buyer mutual consent allowing transfer below the statutory threshold
+  buyerConsentEarlyTransfer  Boolean           @default(false)
+  contractDocumentUrl        String?
+  notes                      String?
+  createdAt                  DateTime          @default(now())
+  updatedAt                  DateTime          @updatedAt
+
+  project Project? @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  listing Listing? @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  buyer   User?    @relation("EscrowBuyer", fields: [buyerId], references: [id])
+
+  @@index([status])
+  @@index([buyerId])
+  @@map("escrow_accounts")
+}
+
+// ---------------------------------------------------------------------------
+// Proclamation 1388/2025 — foreign nationals’ residential ownership clearance
+// ---------------------------------------------------------------------------
+
+/// Clearance / eligibility parameters for foreign buyers of residential houses.
+model ForeignInvestorClearance {
+  id                          String                 @id @default(cuid())
+  applicantId                 String
+  listingId                   String?
+  status                      ForeignClearanceStatus @default(PENDING)
+  /// ISO 3166-1 alpha-2 nationality
+  nationalityCountryCode      String
+  passportOrIdNumber          String
+  /// Licensed foreign investor may be exempt from the USD 150,000 floor for one house
+  isLicensedForeignInvestor   Boolean                @default(false)
+  investmentLicenseNumber     String?
+  /// Minimum investment including lease costs (statutory floor: USD 150,000)
+  minimumInvestmentUsd        Decimal                @default(150000) @db.Decimal(18, 2)
+  declaredInvestmentUsd       Decimal?               @db.Decimal(18, 2)
+  minimumInvestmentMet        Boolean                @default(false)
+  /// Proof that purchase funds were remitted in foreign currency from abroad
+  foreignCurrencyProofUrl     String?
+  foreignCurrencyRemittanceRef String?
+  /// Proc. 1388 prohibits financing via Ethiopian banks / local capital
+  usedLocalBankFinancing      Boolean                @default(false)
+  /// Generally one residential house per foreign national at a time
+  oneHouseLimitAcknowledged   Boolean                @default(false)
+  existingLocalHouseCount     Int                    @default(0)
+  nationalSecurityCleared     Boolean                @default(false)
+  criminalRecordCleared       Boolean                @default(false)
+  reciprocityOk               Boolean                @default(true)
+  /// Ministry of Urban and Infrastructure approval reference
+  ministryApprovalRef         String?
+  ministryApprovedAt          DateTime?
+  clearanceExpiresAt          DateTime?
+  rejectionReason             String?
+  notes                       String?
+  createdAt                   DateTime               @default(now())
+  updatedAt                   DateTime               @updatedAt
+
+  applicant User     @relation(fields: [applicantId], references: [id], onDelete: Cascade)
+  listing   Listing? @relation(fields: [listingId], references: [id])
+
+  @@index([status])
+  @@index([applicantId])
+  @@index([nationalityCountryCode])
+  @@map("foreign_investor_clearances")
+}
+
+// ---------------------------------------------------------------------------
+// Fayda / eSignet identity, consent-gated leads, local billing rails
+// ---------------------------------------------------------------------------
+
+/// Verified National ID profile claims from Fayda eSignet OIDC.
+model FaydaIdentity {
+  id                   String    @id @default(cuid())
+  userId               String?   @unique
+  /// OIDC `sub` from eSignet
+  subject              String    @unique
+  verifiedName         String
+  profilePhotoUrl      String?
+  /// E.164 phone asserted by national ID (e.g. +2519…)
+  phoneE164            String
+  idTokenHash          String?
+  accessTokenExpiresAt DateTime?
+  rawClaims            Json?
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
+
+  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([phoneE164])
+  @@map("fayda_identities")
+}
+
+/// Consent-gated listing contact lead (broker phone never exposed without gate).
+model Lead {
+  id              String     @id @default(cuid())
+  listingId       String
+  requesterId     String?
+  brokerUserId    String?
+  delalaId        String?
+  status          LeadStatus @default(CAPTURED)
+  consentGranted  Boolean    @default(false)
+  consentGrantedAt DateTime?
+  /// Always stored / returned for audit UI (E.164 with middle digits masked)
+  maskedPhone     String
+  /// Cleared path after consent — never returned from public listing handlers
+  revealedPhone   String?
+  message         String?
+  metadata        Json?
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+
+  listing    Listing        @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  requester  User?          @relation("LeadRequester", fields: [requesterId], references: [id], onDelete: SetNull)
+  brokerUser User?          @relation("LeadBroker", fields: [brokerUserId], references: [id], onDelete: SetNull)
+  delala     DelalaProfile? @relation(fields: [delalaId], references: [id], onDelete: SetNull)
+
+  @@index([listingId, createdAt])
+  @@index([requesterId])
+  @@index([consentGranted])
+  @@map("leads")
+}
+
+model Subscription {
+  id                 String             @id @default(cuid())
+  userId             String             @unique
+  planCode           String             @default("delala-standard")
+  status             SubscriptionStatus @default(TRIAL)
+  amountEtb          Decimal            @default(0) @db.Decimal(18, 2)
+  /// Operational pilot: INDEPENDENT_DELALA roles bill at 0 ETB upfront
+  pilotExempt        Boolean            @default(false)
+  billingProvider    BillingProvider?
+  lastExternalTxnId  String?
+  currentPeriodStart DateTime?
+  currentPeriodEnd   DateTime?
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([status])
+  @@index([pilotExempt])
+  @@map("subscriptions")
+}
+
+model BillingWebhookEvent {
+  id            String          @id @default(cuid())
+  provider      BillingProvider
+  externalTxnId String
+  payload       Json
+  signatureOk   Boolean         @default(false)
+  processed     Boolean         @default(false)
+  amountEtb     Decimal?        @db.Decimal(18, 2)
+  userId        String?
+  notes         String?
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+
+  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@unique([provider, externalTxnId])
+  @@index([processed, createdAt])
+  @@map("billing_webhook_events")
+}

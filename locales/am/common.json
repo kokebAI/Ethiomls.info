@@ -1,0 +1,158 @@
+{
+  "brand": {
+    "name": "EthioMLS",
+    "tagline": "በኢትዮጵያ ቤቶችንና የንግድ ቦታዎችን ያግኙ"
+  },
+  "nav": {
+    "home": "መነሻ",
+    "listings": "ዝርዝሮች",
+    "projects": "ፕሮጀክቶች",
+    "developers": "ገንቢዎች",
+    "about": "ስለ እኛ",
+    "signIn": "ግባ",
+    "listProperty": "ንብረት ያስመዝግቡ"
+  },
+  "locale": {
+    "label": "ቋንቋ",
+    "switchTo": "ቋንቋ ቀይር"
+  },
+  "listing": {
+    "subCity": "ክፍለ ከተማ",
+    "price": "ዋጋ",
+    "bedrooms": "መኝታ ቤቶች",
+    "bathrooms": "መታጠቢያ ቤቶች",
+    "floorArea": "የወለል ስፋት",
+    "plotArea": "የቦታ ስፋት",
+    "propertyType": "የንብረት አይነት",
+    "listingType": "የዝርዝር አይነት",
+    "status": "ሁኔታ",
+    "address": "አኼራሻ",
+    "constructionStage": "የግንባታ ደረጃ",
+    "completionPercent": "ማጠናቀቅ",
+    "waterAvailability": "የውሃ አቅርቦት",
+    "powerBackup": "ተለዋጭ ሃይል",
+    "gatedCompound": "በበር የተጠበቀ ካምፓውንድ",
+    "parking": "መኪና ማቆሚያ",
+    "elevator": "ሊፍት",
+    "furnished": "በቤታዊ እቃ የተሞላ",
+    "escrowVerified": "ኤስክሮው የተረጋገጠ",
+    "virtualTour": "360° ምናባዊ ጉብኝት",
+    "openToForeignBuyers": "ለውጫ ገዢዎች ክፍት",
+    "forSale": "ለሽያጭ",
+    "forRent": "ለኪራይ",
+    "offPlan": "ከቀድሞ እቅድ"
+  },
+  "filters": {
+    "title": "ማጣሪያዎች",
+    "searchPlaceholder": "በአካባቢ፣ ፕሮጀክት ወይም ቁልፍ ቃል ይፈልጉ",
+    "apply": "ማጣሪያዎችን ተግብር",
+    "reset": "እንደገና አዘጋጅ",
+    "sortBy": "ደርድር በ",
+    "priceLowHigh": "ዋጋ፡ ከዝቅተኛ ወደ ከፍተኛ",
+    "priceHighLow": "ዋጋ፡ ከከፍተኛ ወደ ዝቅተኛ",
+    "newest": "አዲስ"
+  },
+  "amenities": {
+    "title": "መገልገያዎች",
+    "available": "አለ",
+    "notAvailable": "የለም",
+    "partial": "ከፊል / የጋራ"
+  },
+  "compliance": {
+    "escrowTitle": "የኤስክሮው ጥበቃ",
+    "escrowBody": "የገዢ ተቀማጳ ገንዘብ በተቆለፈ የባንክ ሂሳብ ውስጥ ይያዛል እና በአዋጅ ቁጥር 1357/2016 መሀረት በተረጋገጡ የግንባታ ደረጃዎች ይለቀቃል።",
+    "foreignClearanceTitle": "የውጫ ገዢ ፈቃድ",
+    "foreignClearanceBody": "የውጫ ዔጎች የመኖሪያ ቤት ግዢ በአዋጅ ቁጥር 1388/2017 የፈቃድና የኢንቨስትመንት ህጎችን ይከተላል።",
+    "foreignBadge": "አዋጅ 1388/2017 ፈቃድ",
+    "offPlanWarningTitle": "ከቀድሞ እቅድ የኤስክሮው ማስታወቂያ",
+    "offPlanWarningBody": "ለዚህ ከቀድሞ እቅድ ንብረት የገንቢ ክፍያዎች በተዘጋ የባንክ ኤስክሮው ሂሳብ ውስጥ ተቆልፈዋል። ገንዘቡ የሚለቀቀው የተረጋገጡ የግንባታ ደረጃዎች ከተረጋገጡ በእላላ ብቻ ነው (አዋጅ 1357/2016)።",
+    "offPlanWarningCite": "ህጋዊ ማስታወቂያ · አዋጅ 1357/2016"
+  },
+  "header": {
+    "browseListings": "ዝርዝሮችን ይመልከቱ",
+    "menuOpen": "ምናሌ ክፈት",
+    "menuClose": "ምናሌ ዝጋ"
+  },
+  "common": {
+    "loading": "በመጫን ላይ…",
+    "error": "ስህተት ተከስቷል",
+    "retry": "እንደገና ይሞክሩ",
+    "seeDetails": "ዝርዝር ይመልከቱ",
+    "verified": "ተረጋግጧል",
+    "from": "ከ",
+    "perMonth": "/ ወር"
+  },
+  "search": {
+    "eyebrow": "Guided search",
+    "title": "Tell us what you are looking for",
+    "lede": "Answer three short prompts. Your budget stays balanced across ETB and USD using today’s NBE day-rate proxy.",
+    "progressLabel": "Search steps",
+    "prompts": {
+      "intent": "What is your intent type?",
+      "cluster": "Which Addis Ababa sub-city cluster do you prefer?",
+      "budget": "What is your target budget?"
+    },
+    "intent": {
+      "buy": "Buy",
+      "buyHint": "Completed or ready homes for sale",
+      "rent": "Rent",
+      "rentHint": "Monthly residential or commercial leases",
+      "offPlan": "Off-plan",
+      "offPlanHint": "Developer allocations under escrow rules"
+    },
+    "clusters": {
+      "central": "Central core",
+      "centralHint": "Arada · Kirkos · Lideta · Addis Ketema",
+      "east": "Eastern corridor",
+      "eastHint": "Bole · Yeka · Lemi Kura",
+      "west": "Western ridge",
+      "westHint": "Kolfe Keranio · Gullele",
+      "south": "Southern expansion",
+      "southHint": "Akaky Kaliti · Nifas Silk-Lafto"
+    },
+    "budgetAmount": "Target amount",
+    "budgetBalance": "Cross-currency balance:",
+    "nbeRateLabel": "NBE day-rate",
+    "rateLive": "configured",
+    "rateProxy": "proxy",
+    "summary": {
+      "intent": "Intent",
+      "cluster": "Cluster",
+      "budget": "Budget"
+    },
+    "back": "Back",
+    "submit": "Show matching listings"
+  },
+  "building": {
+    "eyebrow": "Building stack",
+    "skeletonLabel": "Multi-floor building skeleton",
+    "scrollHint": "Scroll the stack or tap a floor",
+    "floorLabel": "Floor {level}",
+    "availableShort": "available",
+    "availableUnits": "available units",
+    "totalUnits": "total units",
+    "liveFloor": "Viewing floor {level}",
+    "inspectFloor": "Inspect floor",
+    "panelLabel": "Floor unit panel",
+    "closePanel": "Close floor panel",
+    "unnamedUnit": "Unit listing",
+    "status": {
+      "available": "Available",
+      "reserved": "Reserved",
+      "sold": "Sold"
+    }
+  },
+  "consent": {
+    "title": "Consent to contact broker",
+    "body": "Broker telephone numbers stay masked for privacy. Confirm the Consent Gate to create a routed lead and unlock the contact line for this listing only.",
+    "maskedLabel": "Masked broker index",
+    "checkbox": "I consent to share my enquiry and receive the broker contact details for this listing.",
+    "mustTick": "Tick the Consent Gate checkbox to continue.",
+    "confirm": "Confirm & reveal contact",
+    "cancel": "Cancel",
+    "requestContact": "Request contact",
+    "callNow": "Call broker",
+    "contactLabel": "Listing contact",
+    "routeFailed": "Could not complete secure lead routing."
+  }
+}

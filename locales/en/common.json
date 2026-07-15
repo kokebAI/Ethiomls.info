@@ -1,0 +1,158 @@
+{
+  "brand": {
+    "name": "EthioMLS",
+    "tagline": "Find homes and commercial spaces across Ethiopia"
+  },
+  "nav": {
+    "home": "Home",
+    "listings": "Listings",
+    "projects": "Projects",
+    "developers": "Developers",
+    "about": "About",
+    "signIn": "Sign in",
+    "listProperty": "List a property"
+  },
+  "locale": {
+    "label": "Language",
+    "switchTo": "Switch language"
+  },
+  "listing": {
+    "subCity": "Sub-city",
+    "price": "Price",
+    "bedrooms": "Bedrooms",
+    "bathrooms": "Bathrooms",
+    "floorArea": "Floor area",
+    "plotArea": "Plot area",
+    "propertyType": "Property type",
+    "listingType": "Listing type",
+    "status": "Status",
+    "address": "Address",
+    "constructionStage": "Construction stage",
+    "completionPercent": "Completion",
+    "waterAvailability": "Water Availability",
+    "powerBackup": "Power Backup",
+    "gatedCompound": "Gated Compound",
+    "parking": "Parking",
+    "elevator": "Elevator",
+    "furnished": "Furnished",
+    "escrowVerified": "Escrow Verified",
+    "virtualTour": "360° Virtual Tour",
+    "openToForeignBuyers": "Open to foreign buyers",
+    "forSale": "For sale",
+    "forRent": "For rent",
+    "offPlan": "Off-plan"
+  },
+  "filters": {
+    "title": "Filters",
+    "searchPlaceholder": "Search by area, project, or keyword",
+    "apply": "Apply filters",
+    "reset": "Reset",
+    "sortBy": "Sort by",
+    "priceLowHigh": "Price: low to high",
+    "priceHighLow": "Price: high to low",
+    "newest": "Newest"
+  },
+  "amenities": {
+    "title": "Amenities",
+    "available": "Available",
+    "notAvailable": "Not available",
+    "partial": "Partial / shared"
+  },
+  "compliance": {
+    "escrowTitle": "Escrow protection",
+    "escrowBody": "Buyer deposits are held in a locked bank account and released by verified construction milestones under Proclamation 1357/2024.",
+    "foreignClearanceTitle": "Foreign buyer clearance",
+    "foreignClearanceBody": "Residential purchases by foreign nationals follow Proclamation 1388/2025 clearance and investment rules.",
+    "foreignBadge": "Proc. 1388/2025 clearance",
+    "offPlanWarningTitle": "Off-plan escrow notice",
+    "offPlanWarningBody": "Developer allocations for this off-plan property are locked in a closed bank escrow account. Funds are released only after certified construction stages are verified under Proclamation 1357/2024.",
+    "offPlanWarningCite": "Legal notice · Proclamation 1357/2024"
+  },
+  "header": {
+    "browseListings": "Browse listings",
+    "menuOpen": "Open menu",
+    "menuClose": "Close menu"
+  },
+  "common": {
+    "loading": "Loading…",
+    "error": "Something went wrong",
+    "retry": "Try again",
+    "seeDetails": "See details",
+    "verified": "Verified",
+    "from": "From",
+    "perMonth": "/ month"
+  },
+  "search": {
+    "eyebrow": "Guided search",
+    "title": "Tell us what you are looking for",
+    "lede": "Answer three short prompts. Your budget stays balanced across ETB and USD using today’s NBE day-rate proxy.",
+    "progressLabel": "Search steps",
+    "prompts": {
+      "intent": "What is your intent type?",
+      "cluster": "Which Addis Ababa sub-city cluster do you prefer?",
+      "budget": "What is your target budget?"
+    },
+    "intent": {
+      "buy": "Buy",
+      "buyHint": "Completed or ready homes for sale",
+      "rent": "Rent",
+      "rentHint": "Monthly residential or commercial leases",
+      "offPlan": "Off-plan",
+      "offPlanHint": "Developer allocations under escrow rules"
+    },
+    "clusters": {
+      "central": "Central core",
+      "centralHint": "Arada · Kirkos · Lideta · Addis Ketema",
+      "east": "Eastern corridor",
+      "eastHint": "Bole · Yeka · Lemi Kura",
+      "west": "Western ridge",
+      "westHint": "Kolfe Keranio · Gullele",
+      "south": "Southern expansion",
+      "southHint": "Akaky Kaliti · Nifas Silk-Lafto"
+    },
+    "budgetAmount": "Target amount",
+    "budgetBalance": "Cross-currency balance:",
+    "nbeRateLabel": "NBE day-rate",
+    "rateLive": "configured",
+    "rateProxy": "proxy",
+    "summary": {
+      "intent": "Intent",
+      "cluster": "Cluster",
+      "budget": "Budget"
+    },
+    "back": "Back",
+    "submit": "Show matching listings"
+  },
+  "building": {
+    "eyebrow": "Building stack",
+    "skeletonLabel": "Multi-floor building skeleton",
+    "scrollHint": "Scroll the stack or tap a floor",
+    "floorLabel": "Floor {level}",
+    "availableShort": "available",
+    "availableUnits": "available units",
+    "totalUnits": "total units",
+    "liveFloor": "Viewing floor {level}",
+    "inspectFloor": "Inspect floor",
+    "panelLabel": "Floor unit panel",
+    "closePanel": "Close floor panel",
+    "unnamedUnit": "Unit listing",
+    "status": {
+      "available": "Available",
+      "reserved": "Reserved",
+      "sold": "Sold"
+    }
+  },
+  "consent": {
+    "title": "Consent to contact broker",
+    "body": "Broker telephone numbers stay masked for privacy. Confirm the Consent Gate to create a routed lead and unlock the contact line for this listing only.",
+    "maskedLabel": "Masked broker index",
+    "checkbox": "I consent to share my enquiry and receive the broker contact details for this listing.",
+    "mustTick": "Tick the Consent Gate checkbox to continue.",
+    "confirm": "Confirm & reveal contact",
+    "cancel": "Cancel",
+    "requestContact": "Request contact",
+    "callNow": "Call broker",
+    "contactLabel": "Listing contact",
+    "routeFailed": "Could not complete secure lead routing."
+  }
+}

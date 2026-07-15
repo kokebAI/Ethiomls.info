@@ -1,0 +1,158 @@
+{
+  "brand": {
+    "name": "EthioMLS",
+    "tagline": "Manneenii fi bakka daldalaa Itoophiyaa keessatti barbaadi"
+  },
+  "nav": {
+    "home": "Fuula duraa",
+    "listings": "Tarreewwan",
+    "projects": "Pirojektoota",
+    "developers": "Ijaartoota",
+    "about": "Waa'ee keenya",
+    "signIn": "Seeni",
+    "listProperty": "Qabeenya galmeessi"
+  },
+  "locale": {
+    "label": "Afaan",
+    "switchTo": "Afaan jijjiiri"
+  },
+  "listing": {
+    "subCity": "Magaalaa golaa",
+    "price": "Gatii",
+    "bedrooms": "Kutaalee ciisichaa",
+    "bathrooms": "Mana dhiqannaa",
+    "floorArea": "Bal'ina dadaa",
+    "plotArea": "Bal'ina lafaa",
+    "propertyType": "Gosa qabeenyaa",
+    "listingType": "Gosa tarree",
+    "status": "Haala",
+    "address": "Teessoo",
+    "constructionStage": "Sadarkaa ijaarsaa",
+    "completionPercent": "Xumura",
+    "waterAvailability": "Argamuu bishaanii",
+    "powerBackup": "Humna dabalataa",
+    "gatedCompound": "Kompaawundii balbala qabu",
+    "parking": "Bakka konkolaataa dhaabuu",
+    "elevator": "Liiftu",
+    "furnished": "Meeshaalee manaatiin qophaa'e",
+    "escrowVerified": "Eskiroo mirkanaa'e",
+    "virtualTour": "Daawwannaa 360° varchuwaalii",
+    "openToForeignBuyers": "Bittoota alaaaf banaa",
+    "forSale": "Gurgurmaa",
+    "forRent": "Kireeffamaa",
+    "offPlan": "Karoora duraatiin"
+  },
+  "filters": {
+    "title": "Filtaroota",
+    "searchPlaceholder": "Naannoo, pirojektii ykn jecha ijoo'n barbaadi",
+    "apply": "Filtaroota hojiirra oolchi",
+    "reset": "Deebisi",
+    "sortBy": "Tartiiba kennaan",
+    "priceLowHigh": "Gatii: gadii hanga ol",
+    "priceHighLow": "Gatii: ol hanga gadi",
+    "newest": "Haaraa"
+  },
+  "amenities": {
+    "title": "Tajaajiloota dabalataa",
+    "available": "Ni jira",
+    "notAvailable": "Hin jiru",
+    "partial": "Giddu-galeessa / qoodama"
+  },
+  "compliance": {
+    "escrowTitle": "Eegumsa eskiroo",
+    "escrowBody": "Maallaqni kuusaa bittootaa herrega baankii cufame keessatti qabama; sadarkaa ijaarsaa mirkanaa'een Labsii 1357/2024 jalatti gadhiifama.",
+    "foreignClearanceTitle": "Hayyama bittootaa alaa",
+    "foreignClearanceBody": "Bituu mana jireenyaa lammiilee alaa Labsii 1388/2025 fi seera investimantii hordofa.",
+    "foreignBadge": "Labsii 1388/2025 hayyama",
+    "offPlanWarningTitle": "Beeksisa eskiroo karoora duraatiin",
+    "offPlanWarningBody": "Kaffaltiileen ijaartaa qabeenya karoora duraatiin kanaaf herrega eskiroo baankii cufame keessatti cuqqaalama. Maallaqni gadhiifamu erga sadarkaan ijaarsaa mirkanaa'ee qofa (Labsii 1357/2024).",
+    "offPlanWarningCite": "Beeksisa seeraa · Labsii 1357/2024"
+  },
+  "header": {
+    "browseListings": "Tarreewwan ilaali",
+    "menuOpen": "Baafata bani",
+    "menuClose": "Baafata cufi"
+  },
+  "common": {
+    "loading": "Fe'aa jira…",
+    "error": "Dogoggorri uumame",
+    "retry": "Ammas yaali",
+    "seeDetails": "Ibsa ilaali",
+    "verified": "Mirkanaa'e",
+    "from": "Irraa",
+    "perMonth": "/ ji'a"
+  },
+  "search": {
+    "eyebrow": "Barbaacha qajeelfamaa",
+    "title": "Waan barbaaddu nuuf himi",
+    "lede": "Gaaffii gabaabaa sadii deebisi. Baajatni kee ETB fi USD gidduutti rate NBE tiin madaalama.",
+    "progressLabel": "Tarkaanfii barbaachaa",
+    "prompts": {
+      "intent": "Kaayyoon kee maal?",
+      "cluster": "Klaasteri magaalaa golaa Addis Ababaa isa kami?",
+      "budget": "Baajatni kee hagam?"
+    },
+    "intent": {
+      "buy": "Biti",
+      "buyHint": "Manneen xumuramanii gurgurmaa",
+      "rent": "Kireeffadhu",
+      "rentHint": "Kireeffannaa ji'aa",
+      "offPlan": "Karoora duraatiin",
+      "offPlanHint": "Kaffaltii ijaartaa seera eskiroo jalatti"
+    },
+    "clusters": {
+      "central": "Central core",
+      "centralHint": "Arada · Kirkos · Lideta · Addis Ketema",
+      "east": "Eastern corridor",
+      "eastHint": "Bole · Yeka · Lemi Kura",
+      "west": "Western ridge",
+      "westHint": "Kolfe Keranio · Gullele",
+      "south": "Southern expansion",
+      "southHint": "Akaky Kaliti · Nifas Silk-Lafto"
+    },
+    "budgetAmount": "Hanga baajataa",
+    "budgetBalance": "Madaala currency:",
+    "nbeRateLabel": "Rate NBE guyyaa",
+    "rateLive": "configured",
+    "rateProxy": "proxy",
+    "summary": {
+      "intent": "Intent",
+      "cluster": "Cluster",
+      "budget": "Budget"
+    },
+    "back": "Deebi'i",
+    "submit": "Tarree walsimuu agarsiisi"
+  },
+  "building": {
+    "eyebrow": "Ijaarsa jilli",
+    "skeletonLabel": "Multi-floor building skeleton",
+    "scrollHint": "Scroll godhi ykn floor tuqi",
+    "floorLabel": "Floor {level}",
+    "availableShort": "available",
+    "availableUnits": "unitota argaman",
+    "totalUnits": "unitota waliigalaa",
+    "liveFloor": "Floor {level} ilaalaa jirta",
+    "inspectFloor": "Floor ilaali",
+    "panelLabel": "Floor unit panel",
+    "closePanel": "Panel cufi",
+    "unnamedUnit": "Unit listing",
+    "status": {
+      "available": "Ni jira",
+      "reserved": "Qabamaa",
+      "sold": "Gurgurame"
+    }
+  },
+  "consent": {
+    "title": "Hayyama qunnamtii daldalaa",
+    "body": "Lakkoofsi bilbilaa delalaa masked ta'ee hafe. Consent Gate mirkaneessi lead uumuuf qunnamtii argachuuf.",
+    "maskedLabel": "Lakkoofsa masked",
+    "checkbox": "Gaaffii koo qooduuf fi qunnamtii delalaa argachuuf nan hayyama.",
+    "mustTick": "Checkbox Consent Gate tuqi.",
+    "confirm": "Mirkaneessi & qunnamtii agarsiisi",
+    "cancel": "Dhiisi",
+    "requestContact": "Qunnamtii gaafadhu",
+    "callNow": "Delalaa bilbili",
+    "contactLabel": "Qunnamtii tarree",
+    "routeFailed": "Lead routing hin milkoofne."
+  }
+}
