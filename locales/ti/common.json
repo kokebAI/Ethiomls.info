@@ -154,5 +154,21 @@
     "callNow": "Call broker",
     "contactLabel": "Listing contact",
     "routeFailed": "Could not complete secure lead routing."
+  },
+  "pages": {
+    "listings": {
+      "title": "ዝርዝራት",
+      "lede": "ኣብ አዲስ ኣበባ ንጡፋት ኣባይቲን ንግዳዊ ቦታታትን ረኣዩ።"
+    },
+    "projects": {
+      "title": "ፕሮጀክታት",
+      "lede": "ኦፍ-ፕላንን ኣብ ህንጻ ዘለው ፕሮጀክታት ብኤስክሮ ደረጃ ርእዮ።"
+    },
+    "developers": {
+      "title": "ኣራጋጽቲ",
+      "lede": "ኣብ EthioMLS ዝተረጋገጹ ኮርፖሬት ኣራጋጽትን ደላላን ምርምር።"
+    },
+    "comingOnline": "ዝርዝር ኣብ መስመር ይመጽእ ኣሎ — ናሙና ኣብ ታሕቲ።",
+    "emptyHint": "ምሉእ ካታሎግ PostgreSQL ዳታቤዝ ምስ ተተሓሓዘ ይርከብ።"
   }
 }

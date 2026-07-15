@@ -142,6 +142,22 @@
       "sold": "Sold"
     }
   },
+  "pages": {
+    "listings": {
+      "title": "Listings",
+      "lede": "Browse active homes and commercial spaces across Addis Ababa sub-cities."
+    },
+    "projects": {
+      "title": "Projects",
+      "lede": "Track off-plan and under-construction projects with escrow-stage visibility."
+    },
+    "developers": {
+      "title": "Developers",
+      "lede": "Explore verified corporate developers and licensed delala partners on EthioMLS."
+    },
+    "comingOnline": "Directory coming online — sample inventory below.",
+    "emptyHint": "Full catalogue connects when your PostgreSQL database is linked."
+  },
   "consent": {
     "title": "Consent to contact broker",
     "body": "Broker telephone numbers stay masked for privacy. Confirm the Consent Gate to create a routed lead and unlock the contact line for this listing only.",

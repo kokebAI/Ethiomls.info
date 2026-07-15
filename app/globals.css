@@ -391,3 +391,61 @@ button {
     display: none;
   }
 }
+
+/* ---- Secondary nav pages ---- */
+
+.page-shell {
+  display: grid;
+  gap: 2rem;
+}
+
+.page-shell__intro {
+  display: grid;
+  gap: 0.65rem;
+  max-width: 40rem;
+}
+
+.page-shell__lede {
+  margin: 0;
+  color: var(--color-ink-muted);
+  font-size: 1.05rem;
+  line-height: 1.55;
+}
+
+.page-shell__note {
+  margin: 0;
+  padding: 0.85rem 1rem;
+  border-radius: 12px;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-ink-muted);
+  font-size: 0.92rem;
+  line-height: 1.45;
+}
+
+.page-directory {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.85rem;
+}
+
+.page-directory__card {
+  padding: 1.1rem 1.2rem;
+  border-radius: var(--radius);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-soft);
+}
+
+.page-directory__title {
+  margin: 0 0 0.35rem;
+  font-size: 1.15rem;
+}
+
+.page-directory__meta {
+  margin: 0;
+  color: var(--color-ink-muted);
+  font-size: 0.9rem;
+}

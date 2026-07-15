@@ -142,6 +142,22 @@
       "sold": "Sold"
     }
   },
+  "pages": {
+    "listings": {
+      "title": "ዝርዝሮች",
+      "lede": "በአዲስ አበባ ክፍለ ከተሞች ያሉ ንቁ ቤቶችን እና የንግድ ቦታዎችን ይመልከቱ።"
+    },
+    "projects": {
+      "title": "ፕሮጀክቶች",
+      "lede": "እስክሮ እና የግንባታ ደረጃ ታይነት ያላቸው ኦፍ-ፕላን እና በግንባታ ላይ ያሉ ፕሮጀክቶች።"
+    },
+    "developers": {
+      "title": "ገንቢዎች",
+      "lede": "በEthioMLS የተረጋገጡ የኮርፖሬት ገንቢዎችን እና ፈቃድ ያላቸው ደላሎችን ያስሱ።"
+    },
+    "comingOnline": "ማውጫው በመስመር ላይ እየመጣ ነው — ከታች ናሙና እቃዎች።",
+    "emptyHint": "ሙሉ ካታሎግ የ PostgreSQL ዳታቤዝ ሲገናኝ ይገኛል።"
+  },
   "consent": {
     "title": "Consent to contact broker",
     "body": "Broker telephone numbers stay masked for privacy. Confirm the Consent Gate to create a routed lead and unlock the contact line for this listing only.",

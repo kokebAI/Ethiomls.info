@@ -154,5 +154,21 @@
     "callNow": "Delalaa bilbili",
     "contactLabel": "Qunnamtii tarree",
     "routeFailed": "Lead routing hin milkoofne."
+  },
+  "pages": {
+    "listings": {
+      "title": "Tarreewwan",
+      "lede": "Manneen fi bakka daldalaa Finfinnee keessatti argaman ilaali."
+    },
+    "projects": {
+      "title": "Pirojektoota",
+      "lede": "Pirojektoota off-plan fi ijaarsa jiran escrow-stage wajjin hordofi."
+    },
+    "developers": {
+      "title": "Ijaartoota",
+      "lede": "Ijaartoota koorporatee mirkanaa'an fi delaloota hayyama qaban EthioMLS irratti qoreessi."
+    },
+    "comingOnline": "Tarreewwan online ta'aa jiru — fakkeenya armaan gadii.",
+    "emptyHint": "Kataloogiin guutuu yeroo PostgreSQL database qunnamu ni argama."
   }
 }
