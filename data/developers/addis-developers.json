@@ -1,0 +1,271 @@
+{
+  "source": "curated-public-directory",
+  "description": "Publicly known Addis Ababa / Ethiopia corporate real-estate developers compiled from company websites and industry directories. Not an official government registry. registrationNumber values are EthioMLS directory keys (ET-DIR-*), not MoUD/license IDs unless noted.",
+  "updatedAt": "2026-07-16",
+  "developers": [
+    {
+      "tradeName": "Noah Real Estate PLC",
+      "displayName": {
+        "en": "Noah Real Estate",
+        "am": "ኖአ ሪል ኢስቴት"
+      },
+      "registrationNumber": "ET-DIR-NOAH-001",
+      "website": "https://noahrealestateplc.com",
+      "hqCode": "bole",
+      "licenseNumber": null,
+      "tin": null
+    },
+    {
+      "tradeName": "Flintstone Homes PLC",
+      "displayName": {
+        "en": "Flintstone Homes",
+        "am": "ፍሊንትስቶን ሆምስ"
+      },
+      "registrationNumber": "ET-DIR-FLINT-002",
+      "website": "https://flintstonehomes.com",
+      "hqCode": "bole",
+      "licenseNumber": null,
+      "tin": null
+    },
+    {
+      "tradeName": "Gift Real Estate PLC",
+      "displayName": {
+        "en": "Gift Real Estate",
+        "am": "ጊፍት ሪል ኢስቴት"
+      },
+      "registrationNumber": "ET-DIR-GIFT-003",
+      "website": "https://giftrealestate.com",
+      "hqCode": "yeka",
+      "licenseNumber": null,
+      "tin": null
+    },
+    {
+      "tradeName": "Ayat Real Estate Development Share Company",
+      "displayName": {
+        "en": "Ayat Real Estate",
+        "am": "አያት ሪል ኢስቴት"
+      },
+      "registrationNumber": "ET-DIR-AYAT-004",
+      "website": "https://ayatrealestate.com",
+      "hqCode": "yeka",
+      "licenseNumber": null,
+      "tin": null
+    },
+    {
+      "tradeName": "Sunshine Real Estate PLC",
+      "displayName": {
+        "en": "Sunshine Real Estate",
+        "am": "ሰንሻይን ሪል ኢስቴት"
+      },
+      "registrationNumber": "ET-DIR-SUN-005",
+      "website": "https://sunshineethiopia.com",
+      "hqCode": "bole",
+      "licenseNumber": null,
+      "tin": null
+    },
+    {
+      "tradeName": "Pluto Real Estate PLC",
+      "displayName": {
+        "en": "Pluto Real Estate",
+        "am": "ፕሉቶ ሪል ኢስቴት"
+      },
+      "registrationNumber": "ET-DIR-PLUTO-006",
+      "website": "https://plutorealestate.com",
+      "hqCode": "bole",
+      "licenseNumber": null,
+      "tin": null
+    },
+    {
+      "tradeName": "Country Club Developers PLC",
+      "displayName": {
+        "en": "Country Club Developers",
+        "am": "ካንትሪ ክለብ ዲቨሎፐርስ"
+      },
+      "registrationNumber": "ET-DIR-CCD-007",
+      "website": "https://countryclubdevelopers.com",
+      "hqCode": "yeka",
+      "licenseNumber": null,
+      "tin": null
+    },
+    {
+      "tradeName": "Habitat Real Estate PLC",
+      "displayName": {
+        "en": "Habitat Real Estate",
+        "am": "ሀቢታት ሪል ኢስቴት"
+      },
+      "registrationNumber": "ET-DIR-HAB-008",
+      "website": "https://habitatethiopia.com",
+      "hqCode": "kirkos",
+      "licenseNumber": null,
+      "tin": null
+    },
+    {
+      "tradeName": "Access Real Estate PLC",
+      "displayName": {
+        "en": "Access Real Estate",
+        "am": "አክሰስ ሪል ኢስቴት"
+      },
+      "registrationNumber": "ET-DIR-ACCESS-009",
+      "website": "https://accessrealestate.com",
+      "hqCode": "bole",
+      "licenseNumber": null,
+      "tin": null
+    },
+    {
+      "tradeName": "Evergreen Real Estate PLC",
+      "displayName": {
+        "en": "Evergreen Real Estate",
+        "am": "ኤቨርግሪን ሪል ኢስቴት"
+      },
+      "registrationNumber": "ET-DIR-EVER-010",
+      "website": "https://evergreenrealestateet.com",
+      "hqCode": "lemi-kura",
+      "licenseNumber": null,
+      "tin": null
+    },
+    {
+      "tradeName": "Mebrit Real Estate PLC",
+      "displayName": {
+        "en": "Mebrit Real Estate",
+        "am": "መብሪት ሪል ኢስቴት"
+      },
+      "registrationNumber": "ET-DIR-MEBRIT-011",
+      "website": "https://mebritrealestate.com",
+      "hqCode": "bole",
+      "licenseNumber": null,
+      "tin": null
+    },
+    {
+      "tradeName": "ZCAP Real Estate PLC",
+      "displayName": {
+        "en": "ZCAP Real Estate",
+        "am": "ዝካፕ ሪል ኢስቴት"
+      },
+      "registrationNumber": "ET-DIR-ZCAP-012",
+      "website": "https://zcapethiopia.com",
+      "hqCode": "bole",
+      "licenseNumber": null,
+      "tin": null
+    },
+    {
+      "tradeName": "Durable Real Estate PLC",
+      "displayName": {
+        "en": "Durable Real Estate",
+        "am": "ዱራብል ሪል ኢስቴት"
+      },
+      "registrationNumber": "ET-DIR-DUR-013",
+      "website": "https://durablerealestate.com",
+      "hqCode": "nifas-silk-lafto",
+      "licenseNumber": null,
+      "tin": null
+    },
+    {
+      "tradeName": "4M Real Estate PLC",
+      "displayName": {
+        "en": "4M Real Estate",
+        "am": "4ኤም ሪል ኢስቴት"
+      },
+      "registrationNumber": "ET-DIR-4M-014",
+      "website": "https://4mrealestate.com",
+      "hqCode": "bole",
+      "licenseNumber": null,
+      "tin": null
+    },
+    {
+      "tradeName": "Skyline Real Estate PLC",
+      "displayName": {
+        "en": "Skyline Real Estate",
+        "am": "ስካይላይን ሪል ኢስቴት"
+      },
+      "registrationNumber": "ET-DIR-SKY-015",
+      "website": "https://skylinerealestateethiopia.com",
+      "hqCode": "kirkos",
+      "licenseNumber": null,
+      "tin": null
+    },
+    {
+      "tradeName": "Metrociti Real Estate PLC",
+      "displayName": {
+        "en": "Metrociti Real Estate",
+        "am": "ሜትሮሲቲ ሪል ኢስቴት"
+      },
+      "registrationNumber": "ET-DIR-METRO-016",
+      "website": "https://metrocitirealestate.com",
+      "hqCode": "bole",
+      "licenseNumber": null,
+      "tin": null
+    },
+    {
+      "tradeName": "Dream Home Real Estate PLC",
+      "displayName": {
+        "en": "Dream Home Real Estate",
+        "am": "ድሪም ሆም ሪል ኢስቴት"
+      },
+      "registrationNumber": "ET-DIR-DREAM-017",
+      "website": "https://dreamhomerealestateethiopia.com",
+      "hqCode": "lemi-kura",
+      "licenseNumber": null,
+      "tin": null
+    },
+    {
+      "tradeName": "Italian Real Estate Ethiopia PLC",
+      "displayName": {
+        "en": "Italian Real Estate",
+        "am": "ኢጣሊያን ሪል ኢስቴት"
+      },
+      "registrationNumber": "ET-DIR-ITA-018",
+      "website": "https://italianrealestateethiopia.com",
+      "hqCode": "yeka",
+      "licenseNumber": null,
+      "tin": null
+    },
+    {
+      "tradeName": "SACO Real Estate PLC",
+      "displayName": {
+        "en": "SACO Real Estate",
+        "am": "ሳኮ ሪል ኢስቴት"
+      },
+      "registrationNumber": "ET-DIR-SACO-019",
+      "website": "https://sacorealestate.com",
+      "hqCode": "arada",
+      "licenseNumber": null,
+      "tin": null
+    },
+    {
+      "tradeName": "HiLCO Real Estate PLC",
+      "displayName": {
+        "en": "HiLCO Real Estate",
+        "am": "ሂልኮ ሪል ኢስቴት"
+      },
+      "registrationNumber": "ET-DIR-HILCO-020",
+      "website": "https://hilcorealestate.com",
+      "hqCode": "bole",
+      "licenseNumber": null,
+      "tin": null
+    },
+    {
+      "tradeName": "Yared Real Estate PLC",
+      "displayName": {
+        "en": "Yared Real Estate",
+        "am": "ያሬድ ሪል ኢስቴት"
+      },
+      "registrationNumber": "ET-DIR-YARED-021",
+      "website": "https://yaredrealestate.com",
+      "hqCode": "kirkos",
+      "licenseNumber": null,
+      "tin": null
+    },
+    {
+      "tradeName": "Akakas Real Estate PLC",
+      "displayName": {
+        "en": "Akakas Real Estate",
+        "am": "አካካስ ሪል ኢስቴት"
+      },
+      "registrationNumber": "ET-DIR-AKAKAS-022",
+      "website": "https://akakas.com",
+      "hqCode": "bole",
+      "licenseNumber": null,
+      "tin": null
+    }
+  ]
+}

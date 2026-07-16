@@ -1,0 +1,2158 @@
+{
+  "source": "curated-recent-projects",
+  "description": "Recent (2024–2026) Addis Ababa developer projects compiled for EthioMLS import. Linked to data/developers/addis-developers.json via registrationNumber (ET-DIR-*). Not an official registry extract.",
+  "updatedAt": "2026-07-16",
+  "projects": [
+    {
+      "slug": "SKYTOWER-2025",
+      "registrationNumber": "ET-DIR-NOAH-001",
+      "subCityCode": "bole",
+      "title": {
+        "en": "Noah Sky Tower 2025",
+        "am": "ኖአ ስካይ ታወር 2025"
+      },
+      "description": {
+        "en": "Bole corridor residential tower with escrow-tracked superstructure and panoramic city views.",
+        "am": "በቦሌ ኮሪደር የሚገኝ የመኖሪያ ታወር ከኤስክሮው ተከታትሎ የሚገነባ።"
+      },
+      "addressLine": "Bole Road · Atlas area",
+      "constructionStage": "SUPERSTRUCTURE",
+      "completionPercent": 61,
+      "requiresEscrow": true,
+      "website": "https://noahrealestateplc.com",
+      "telegram": "https://t.me/noahrealestate",
+      "sourceUpdatedAt": "2026-06-12",
+      "amenities": [
+        "parking",
+        "elevator",
+        "gym",
+        "security",
+        "water",
+        "power-backup"
+      ],
+      "building": {
+        "floors": [
+          {
+            "level": 12,
+            "label": {
+              "en": "Floor 12 · Penthouse",
+              "am": "ፎቅ 12 · ፔንትሃውስ"
+            },
+            "units": [
+              {
+                "unitLabel": "12A",
+                "floor": 12,
+                "bedrooms": 4,
+                "bathrooms": 3,
+                "floorAreaSqm": 248,
+                "price": 42000000,
+                "currency": "ETB",
+                "listingType": "SALE",
+                "status": "available",
+                "title": {
+                  "en": "Corner penthouse with terrace",
+                  "am": "መስኮታማ ፔንትሃውስ ከቴረስ ጋር"
+                },
+                "description": {
+                  "en": "Four-bedroom corner penthouse with wraparound terrace, dual parking, and premium finishes.",
+                  "am": "አራት መኝታ ቤት ያለው የማዕዘን ፔንትሃውስ ከአካባቢ ቴረስ እና ድርብ መኪና ማቆሚያ ጋር።"
+                },
+                "amenities": [
+                  "terrace",
+                  "parking",
+                  "elevator",
+                  "storage"
+                ]
+              },
+              {
+                "unitLabel": "12B",
+                "floor": 12,
+                "bedrooms": 3,
+                "bathrooms": 3,
+                "floorAreaSqm": 210,
+                "price": 38000000,
+                "currency": "ETB",
+                "listingType": "SALE",
+                "status": "reserved",
+                "title": {
+                  "en": "Sky terrace suite",
+                  "am": "የሰማይ ቴረስ ሱት"
+                },
+                "description": {
+                  "en": "Three-bedroom sky suite facing the airport approach with reserved buyer allocation.",
+                  "am": "ወደ አውሮፕላን ማረፊያ አቅጣጫ የሚታይ ሶስት መኝታ ቤት ከተያዘ ገዢ ጋር።"
+                },
+                "amenities": [
+                  "terrace",
+                  "parking",
+                  "elevator"
+                ]
+              }
+            ]
+          },
+          {
+            "level": 8,
+            "label": {
+              "en": "Floor 8",
+              "am": "ፎቅ 8"
+            },
+            "units": [
+              {
+                "unitLabel": "08A",
+                "floor": 8,
+                "bedrooms": 3,
+                "bathrooms": 2,
+                "floorAreaSqm": 142,
+                "price": 18500000,
+                "currency": "ETB",
+                "listingType": "SALE",
+                "status": "available",
+                "title": {
+                  "en": "East-facing 3BR family flat",
+                  "am": "ምስራቅ አቅጣጫ 3 መኝታ"
+                },
+                "description": {
+                  "en": "Bright three-bedroom sale flat with east light, balcony, and covered parking.",
+                  "am": "ብርሃናማ ሶስት መኝታ ከበኩን በረንዳ እና መኪና ማቆሚያ ጋር።"
+                },
+                "amenities": [
+                  "balcony",
+                  "parking",
+                  "elevator"
+                ]
+              },
+              {
+                "unitLabel": "08B",
+                "floor": 8,
+                "bedrooms": 3,
+                "bathrooms": 2,
+                "floorAreaSqm": 138,
+                "price": 17800000,
+                "currency": "ETB",
+                "listingType": "SALE",
+                "status": "available",
+                "title": {
+                  "en": "Family 3BR mid-floor",
+                  "am": "ቤተሰብ 3 መኝታ"
+                },
+                "description": {
+                  "en": "Efficient mid-floor layout suited to families needing two baths and storage.",
+                  "am": "ለቤተሰብ ተስማሚ የመሃል ፎቅ ከሁለት መታጠቢያ እና ማከማቻ ጋር።"
+                },
+                "amenities": [
+                  "parking",
+                  "elevator",
+                  "storage"
+                ]
+              },
+              {
+                "unitLabel": "08C",
+                "floor": 8,
+                "bedrooms": 2,
+                "bathrooms": 2,
+                "floorAreaSqm": 98,
+                "price": 12800000,
+                "currency": "ETB",
+                "listingType": "SALE",
+                "status": "sold",
+                "title": {
+                  "en": "Compact 2BR",
+                  "am": "አጭር 2 መኝታ"
+                },
+                "description": {
+                  "en": "Sold compact two-bedroom unit retained in the building inventory for transparency.",
+                  "am": "ለብርሃን የተሸጠ አጭር ሁለት መኝታ ክፍል።"
+                },
+                "amenities": [
+                  "balcony",
+                  "elevator"
+                ]
+              }
+            ]
+          },
+          {
+            "level": 5,
+            "label": {
+              "en": "Floor 5",
+              "am": "ፎቅ 5"
+            },
+            "units": [
+              {
+                "unitLabel": "05A",
+                "floor": 5,
+                "bedrooms": 2,
+                "bathrooms": 2,
+                "floorAreaSqm": 110,
+                "price": 14500000,
+                "currency": "ETB",
+                "listingType": "SALE",
+                "status": "available",
+                "title": {
+                  "en": "Garden-view 2BR",
+                  "am": "የአትክልት እይታ 2 መኝታ"
+                },
+                "description": {
+                  "en": "Two-bedroom overlooking the podium garden with flexible living/dining zone.",
+                  "am": "የመሬት አትክልትን የሚያይ ሁለት መኝታ ከተለዋዋጭ ሳሎን ጋር።"
+                },
+                "amenities": [
+                  "garden-view",
+                  "parking",
+                  "elevator"
+                ]
+              },
+              {
+                "unitLabel": "05B",
+                "floor": 5,
+                "bedrooms": 2,
+                "bathrooms": 1,
+                "floorAreaSqm": 88,
+                "price": 65000,
+                "currency": "ETB",
+                "listingType": "RENT",
+                "status": "available",
+                "title": {
+                  "en": "Furnished rental shell",
+                  "am": "የተሞላ የኪራይ ክፍል"
+                },
+                "description": {
+                  "en": "Monthly rental with partial furnishing, water reliability, and lift access.",
+                  "am": "ወርሃዊ ኪራይ ከከፊል እቃ፣ ውሃ አቅርቦት እና ሊፍት ጋር።"
+                },
+                "amenities": [
+                  "furnished",
+                  "elevator",
+                  "water"
+                ]
+              }
+            ]
+          },
+          {
+            "level": 2,
+            "label": {
+              "en": "Floor 2 · Off-plan",
+              "am": "ፎቅ 2 · ከቀድሞ እቅድ"
+            },
+            "units": [
+              {
+                "unitLabel": "02A",
+                "floor": 2,
+                "bedrooms": 3,
+                "bathrooms": 2,
+                "floorAreaSqm": 150,
+                "price": 15200000,
+                "currency": "ETB",
+                "listingType": "OFF_PLAN",
+                "status": "available",
+                "title": {
+                  "en": "Off-plan 3BR frame",
+                  "am": "ከቀድሞ እቅድ 3 መኝታ"
+                },
+                "description": {
+                  "en": "Escrow-backed off-plan three-bedroom allocation during superstructure.",
+                  "am": "በኤስክሮው የተደገፈ ከቀድሞ እቅድ ሶስት መኝታ።"
+                },
+                "amenities": [
+                  "escrow",
+                  "elevator",
+                  "parking"
+                ]
+              },
+              {
+                "unitLabel": "02B",
+                "floor": 2,
+                "bedrooms": 2,
+                "bathrooms": 2,
+                "floorAreaSqm": 105,
+                "price": 11200000,
+                "currency": "ETB",
+                "listingType": "OFF_PLAN",
+                "status": "reserved",
+                "title": {
+                  "en": "Off-plan dual-aspect 2BR",
+                  "am": "ከቀድሞ እቅድ 2 መኝታ"
+                },
+                "description": {
+                  "en": "Reserved dual-aspect off-plan shell with milestone release schedule.",
+                  "am": "በደረጃ የሚለቀቅ የተያዘ ከቀድሞ እቅድ ክፍል።"
+                },
+                "amenities": [
+                  "escrow",
+                  "parking"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "slug": "FLINT-GARDENS-2026",
+      "registrationNumber": "ET-DIR-FLINT-002",
+      "subCityCode": "bole",
+      "title": {
+        "en": "Flintstone Gardens 2026",
+        "am": "ፍሊንትስቶን ጋርደንስ 2026"
+      },
+      "description": {
+        "en": "Low-rise boutique residences beside Bole schools corridor with landscaped courtyard.",
+        "am": "ከቦሌ ትምህርት ቤቶች አቅራቢያ የሚገኝ አጭር ከፍታ ያለው የመኖሪያ ውድድር።"
+      },
+      "addressLine": "Bole Medhanialem · Schools belt",
+      "constructionStage": "INTERIOR_FINISHING",
+      "completionPercent": 82,
+      "requiresEscrow": true,
+      "website": "https://flintstonehomes.com",
+      "telegram": "https://t.me/flintstonehomes",
+      "sourceUpdatedAt": "2026-07-01",
+      "amenities": [
+        "parking",
+        "security",
+        "garden",
+        "water",
+        "elevator"
+      ],
+      "building": {
+        "floors": [
+          {
+            "level": 6,
+            "label": {
+              "en": "Floor 6",
+              "am": "ፎቅ 6"
+            },
+            "units": [
+              {
+                "unitLabel": "06A",
+                "floor": 6,
+                "bedrooms": 3,
+                "bathrooms": 2,
+                "floorAreaSqm": 156,
+                "price": 22000000,
+                "currency": "ETB",
+                "listingType": "SALE",
+                "status": "available",
+                "title": {
+                  "en": "Top-floor garden terrace 3BR",
+                  "am": "የከፍተኛ ፎቅ 3 መኝታ"
+                },
+                "description": {
+                  "en": "Interior-finishing stage three-bedroom with private roof terrace access.",
+                  "am": "የውስጥ ማጠናቀቅ ደረጃ ሶስት መኝታ ከግል ጣራ ቴረስ ጋር።"
+                },
+                "amenities": [
+                  "terrace",
+                  "parking",
+                  "garden"
+                ]
+              },
+              {
+                "unitLabel": "06B",
+                "floor": 6,
+                "bedrooms": 2,
+                "bathrooms": 2,
+                "floorAreaSqm": 118,
+                "price": 17500000,
+                "currency": "ETB",
+                "listingType": "SALE",
+                "status": "available",
+                "title": {
+                  "en": "Quiet 2BR overlooking court",
+                  "am": "ጸጥ ያለ 2 መኝታ"
+                },
+                "description": {
+                  "en": "Courtyard-facing two-bedroom with acoustic glazing and covered stall.",
+                  "am": "ወደ ጓሮ የሚታይ ሁለት መኝታ ከድምፅ መከላከያ መስታወት ጋር።"
+                },
+                "amenities": [
+                  "parking",
+                  "garden",
+                  "elevator"
+                ]
+              }
+            ]
+          },
+          {
+            "level": 4,
+            "label": {
+              "en": "Floor 4",
+              "am": "ፎቅ 4"
+            },
+            "units": [
+              {
+                "unitLabel": "04A",
+                "floor": 4,
+                "bedrooms": 3,
+                "bathrooms": 2,
+                "floorAreaSqm": 148,
+                "price": 20500000,
+                "currency": "ETB",
+                "listingType": "SALE",
+                "status": "reserved",
+                "title": {
+                  "en": "Family court residence",
+                  "am": "ቤተሰብ መኖሪያ"
+                },
+                "description": {
+                  "en": "Reserved family three-bedroom nearest the courtyard café annex.",
+                  "am": "ለቤተሰብ የተያዘ ሶስት መኝታ ከጓሮ ካፌ አቅራቢያ።"
+                },
+                "amenities": [
+                  "parking",
+                  "garden"
+                ]
+              },
+              {
+                "unitLabel": "04B",
+                "floor": 4,
+                "bedrooms": 2,
+                "bathrooms": 1,
+                "floorAreaSqm": 95,
+                "price": 72000,
+                "currency": "ETB",
+                "listingType": "RENT",
+                "status": "available",
+                "title": {
+                  "en": "Courtyard rental 2BR",
+                  "am": "የጓሮ ኪራይ 2 መኝታ"
+                },
+                "description": {
+                  "en": "Rent-ready two-bedroom with shared garden access and security gate.",
+                  "am": "ዝግጁ የኪራይ ሁለት መኝታ ከጋራ አትክልት እና ደህንነት ጋር።"
+                },
+                "amenities": [
+                  "garden",
+                  "security",
+                  "water"
+                ]
+              }
+            ]
+          },
+          {
+            "level": 1,
+            "label": {
+              "en": "Floor 1",
+              "am": "ፎቅ 1"
+            },
+            "units": [
+              {
+                "unitLabel": "01A",
+                "floor": 1,
+                "bedrooms": 2,
+                "bathrooms": 2,
+                "floorAreaSqm": 108,
+                "price": 14800000,
+                "currency": "ETB",
+                "listingType": "SALE",
+                "status": "available",
+                "title": {
+                  "en": "Lobby-adjacent 2BR",
+                  "am": "ከሎቢ አጠገብ 2 መኝታ"
+                },
+                "description": {
+                  "en": "Easy-access two-bedroom near lobby with elevator and reception.",
+                  "am": "ከመግቢያ ሎቢ አጠገብ ቀላል መዳረሻ ያለው ሁለት መኝታ።"
+                },
+                "amenities": [
+                  "elevator",
+                  "security",
+                  "parking"
+                ]
+              },
+              {
+                "unitLabel": "01B",
+                "floor": 1,
+                "bedrooms": 3,
+                "bathrooms": 2,
+                "floorAreaSqm": 140,
+                "price": 13200000,
+                "currency": "ETB",
+                "listingType": "OFF_PLAN",
+                "status": "available",
+                "title": {
+                  "en": "Finishing-stage off-plan 3BR",
+                  "am": "የማጠናቀቅ ደረጃ 3 መኝታ"
+                },
+                "description": {
+                  "en": "Late-stage off-plan three-bedroom allocated under escrow finishing tranche.",
+                  "am": "በኤስክሮው የመጨረሻ ደረጃ ከቀድሞ እቅድ ሶስት መኝታ።"
+                },
+                "amenities": [
+                  "escrow",
+                  "parking",
+                  "garden"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "slug": "AYAT-HILLS-2025",
+      "registrationNumber": "ET-DIR-AYAT-004",
+      "subCityCode": "yeka",
+      "title": {
+        "en": "Ayat Hills Residence 2025",
+        "am": "አያት ሂልስ መኖሪያ 2025"
+      },
+      "description": {
+        "en": "Northeast Addis hillside residences with staged MEP and escrow milestone tracking.",
+        "am": "በሰሜን ምሥራቅ አዲስ አበባ የሚገኝ ተራራማ መኖሪያ ከኤስክሮው ደረጃ ጋር።"
+      },
+      "addressLine": "Yeka · CMC / Ayat axis",
+      "constructionStage": "MEP_INSTALLATION",
+      "completionPercent": 74,
+      "requiresEscrow": true,
+      "website": "https://ayatrealestate.com",
+      "telegram": "https://t.me/ayatrealestate",
+      "sourceUpdatedAt": "2026-05-28",
+      "amenities": [
+        "parking",
+        "security",
+        "water",
+        "power-backup",
+        "elevator"
+      ],
+      "building": {
+        "floors": [
+          {
+            "level": 10,
+            "label": {
+              "en": "Floor 10",
+              "am": "ፎቅ 10"
+            },
+            "units": [
+              {
+                "unitLabel": "10A",
+                "floor": 10,
+                "bedrooms": 4,
+                "bathrooms": 3,
+                "floorAreaSqm": 230,
+                "price": 39000000,
+                "currency": "ETB",
+                "listingType": "SALE",
+                "status": "available",
+                "title": {
+                  "en": "Hill-view 4BR residence",
+                  "am": "የኮረብታ እይታ 4 መኝታ"
+                },
+                "description": {
+                  "en": "Four-bedroom upper unit with mountain outlook and dual parking stalls.",
+                  "am": "አራት መኝታ ከኮረብታ እይታ እና ድርብ መኪና ማቆሚያ ጋር።"
+                },
+                "amenities": [
+                  "parking",
+                  "elevator",
+                  "power-backup"
+                ]
+              },
+              {
+                "unitLabel": "10B",
+                "floor": 10,
+                "bedrooms": 3,
+                "bathrooms": 2,
+                "floorAreaSqm": 168,
+                "price": 27500000,
+                "currency": "ETB",
+                "listingType": "SALE",
+                "status": "available",
+                "title": {
+                  "en": "MEP-ready 3BR",
+                  "am": "የMEP ዝግጁ 3 መኝታ"
+                },
+                "description": {
+                  "en": "Three-bedroom during MEP installation with verified conduit runs.",
+                  "am": "በMEP ጭነት ላይ ያለ ሶስት መኝታ ከተረጋገጠ መስመር ጋር።"
+                },
+                "amenities": [
+                  "elevator",
+                  "parking",
+                  "water"
+                ]
+              }
+            ]
+          },
+          {
+            "level": 7,
+            "label": {
+              "en": "Floor 7",
+              "am": "ፎቅ 7"
+            },
+            "units": [
+              {
+                "unitLabel": "07A",
+                "floor": 7,
+                "bedrooms": 3,
+                "bathrooms": 2,
+                "floorAreaSqm": 155,
+                "price": 24800000,
+                "currency": "ETB",
+                "listingType": "SALE",
+                "status": "reserved",
+                "title": {
+                  "en": "South light 3BR",
+                  "am": "ደቡብ ብርሃን 3 መኝታ"
+                },
+                "description": {
+                  "en": "Reserved three-bedroom with strong southern exposure along the hillside.",
+                  "am": "ከደቡብ ብርሃን ጋር የተያዘ ሶስት መኝታ።"
+                },
+                "amenities": [
+                  "balcony",
+                  "parking"
+                ]
+              },
+              {
+                "unitLabel": "07B",
+                "floor": 7,
+                "bedrooms": 2,
+                "bathrooms": 2,
+                "floorAreaSqm": 112,
+                "price": 18200000,
+                "currency": "ETB",
+                "listingType": "SALE",
+                "status": "available",
+                "title": {
+                  "en": "Compact hills 2BR",
+                  "am": "አጭር ሂልስ 2 መኝታ"
+                },
+                "description": {
+                  "en": "Compact two-bedroom with backup power circuit and elevator core adjacency.",
+                  "am": "ከተለዋጭ ኃይል ዑደት ጋር አጭር ሁለት መኝታ።"
+                },
+                "amenities": [
+                  "power-backup",
+                  "elevator"
+                ]
+              }
+            ]
+          },
+          {
+            "level": 3,
+            "label": {
+              "en": "Floor 3 · Off-plan",
+              "am": "ፎቅ 3 · ከቀድሞ እቅድ"
+            },
+            "units": [
+              {
+                "unitLabel": "03A",
+                "floor": 3,
+                "bedrooms": 3,
+                "bathrooms": 2,
+                "floorAreaSqm": 160,
+                "price": 19800000,
+                "currency": "ETB",
+                "listingType": "OFF_PLAN",
+                "status": "available",
+                "title": {
+                  "en": "Escrow off-plan 3BR",
+                  "am": "ኤስክሮው ከቀድሞ እቅድ 3 መኝታ"
+                },
+                "description": {
+                  "en": "Off-plan three-bedroom allocation with funds locked until MEP verification.",
+                  "am": "ገንዘብ እስከ MEP ማረጋገጫ የሚቆለፍ ከቀድሞ እቅድ።"
+                },
+                "amenities": [
+                  "escrow",
+                  "parking",
+                  "security"
+                ]
+              },
+              {
+                "unitLabel": "03B",
+                "floor": 3,
+                "bedrooms": 2,
+                "bathrooms": 2,
+                "floorAreaSqm": 118,
+                "price": 86000,
+                "currency": "ETB",
+                "listingType": "RENT",
+                "status": "available",
+                "title": {
+                  "en": "Interim rental 2BR",
+                  "am": "ጊዜያዊ ኪራይ 2 መኝታ"
+                },
+                "description": {
+                  "en": "Temporary rental stock released while upper floors complete MEP.",
+                  "am": "የላይኛ ፎቆች ሲጠናቀቁ የተለቀቀ ጊዜያዊ ኪራይ።"
+                },
+                "amenities": [
+                  "water",
+                  "security",
+                  "elevator"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "slug": "SUNSHINE-HEIGHTS-2024",
+      "registrationNumber": "ET-DIR-SUN-005",
+      "subCityCode": "bole",
+      "title": {
+        "en": "Sunshine Heights Tower",
+        "am": "ሰንሻይን ሃይትስ ታወር"
+      },
+      "description": {
+        "en": "Flagship Bole tower with escrow stage tracking and mixed sale/rent inventory.",
+        "am": "በቦሌ የሚገኝ ዋና ታወር ከኤስክሮው ደረጃ እና የተቀላቀለ ዝርዝር ጋር።"
+      },
+      "addressLine": "Bole Road · Block C",
+      "constructionStage": "SUPERSTRUCTURE",
+      "completionPercent": 62,
+      "requiresEscrow": true,
+      "website": "https://sunshineethiopia.com",
+      "telegram": "https://t.me/sunshineethiopia",
+      "sourceUpdatedAt": "2026-04-18",
+      "amenities": [
+        "parking",
+        "elevator",
+        "security",
+        "water",
+        "gym"
+      ],
+      "building": {
+        "floors": [
+          {
+            "level": 12,
+            "label": {
+              "en": "Floor 12 · Penthouse",
+              "am": "ፎቅ 12 · ፔንትሃውስ"
+            },
+            "units": [
+              {
+                "unitLabel": "12A",
+                "floor": 12,
+                "bedrooms": 4,
+                "bathrooms": 3,
+                "floorAreaSqm": 248,
+                "price": 185000,
+                "currency": "USD",
+                "listingType": "SALE",
+                "status": "available",
+                "title": {
+                  "en": "Corner penthouse",
+                  "am": "የማዕዘን ፔንትሃውስ"
+                },
+                "description": {
+                  "en": "USD-priced corner penthouse with dual living zones and terrace.",
+                  "am": "በዶላር የተገለጸ የማዕዘን ፔንትሃውስ ከቴረስ ጋር።"
+                },
+                "amenities": [
+                  "terrace",
+                  "parking",
+                  "elevator"
+                ]
+              },
+              {
+                "unitLabel": "12B",
+                "floor": 12,
+                "bedrooms": 3,
+                "bathrooms": 3,
+                "floorAreaSqm": 210,
+                "price": 162000,
+                "currency": "USD",
+                "listingType": "SALE",
+                "status": "reserved",
+                "title": {
+                  "en": "Sky terrace suite",
+                  "am": "የሰማይ ቴረስ ሱት"
+                },
+                "description": {
+                  "en": "Reserved sky suite with furnished finish package option.",
+                  "am": "የተያዘ የሰማይ ሱት ከማጠናቀቅ አማራጭ ጋር።"
+                },
+                "amenities": [
+                  "terrace",
+                  "furnished",
+                  "elevator"
+                ]
+              }
+            ]
+          },
+          {
+            "level": 8,
+            "label": {
+              "en": "Floor 8",
+              "am": "ፎቅ 8"
+            },
+            "units": [
+              {
+                "unitLabel": "08A",
+                "floor": 8,
+                "bedrooms": 3,
+                "bathrooms": 2,
+                "floorAreaSqm": 142,
+                "price": 18500000,
+                "currency": "ETB",
+                "listingType": "SALE",
+                "status": "available",
+                "title": {
+                  "en": "East-facing 3BR",
+                  "am": "ምስራቅ አቅጣጫ 3 መኝታ"
+                },
+                "description": {
+                  "en": "Canonical EthioMLS sample three-bedroom matching published MLS ID examples.",
+                  "am": "ከተለቀቁ የMLS መለያዎች ጋር የሚመሳሰል ምሳሌ ሶስት መኝታ።"
+                },
+                "amenities": [
+                  "balcony",
+                  "parking",
+                  "elevator"
+                ]
+              },
+              {
+                "unitLabel": "08B",
+                "floor": 8,
+                "bedrooms": 3,
+                "bathrooms": 2,
+                "floorAreaSqm": 138,
+                "price": 17800000,
+                "currency": "ETB",
+                "listingType": "SALE",
+                "status": "available",
+                "title": {
+                  "en": "Family 3BR",
+                  "am": "ቤተሰብ 3 መኝታ"
+                },
+                "description": {
+                  "en": "Family three-bedroom mid-tower unit with storage locker.",
+                  "am": "ከማከማቻ ጋር የመሃል ታወር ቤተሰብ ሶስት መኝታ።"
+                },
+                "amenities": [
+                  "parking",
+                  "storage",
+                  "elevator"
+                ]
+              },
+              {
+                "unitLabel": "08C",
+                "floor": 8,
+                "bedrooms": 2,
+                "bathrooms": 2,
+                "floorAreaSqm": 96,
+                "price": 12100000,
+                "currency": "ETB",
+                "listingType": "SALE",
+                "status": "sold",
+                "title": {
+                  "en": "Compact 2BR",
+                  "am": "አጭር 2 መኝታ"
+                },
+                "description": {
+                  "en": "Sold compact unit kept in stack for floor occupancy visibility.",
+                  "am": "ለፎቅ ሁኔታ ታይነት የተሸጠ አጭር ክፍል።"
+                },
+                "amenities": [
+                  "elevator"
+                ]
+              }
+            ]
+          },
+          {
+            "level": 5,
+            "label": {
+              "en": "Floor 5",
+              "am": "ፎቅ 5"
+            },
+            "units": [
+              {
+                "unitLabel": "05A",
+                "floor": 5,
+                "bedrooms": 2,
+                "bathrooms": 2,
+                "floorAreaSqm": 110,
+                "price": 14200000,
+                "currency": "ETB",
+                "listingType": "SALE",
+                "status": "available",
+                "title": {
+                  "en": "Garden-view 2BR",
+                  "am": "የአትክልት እይታ 2 መኝታ"
+                },
+                "description": {
+                  "en": "Two-bedroom overlooking podium greenery with covered parking.",
+                  "am": "የፖዲየም አረንጓዴን የሚያይ ሁለት መኝታ።"
+                },
+                "amenities": [
+                  "garden-view",
+                  "parking"
+                ]
+              },
+              {
+                "unitLabel": "05B",
+                "floor": 5,
+                "bedrooms": 1,
+                "bathrooms": 1,
+                "floorAreaSqm": 62,
+                "price": 48000,
+                "currency": "ETB",
+                "listingType": "RENT",
+                "status": "available",
+                "title": {
+                  "en": "Studio office-ready",
+                  "am": "ስቱድዮ ለቢሮ"
+                },
+                "description": {
+                  "en": "Flexible studio rent for remote work with lift and power backup.",
+                  "am": "ለርቀት ስራ ተስማሚ የኪራይ ስቱድዮ።"
+                },
+                "amenities": [
+                  "elevator",
+                  "power-backup"
+                ]
+              }
+            ]
+          },
+          {
+            "level": 2,
+            "label": {
+              "en": "Floor 2 · Off-plan",
+              "am": "ፎቅ 2 · ከቀድሞ እቅድ"
+            },
+            "units": [
+              {
+                "unitLabel": "02A",
+                "floor": 2,
+                "bedrooms": 3,
+                "bathrooms": 2,
+                "floorAreaSqm": 148,
+                "price": 14900000,
+                "currency": "ETB",
+                "listingType": "OFF_PLAN",
+                "status": "available",
+                "title": {
+                  "en": "Unfinished kitchen framework",
+                  "am": "ያልተጠናቀቀ ኩሽና"
+                },
+                "description": {
+                  "en": "Off-plan three-bedroom frame during superstructure with escrow hold.",
+                  "am": "በሱፐርስትራክቸር ደረጃ ከኤስክሮው ጋር ከቀድሞ እቅድ።"
+                },
+                "amenities": [
+                  "escrow",
+                  "parking"
+                ]
+              },
+              {
+                "unitLabel": "02B",
+                "floor": 2,
+                "bedrooms": 2,
+                "bathrooms": 2,
+                "floorAreaSqm": 108,
+                "price": 11800000,
+                "currency": "ETB",
+                "listingType": "OFF_PLAN",
+                "status": "available",
+                "title": {
+                  "en": "Core & shell dual-aspect",
+                  "am": "ኮር እና ሼል"
+                },
+                "description": {
+                  "en": "Dual-aspect off-plan core-and-shell ready for buyer finish selection.",
+                  "am": "ገዢ ማጠናቀቅ የሚመርጥበት ከቀድሞ እቅድ ኮር።"
+                },
+                "amenities": [
+                  "escrow",
+                  "elevator"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "slug": "GIFT-PARK-2025",
+      "registrationNumber": "ET-DIR-GIFT-003",
+      "subCityCode": "yeka",
+      "title": {
+        "en": "Gift Park Residences",
+        "am": "ጊፍት ፓርክ መኖሪያዎች"
+      },
+      "description": {
+        "en": "Yeka park-edge apartments with completed envelope and interior finishing underway.",
+        "am": "ከየካ ፓርክ አጠገብ የሚገኝ መኖሪያ ከተጠናቀቀ ኤንቬሎፕ ጋር።"
+      },
+      "addressLine": "Yeka · Megenagna east",
+      "constructionStage": "INTERIOR_FINISHING",
+      "completionPercent": 79,
+      "requiresEscrow": true,
+      "website": "https://giftrealestate.com",
+      "telegram": "https://t.me/giftrealestate",
+      "sourceUpdatedAt": "2026-06-22",
+      "amenities": [
+        "parking",
+        "elevator",
+        "park-access",
+        "security",
+        "water"
+      ],
+      "building": {
+        "floors": [
+          {
+            "level": 9,
+            "label": {
+              "en": "Floor 9",
+              "am": "ፎቅ 9"
+            },
+            "units": [
+              {
+                "unitLabel": "09A",
+                "floor": 9,
+                "bedrooms": 3,
+                "bathrooms": 2,
+                "floorAreaSqm": 165,
+                "price": 26800000,
+                "currency": "ETB",
+                "listingType": "SALE",
+                "status": "available",
+                "title": {
+                  "en": "Park-view 3BR",
+                  "am": "የፓርክ እይታ 3 መኝታ"
+                },
+                "description": {
+                  "en": "Three-bedroom facing green belt with finishing package included.",
+                  "am": "ወደ አረንጓዴ ቀበቶ የሚታይ ሶስት መኝታ ከማጠናቀቅ ጋር።"
+                },
+                "amenities": [
+                  "park-access",
+                  "parking",
+                  "elevator"
+                ]
+              },
+              {
+                "unitLabel": "09B",
+                "floor": 9,
+                "bedrooms": 2,
+                "bathrooms": 2,
+                "floorAreaSqm": 120,
+                "price": 19800000,
+                "currency": "ETB",
+                "listingType": "SALE",
+                "status": "available",
+                "title": {
+                  "en": "Corner park 2BR",
+                  "am": "የማዕዘን ፓርክ 2 መኝታ"
+                },
+                "description": {
+                  "en": "Corner two-bedroom with dual balcony and lift adjacency.",
+                  "am": "ድርብ በረንዳ ያለው የማዕዘን ሁለት መኝታ።"
+                },
+                "amenities": [
+                  "balcony",
+                  "elevator",
+                  "parking"
+                ]
+              }
+            ]
+          },
+          {
+            "level": 6,
+            "label": {
+              "en": "Floor 6",
+              "am": "ፎቅ 6"
+            },
+            "units": [
+              {
+                "unitLabel": "06A",
+                "floor": 6,
+                "bedrooms": 3,
+                "bathrooms": 2,
+                "floorAreaSqm": 150,
+                "price": 23500000,
+                "currency": "ETB",
+                "listingType": "SALE",
+                "status": "reserved",
+                "title": {
+                  "en": "Family park residence",
+                  "am": "ቤተሰብ ፓርክ መኖሪያ"
+                },
+                "description": {
+                  "en": "Reserved family three-bedroom near shared kids play deck.",
+                  "am": "ከልጆች አጫዋች ቦታ አጠገብ የተያዘ ሶስት መኝታ።"
+                },
+                "amenities": [
+                  "park-access",
+                  "security"
+                ]
+              },
+              {
+                "unitLabel": "06B",
+                "floor": 6,
+                "bedrooms": 2,
+                "bathrooms": 1,
+                "floorAreaSqm": 95,
+                "price": 78000,
+                "currency": "ETB",
+                "listingType": "RENT",
+                "status": "available",
+                "title": {
+                  "en": "Park-edge rental",
+                  "am": "የፓርክ ኪራይ"
+                },
+                "description": {
+                  "en": "Monthly rental with water reliability and overnight security.",
+                  "am": "ከውሃ አቅርቦት እና ሌሊት ደህንነት ጋር ወርሃዊ ኪራይ።"
+                },
+                "amenities": [
+                  "water",
+                  "security",
+                  "elevator"
+                ]
+              }
+            ]
+          },
+          {
+            "level": 2,
+            "label": {
+              "en": "Floor 2",
+              "am": "ፎቅ 2"
+            },
+            "units": [
+              {
+                "unitLabel": "02A",
+                "floor": 2,
+                "bedrooms": 2,
+                "bathrooms": 2,
+                "floorAreaSqm": 115,
+                "price": 16800000,
+                "currency": "ETB",
+                "listingType": "SALE",
+                "status": "available",
+                "title": {
+                  "en": "Quiet mid 2BR",
+                  "am": "ጸጥ ያለ 2 መኝታ"
+                },
+                "description": {
+                  "en": "Quieter lower-mid floor two-bedroom for owner-occupiers.",
+                  "am": "ለባለቤት ነዋሪዎች ጸጥ ያለ ሁለት መኝታ።"
+                },
+                "amenities": [
+                  "parking",
+                  "elevator"
+                ]
+              },
+              {
+                "unitLabel": "02B",
+                "floor": 2,
+                "bedrooms": 3,
+                "bathrooms": 2,
+                "floorAreaSqm": 145,
+                "price": 15500000,
+                "currency": "ETB",
+                "listingType": "OFF_PLAN",
+                "status": "available",
+                "title": {
+                  "en": "Finishing off-plan 3BR",
+                  "am": "የማጠናቀቅ ከቀድሞ እቅድ"
+                },
+                "description": {
+                  "en": "Late escrow tranche off-plan three-bedroom during finishing.",
+                  "am": "በማጠናቀቅ ደረጃ ከኤስክሮው ጋር ከቀድሞ እቅድ።"
+                },
+                "amenities": [
+                  "escrow",
+                  "parking"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "slug": "HABITAT-CENTRAL-2025",
+      "registrationNumber": "ET-DIR-HAB-008",
+      "subCityCode": "kirkos",
+      "title": {
+        "en": "Habitat Central Courts",
+        "am": "ሀቢታት ሴንትራል ኮርትስ"
+      },
+      "description": {
+        "en": "Boutique courts near Meskel Square with roofing envelope complete and interiors progressing.",
+        "am": "ከመስቀል አደባባይ አቅራቢያ የሚገኝ ትንሽ መኖሪያ ከተጠናቀቀ ጣራ ጋር።"
+      },
+      "addressLine": "Kirkos · Near Meskel Square",
+      "constructionStage": "ROOFING_ENVELOPE",
+      "completionPercent": 55,
+      "requiresEscrow": true,
+      "website": "https://habitatethiopia.com",
+      "telegram": "https://t.me/habitatethiopia",
+      "sourceUpdatedAt": "2026-03-30",
+      "amenities": [
+        "parking",
+        "security",
+        "elevator",
+        "water"
+      ],
+      "building": {
+        "floors": [
+          {
+            "level": 7,
+            "label": {
+              "en": "Floor 7",
+              "am": "ፎቅ 7"
+            },
+            "units": [
+              {
+                "unitLabel": "07A",
+                "floor": 7,
+                "bedrooms": 3,
+                "bathrooms": 2,
+                "floorAreaSqm": 140,
+                "price": 21000000,
+                "currency": "ETB",
+                "listingType": "SALE",
+                "status": "available",
+                "title": {
+                  "en": "Square-view 3BR",
+                  "am": "የአደባባይ እይታ 3 መኝታ"
+                },
+                "description": {
+                  "en": "Three-bedroom overlooking the square axis with roofing complete.",
+                  "am": "ወደ አደባባይ የሚታይ ሶስት መኝታ ጣራ ከተጠናቀቀ በኋላ።"
+                },
+                "amenities": [
+                  "elevator",
+                  "parking",
+                  "security"
+                ]
+              },
+              {
+                "unitLabel": "07B",
+                "floor": 7,
+                "bedrooms": 2,
+                "bathrooms": 2,
+                "floorAreaSqm": 105,
+                "price": 15800000,
+                "currency": "ETB",
+                "listingType": "SALE",
+                "status": "available",
+                "title": {
+                  "en": "Central 2BR",
+                  "am": "ማዕከላዊ 2 መኝታ"
+                },
+                "description": {
+                  "en": "Central two-bedroom suited to professionals near ministries corridor.",
+                  "am": "ከመንግስት ቢሮዎች አቅራቢያ ለባለሙያዎች ሁለት መኝታ።"
+                },
+                "amenities": [
+                  "elevator",
+                  "security"
+                ]
+              }
+            ]
+          },
+          {
+            "level": 4,
+            "label": {
+              "en": "Floor 4",
+              "am": "ፎቅ 4"
+            },
+            "units": [
+              {
+                "unitLabel": "04A",
+                "floor": 4,
+                "bedrooms": 2,
+                "bathrooms": 1,
+                "floorAreaSqm": 90,
+                "price": 68000,
+                "currency": "ETB",
+                "listingType": "RENT",
+                "status": "available",
+                "title": {
+                  "en": "Urban rental 2BR",
+                  "am": "ከተማ ኪራይ 2 መኝታ"
+                },
+                "description": {
+                  "en": "Rent-ready two-bedroom with reliable municipal water meter.",
+                  "am": "ከተረጋጋ የውሃ ቆጣሪ ጋር የኪራይ ሁለት መኝታ።"
+                },
+                "amenities": [
+                  "water",
+                  "security"
+                ]
+              },
+              {
+                "unitLabel": "04B",
+                "floor": 4,
+                "bedrooms": 3,
+                "bathrooms": 2,
+                "floorAreaSqm": 135,
+                "price": 18800000,
+                "currency": "ETB",
+                "listingType": "SALE",
+                "status": "reserved",
+                "title": {
+                  "en": "Family court 3BR",
+                  "am": "ቤተሰብ ኮርት 3 መኝታ"
+                },
+                "description": {
+                  "en": "Reserved three-bedroom facing the inner court and lobby stair.",
+                  "am": "ወደ ውስጥ ኮርት የሚታይ የተያዘ ሶስት መኝታ።"
+                },
+                "amenities": [
+                  "parking",
+                  "elevator"
+                ]
+              }
+            ]
+          },
+          {
+            "level": 1,
+            "label": {
+              "en": "Floor 1 · Off-plan",
+              "am": "ፎቅ 1 · ከቀድሞ እቅድ"
+            },
+            "units": [
+              {
+                "unitLabel": "01A",
+                "floor": 1,
+                "bedrooms": 2,
+                "bathrooms": 2,
+                "floorAreaSqm": 100,
+                "price": 12500000,
+                "currency": "ETB",
+                "listingType": "OFF_PLAN",
+                "status": "available",
+                "title": {
+                  "en": "Envelope-stage off-plan 2BR",
+                  "am": "የኤንቬሎፕ ከቀድሞ እቅድ"
+                },
+                "description": {
+                  "en": "Off-plan two-bedroom after roofing/envelope with escrow release pending MEP.",
+                  "am": "ከጣራ በኋላ የሚቀጥል ከቀድሞ እቅድ ሁለት መኝታ።"
+                },
+                "amenities": [
+                  "escrow",
+                  "parking"
+                ]
+              },
+              {
+                "unitLabel": "01B",
+                "floor": 1,
+                "bedrooms": 3,
+                "bathrooms": 2,
+                "floorAreaSqm": 130,
+                "price": 14800000,
+                "currency": "ETB",
+                "listingType": "OFF_PLAN",
+                "status": "available",
+                "title": {
+                  "en": "Boutique off-plan 3BR",
+                  "am": "ቡቲክ ከቀድሞ እቅድ 3 መኝታ"
+                },
+                "description": {
+                  "en": "Three-bedroom boutique allocation with court landscaping deferred works.",
+                  "am": "የጓሮ አረንጓዴ ስራ በመጠባበቅ ላይ ያለ ከቀድሞ እቅድ።"
+                },
+                "amenities": [
+                  "escrow",
+                  "security"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "slug": "ACCESS-BOLE-2026",
+      "registrationNumber": "ET-DIR-ACCESS-009",
+      "subCityCode": "bole",
+      "title": {
+        "en": "Access Bole Gateway 2026",
+        "am": "አክሰስ ቦሌ ጌትዌይ 2026"
+      },
+      "description": {
+        "en": "Airport-adjacent Bole gateway residences launching soft sales with earthworks complete.",
+        "am": "ከአየር ማረፊያ አቅራቢያ የሚጀምር ቦሌ መኖሪያ ከተጠናቀቀ መሰረት ጋር።"
+      },
+      "addressLine": "Bole · Airport road approach",
+      "constructionStage": "SUBSTRUCTURE",
+      "completionPercent": 28,
+      "requiresEscrow": true,
+      "website": "https://accessrealestate.com",
+      "telegram": "https://t.me/accessrealestate",
+      "sourceUpdatedAt": "2026-07-08",
+      "amenities": [
+        "parking",
+        "security",
+        "water",
+        "elevator"
+      ],
+      "building": {
+        "floors": [
+          {
+            "level": 5,
+            "label": {
+              "en": "Floor 5 · Planned",
+              "am": "ፎቅ 5 · እቅድ"
+            },
+            "units": [
+              {
+                "unitLabel": "05A",
+                "floor": 5,
+                "bedrooms": 3,
+                "bathrooms": 2,
+                "floorAreaSqm": 150,
+                "price": 16500000,
+                "currency": "ETB",
+                "listingType": "OFF_PLAN",
+                "status": "available",
+                "title": {
+                  "en": "Gateway off-plan 3BR",
+                  "am": "ጌትዌይ ከቀድሞ እቅድ 3 መኝታ"
+                },
+                "description": {
+                  "en": "Early off-plan three-bedroom during substructure with escrow account open.",
+                  "am": "በመሬት ስር ግንባታ ደረጃ ከኤስክሮው ጋር ከቀድሞ እቅድ።"
+                },
+                "amenities": [
+                  "escrow",
+                  "parking"
+                ]
+              },
+              {
+                "unitLabel": "05B",
+                "floor": 5,
+                "bedrooms": 2,
+                "bathrooms": 2,
+                "floorAreaSqm": 112,
+                "price": 12800000,
+                "currency": "ETB",
+                "listingType": "OFF_PLAN",
+                "status": "available",
+                "title": {
+                  "en": "Airport-axis 2BR shell",
+                  "am": "የአውሮፕላን አቅጣጫ 2 መኝታ"
+                },
+                "description": {
+                  "en": "Two-bedroom shell allocation oriented to the airport road axis.",
+                  "am": "ወደ አውሮፕላን መንገድ አቅጣጫ የተመራ ከቀድሞ እቅድ።"
+                },
+                "amenities": [
+                  "escrow",
+                  "security"
+                ]
+              }
+            ]
+          },
+          {
+            "level": 3,
+            "label": {
+              "en": "Floor 3 · Planned",
+              "am": "ፎቅ 3 · እቅድ"
+            },
+            "units": [
+              {
+                "unitLabel": "03A",
+                "floor": 3,
+                "bedrooms": 2,
+                "bathrooms": 1,
+                "floorAreaSqm": 95,
+                "price": 9800000,
+                "currency": "ETB",
+                "listingType": "OFF_PLAN",
+                "status": "reserved",
+                "title": {
+                  "en": "Starter off-plan 2BR",
+                  "am": "መጀመሪያ ከቀድሞ እቅድ"
+                },
+                "description": {
+                  "en": "Reserved starter two-bedroom in the first soft-sale tranche.",
+                  "am": "በመጀመሪያ የሽያጭ ዙር የተያዘ ሁለት መኝታ።"
+                },
+                "amenities": [
+                  "escrow",
+                  "parking"
+                ]
+              },
+              {
+                "unitLabel": "03B",
+                "floor": 3,
+                "bedrooms": 3,
+                "bathrooms": 2,
+                "floorAreaSqm": 140,
+                "price": 14200000,
+                "currency": "ETB",
+                "listingType": "OFF_PLAN",
+                "status": "available",
+                "title": {
+                  "en": "Family off-plan 3BR",
+                  "am": "ቤተሰብ ከቀድሞ እቅድ"
+                },
+                "description": {
+                  "en": "Family three-bedroom off-plan with dual stall parking reservation.",
+                  "am": "ድርብ መኪና ማቆሚያ ያለው ቤተሰብ ከቀድሞ እቅድ።"
+                },
+                "amenities": [
+                  "escrow",
+                  "parking",
+                  "security"
+                ]
+              }
+            ]
+          },
+          {
+            "level": 1,
+            "label": {
+              "en": "Floor 1 · Planned",
+              "am": "ፎቅ 1 · እቅድ"
+            },
+            "units": [
+              {
+                "unitLabel": "01A",
+                "floor": 1,
+                "bedrooms": 2,
+                "bathrooms": 2,
+                "floorAreaSqm": 108,
+                "price": 11500000,
+                "currency": "ETB",
+                "listingType": "OFF_PLAN",
+                "status": "available",
+                "title": {
+                  "en": "Lobby-level off-plan 2BR",
+                  "am": "ሎቢ ደረጃ ከቀድሞ እቅድ"
+                },
+                "description": {
+                  "en": "Lobby-adjacent off-plan two-bedroom near ground parking podium.",
+                  "am": "ከመኪና ማቆሚያ አጠገብ የሎቢ ደረጃ ከቀድሞ እቅድ።"
+                },
+                "amenities": [
+                  "escrow",
+                  "parking"
+                ]
+              },
+              {
+                "unitLabel": "01B",
+                "floor": 1,
+                "bedrooms": 1,
+                "bathrooms": 1,
+                "floorAreaSqm": 58,
+                "price": 7200000,
+                "currency": "ETB",
+                "listingType": "OFF_PLAN",
+                "status": "available",
+                "title": {
+                  "en": "Compact studio shell",
+                  "am": "አጭር ስቱድዮ ሼል"
+                },
+                "description": {
+                  "en": "Compact studio off-plan suited to investor rentals after completion.",
+                  "am": "ከማጠናቀቅ በኋላ ለኪራይ ተስማሚ አጭር ስቱድዮ።"
+                },
+                "amenities": [
+                  "escrow",
+                  "elevator"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "slug": "PLUTO-RIDGE-2025",
+      "registrationNumber": "ET-DIR-PLUTO-006",
+      "subCityCode": "bole",
+      "title": {
+        "en": "Pluto Ridge Residences",
+        "am": "ፕሉቶ ሪጅ መኖሪያዎች"
+      },
+      "description": {
+        "en": "Ridge-line Bole residences with superstructure underway and escrow visibility.",
+        "am": "በቦሌ ሪጅ ላይ የሚገኝ መኖሪያ ከሱፐርስትራክቸር እና ኤስክሮው ጋር።"
+      },
+      "addressLine": "Bole · Rwanda Embassy ridge",
+      "constructionStage": "SUPERSTRUCTURE",
+      "completionPercent": 48,
+      "requiresEscrow": true,
+      "website": "https://plutorealestate.com",
+      "telegram": "https://t.me/plutorealestate",
+      "sourceUpdatedAt": "2026-05-10",
+      "amenities": [
+        "parking",
+        "elevator",
+        "gym",
+        "security",
+        "water"
+      ],
+      "building": {
+        "floors": [
+          {
+            "level": 11,
+            "label": {
+              "en": "Floor 11",
+              "am": "ፎቅ 11"
+            },
+            "units": [
+              {
+                "unitLabel": "11A",
+                "floor": 11,
+                "bedrooms": 4,
+                "bathrooms": 3,
+                "floorAreaSqm": 220,
+                "price": 36000000,
+                "currency": "ETB",
+                "listingType": "SALE",
+                "status": "available",
+                "title": {
+                  "en": "Ridge penthouse 4BR",
+                  "am": "ሪጅ ፔንትሃውስ 4 መኝታ"
+                },
+                "description": {
+                  "en": "Four-bedroom ridge penthouse with city and mountain dual aspect.",
+                  "am": "ከከተማ እና ተራራ እይታ ጋር አራት መኝታ ፔንትሃውስ።"
+                },
+                "amenities": [
+                  "terrace",
+                  "parking",
+                  "elevator",
+                  "gym"
+                ]
+              },
+              {
+                "unitLabel": "11B",
+                "floor": 11,
+                "bedrooms": 3,
+                "bathrooms": 2,
+                "floorAreaSqm": 170,
+                "price": 28500000,
+                "currency": "ETB",
+                "listingType": "SALE",
+                "status": "available",
+                "title": {
+                  "en": "Upper ridge 3BR",
+                  "am": "የላይኛ ሪጅ 3 መኝታ"
+                },
+                "description": {
+                  "en": "Upper three-bedroom during superstructure with elevator core online.",
+                  "am": "ሊፍት ጎር ካለ ሱፐርስትራክቸር ሶስት መኝታ።"
+                },
+                "amenities": [
+                  "elevator",
+                  "parking",
+                  "security"
+                ]
+              }
+            ]
+          },
+          {
+            "level": 6,
+            "label": {
+              "en": "Floor 6",
+              "am": "ፎቅ 6"
+            },
+            "units": [
+              {
+                "unitLabel": "06A",
+                "floor": 6,
+                "bedrooms": 3,
+                "bathrooms": 2,
+                "floorAreaSqm": 148,
+                "price": 22000000,
+                "currency": "ETB",
+                "listingType": "SALE",
+                "status": "reserved",
+                "title": {
+                  "en": "Mid-ridge family 3BR",
+                  "am": "መሃል ሪጅ ቤተሰብ"
+                },
+                "description": {
+                  "en": "Reserved family three-bedroom with gym membership included for year one.",
+                  "am": "ለአንድ አመት ጂም አባልነት ያለው የተያዘ ሶስት መኝታ።"
+                },
+                "amenities": [
+                  "gym",
+                  "parking",
+                  "elevator"
+                ]
+              },
+              {
+                "unitLabel": "06B",
+                "floor": 6,
+                "bedrooms": 2,
+                "bathrooms": 2,
+                "floorAreaSqm": 110,
+                "price": 82000,
+                "currency": "ETB",
+                "listingType": "RENT",
+                "status": "available",
+                "title": {
+                  "en": "Ridge rental 2BR",
+                  "am": "ሪጅ ኪራይ 2 መኝታ"
+                },
+                "description": {
+                  "en": "Two-bedroom monthly rental with water and overnight security.",
+                  "am": "ከውሃ እና ሌሊት ደህንነት ጋር ወርሃዊ ኪራይ።"
+                },
+                "amenities": [
+                  "water",
+                  "security",
+                  "elevator"
+                ]
+              }
+            ]
+          },
+          {
+            "level": 2,
+            "label": {
+              "en": "Floor 2 · Off-plan",
+              "am": "ፎቅ 2 · ከቀድሞ እቅድ"
+            },
+            "units": [
+              {
+                "unitLabel": "02A",
+                "floor": 2,
+                "bedrooms": 3,
+                "bathrooms": 2,
+                "floorAreaSqm": 145,
+                "price": 16800000,
+                "currency": "ETB",
+                "listingType": "OFF_PLAN",
+                "status": "available",
+                "title": {
+                  "en": "Escrow off-plan 3BR",
+                  "am": "ኤስክሮው ከቀድሞ እቅድ 3 መኝታ"
+                },
+                "description": {
+                  "en": "Off-plan three-bedroom escrow allocation during mid-superstructure.",
+                  "am": "በመሃል ሱፐርስትራክቸር ከኤስክሮው ጋር ከቀድሞ እቅድ።"
+                },
+                "amenities": [
+                  "escrow",
+                  "parking"
+                ]
+              },
+              {
+                "unitLabel": "02B",
+                "floor": 2,
+                "bedrooms": 2,
+                "bathrooms": 2,
+                "floorAreaSqm": 108,
+                "price": 13200000,
+                "currency": "ETB",
+                "listingType": "OFF_PLAN",
+                "status": "available",
+                "title": {
+                  "en": "Dual-aspect off-plan 2BR",
+                  "am": "ድርብ እይታ ከቀድሞ እቅድ"
+                },
+                "description": {
+                  "en": "Dual-aspect two-bedroom shell with funds locked until MEP stage.",
+                  "am": "እስከ MEP ደረጃ የተቆለፈ ገንዘብ ያለው ከቀድሞ እቅድ።"
+                },
+                "amenities": [
+                  "escrow",
+                  "elevator"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "slug": "CCD-EDGE-2024",
+      "registrationNumber": "ET-DIR-CCD-007",
+      "subCityCode": "yeka",
+      "title": {
+        "en": "Country Club Edge Villas Tower",
+        "am": "ካንትሪ ክለብ ኤጅ ታወር"
+      },
+      "description": {
+        "en": "Yeka country-club edge tower with external works beginning after interiors.",
+        "am": "ከካንትሪ ክለብ ጫፍ አጠገብ የሚገኝ ታወር ከውጭ ስራ ጅማሬ ጋር።"
+      },
+      "addressLine": "Yeka · Country Club road",
+      "constructionStage": "EXTERNAL_WORKS",
+      "completionPercent": 88,
+      "requiresEscrow": false,
+      "website": "https://countryclubdevelopers.com",
+      "telegram": "https://t.me/countryclubdevelopers",
+      "sourceUpdatedAt": "2026-02-14",
+      "amenities": [
+        "parking",
+        "security",
+        "club-access",
+        "elevator",
+        "water",
+        "power-backup"
+      ],
+      "building": {
+        "floors": [
+          {
+            "level": 8,
+            "label": {
+              "en": "Floor 8",
+              "am": "ፎቅ 8"
+            },
+            "units": [
+              {
+                "unitLabel": "08A",
+                "floor": 8,
+                "bedrooms": 4,
+                "bathrooms": 3,
+                "floorAreaSqm": 240,
+                "price": 45000000,
+                "currency": "ETB",
+                "listingType": "SALE",
+                "status": "available",
+                "title": {
+                  "en": "Club-view penthouse",
+                  "am": "የክለብ እይታ ፔንትሃውስ"
+                },
+                "description": {
+                  "en": "Near-complete four-bedroom penthouse with club access privilege.",
+                  "am": "ከክለብ መግቢያ ጋር አራት መኝታ ፔንትሃውስ።"
+                },
+                "amenities": [
+                  "club-access",
+                  "terrace",
+                  "parking",
+                  "elevator"
+                ]
+              },
+              {
+                "unitLabel": "08B",
+                "floor": 8,
+                "bedrooms": 3,
+                "bathrooms": 2,
+                "floorAreaSqm": 175,
+                "price": 32000000,
+                "currency": "ETB",
+                "listingType": "SALE",
+                "status": "sold",
+                "title": {
+                  "en": "Sold club-edge 3BR",
+                  "am": "የተሸጠ ክለብ 3 መኝታ"
+                },
+                "description": {
+                  "en": "Sold three-bedroom retained for building inventory clarity.",
+                  "am": "ለህንፃ ታይነት የተሸጠ ሶስት መኝታ።"
+                },
+                "amenities": [
+                  "club-access",
+                  "parking"
+                ]
+              }
+            ]
+          },
+          {
+            "level": 4,
+            "label": {
+              "en": "Floor 4",
+              "am": "ፎቅ 4"
+            },
+            "units": [
+              {
+                "unitLabel": "04A",
+                "floor": 4,
+                "bedrooms": 3,
+                "bathrooms": 2,
+                "floorAreaSqm": 155,
+                "price": 27500000,
+                "currency": "ETB",
+                "listingType": "SALE",
+                "status": "available",
+                "title": {
+                  "en": "Ready family 3BR",
+                  "am": "ዝግጁ ቤተሰብ 3 መኝታ"
+                },
+                "description": {
+                  "en": "Near-handover three-bedroom with landscaping external works ongoing.",
+                  "am": "ውጭ አረንጓዴ ስራ እየተካሄደ ያለ ዝግጁ ሶስት መኝታ።"
+                },
+                "amenities": [
+                  "parking",
+                  "elevator",
+                  "power-backup"
+                ]
+              },
+              {
+                "unitLabel": "04B",
+                "floor": 4,
+                "bedrooms": 2,
+                "bathrooms": 2,
+                "floorAreaSqm": 118,
+                "price": 95000,
+                "currency": "ETB",
+                "listingType": "RENT",
+                "status": "available",
+                "title": {
+                  "en": "Premium rental 2BR",
+                  "am": "ፕሪሚየም ኪራይ 2 መኝታ"
+                },
+                "description": {
+                  "en": "Furnished premium rental with power backup and club guest passes.",
+                  "am": "ከተለዋጭ ኃይል እና ክለብ ምርጫ ጋር የተሞላ ኪራይ።"
+                },
+                "amenities": [
+                  "furnished",
+                  "power-backup",
+                  "club-access"
+                ]
+              }
+            ]
+          },
+          {
+            "level": 1,
+            "label": {
+              "en": "Floor 1",
+              "am": "ፎቅ 1"
+            },
+            "units": [
+              {
+                "unitLabel": "01A",
+                "floor": 1,
+                "bedrooms": 2,
+                "bathrooms": 2,
+                "floorAreaSqm": 112,
+                "price": 19800000,
+                "currency": "ETB",
+                "listingType": "SALE",
+                "status": "available",
+                "title": {
+                  "en": "Ground-adjacent 2BR",
+                  "am": "ከመሬት አጠገብ 2 መኝታ"
+                },
+                "description": {
+                  "en": "Easy-access two-bedroom near parking podium and reception.",
+                  "am": "ከመኪና ማቆሚያ እና መቀበያ አጠገብ ሁለት መኝታ።"
+                },
+                "amenities": [
+                  "parking",
+                  "security",
+                  "elevator"
+                ]
+              },
+              {
+                "unitLabel": "01B",
+                "floor": 1,
+                "bedrooms": 3,
+                "bathrooms": 2,
+                "floorAreaSqm": 148,
+                "price": 24800000,
+                "currency": "ETB",
+                "listingType": "SALE",
+                "status": "reserved",
+                "title": {
+                  "en": "Garden court 3BR",
+                  "am": "የአትክልት ኮርት 3 መኝታ"
+                },
+                "description": {
+                  "en": "Reserved three-bedroom facing the finishing-stage garden court.",
+                  "am": "ወደ አትክልት ኮርት የሚታይ የተያዘ ሶስት መኝታ።"
+                },
+                "amenities": [
+                  "garden",
+                  "parking",
+                  "security"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "slug": "EVERGREEN-LMK-2026",
+      "registrationNumber": "ET-DIR-EVER-010",
+      "subCityCode": "lemi-kura",
+      "title": {
+        "en": "Evergreen Lemi Kura 2026",
+        "am": "ኤቨርግሪን ለሚ ኩራ 2026"
+      },
+      "description": {
+        "en": "Eastern expansion corridor residences in Lemi Kura with foundation complete.",
+        "am": "በለሚ ኩራ የሚገኝ የምስራቅ መስፋፋት መኖሪያ ከተጠናቀቀ መሰረት ጋር።"
+      },
+      "addressLine": "Lemi Kura · Ayat–CMC expansion",
+      "constructionStage": "EARTHWORKS_FOUNDATION",
+      "completionPercent": 16,
+      "requiresEscrow": true,
+      "website": "https://evergreenrealestateet.com",
+      "telegram": "https://t.me/evergreenrealestateet",
+      "sourceUpdatedAt": "2026-07-10",
+      "amenities": [
+        "parking",
+        "security",
+        "water"
+      ],
+      "building": {
+        "floors": [
+          {
+            "level": 4,
+            "label": {
+              "en": "Floor 4 · Planned",
+              "am": "ፎቅ 4 · እቅድ"
+            },
+            "units": [
+              {
+                "unitLabel": "04A",
+                "floor": 4,
+                "bedrooms": 3,
+                "bathrooms": 2,
+                "floorAreaSqm": 140,
+                "price": 11800000,
+                "currency": "ETB",
+                "listingType": "OFF_PLAN",
+                "status": "available",
+                "title": {
+                  "en": "Early off-plan 3BR",
+                  "am": "መጀመሪያ ከቀድሞ እቅድ 3 መኝታ"
+                },
+                "description": {
+                  "en": "Foundation-stage three-bedroom escrow allocation at expansion pricing.",
+                  "am": "በመሰረት ደረጃ ከኤስክሮው ጋር የመስፋፋት ዋጋ ሶስት መኝታ።"
+                },
+                "amenities": [
+                  "escrow",
+                  "parking"
+                ]
+              },
+              {
+                "unitLabel": "04B",
+                "floor": 4,
+                "bedrooms": 2,
+                "bathrooms": 2,
+                "floorAreaSqm": 105,
+                "price": 9200000,
+                "currency": "ETB",
+                "listingType": "OFF_PLAN",
+                "status": "available",
+                "title": {
+                  "en": "Early off-plan 2BR",
+                  "am": "መጀመሪያ ከቀድሞ እቅድ 2 መኝታ"
+                },
+                "description": {
+                  "en": "Two-bedroom early allocation with site works and fencing complete.",
+                  "am": "አጥር እና ቦታ ስራ ከተጠናቀቀ በኋላ ሁለት መኝታ።"
+                },
+                "amenities": [
+                  "escrow",
+                  "security"
+                ]
+              }
+            ]
+          },
+          {
+            "level": 2,
+            "label": {
+              "en": "Floor 2 · Planned",
+              "am": "ፎቅ 2 · እቅድ"
+            },
+            "units": [
+              {
+                "unitLabel": "02A",
+                "floor": 2,
+                "bedrooms": 2,
+                "bathrooms": 1,
+                "floorAreaSqm": 88,
+                "price": 7800000,
+                "currency": "ETB",
+                "listingType": "OFF_PLAN",
+                "status": "reserved",
+                "title": {
+                  "en": "Starter expansion 2BR",
+                  "am": "መጀመሪያ መስፋፋት 2 መኝታ"
+                },
+                "description": {
+                  "en": "Reserved starter two-bedroom in the first Lemi Kura tranche.",
+                  "am": "በመጀመሪያ ለሚ ኩራ ዙር የተያዘ ሁለት መኝታ።"
+                },
+                "amenities": [
+                  "escrow",
+                  "parking"
+                ]
+              },
+              {
+                "unitLabel": "02B",
+                "floor": 2,
+                "bedrooms": 3,
+                "bathrooms": 2,
+                "floorAreaSqm": 132,
+                "price": 10500000,
+                "currency": "ETB",
+                "listingType": "OFF_PLAN",
+                "status": "available",
+                "title": {
+                  "en": "Family expansion 3BR",
+                  "am": "ቤተሰብ መስፋፋት 3 መኝታ"
+                },
+                "description": {
+                  "en": "Family three-bedroom off-plan with dual parking reservation on plot.",
+                  "am": "ድርብ መኪና ማቆሚያ ያለው ቤተሰብ ከቀድሞ እቅድ።"
+                },
+                "amenities": [
+                  "escrow",
+                  "parking",
+                  "water"
+                ]
+              }
+            ]
+          },
+          {
+            "level": 1,
+            "label": {
+              "en": "Floor 1 · Planned",
+              "am": "ፎቅ 1 · እቅድ"
+            },
+            "units": [
+              {
+                "unitLabel": "01A",
+                "floor": 1,
+                "bedrooms": 2,
+                "bathrooms": 2,
+                "floorAreaSqm": 100,
+                "price": 8500000,
+                "currency": "ETB",
+                "listingType": "OFF_PLAN",
+                "status": "available",
+                "title": {
+                  "en": "Lobby-plan 2BR",
+                  "am": "ሎቢ እቅድ 2 መኝታ"
+                },
+                "description": {
+                  "en": "Lobby-level planned two-bedroom nearest future reception and stalls.",
+                  "am": "ከወደፊት መቀበያ አጠገብ የታቀደ ሁለት መኝታ።"
+                },
+                "amenities": [
+                  "escrow",
+                  "security"
+                ]
+              },
+              {
+                "unitLabel": "01B",
+                "floor": 1,
+                "bedrooms": 1,
+                "bathrooms": 1,
+                "floorAreaSqm": 55,
+                "price": 5500000,
+                "currency": "ETB",
+                "listingType": "OFF_PLAN",
+                "status": "available",
+                "title": {
+                  "en": "Investor studio shell",
+                  "am": "ባለሀብት ስቱድዮ"
+                },
+                "description": {
+                  "en": "Compact studio for rental investors after phased handover.",
+                  "am": "ከደረጃ ማስረከብ በኋላ ለኪራይ ባለሀብቶች ስቱድዮ።"
+                },
+                "amenities": [
+                  "escrow",
+                  "water"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

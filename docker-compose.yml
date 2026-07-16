@@ -1,0 +1,36 @@
+services:
+  db:
+    image: postgis/postgis:16-3.4
+    container_name: ethiomls-postgres
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: ethiomls
+      POSTGRES_PASSWORD: ethiomls
+      POSTGRES_DB: ethiomls
+    volumes:
+      - ethiomls_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ethiomls -d ethiomls"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    container_name: ethiomls-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - ethiomls_redis:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+volumes:
+  ethiomls_pgdata:
+  ethiomls_redis:

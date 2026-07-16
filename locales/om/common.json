@@ -1,0 +1,255 @@
+{
+  "brand": {
+    "name": "EthioMLS",
+    "tagline": "Manneenii fi bakka daldalaa Itoophiyaa keessatti barbaadi",
+    "motto": "Bu'ura amanamaa, boru fooyya'aa tiifi."
+  },
+  "nav": {
+    "home": "Fuula duraa",
+    "listings": "Tarreewwan",
+    "projects": "Pirojektoota",
+    "developers": "Ijaartoota",
+    "about": "Waa'ee keenya",
+    "signIn": "Seeni",
+    "listProperty": "Qabeenya galmeessi",
+    "dashboard": "Daashboordii"
+  },
+  "locale": {
+    "label": "Afaan",
+    "switchTo": "Afaan jijjiiri"
+  },
+  "listing": {
+    "subCity": "Magaalaa golaa",
+    "price": "Gatii",
+    "bedrooms": "Kutaalee ciisichaa",
+    "bathrooms": "Mana dhiqannaa",
+    "floorArea": "Bal'ina dadaa",
+    "plotArea": "Bal'ina lafaa",
+    "propertyType": "Gosa qabeenyaa",
+    "listingType": "Gosa tarree",
+    "status": "Haala",
+    "address": "Teessoo",
+    "constructionStage": "Sadarkaa ijaarsaa",
+    "completionPercent": "Xumura",
+    "waterAvailability": "Argamuu bishaanii",
+    "powerBackup": "Humna dabalataa",
+    "gatedCompound": "Kompaawundii balbala qabu",
+    "parking": "Bakka konkolaataa dhaabuu",
+    "elevator": "Liiftu",
+    "furnished": "Meeshaalee manaatiin qophaa'e",
+    "escrowVerified": "Eskiroo mirkanaa'e",
+    "virtualTour": "Daawwannaa 360° varchuwaalii",
+    "openToForeignBuyers": "Bittoota alaaaf banaa",
+    "forSale": "Gurgurmaa",
+    "forRent": "Kireeffamaa",
+    "offPlan": "Karoora duraatiin",
+    "propertyId": "ID MLS",
+    "telegram": "Telegram",
+    "website": "Weebsaayitii"
+  },
+  "filters": {
+    "title": "Filtaroota",
+    "searchPlaceholder": "Naannoo, pirojektii ykn jecha ijoo'n barbaadi",
+    "apply": "Filtaroota hojiirra oolchi",
+    "reset": "Deebisi",
+    "sortBy": "Tartiiba kennaan",
+    "priceLowHigh": "Gatii: gadii hanga ol",
+    "priceHighLow": "Gatii: ol hanga gadi",
+    "newest": "Haaraa",
+    "allTypes": "Gosa hunda",
+    "allAreas": "K/Magaalaa hunda",
+    "minPrice": "Gatii xiqqaa",
+    "maxPrice": "Gatii ol'aanaa",
+    "showingCount": "{filtered} kan {total} agarsiisaa jira"
+  },
+  "amenities": {
+    "title": "Tajaajiloota dabalataa",
+    "available": "Ni jira",
+    "notAvailable": "Hin jiru",
+    "partial": "Giddu-galeessa / qoodama"
+  },
+  "compliance": {
+    "escrowTitle": "Eegumsa eskiroo",
+    "escrowBody": "Maallaqni kuusaa bittootaa herrega baankii cufame keessatti qabama; sadarkaa ijaarsaa mirkanaa'een Labsii 1357/2024 jalatti gadhiifama.",
+    "foreignClearanceTitle": "Hayyama bittootaa alaa",
+    "foreignClearanceBody": "Bituu mana jireenyaa lammiilee alaa Labsii 1388/2025 fi seera investimantii hordofa.",
+    "foreignBadge": "Labsii 1388/2025 hayyama",
+    "offPlanWarningTitle": "Beeksisa eskiroo karoora duraatiin",
+    "offPlanWarningBody": "Kaffaltiileen ijaartaa qabeenya karoora duraatiin kanaaf herrega eskiroo baankii cufame keessatti cuqqaalama. Maallaqni gadhiifamu erga sadarkaan ijaarsaa mirkanaa'ee qofa (Labsii 1357/2024).",
+    "offPlanWarningCite": "Beeksisa seeraa · Labsii 1357/2024"
+  },
+  "header": {
+    "browseListings": "Tarreewwan ilaali",
+    "menuOpen": "Baafata bani",
+    "menuClose": "Baafata cufi"
+  },
+  "common": {
+    "loading": "Fe'aa jira…",
+    "error": "Dogoggorri uumame",
+    "retry": "Ammas yaali",
+    "seeDetails": "Ibsa ilaali",
+    "verified": "Mirkanaa'e",
+    "from": "Irraa",
+    "perMonth": "/ ji'a"
+  },
+  "search": {
+    "eyebrow": "Barbaacha qajeelfamaa",
+    "title": "Waan barbaaddu nuuf himi",
+    "lede": "Gaaffii gabaabaa sadii deebisi. Baajatni kee ETB fi USD gidduutti rate NBE tiin madaalama.",
+    "progressLabel": "Tarkaanfii barbaachaa",
+    "prompts": {
+      "intent": "Kaayyoon kee maal?",
+      "cluster": "Klaasteri magaalaa golaa Addis Ababaa isa kami?",
+      "budget": "Baajatni kee hagam?"
+    },
+    "intent": {
+      "buy": "Biti",
+      "buyHint": "Manneen xumuramanii gurgurmaa",
+      "rent": "Kireeffadhu",
+      "rentHint": "Kireeffannaa ji'aa",
+      "offPlan": "Karoora duraatiin",
+      "offPlanHint": "Kaffaltii ijaartaa seera eskiroo jalatti"
+    },
+    "clusters": {
+      "central": "Giddugaleessa",
+      "centralHint": "Araadaa · Qirqoos · Lidetaa · Addis Ketema",
+      "east": "Karaa bahaa",
+      "eastHint": "Boolee · Yeekaa · Leemii Kuraa",
+      "west": "Gaara dhihaa",
+      "westHint": "Kolfee Qeraaniyoo · Gullelee",
+      "south": "Babal'ina kibbaa",
+      "southHint": "Akaakii Qalitii · Nifaas Silqii-Laaftoo"
+    },
+    "budgetAmount": "Hanga baajataa",
+    "budgetBalance": "Madaala currency:",
+    "nbeRateLabel": "Rate NBE guyyaa",
+    "rateLive": "qophaa'e",
+    "rateProxy": "fakkeenya",
+    "summary": {
+      "intent": "Kaayyoo",
+      "cluster": "Kilaasterii",
+      "budget": "Baajata"
+    },
+    "back": "Deebi'i",
+    "submit": "Tarree walsimuu agarsiisi",
+    "ai": {
+      "eyebrow": "Gargaarsa Gemini",
+      "lede": "Waan barbaaddan jecha salphaan ibsaa — kaayyoo, naannoo fi baajata ni qopheessina.",
+      "placeholder": "Fkn: Bole biratti mana ciisicha 2 ji'atti ETB 80,000 gadii hireeffachuu",
+      "apply": "AI'n guuti",
+      "working": "Hiikamuu jira…",
+      "error": "Barbaachisaa hin hubanne. Gaaffiiwwan armaan gadii yaali.",
+      "toggle": "AI fayyadami"
+    },
+    "simpleLede": "Kaayyoo, naannoo fi baajata filadhu — booda manneen walsimuu ilaali."
+  },
+  "building": {
+    "eyebrow": "Ijaarsa jilli",
+    "skeletonLabel": "Qaama ijaarsa floor hedduu",
+    "scrollHint": "Jilli scroll godhi ykn floor tuqi",
+    "floorLabel": "Tajaajila {level}",
+    "availableShort": "ni jira",
+    "availableUnits": "unitota argaman",
+    "totalUnits": "unitota waliigalaa",
+    "liveFloor": "Tajaajila {level} ilaalaa jirta",
+    "inspectFloor": "Tajaajila ilaali",
+    "panelLabel": "Paaneelii unit floor",
+    "closePanel": "Panel cufi",
+    "unnamedUnit": "Tarree unitii",
+    "status": {
+      "available": "Ni jira",
+      "reserved": "Qabamaa",
+      "sold": "Gurgurame"
+    }
+  },
+  "demo": {
+    "buildingName": "Olka'iinsa Adurii",
+    "addressLine": "Karaa Boolee · Blokii C",
+    "developerName": "Manneen Adurii PLC",
+    "floor12": "Tajaajila 12 · Penthouse",
+    "floor2": "Tajaajila 2 · Freem off-plan",
+    "floor0": "Lafa · Daldala lobby",
+    "u12a": "Penthouse kornaraa",
+    "u12b": "Suite terrace samii",
+    "u8a": "3BR fuuldura bahaa",
+    "u8b": "3BR maatii",
+    "u8c": "2BR qophoofaa",
+    "u5a": "2BR ilaalcha midhaanii",
+    "u5b": "Shell waajjiraaf qophaa'e",
+    "u2a": "Freem kuushinaa hin xumuramne",
+    "u2b": "Core fi shell ilaalcha lama",
+    "u2c": "Shell duplex qophaa'e",
+    "u0a": "Bay daldalaa daandii",
+    "u0b": "Shell kafeen kornaraa"
+  },
+  "consent": {
+    "title": "Hayyama qunnamtii daldalaa",
+    "body": "Lakkoofsi bilbilaa delalaa masked ta'ee hafe. Consent Gate mirkaneessi lead uumuuf qunnamtii argachuuf.",
+    "maskedLabel": "Lakkoofsa masked",
+    "checkbox": "Gaaffii koo qooduuf fi qunnamtii delalaa argachuuf nan hayyama.",
+    "mustTick": "Checkbox Consent Gate tuqi.",
+    "confirm": "Mirkaneessi & qunnamtii agarsiisi",
+    "cancel": "Dhiisi",
+    "requestContact": "Qunnamtii gaafadhu",
+    "callNow": "Delalaa bilbili",
+    "contactLabel": "Qunnamtii tarree",
+    "routeFailed": "Lead routing hin milkoofne."
+  },
+  "pages": {
+    "listings": {
+      "title": "Tarreewwan",
+      "lede": "Manneen fi bakka daldalaa Finfinnee keessatti argaman ilaali."
+    },
+    "projects": {
+      "title": "Pirojektoota",
+      "lede": "Pirojektoota off-plan fi ijaarsa jiran escrow-stage wajjin hordofi.",
+      "selectUnit": "Inspect a floor, then select a unit to see MLS ID and property details."
+    },
+    "developers": {
+      "title": "Ijaartoota",
+      "lede": "Ijaartoota koorporatee mirkanaa'an fi delaloota hayyama qaban EthioMLS irratti qoreessi."
+    },
+    "comingOnline": "Tarreewwan online ta'aa jiru — fakkeenya armaan gadii.",
+    "emptyHint": "Kataloogiin guutuu yeroo PostgreSQL database qunnamu ni argama.",
+    "recordCount": "Galmeewwan kallattii {count} kuusaa keessan irraa.",
+    "emptyDirectory": "Galmeewwan maxxanfaman hin jiru. Kuusaa fakkeenyaa guutuuf `npx prisma db seed` hordofaa."
+  },
+  "auth": {
+    "accessEyebrow": "Secure access",
+    "title": "Sign in to EthioMLS",
+    "lede": "Verify with SMS OTP, or continue with Google when configured.",
+    "loginTab": "Sign in",
+    "registerTab": "Register",
+    "fullName": "Full name",
+    "fullNamePlaceholder": "Your name",
+    "phone": "Mobile number",
+    "otp": "SMS verification code",
+    "sendCode": "Send SMS code",
+    "verify": "Verify & continue",
+    "back": "Change number",
+    "or": "or",
+    "continueGoogle": "Continue with Google",
+    "googleNotConfigured": "Google sign-in needs GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET in your environment. SMS OTP works now (mock SMS locally).",
+    "codeSent": "We sent a verification code by SMS.",
+    "mockHint": "SMS is in mock mode — use the debug code below.",
+    "debugCode": "Dev code",
+    "smsFailed": "Could not send SMS.",
+    "verifyFailed": "Verification failed.",
+    "logout": "Sign out",
+    "backHome": "Back to home"
+  },
+  "dashboard": {
+    "eyebrow": "Teessoo hojii",
+    "title": "Teessoo gabaa",
+    "welcome": "Baga nagaan dhufte, {name}",
+    "lede": "Fayyaa kuusaa Finfinnee, tarree mirkaneessaa, fi haguuggii hiikkaa Gemini.",
+    "metrics": {
+      "active": "Tarreewwan active",
+      "activeTag": "Addis MLS",
+      "pending": "Eegaa jiru",
+      "pendingTag": "Hawaasaa / mirkaneessa",
+      "translation": "Sadarkaa hiikkaa",
+      "translationTag": "Afaanota Gemini"
+    }
+  }
+}

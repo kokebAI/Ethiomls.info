@@ -1,0 +1,60 @@
+{
+  "name": "ethiomls-info",
+  "version": "0.1.0",
+  "private": true,
+  "description": "EthioMLS — home and commercial space listings for Ethiopia",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "tsc --noEmit",
+    "db:up": "docker compose up -d",
+    "db:down": "docker compose down",
+    "db:migrate": "prisma migrate deploy",
+    "db:migrate:dev": "prisma migrate dev",
+    "db:generate": "prisma generate",
+    "db:seed": "prisma db seed",
+    "db:studio": "prisma studio",
+    "db:reset": "prisma migrate reset",
+    "worker:broadcast": "tsx src/workers/broadcast.worker.ts",
+    "cron:stale-listings": "tsx src/cron/stale-listings.ts",
+    "cron:stale-listings:schedule": "tsx src/cron/stale-listings.ts --schedule",
+    "scrape:developers": "tsx scripts/scrape-developers.ts",
+    "scrape:projects": "tsx scripts/scrape-projects.ts"
+  },
+  "prisma": {
+    "seed": "tsx prisma/seed.ts"
+  },
+  "dependencies": {
+    "@google/genai": "^2.11.0",
+    "@prisma/client": "^6.19.3",
+    "@vercel/speed-insights": "^2.0.0",
+    "bcryptjs": "^3.0.3",
+    "bullmq": "^5.80.4",
+    "i18next": "^26.3.6",
+    "ioredis": "^5.6.1",
+    "lucide-react": "^1.24.0",
+    "mapbox-gl": "^3.26.0",
+    "next": "^16.2.10",
+    "node-cron": "^4.1.0",
+    "react": "^19.2.7",
+    "react-dom": "^19.2.7",
+    "sharp": "^0.34.5",
+    "three": "^0.177.0",
+    "zod": "^3.25.76"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4.1.11",
+    "@types/bcryptjs": "^2.4.6",
+    "@types/node": "^22.15.30",
+    "@types/node-cron": "^3.0.11",
+    "@types/react": "^19.2.17",
+    "@types/react-dom": "^19.2.3",
+    "@types/three": "^0.177.0",
+    "postcss": "^8.5.6",
+    "prisma": "^6.19.3",
+    "tailwindcss": "^4.1.11",
+    "tsx": "^4.20.3",
+    "typescript": "^5.8.3"
+  }
+}
