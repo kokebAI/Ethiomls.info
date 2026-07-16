@@ -1,3 +1,4 @@
+import { AddisSkylineBackdrop } from "@/components/AddisSkylineBackdrop";
 import { BrandMark } from "@/components/BrandMark";
 import { AuthPanel } from "@/components/auth/AuthPanel";
 import { LocaleSwitcher } from "@/components/LocaleSwitcher";
@@ -24,11 +25,12 @@ export default async function LoginPage({
   }
 
   return (
-    <div className="relative flex min-h-[70vh] items-center justify-center py-6">
+    <div className="relative flex min-h-[70vh] items-center justify-center overflow-hidden rounded-[2rem] py-6">
       <div
-        className="pointer-events-none absolute inset-0 -z-10 rounded-[2rem] bg-[radial-gradient(ellipse_at_top,_rgba(217,119,6,0.18),_transparent_55%),linear-gradient(160deg,#0F172A_0%,#1E293B_55%,#0F172A_100%)]"
+        className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_top,_rgba(217,119,6,0.22),_transparent_55%),linear-gradient(160deg,#0F172A_0%,#1E293B_55%,#0F172A_100%)]"
         aria-hidden
       />
+      <AddisSkylineBackdrop variant="dark" className="-z-[5]" />
       <div className="w-full max-w-md">
         <div className="mb-4 flex items-center justify-between gap-3 px-1">
           <div className="flex items-center gap-3">

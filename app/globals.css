@@ -45,9 +45,9 @@ body {
   font-family: var(--font-sans), var(--font-ethiopic), "Noto Sans Ethiopic", sans-serif;
   color: var(--color-ink);
   background:
-    radial-gradient(1200px 500px at 10% -10%, rgb(217 119 6 / 0.08) 0%, transparent 55%),
-    radial-gradient(900px 420px at 100% 0%, rgb(30 41 59 / 0.08) 0%, transparent 50%),
-    linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
+    radial-gradient(1200px 500px at 10% -10%, rgb(217 119 6 / 0.06) 0%, transparent 55%),
+    radial-gradient(900px 420px at 100% 0%, rgb(30 41 59 / 0.06) 0%, transparent 50%),
+    linear-gradient(180deg, #f8fafc 0%, #f1f5f9 72%, #e8edf3 100%);
   -webkit-font-smoothing: antialiased;
 }
 
