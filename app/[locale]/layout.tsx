@@ -12,6 +12,9 @@ export function generateStaticParams() {
   return locales.map((locale) => ({ locale }));
 }
 
+/** Allow `/en` (and other locales) even if a deploy skips static params. */
+export const dynamicParams = true;
+
 export async function generateMetadata({
   params,
 }: {

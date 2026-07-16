@@ -39,6 +39,8 @@ function getPathLocale(pathname: string): Locale | null {
 /**
  * Next.js 16 network proxy (replaces deprecated middleware.ts).
  * Handles locale negotiation and canonical locale redirects.
+ *
+ * Matcher must include `/` and `/{locale}` — do not exclude home routes.
  */
 export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
@@ -58,6 +60,7 @@ export function proxy(request: NextRequest) {
   if (pathLocale) {
     const requestHeaders = new Headers(request.headers);
     requestHeaders.set("x-ethiomls-locale", pathLocale);
+    requestHeaders.set("x-pathname", pathname);
 
     const response = NextResponse.next({
       request: { headers: requestHeaders },
@@ -88,7 +91,17 @@ export function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/", "/((?!_next|api|.*\\..*).*)"],
+  matcher: [
+    // Always run on `/` (some path-to-regexp builds skip bare `/` in the catch-all).
+    "/",
+    /*
+     * Match all pathnames except:
+     * - api routes
+     * - _next internals
+     * - static files (containing a dot)
+     */
+    "/((?!api|_next/static|_next/image|_next/data|favicon.ico|.*\\..*).*)",
+  ],
 };
 
 export const supportedLocales = locales;

@@ -5,6 +5,9 @@ import { isLocale, type Locale } from "@/lib/i18n/config";
 import { getDictionary, translate } from "@/lib/i18n/getDictionary";
 import { pickLocalized } from "@/lib/i18n/pickLocalized";
 
+/** DB-backed page — skip SSG so Vercel builds succeed without live Postgres. */
+export const dynamic = "force-dynamic";
+
 export default async function ProjectsPage({
   params,
 }: {

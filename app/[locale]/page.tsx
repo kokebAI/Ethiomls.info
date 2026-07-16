@@ -1,10 +1,13 @@
 import { LogoutButton } from "@/components/auth/LogoutButton";
 import { DashboardMetrics } from "@/components/dashboard/DashboardMetrics";
-import { HomeClient } from "@/app/[locale]/home-client";
+import { HomeClient } from "./home-client";
 import { getSession } from "@/lib/auth/session";
 import { fetchDashboardMetrics } from "@/lib/catalog/dashboard-metrics";
 import { isLocale, type Locale } from "@/lib/i18n/config";
 import { getDictionary } from "@/lib/i18n/getDictionary";
+
+/** Prefer request-time render — homepage uses session cookies + Prisma metrics. */
+export const dynamic = "force-dynamic";
 
 export default async function LocaleHomePage({
   params,

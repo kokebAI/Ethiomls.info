@@ -1,5 +1,5 @@
 import { PageIntro } from "@/components/PageIntro";
-import { ListingsFunnel } from "@/app/[locale]/listings/listings-funnel";
+import { ListingsFunnel } from "./listings-funnel";
 import { fetchPublishedListings } from "@/lib/catalog/queries";
 import { isLocale, type Locale } from "@/lib/i18n/config";
 import { getDictionary, translate } from "@/lib/i18n/getDictionary";
@@ -19,6 +19,9 @@ function listingBadge(type: string, t: (key: string) => string): DirectoryBadge 
       return { label: type.replaceAll("_", " "), tone: "slate" };
   }
 }
+
+/** DB-backed page — skip SSG so Vercel builds succeed without live Postgres. */
+export const dynamic = "force-dynamic";
 
 export default async function ListingsPage({
   params,

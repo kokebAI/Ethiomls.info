@@ -25,39 +25,51 @@ export type DashboardMetricsData = {
   translationRate: number;
 };
 
+const EMPTY_METRICS: DashboardMetricsData = {
+  activeListings: 0,
+  pendingApprovals: 0,
+  translationRate: 0,
+};
+
 export async function fetchDashboardMetrics(): Promise<DashboardMetricsData> {
-  const [activeCount, pendingCount, alertCount, listingsForCoverage] =
-    await Promise.all([
-      prisma.listing.count({
-        where: {
-          status: ListingStatus.PUBLISHED,
-          subCity: { isActive: true },
-        },
-      }),
-      prisma.listing.count({
-        where: { status: ListingStatus.PENDING_REVIEW },
-      }),
-      prisma.adminAlert.count({
-        where: { isRead: false },
-      }),
-      prisma.listing.findMany({
-        select: { title: true, description: true },
-        take: 500,
-        orderBy: { updatedAt: "desc" },
-      }),
-    ]);
+  try {
+    const [activeCount, pendingCount, alertCount, listingsForCoverage] =
+      await Promise.all([
+        prisma.listing.count({
+          where: {
+            status: ListingStatus.PUBLISHED,
+            subCity: { isActive: true },
+          },
+        }),
+        prisma.listing.count({
+          where: { status: ListingStatus.PENDING_REVIEW },
+        }),
+        prisma.adminAlert.count({
+          where: { isRead: false },
+        }),
+        prisma.listing.findMany({
+          select: { title: true, description: true },
+          take: 500,
+          orderBy: { updatedAt: "desc" },
+        }),
+      ]);
 
-  const covered = listingsForCoverage.filter((row) =>
-    localizedCoverage(row.title, row.description),
-  ).length;
-  const translationRate =
-    listingsForCoverage.length === 0
-      ? 0
-      : Math.round((covered / listingsForCoverage.length) * 100);
+    const covered = listingsForCoverage.filter((row) =>
+      localizedCoverage(row.title, row.description),
+    ).length;
+    const translationRate =
+      listingsForCoverage.length === 0
+        ? 0
+        : Math.round((covered / listingsForCoverage.length) * 100);
 
-  return {
-    activeListings: activeCount,
-    pendingApprovals: pendingCount + alertCount,
-    translationRate,
-  };
+    return {
+      activeListings: activeCount,
+      pendingApprovals: pendingCount + alertCount,
+      translationRate,
+    };
+  } catch (error) {
+    // Don't block the homepage when Postgres/pooler is slow or unreachable.
+    console.error("[dashboard-metrics] falling back to empty metrics:", error);
+    return EMPTY_METRICS;
+  }
 }
