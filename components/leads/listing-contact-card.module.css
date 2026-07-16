@@ -1,0 +1,44 @@
+.root {
+  border-radius: var(--radius, 14px);
+  border: 1px solid var(--color-border, rgba(21, 37, 31, 0.12));
+  background: var(--color-surface, rgba(248, 252, 250, 0.9));
+  padding: 1rem 1.1rem;
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0.85rem;
+  align-items: center;
+}
+
+.label {
+  margin: 0;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-ink-muted, #4a5c54);
+}
+
+.value {
+  margin: 0.3rem 0 0;
+  font-size: 1rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.cta {
+  display: inline-flex;
+  align-items: center;
+  border: 0;
+  border-radius: 999px;
+  padding: 0.55rem 0.95rem;
+  background: var(--color-ink, #15251f);
+  color: #f4faf7;
+  font-size: 0.86rem;
+  font-weight: 700;
+  cursor: pointer;
+  text-decoration: none;
+}
