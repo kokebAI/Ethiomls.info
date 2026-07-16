@@ -1,0 +1,255 @@
+{
+  "brand": {
+    "name": "EthioMLS",
+    "tagline": "በኢትዮጵያ ቤቶችንና የንግድ ቦታዎችን ያግኙ",
+    "motto": "አስተማማኝ መሠረት፣ የተሻለ ነገ።"
+  },
+  "nav": {
+    "home": "መነሻ",
+    "listings": "ዝርዝሮች",
+    "projects": "ፕሮጀክቶች",
+    "developers": "ገንቢዎች",
+    "about": "ስለ እኛ",
+    "signIn": "ግባ",
+    "listProperty": "ንብረት ያስመዝግቡ",
+    "dashboard": "ዳሽቦርድ"
+  },
+  "locale": {
+    "label": "ቋንቋ",
+    "switchTo": "ቋንቋ ቀይር"
+  },
+  "listing": {
+    "subCity": "ክፍለ ከተማ",
+    "price": "ዋጋ",
+    "bedrooms": "መኝታ ቤቶች",
+    "bathrooms": "መታጠቢያ ቤቶች",
+    "floorArea": "የወለል ስፋት",
+    "plotArea": "የቦታ ስፋት",
+    "propertyType": "የንብረት አይነት",
+    "listingType": "የዝርዝር አይነት",
+    "status": "ሁኔታ",
+    "address": "አኼራሻ",
+    "constructionStage": "የግንባታ ደረጃ",
+    "completionPercent": "ማጠናቀቅ",
+    "waterAvailability": "የውሃ አቅርቦት",
+    "powerBackup": "ተለዋጭ ሃይል",
+    "gatedCompound": "በበር የተጠበቀ ካምፓውንድ",
+    "parking": "መኪና ማቆሚያ",
+    "elevator": "ሊፍት",
+    "furnished": "በቤታዊ እቃ የተሞላ",
+    "escrowVerified": "ኤስክሮው የተረጋገጠ",
+    "virtualTour": "360° ምናባዊ ጉብኝት",
+    "openToForeignBuyers": "ለውጫ ገዢዎች ክፍት",
+    "forSale": "ለሽያጭ",
+    "forRent": "ለኪራይ",
+    "offPlan": "ከቀድሞ እቅድ",
+    "propertyId": "የMLS መለያ",
+    "telegram": "ቴሌግራም",
+    "website": "ድረ-ገጽ"
+  },
+  "filters": {
+    "title": "ማጣሪያዎች",
+    "searchPlaceholder": "በአካባቢ፣ ፕሮጀክት ወይም ቁልፍ ቃል ይፈልጉ",
+    "apply": "ማጣሪያዎችን ተግብር",
+    "reset": "እንደገና አዘጋጅ",
+    "sortBy": "ደርድር በ",
+    "priceLowHigh": "ዋጋ፡ ከዝቅተኛ ወደ ከፍተኛ",
+    "priceHighLow": "ዋጋ፡ ከከፍተኛ ወደ ዝቅተኛ",
+    "newest": "አዲስ",
+    "allTypes": "ሁሉም አይነቶች",
+    "allAreas": "ሁሉም ክ/ከተሞች",
+    "minPrice": "ዝቅተኛ ዋጋ",
+    "maxPrice": "ከፍተኛ ዋጋ",
+    "showingCount": "{total} ውስጥ {filtered} በማሳየት"
+  },
+  "amenities": {
+    "title": "መገልገያዎች",
+    "available": "አለ",
+    "notAvailable": "የለም",
+    "partial": "ከፊል / የጋራ"
+  },
+  "compliance": {
+    "escrowTitle": "የኤስክሮው ጥበቃ",
+    "escrowBody": "የገዢ ተቀማጳ ገንዘብ በተቆለፈ የባንክ ሂሳብ ውስጥ ይያዛል እና በአዋጅ ቁጥር 1357/2016 መሀረት በተረጋገጡ የግንባታ ደረጃዎች ይለቀቃል።",
+    "foreignClearanceTitle": "የውጫ ገዢ ፈቃድ",
+    "foreignClearanceBody": "የውጫ ዔጎች የመኖሪያ ቤት ግዢ በአዋጅ ቁጥር 1388/2017 የፈቃድና የኢንቨስትመንት ህጎችን ይከተላል።",
+    "foreignBadge": "አዋጅ 1388/2017 ፈቃድ",
+    "offPlanWarningTitle": "ከቀድሞ እቅድ የኤስክሮው ማስታወቂያ",
+    "offPlanWarningBody": "ለዚህ ከቀድሞ እቅድ ንብረት የገንቢ ክፍያዎች በተዘጋ የባንክ ኤስክሮው ሂሳብ ውስጥ ተቆልፈዋል። ገንዘቡ የሚለቀቀው የተረጋገጡ የግንባታ ደረጃዎች ከተረጋገጡ በእላላ ብቻ ነው (አዋጅ 1357/2016)።",
+    "offPlanWarningCite": "ህጋዊ ማስታወቂያ · አዋጅ 1357/2016"
+  },
+  "header": {
+    "browseListings": "ዝርዝሮችን ይመልከቱ",
+    "menuOpen": "ምናሌ ክፈት",
+    "menuClose": "ምናሌ ዝጋ"
+  },
+  "common": {
+    "loading": "በመጫን ላይ…",
+    "error": "ስህተት ተከስቷል",
+    "retry": "እንደገና ይሞክሩ",
+    "seeDetails": "ዝርዝር ይመልከቱ",
+    "verified": "ተረጋግጧል",
+    "from": "ከ",
+    "perMonth": "/ ወር"
+  },
+  "search": {
+    "eyebrow": "መመሪያ ፍለጋ",
+    "title": "የሚፈልጉትን ይንገሩን",
+    "lede": "ሦስት አጭር ጥያቄዎችን ይመልሱ። በጀትዎ በዛሬው የብሔራዊ ባንክ ቀን ተመን በETB እና USD ይመጣጠናል።",
+    "progressLabel": "የፍለጋ ደረጃዎች",
+    "prompts": {
+      "intent": "ዓላማዎ ምንድን ነው?",
+      "cluster": "የትኛውን የአዲስ አበባ ክፍለ ከተማ ቡድን ይመርጣሉ?",
+      "budget": "የታለመ በጀትዎ ስንት ነው?"
+    },
+    "intent": {
+      "buy": "ግዢ",
+      "buyHint": "ዝግጁ ወይም የተጠናቀቁ ቤቶች ለሽያጭ",
+      "rent": "ኪራይ",
+      "rentHint": "የወርሃዊ መኖሪያ ወይም የንግድ ኪራይ",
+      "offPlan": "ኦፍ-ፕላን",
+      "offPlanHint": "በኤስክሮው ህግ ስር የገንቢ ድልድል"
+    },
+    "clusters": {
+      "central": "ማዕከላዊ ክፍል",
+      "centralHint": "አራዳ · ቂርቆስ · ልደታ · አዲስ ከተማ",
+      "east": "ምሥራቃዊ ኮሪደር",
+      "eastHint": "ቦሌ · የካ · ለሚ ኩራ",
+      "west": "ምዕራባዊ ሸለቆ",
+      "westHint": "ኮልፌ ቀራኒዮ · ጉለሌ",
+      "south": "ደቡባዊ መስፋፋት",
+      "southHint": "አቃቂ ቃሊቲ · ንፋስ ስልክ-ላፍቶ"
+    },
+    "budgetAmount": "የታለመ መጠን",
+    "budgetBalance": "ተቃራኒ ምንዛሬ ሚዛን፦",
+    "nbeRateLabel": "የብሔራዊ ባንክ ቀን ተመን",
+    "rateLive": "የተዋቀረ",
+    "rateProxy": "ተተኪ",
+    "summary": {
+      "intent": "ዓላማ",
+      "cluster": "ቡድን",
+      "budget": "በጀት"
+    },
+    "back": "ተመለስ",
+    "submit": "ተመሳሳይ ዝርዝሮችን አሳይ",
+    "ai": {
+      "eyebrow": "የ Gemini እገዛ",
+      "lede": "የሚፈልጉትን በቀላል ቋንቋ ይግለጹ — ዓላማ፣ የአከባቢ ቡድን እና በጀት እንዲሞላ እናደርጋለን።",
+      "placeholder": "ለምሳሌ፦ በቦሌ አቅራቢያ በወር ከ80,000 ብር በታች 2 መኝታ ለመከራየት",
+      "apply": "በ AI ይሙሉ",
+      "working": "እየተረጎመ ነው…",
+      "error": "ፍለጋውን መረዳት አልተቻለም። ከታች ያሉትን ደረጃዎች ይሞክሩ።",
+      "toggle": "በ AI ይሙሉ"
+    },
+    "simpleLede": "ዓላማ፣ አካባቢ እና በጀት ይምረጡ — ከዚያ ተመሳሳይ ቤቶችን ይመልከቱ።"
+  },
+  "building": {
+    "eyebrow": "የህንፃ ክምር",
+    "skeletonLabel": "የብዙ ወለል ህንፃ አጽም",
+    "scrollHint": "ክምሩን ያሸብልሉ ወይም ወለል ይንኩ",
+    "floorLabel": "ወለል {level}",
+    "availableShort": "ክፍት",
+    "availableUnits": "ክፍት ክፍሎች",
+    "totalUnits": "ጠቅላላ ክፍሎች",
+    "liveFloor": "ወለል {level} እያዩ ነው",
+    "inspectFloor": "ወለል ይመልከቱ",
+    "panelLabel": "የወለል ክፍሎች ፓነል",
+    "closePanel": "ፓነሉን ዝጋ",
+    "unnamedUnit": "የክፍል ዝርዝር",
+    "status": {
+      "available": "ክፍት",
+      "reserved": "ተይዟል",
+      "sold": "ተሽጧል"
+    }
+  },
+  "demo": {
+    "buildingName": "ሰንሻይን ሃይትስ",
+    "addressLine": "ቦሌ መንገድ · ብሎክ ሐ",
+    "developerName": "ሰንሻይን ሆምስ ኃ.የተ.የግ.ማ",
+    "floor12": "ወለል 12 · ፔንትሃውስ",
+    "floor2": "ወለል 2 · ኦፍ-ፕላን ፍሬም",
+    "floor0": "መሬት · የሎቢ ችርቻሮ",
+    "u12a": "የማዕዘን ፔንትሃውስ",
+    "u12b": "የሰማይ ሜዳ ሱት",
+    "u8a": "ምሥራቅ ተመጣጣኝ 3 መኝታ",
+    "u8b": "የቤተሰብ 3 መኝታ",
+    "u8c": "ጥቅጥቅ ያለ 2 መኝታ",
+    "u5a": "የአትክልት እይታ 2 መኝታ",
+    "u5b": "ለቢሮ ዝግጁ ቅርፅ",
+    "u2a": "ያልተጠናቀቀ የወጥ ቤት ፍሬም",
+    "u2b": "ኮር እና ሼል ሁለት እይታ",
+    "u2c": "የተመደበ ዱፕሌክስ ሼል",
+    "u0a": "የመንገድ ችርቻሮ ቤይ",
+    "u0b": "የማዕዘን ካፌ ሼል"
+  },
+  "pages": {
+    "listings": {
+      "title": "ዝርዝሮች",
+      "lede": "በአዲስ አበባ ክፍለ ከተሞች ያሉ ንቁ ቤቶችን እና የንግድ ቦታዎችን ይመልከቱ።"
+    },
+    "projects": {
+      "title": "ፕሮጀክቶች",
+      "lede": "እስክሮ እና የግንባታ ደረጃ ታይነት ያላቸው ኦፍ-ፕላን እና በግንባታ ላይ ያሉ ፕሮጀክቶች።",
+      "selectUnit": "Inspect a floor, then select a unit to see MLS ID and property details."
+    },
+    "developers": {
+      "title": "ገንቢዎች",
+      "lede": "በEthioMLS የተረጋገጡ የኮርፖሬት ገንቢዎችን እና ፈቃድ ያላቸው ደላሎችን ያስሱ።"
+    },
+    "comingOnline": "ማውጫው በመስመር ላይ እየመጣ ነው — ከታች ናሙና እቃዎች።",
+    "emptyHint": "ሙሉ ካታሎግ የ PostgreSQL ዳታቤዝ ሲገናኝ ይገኛል።",
+    "recordCount": "{count} ቀጥታ መዝገቦች ከዳታቤዝዎ።",
+    "emptyDirectory": "የታተሙ መዝገቦች የሉም። የማሳያ ክምችት ለመሙላት `npx prisma db seed` ያሂዱ።"
+  },
+  "consent": {
+    "title": "ደላላን ለማግኘት ፈቃድ",
+    "body": "የደላላ ስልክ ቁጥሮች ለግላዊነት ተሸፍነዋል። ለዚህ ዝርዝር ብቻ የሚደርስ መሪ ለመፍጠር እና መስመሩን ለመክፈት የፈቃድ በርን ያረጋግጡ።",
+    "maskedLabel": "የተሸፈነ የደላላ መረጃ",
+    "checkbox": "ጥያቄዬን ለማጋራት እና የዚህ ዝርዝር የደላላ መገኛ ለመቀበል እስማማለሁ።",
+    "mustTick": "ለመቀጠል የፈቃድ በር ሳጥኑን ምልክት ያድርጉ።",
+    "confirm": "አረጋግጥ እና መገኛ አሳይ",
+    "cancel": "ሰርዝ",
+    "requestContact": "መገኛ ጠይቅ",
+    "callNow": "ደላላን ደውል",
+    "contactLabel": "የዝርዝር መገኛ",
+    "routeFailed": "ደህንነቱ የተጠበቀ የመሪ መምሪያ አልተሳካም።"
+  },
+  "auth": {
+    "accessEyebrow": "ደህንነቱ የተጠበቀ መግቢያ",
+    "title": "ወደ EthioMLS ይግቡ",
+    "lede": "በSMS ኮድ ይረጋገጡ፣ ወይም በGoogle ይቀጥሉ።",
+    "loginTab": "ግባ",
+    "registerTab": "ተመዝገብ",
+    "fullName": "ሙሉ ስም",
+    "fullNamePlaceholder": "Your name",
+    "phone": "ስልክ ቁጥር",
+    "otp": "SMS verification code",
+    "sendCode": "የSMS ኮድ ላክ",
+    "verify": "አረጋግጥ እና ቀጥል",
+    "back": "Change number",
+    "or": "or",
+    "continueGoogle": "በ Google ቀጥል",
+    "googleNotConfigured": "Google sign-in needs GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET in your environment. SMS OTP works now (mock SMS locally).",
+    "codeSent": "We sent a verification code by SMS.",
+    "mockHint": "SMS is in mock mode — use the debug code below.",
+    "debugCode": "Dev code",
+    "smsFailed": "Could not send SMS.",
+    "verifyFailed": "Verification failed.",
+    "logout": "ውጣ",
+    "backHome": "ወደ መነሻ"
+  },
+  "dashboard": {
+    "eyebrow": "የአስተዳደር ዴስክ",
+    "title": "የገበያ ዴስክ",
+    "welcome": "እንኳን ደህና መጡ፣ {name}",
+    "lede": "የአዲስ አበባ ክምችት፣ የግምገማ ወረፋ እና የGemini ትርጉም ሽፋን።",
+    "metrics": {
+      "active": "ንቁ ዝርዝሮች",
+      "activeTag": "Addis MLS",
+      "pending": "በመጠባበቅ ላይ",
+      "pendingTag": "ማህበራዊ / ግምገማ",
+      "translation": "የትርጉም ሽፋን",
+      "translationTag": "Gemini ቋንቋዎች"
+    }
+  }
+}
