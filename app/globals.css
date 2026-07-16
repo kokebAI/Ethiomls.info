@@ -1,0 +1,91 @@
+@import "tailwindcss";
+
+@theme {
+  /* EthioMLS corporate palette — imperial gold on deep slate */
+  --color-brand-50: #fffbeb;
+  --color-brand-100: #fef3c7;
+  --color-brand-200: #fde68a;
+  --color-brand-500: #d97706;
+  --color-brand-600: #d97706;
+  --color-brand-700: #b45309;
+  --color-brand-800: #92400e;
+
+  --color-slate-deep: #0f172a;
+  --color-slate-obsidian: #1e293b;
+  --color-accent-gold: #d97706;
+
+  --color-surface: #ffffff;
+  --color-surface-muted: #f8fafc;
+  --color-ink: #334155;
+  --color-ink-muted: #64748b;
+  --color-border: #e2e8f0;
+
+  --font-sans: ui-sans-serif, system-ui, sans-serif;
+  --font-ethiopic: "Noto Sans Ethiopic", sans-serif;
+
+  --shadow-card: 0 1px 3px rgb(15 23 42 / 0.06), 0 8px 24px rgb(15 23 42 / 0.06);
+  --shadow-card-hover: 0 4px 12px rgb(15 23 42 / 0.08), 0 16px 40px rgb(15 23 42 / 0.1);
+  --radius-card: 1rem;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100%;
+}
+
+body {
+  font-family: var(--font-sans), var(--font-ethiopic), "Noto Sans Ethiopic", sans-serif;
+  color: var(--color-ink);
+  background:
+    radial-gradient(1200px 500px at 10% -10%, rgb(217 119 6 / 0.08) 0%, transparent 55%),
+    radial-gradient(900px 420px at 100% 0%, rgb(30 41 59 / 0.08) 0%, transparent 50%),
+    linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  font: inherit;
+}
+
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes locale-rise {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-rise-in {
+  animation: rise-in 420ms ease;
+}
+
+.animate-locale-rise {
+  animation: locale-rise 160ms ease;
+}
