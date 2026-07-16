@@ -1,0 +1,255 @@
+{
+  "brand": {
+    "name": "EthioMLS",
+    "tagline": "ኣብ ኢትዮጵያ ገዛውንቲን ንግዳዊ ቦታታትን ርከቡ",
+    "motto": "ኣተኣማኒ መሰረት፣ ንዝበለጸ ጽባሕ።"
+  },
+  "nav": {
+    "home": "መእተዊ",
+    "listings": "ዝርዝራት",
+    "projects": "ፕሮጀክታት",
+    "developers": "ኣራጋጽቲ",
+    "about": "ብዛእባና",
+    "signIn": "እቶ",
+    "listProperty": "ንብረት መዝግቡ",
+    "dashboard": "ዳሽቦርድ"
+  },
+  "locale": {
+    "label": "ቋንቋ",
+    "switchTo": "ቋንቋ ቀይር"
+  },
+  "listing": {
+    "subCity": "ንኡስ ከተማ",
+    "price": "ዋጋ",
+    "bedrooms": "ክፍልታት ዘቤት",
+    "bathrooms": "መሕጸቢታት",
+    "floorArea": "ግፍሒ ወለል",
+    "plotArea": "ግፍሒ መሬት",
+    "propertyType": "ዓይነት ንብረት",
+    "listingType": "ዓይነት ዝርዝር",
+    "status": "ኩነታት",
+    "address": "ኣድራሻ",
+    "constructionStage": "ደረጃ ህንጻ",
+    "completionPercent": "ምዝላቅ",
+    "waterAvailability": "ርክበት ማይ",
+    "powerBackup": "ተተካእቲ ሃይሊ",
+    "gatedCompound": "ብኣፍደገ ዝተሃለዎ ካምፓውንድ",
+    "parking": "መዕረፊ መኪና",
+    "elevator": "ሊፍት",
+    "furnished": "ብኣቅሃ ገዛ ዝተዓደለ",
+    "escrowVerified": "ኤስክሮው ዝተረጋገጸ",
+    "virtualTour": "360° ምናባዊ ጉብኝት",
+    "openToForeignBuyers": "ንጉናውያን ዓደቅቲ ክጹት",
+    "forSale": "ንመሸጣ",
+    "forRent": "ንኪራይ",
+    "offPlan": "ቅድሚ ውጥን",
+    "propertyId": "MLS ID",
+    "telegram": "Telegram",
+    "website": "Website"
+  },
+  "filters": {
+    "title": "መጣረያታት",
+    "searchPlaceholder": "ብቦታ፣ ፕሮጀክት ወይ ቁልፊ ቃል ድለዩ",
+    "apply": "መጣረያታት ተግብሩ",
+    "reset": "ዳግማይ ኣዳልዩ",
+    "sortBy": "ብዚ ምድራት",
+    "priceLowHigh": "ዋጋ፡ ካብ ትሑት ናብ ልዑል",
+    "priceHighLow": "ዋጋ፡ ካብ ልዑል ናብ ትሑት",
+    "newest": "ሃድሽ",
+    "allTypes": "ኩሉ ዓይነታት",
+    "allAreas": "ኩሉ ክ/ከተማታት",
+    "minPrice": "ዝቐለል ዋጋ",
+    "maxPrice": "ዝለዓለ ዋጋ",
+    "showingCount": "{filtered} ካብ {total} ይርኢ"
+  },
+  "amenities": {
+    "title": "መገልገሊታት",
+    "available": "ኣሎ",
+    "notAvailable": "የለን",
+    "partial": "ከፊል / ሃባራዊ"
+  },
+  "compliance": {
+    "escrowTitle": "ክልከላ ኤስክሮው",
+    "escrowBody": "ናይ ዓደቅቲ ዕችር ገንዘብ ኣብ ዝተቈጸለ ናይ ባንክ ሕሳብ ይሕዝ፤ ብኣዋጅ ቁጽሪ 1357/2016 ኣብ ዝተረጋገጹ ደረጃታት ህንጻ ይፍተሕ።",
+    "foreignClearanceTitle": "ፍቃድ ጉና ዓደቃይ",
+    "foreignClearanceBody": "ናይ ጉኖት ዔጋታት መንበሪ ገዛ ዕድጊ ብኣዋጅ ቁጽሪ 1388/2017 ሕግታት ፍቃድን ወፍሪን ይክተል።",
+    "foreignBadge": "ኣዋጅ 1388/2017 ፍቃድ",
+    "offPlanWarningTitle": "ናይ ቅድሚ ውጥን ኤስክሮው መጠንቀቅታ",
+    "offPlanWarningBody": "ናይ ኣራጋጺ ክፍልታት ንዚ ቅድሚ ውጥን ንብረት ኣብ ዕጹው ናይ ባንክ ኤስክሮው ሕሳብ ተቈፊሉ ኣሎ። ገንዘብ ዝፍተሕ ድሕሪ ዝተረጋገጹ ደረጃታት ህንጻ ጥራይ እዩ (ኣዋጅ 1357/2016)።",
+    "offPlanWarningCite": "ሕጋዊ መጠንቀቅታ · ኣዋጅ 1357/2016"
+  },
+  "header": {
+    "browseListings": "ዝርዝራት ርኣዩ",
+    "menuOpen": "ምናሌ ክፈቱ",
+    "menuClose": "ምናሌ ዕጶ"
+  },
+  "common": {
+    "loading": "ይጽዕን ኣሎ…",
+    "error": "ጌጋ ኣጋጢሙ",
+    "retry": "ዳግማይ ፈትኑ",
+    "seeDetails": "ዝርዝር ርኣዩ",
+    "verified": "ተረጋጊጹ",
+    "from": "ካብ",
+    "perMonth": "/ ወርሒ"
+  },
+  "search": {
+    "eyebrow": "መሪ ድለይ",
+    "title": "ዝደልዩዎ ንገሩና",
+    "lede": "ሰለስተ ኣጽቃጢ ሕቶታት መልሱ። በጀትኩም ብናይ እዋን NBE ተመን ኣብ ETBን USDን ይመጣጠን።",
+    "progressLabel": "ደረጃታት ድለይ",
+    "prompts": {
+      "intent": "ዕላማኹም እንታይ እዩ?",
+      "cluster": "ኣየናይ ክፍለ ከተማ ኣዲስ ኣበባ ትመርጹ?",
+      "budget": "ዝተመዘዘ በጀትኩም ክንደይ እዩ?"
+    },
+    "intent": {
+      "buy": "ግዢ",
+      "buyHint": "ዝተዛዘሙ ወይ ዝተዳለዉ ኣባይቲ ንሽያጥ",
+      "rent": "ኪራይ",
+      "rentHint": "ወርሓዊ ኪራይ መንበሪ ወይ ንግዲ",
+      "offPlan": "ኦፍ-ፕላን",
+      "offPlanHint": "ብሕጊ ኤስክሮ ዝተሓለወ ምቕራጽ ኣራጋጺ"
+    },
+    "clusters": {
+      "central": "ማእከላይ ክፋል",
+      "centralHint": "ኣራዳ · ቂርቆስ · ልደታ · ኣዲስ ከተማ",
+      "east": "ምብራቓዊ ኮሪደር",
+      "eastHint": "ቦሌ · የካ · ለሚ ኩራ",
+      "west": "ምዕራባዊ ዓጸድ",
+      "westHint": "ኮልፌ ቀራንዮ · ጉለሌ",
+      "south": "ደቡባዊ ምስፋሕ",
+      "southHint": "ኣቃቂ ቃሊቲ · ንፋስ ስልክ-ላፍቶ"
+    },
+    "budgetAmount": "ዝተመዘዘ መጠን",
+    "budgetBalance": "ናይ ተጻረርቲ ምንዛሪ ሚዛን፦",
+    "nbeRateLabel": "ናይ NBE መዓልታዊ ተመን",
+    "rateLive": "ዝተዋቀረ",
+    "rateProxy": "ተኣሳሳቢ",
+    "summary": {
+      "intent": "ዕላማ",
+      "cluster": "ጉጅለ",
+      "budget": "በጀት"
+    },
+    "back": "ተመለስ",
+    "submit": "ተመሳሳሊ ዝርዝራት ኣርእዩ",
+    "ai": {
+      "eyebrow": "ናይ Gemini ሓገዝ",
+      "lede": "ዝደልዩዎ ብቀሊል ቋንቋ ግለጹ — ዕላማ፣ ከባቢን በጀትን ክምላእ ንገብር።",
+      "placeholder": "ኣብነት፦ ኣብ ቦሌ 2 መደቀሲ ብወርሒ ካብ 80,000 ብር ትሕቲ ንኪራይ",
+      "apply": "ብ AI ምላእ",
+      "working": "ይትርጎም ኣሎ…",
+      "error": "እቲ ድለይ ክረድእ ኣይከኣለን። ኣብ ታሕቲ ዘለዉ ስጉምትታት ፈትኑ።",
+      "toggle": "ብ AI ምላእ"
+    },
+    "simpleLede": "ዕላማ፣ ከባቢን በጀትን ምረጹ — ድሕሪኡ ተመሳሳሊ ኣባይቲ ረኣዩ።"
+  },
+  "building": {
+    "eyebrow": "ናይ ህንጻ ክምር",
+    "skeletonLabel": "ብዙሕ ደረጃ ህንጻ ኣጽም",
+    "scrollHint": "እቲ ክምር ስክሮል ግበሩ ወይ ደረጃ ጠውቁ",
+    "floorLabel": "ደረጃ {level}",
+    "availableShort": "ክፉት",
+    "availableUnits": "ክፉታት ክፍልታት",
+    "totalUnits": "ጠቕላላ ክፍልታት",
+    "liveFloor": "ደረጃ {level} ትርእዩ ኣለኹም",
+    "inspectFloor": "ደረጃ ርኣዩ",
+    "panelLabel": "ናይ ደረጃ ክፍልታት ፓነል",
+    "closePanel": "ፓነል ዕጸዉ",
+    "unnamedUnit": "ዝርዝር ክፍሊ",
+    "status": {
+      "available": "ክፉት",
+      "reserved": "ተሓዚኡ",
+      "sold": "ተሸጡ"
+    }
+  },
+  "demo": {
+    "buildingName": "ሳንሻይን ሃይትስ",
+    "addressLine": "ቦሌ ጽርግያ · ብሎክ ሐ",
+    "developerName": "ሳንሻይን ሆምስ ኃ.የተ.የግ.ማ",
+    "floor12": "ደረጃ 12 · ፔንትሃውስ",
+    "floor2": "ደረጃ 2 · ኦፍ-ፕላን ፍሬም",
+    "floor0": "መሬት · ናይ ሎቢ ችርቻሮ",
+    "u12a": "ኩርናዕ ፔንትሃውስ",
+    "u12b": "ናይ ሰማይ ተረስ ሱይት",
+    "u8a": "ምብራቕ ትጽበ 3 መደቀሲ",
+    "u8b": "ናይ ስድራቤት 3 መደቀሲ",
+    "u8c": "ጥቑር 2 መደቀሲ",
+    "u5a": "ናይ ኣታኽልቲ ትርኢት 2 መደቀሲ",
+    "u5b": "ንቢሮ ድልዱል ቅርጺ",
+    "u2a": "ዘይተዛዘመ ናይ ኩሽና ፍሬም",
+    "u2b": "ኮርን ሼልን ክልተ ትርኢት",
+    "u2c": "ዝተመደበ ዱፕሌክስ ሼል",
+    "u0a": "ናይ ጽርግያ ችርቻሮ ቤይ",
+    "u0b": "ኩርናዕ ካፌ ሼል"
+  },
+  "pages": {
+    "listings": {
+      "title": "ዝርዝራት",
+      "lede": "ኣብ አዲስ ኣበባ ንጡፋት ኣባይቲን ንግዳዊ ቦታታትን ረኣዩ።"
+    },
+    "projects": {
+      "title": "ፕሮጀክታት",
+      "lede": "ኦፍ-ፕላንን ኣብ ህንጻ ዘለው ፕሮጀክታት ብኤስክሮ ደረጃ ርእዮ።",
+      "selectUnit": "Inspect a floor, then select a unit to see MLS ID and property details."
+    },
+    "developers": {
+      "title": "ኣራጋጽቲ",
+      "lede": "ኣብ EthioMLS ዝተረጋገጹ ኮርፖሬት ኣራጋጽትን ደላላን ምርምር።"
+    },
+    "comingOnline": "ዝርዝር ኣብ መስመር ይመጽእ ኣሎ — ናሙና ኣብ ታሕቲ።",
+    "emptyHint": "ምሉእ ካታሎግ PostgreSQL ዳታቤዝ ምስ ተተሓሓዘ ይርከብ።",
+    "recordCount": "{count} ቀጥታ መዝገባት ካብ ዳታቤዝኩም።",
+    "emptyDirectory": "ዝተለገቡ መዝገባት የለን። ናይ ምርኢት ክምችት ንምምላእ `npx prisma db seed` ገይርኩም።"
+  },
+  "consent": {
+    "title": "ምስ ደላላ ንምርካብ ፍቓድ",
+    "body": "ቁጽሪ ስልኪ ደላላ ንብሕታዊነት ተሸፊኑ። ንዚ ዝርዝር ጥራይ lead ንምፍጣርን መስመር ንምኽፋትን Consent Gate ኣረጋግጹ።",
+    "maskedLabel": "ዝተሸፈነ ኢንዴክስ ደላላ",
+    "checkbox": "ሕቶይ ንምክፋልን ናይዚ ዝርዝር መርትዖ ደላላ ንምቕባልን ይሰማማዕ እየ።",
+    "mustTick": "ንምቕጻል ናይ Consent Gate ሳጹን ምልክት ግበሩ።",
+    "confirm": "ኣረጋግጽን መርትዖ ኣርእይን",
+    "cancel": "ሰርዝ",
+    "requestContact": "መርትዖ ሕተት",
+    "callNow": "ደላላ ደውሉ",
+    "contactLabel": "መርትዖ ዝርዝር",
+    "routeFailed": "ውሑስ መርገጺ lead ኣይተሳእለን።"
+  },
+  "auth": {
+    "accessEyebrow": "Secure access",
+    "title": "Sign in to EthioMLS",
+    "lede": "Verify with SMS OTP, or continue with Google when configured.",
+    "loginTab": "Sign in",
+    "registerTab": "Register",
+    "fullName": "Full name",
+    "fullNamePlaceholder": "Your name",
+    "phone": "Mobile number",
+    "otp": "SMS verification code",
+    "sendCode": "Send SMS code",
+    "verify": "Verify & continue",
+    "back": "Change number",
+    "or": "or",
+    "continueGoogle": "Continue with Google",
+    "googleNotConfigured": "Google sign-in needs GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET in your environment. SMS OTP works now (mock SMS locally).",
+    "codeSent": "We sent a verification code by SMS.",
+    "mockHint": "SMS is in mock mode — use the debug code below.",
+    "debugCode": "Dev code",
+    "smsFailed": "Could not send SMS.",
+    "verifyFailed": "Verification failed.",
+    "logout": "Sign out",
+    "backHome": "Back to home"
+  },
+  "dashboard": {
+    "eyebrow": "ናይ ስራሕ ዴስክ",
+    "title": "ናይ ዕዳጋ ዴስክ",
+    "welcome": "እንቋዕ ቀኒልካ፣ {name}",
+    "lede": "ናይ ኣዲስ ኣበባ ክምችት፣ መስርሕ ግምገማን ሽፋን ትርጉም Geminiን።",
+    "metrics": {
+      "active": "ንጡፋት ዝርዝራት",
+      "activeTag": "Addis MLS",
+      "pending": "ኣብ መጸበይ",
+      "pendingTag": "ማሕበራዊ / ግምገማ",
+      "translation": "ደረጃ ትርጉም",
+      "translationTag": "ቋንቋታት Gemini"
+    }
+  }
+}
