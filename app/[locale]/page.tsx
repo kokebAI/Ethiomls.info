@@ -1,43 +1,38 @@
-"use client";
+import { LogoutButton } from "@/components/auth/LogoutButton";
+import { DashboardMetrics } from "@/components/dashboard/DashboardMetrics";
+import { HomeClient } from "@/app/[locale]/home-client";
+import { getSession } from "@/lib/auth/session";
+import { fetchDashboardMetrics } from "@/lib/catalog/dashboard-metrics";
+import { isLocale, type Locale } from "@/lib/i18n/config";
+import { getDictionary } from "@/lib/i18n/getDictionary";
 
-import { useState } from "react";
-import { BuildingScrollView } from "@/components/building/building-scroll-view";
-import {
-  ConversationalFunnel,
-  type ConversationalSearchResult,
-} from "@/components/search/conversational-funnel";
-import { useTranslation } from "@/hooks/useTranslation";
-import { DEMO_BUILDING } from "@/lib/building/demo";
-import { formatMoney } from "@/lib/compliance/currency";
-
-export default function LocaleHomePage() {
-  const { t } = useTranslation();
-  const [search, setSearch] = useState<ConversationalSearchResult | null>(null);
+export default async function LocaleHomePage({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale: raw } = await params;
+  const locale = (isLocale(raw) ? raw : "en") as Locale;
+  const dictionary = getDictionary(locale);
+  const [metrics, session] = await Promise.all([
+    fetchDashboardMetrics(),
+    getSession(),
+  ]);
 
   return (
-    <div className="home">
-      <section className="home__intro">
-        <p className="home__eyebrow">{t("brand.name")}</p>
-        <h1 className="home__title">{t("brand.tagline")}</h1>
-      </section>
-
-      <ConversationalFunnel onComplete={setSearch} />
-
-      {search ? (
-        <p className="home__search-result" role="status">
-          {t("search.summary.intent")}: <strong>{search.intent}</strong>
-          {" · "}
-          {t("search.summary.cluster")}: <strong>{search.clusterId}</strong>
-          {" · "}
-          {t("search.summary.budget")}:{" "}
-          <strong>
-            {formatMoney(search.budgetEtb, "ETB")} /{" "}
-            {formatMoney(search.budgetUsd, "USD")}
-          </strong>
-        </p>
-      ) : null}
-
-      <BuildingScrollView building={DEMO_BUILDING} />
-    </div>
+    <HomeClient>
+      <div className="flex flex-col gap-4">
+        {session ? (
+          <div className="flex justify-end">
+            <LogoutButton />
+          </div>
+        ) : null}
+        <DashboardMetrics
+          dictionary={dictionary}
+          metrics={metrics}
+          welcomeName={session?.fullName ?? null}
+        />
+      </div>
+    </HomeClient>
   );
 }

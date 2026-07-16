@@ -18,13 +18,17 @@
     "db:reset": "prisma migrate reset",
     "worker:broadcast": "tsx src/workers/broadcast.worker.ts",
     "cron:stale-listings": "tsx src/cron/stale-listings.ts",
-    "cron:stale-listings:schedule": "tsx src/cron/stale-listings.ts --schedule"
+    "cron:stale-listings:schedule": "tsx src/cron/stale-listings.ts --schedule",
+    "scrape:developers": "tsx scripts/scrape-developers.ts",
+    "scrape:projects": "tsx scripts/scrape-projects.ts"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"
   },
   "dependencies": {
+    "@google/genai": "^2.11.0",
     "@prisma/client": "^6.19.3",
+    "bcryptjs": "^3.0.3",
     "bullmq": "^5.80.4",
     "i18next": "^26.3.6",
     "ioredis": "^5.6.1",
@@ -39,12 +43,16 @@
     "zod": "^3.25.76"
   },
   "devDependencies": {
+    "@tailwindcss/postcss": "^4.1.11",
+    "@types/bcryptjs": "^2.4.6",
     "@types/node": "^22.15.30",
     "@types/node-cron": "^3.0.11",
     "@types/react": "^19.2.17",
     "@types/react-dom": "^19.2.3",
     "@types/three": "^0.177.0",
+    "postcss": "^8.5.6",
     "prisma": "^6.19.3",
+    "tailwindcss": "^4.1.11",
     "tsx": "^4.20.3",
     "typescript": "^5.8.3"
   }

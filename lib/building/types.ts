@@ -4,10 +4,13 @@ export type BuildingUnitStatus = "available" | "reserved" | "sold";
 
 export type BuildingUnit = {
   id: string;
+  /** EthioMLS property ID when available (often same as `id`). */
+  propertyId?: string;
   /** Display code such as "12A". */
   unitLabel: string;
   floor: number;
   title?: string;
+  description?: string;
   bedrooms?: number;
   bathrooms?: number;
   sizeM2?: number;
@@ -15,6 +18,7 @@ export type BuildingUnit = {
   currency: "ETB" | "USD";
   status: BuildingUnitStatus;
   listingType?: "SALE" | "RENT" | "OFF_PLAN";
+  amenities?: string[];
 };
 
 export type BuildingFloor = {

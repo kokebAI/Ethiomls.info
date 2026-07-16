@@ -1,5 +1,13 @@
 import { randomUUID } from "node:crypto";
-import { PrismaClient, UserRole } from "@prisma/client";
+import {
+  ConstructionStage,
+  ListingStatus,
+  ListingType,
+  PrismaClient,
+  PropertyCategory,
+  UserRole,
+} from "@prisma/client";
+import { allocateUniquePropertyId } from "../lib/db/allocatePropertyId";
 
 const prisma = new PrismaClient();
 
@@ -336,9 +344,191 @@ async function seedMockDevelopers() {
   console.log(`Seeded ${MOCK_DEVELOPERS.length} mock corporate developers.`);
 }
 
+const MOCK_PROJECTS: Array<{
+  id: string;
+  registrationNumber: string;
+  subCityCode: string;
+  title: { en: string; am: string; om: string };
+  description: { en: string; am: string; om: string };
+  constructionStage: ConstructionStage;
+  completionPercent: number;
+}> = [
+  {
+    id: "seed-project-sunshine-heights",
+    registrationNumber: "ET-RE-2024-00042",
+    subCityCode: "bole",
+    title: {
+      en: "Sunshine Heights",
+      am: "ሰንሻይን ሃይትስ",
+      om: "Sunshine Heights",
+    },
+    description: {
+      en: "Premium off-plan tower beside Bole Road with escrow-stage tracking.",
+      am: "ከቦሌ መንገድ አጠገብ የሚገነባ የፕሪሚየም ከፍተኛ ህንፃ።",
+      om: "Gamoo olaanaa Bole Road biratti ijaarame.",
+    },
+    constructionStage: ConstructionStage.SUPERSTRUCTURE,
+    completionPercent: 62,
+  },
+  {
+    id: "seed-project-rift-valley-plaza",
+    registrationNumber: "ET-RE-2023-00118",
+    subCityCode: "yeka",
+    title: {
+      en: "Rift Valley Plaza",
+      am: "ሪፍት ቫሊ ፕላዛ",
+      om: "Rift Valley Plaza",
+    },
+    description: {
+      en: "Mixed-use plaza in northeast Addis with MEP installation underway.",
+      am: "በሰሜን ምሥራቅ አዲስ አበባ የሚገነባ የተቀናጀ አጠቃቀም ፕላዛ።",
+      om: "Plaza fayyaa walitti makamee Addis kaaba-bahaa keessatti.",
+    },
+    constructionStage: ConstructionStage.MEP_INSTALLATION,
+    completionPercent: 78,
+  },
+  {
+    id: "seed-project-highland-courts",
+    registrationNumber: "ET-RE-2022-00077",
+    subCityCode: "kirkos",
+    title: {
+      en: "Highland Courts",
+      am: "ሃይላንድ ኮርትስ",
+      om: "Highland Courts",
+    },
+    description: {
+      en: "Boutique residential courts near Meskel Square.",
+      am: "ከመስቀል አደባባይ አቅራቢያ የሚገነባ ትንሽ የመኖሪያ ቤቶች።",
+      om: "Mana jireenyaa Meskel Square biratti.",
+    },
+    constructionStage: ConstructionStage.EARTHWORKS_FOUNDATION,
+    completionPercent: 18,
+  },
+];
+
+async function seedMockProjects() {
+  const subCities = await prisma.subCity.findMany();
+  const byCode = new Map(subCities.map((s) => [s.code, s.id]));
+  const developers = await prisma.developerProfile.findMany();
+  const byRegistration = new Map(
+    developers.map((d) => [d.registrationNumber, d.id]),
+  );
+
+  for (const project of MOCK_PROJECTS) {
+    const developerId = byRegistration.get(project.registrationNumber);
+    const subCityId = byCode.get(project.subCityCode);
+
+    if (!developerId || !subCityId) {
+      throw new Error(
+        `Missing developer or sub-city for project ${project.id}`,
+      );
+    }
+
+    await prisma.project.upsert({
+      where: { id: project.id },
+      update: {
+        title: project.title,
+        description: project.description,
+        constructionStage: project.constructionStage,
+        completionPercent: project.completionPercent,
+        status: ListingStatus.PUBLISHED,
+        developerId,
+        subCityId,
+      },
+      create: {
+        id: project.id,
+        developerId,
+        subCityId,
+        title: project.title,
+        description: project.description,
+        constructionStage: project.constructionStage,
+        completionPercent: project.completionPercent,
+        status: ListingStatus.PUBLISHED,
+        requiresEscrow: true,
+      },
+    });
+  }
+
+  console.log(`Seeded ${MOCK_PROJECTS.length} off-plan projects.`);
+}
+
+async function seedSubCityListings() {
+  const subCities = await prisma.subCity.findMany({ orderBy: { sortOrder: "asc" } });
+  const developers = await prisma.developerProfile.findMany({
+    include: { user: true },
+    orderBy: { tradeName: "asc" },
+  });
+
+  if (developers.length === 0) {
+    throw new Error("Seed developers before listings.");
+  }
+
+  const publishedAt = new Date("2026-07-01T00:00:00.000Z");
+
+  for (const [index, subCity] of subCities.entries()) {
+    const developer = developers[index % developers.length];
+    const name =
+      subCity.name && typeof subCity.name === "object" && !Array.isArray(subCity.name)
+        ? (subCity.name as Record<string, string>)
+        : { en: subCity.code, am: subCity.code, om: subCity.code };
+
+    const seedKey = `seed:subcity:${subCity.code}`;
+    const bedrooms = 2 + (index % 3);
+    const priceAmount = 4_500_000 + index * 350_000;
+    const existingListing = await prisma.listing.findFirst({
+      where: { metadataTags: { has: seedKey } },
+      select: { id: true },
+    });
+    const listingId =
+      existingListing?.id ?? (await allocateUniquePropertyId(prisma));
+
+    const listingPayload = {
+      title: {
+        en: `${name.en} Garden Residence`,
+        am: `${name.am} የአትክልት መኖሪያ`,
+        om: `${name.om} Mana Jireenyaa`,
+      },
+      description: {
+        en: `Verified ${name.en} listing with municipal sub-city metadata.`,
+        am: `የ${name.am} ክፍለ ከተማ የተረጋገጠ ዝርዝር።`,
+        om: `Tarree ${name.om} mirkanaa'e.`,
+      },
+      status: ListingStatus.PUBLISHED,
+      publishedAt,
+      subCityId: subCity.id,
+      developerId: developer.id,
+      ownerId: developer.userId,
+      priceAmount,
+      bedrooms,
+      bathrooms: Math.max(1, bedrooms - 1),
+      floorAreaSqm: 85 + index * 8,
+      listingType: index % 4 === 0 ? ListingType.RENT : ListingType.SALE,
+      category: PropertyCategory.RESIDENTIAL,
+      metadataTags: [seedKey, "parking", "security", "water", `pid:${listingId}`],
+      waterAvailable: true,
+      powerBackup: index % 2 === 0,
+    };
+
+    if (existingListing) {
+      await prisma.listing.update({
+        where: { id: listingId },
+        data: listingPayload,
+      });
+    } else {
+      await prisma.listing.create({
+        data: { id: listingId, ...listingPayload },
+      });
+    }
+  }
+
+  console.log(`Seeded ${subCities.length} published sub-city listings.`);
+}
+
 async function main() {
   await seedSubCities();
   await seedMockDevelopers();
+  await seedMockProjects();
+  await seedSubCityListings();
 }
 
 main()

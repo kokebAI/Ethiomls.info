@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
-import { notFound } from "next/navigation";
 import type { ReactNode } from "react";
+import { notFound } from "next/navigation";
+import { DocumentLocale } from "@/components/DocumentLocale";
 import { Header } from "@/components/Header";
 import { TranslationProvider } from "@/hooks/useTranslation";
 import { isLocale, locales, type Locale } from "@/lib/i18n/config";
@@ -43,12 +44,20 @@ export default async function LocaleLayout({
 
   const locale = raw;
   const dictionary = getDictionary(locale);
+  const usesEthiopic = locale === "am" || locale === "ti";
 
   return (
     <TranslationProvider locale={locale} dictionary={dictionary}>
-      <div className="app-shell" lang={locale} data-locale={locale}>
+      <DocumentLocale />
+      <div
+        className={`min-h-screen ${usesEthiopic ? "[font-family:var(--font-ethiopic),var(--font-sans),sans-serif]" : ""}`}
+        lang={locale}
+        data-locale={locale}
+      >
         <Header />
-        <main className="app-main">{children}</main>
+        <main className="mx-auto w-full max-w-6xl px-4 py-8 sm:px-6 sm:py-10 lg:py-12">
+          {children}
+        </main>
       </div>
     </TranslationProvider>
   );

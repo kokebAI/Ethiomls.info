@@ -1,13 +1,15 @@
 {
   "brand": {
     "name": "EthioMLS",
-    "tagline": "Find homes and commercial spaces across Ethiopia"
+    "tagline": "Find homes and commercial spaces across Ethiopia",
+    "motto": "A trustworthy foundation, for a better tomorrow."
   },
   "nav": {
     "home": "Home",
     "listings": "Listings",
     "projects": "Projects",
     "developers": "Developers",
+    "dashboard": "Dashboard",
     "about": "About",
     "signIn": "Sign in",
     "listProperty": "List a property"
@@ -40,7 +42,10 @@
     "openToForeignBuyers": "Open to foreign buyers",
     "forSale": "For sale",
     "forRent": "For rent",
-    "offPlan": "Off-plan"
+    "offPlan": "Off-plan",
+    "propertyId": "MLS ID",
+    "telegram": "Telegram",
+    "website": "Website"
   },
   "filters": {
     "title": "Filters",
@@ -50,7 +55,12 @@
     "sortBy": "Sort by",
     "priceLowHigh": "Price: low to high",
     "priceHighLow": "Price: high to low",
-    "newest": "Newest"
+    "newest": "Newest",
+    "allTypes": "All types",
+    "allAreas": "All sub-cities",
+    "minPrice": "Min price",
+    "maxPrice": "Max price",
+    "showingCount": "Showing {filtered} of {total}"
   },
   "amenities": {
     "title": "Amenities",
@@ -121,7 +131,55 @@
       "budget": "Budget"
     },
     "back": "Back",
-    "submit": "Show matching listings"
+    "submit": "Show matching listings",
+    "simpleLede": "Choose intent, area, and budget — then browse matching homes.",
+    "ai": {
+      "eyebrow": "Gemini assist",
+      "lede": "Describe what you want in plain language — we will map it to intent, area cluster, and budget.",
+      "placeholder": "e.g. Looking to rent a 2-bedroom near Bole under 80,000 ETB/month",
+      "apply": "Fill with AI",
+      "toggle": "Use AI instead",
+      "working": "Interpreting…",
+      "error": "Could not interpret that search. Try the fields above."
+    }
+  },
+  "auth": {
+    "accessEyebrow": "Secure access",
+    "title": "Sign in to EthioMLS",
+    "lede": "Verify with SMS OTP, or continue with Google when configured.",
+    "loginTab": "Sign in",
+    "registerTab": "Register",
+    "fullName": "Full name",
+    "fullNamePlaceholder": "Your name",
+    "phone": "Mobile number",
+    "otp": "SMS verification code",
+    "sendCode": "Send SMS code",
+    "verify": "Verify & continue",
+    "back": "Change number",
+    "or": "or",
+    "continueGoogle": "Continue with Google",
+    "googleNotConfigured": "Google sign-in needs GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET in your environment. SMS OTP works now (mock SMS locally).",
+    "codeSent": "We sent a verification code by SMS.",
+    "mockHint": "SMS is in mock mode — use the debug code below.",
+    "debugCode": "Dev code",
+    "smsFailed": "Could not send SMS.",
+    "verifyFailed": "Verification failed.",
+    "logout": "Sign out",
+    "backHome": "Back to home"
+  },
+  "dashboard": {
+    "eyebrow": "Operations desk",
+    "title": "Market desk",
+    "welcome": "Welcome, {name}",
+    "lede": "Live inventory health across Addis Ababa sub-cities, review queues, and Gemini translation coverage.",
+    "metrics": {
+      "active": "Active listings",
+      "activeTag": "Addis MLS",
+      "pending": "Pending approvals",
+      "pendingTag": "Social / review",
+      "translation": "Translatability rate",
+      "translationTag": "Gemini locales"
+    }
   },
   "building": {
     "eyebrow": "Building stack",
@@ -142,6 +200,26 @@
       "sold": "Sold"
     }
   },
+  "demo": {
+    "buildingName": "Sunshine Heights",
+    "addressLine": "Bole Road · Block C",
+    "developerName": "Sunshine Homes PLC",
+    "floor12": "Floor 12 · Penthouse",
+    "floor2": "Floor 2 · Off-plan frame",
+    "floor0": "Ground · Lobby retail",
+    "u12a": "Corner penthouse",
+    "u12b": "Sky terrace suite",
+    "u8a": "East-facing 3BR",
+    "u8b": "Family 3BR",
+    "u8c": "Compact 2BR",
+    "u5a": "Garden-view 2BR",
+    "u5b": "Office-ready shell",
+    "u2a": "Unfinished kitchen framework",
+    "u2b": "Core & shell dual-aspect",
+    "u2c": "Allocated duplex shell",
+    "u0a": "Street retail bay",
+    "u0b": "Corner cafe shell"
+  },
   "pages": {
     "listings": {
       "title": "Listings",
@@ -149,14 +227,17 @@
     },
     "projects": {
       "title": "Projects",
-      "lede": "Track off-plan and under-construction projects with escrow-stage visibility."
+      "lede": "Track off-plan and under-construction projects with escrow-stage visibility.",
+      "selectUnit": "Inspect a floor, then select a unit to see MLS ID and property details."
     },
     "developers": {
       "title": "Developers",
       "lede": "Explore verified corporate developers and licensed delala partners on EthioMLS."
     },
     "comingOnline": "Directory coming online — sample inventory below.",
-    "emptyHint": "Full catalogue connects when your PostgreSQL database is linked."
+    "emptyHint": "Full catalogue connects when your PostgreSQL database is linked.",
+    "recordCount": "{count} live records from your database.",
+    "emptyDirectory": "No published records yet. Run `npx prisma db seed` to populate demo inventory."
   },
   "consent": {
     "title": "Consent to contact broker",

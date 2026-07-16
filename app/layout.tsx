@@ -18,7 +18,9 @@ const notoEthiopic = Noto_Sans_Ethiopic({
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${manrope.variable} ${notoEthiopic.variable}`}>
+      <body
+        className={`${manrope.variable} ${notoEthiopic.variable} font-sans antialiased text-slate-900`}
+      >
         {children}
       </body>
     </html>

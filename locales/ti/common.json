@@ -1,7 +1,8 @@
 {
   "brand": {
     "name": "EthioMLS",
-    "tagline": "ኣብ ኢትዮጵያ ገዛውንቲን ንግዳዊ ቦታታትን ርከቡ"
+    "tagline": "ኣብ ኢትዮጵያ ገዛውንቲን ንግዳዊ ቦታታትን ርከቡ",
+    "motto": "ኣተኣማኒ መሰረት፣ ንዝበለጸ ጽባሕ።"
   },
   "nav": {
     "home": "መእተዊ",
@@ -10,7 +11,8 @@
     "developers": "ኣራጋጽቲ",
     "about": "ብዛእባና",
     "signIn": "እቶ",
-    "listProperty": "ንብረት መዝግቡ"
+    "listProperty": "ንብረት መዝግቡ",
+    "dashboard": "ዳሽቦርድ"
   },
   "locale": {
     "label": "ቋንቋ",
@@ -40,7 +42,10 @@
     "openToForeignBuyers": "ንጉናውያን ዓደቅቲ ክጹት",
     "forSale": "ንመሸጣ",
     "forRent": "ንኪራይ",
-    "offPlan": "ቅድሚ ውጥን"
+    "offPlan": "ቅድሚ ውጥን",
+    "propertyId": "MLS ID",
+    "telegram": "Telegram",
+    "website": "Website"
   },
   "filters": {
     "title": "መጣረያታት",
@@ -50,7 +55,12 @@
     "sortBy": "ብዚ ምድራት",
     "priceLowHigh": "ዋጋ፡ ካብ ትሑት ናብ ልዑል",
     "priceHighLow": "ዋጋ፡ ካብ ልዑል ናብ ትሑት",
-    "newest": "ሃድሽ"
+    "newest": "ሃድሽ",
+    "allTypes": "ኩሉ ዓይነታት",
+    "allAreas": "ኩሉ ክ/ከተማታት",
+    "minPrice": "ዝቐለል ዋጋ",
+    "maxPrice": "ዝለዓለ ዋጋ",
+    "showingCount": "{filtered} ካብ {total} ይርኢ"
   },
   "amenities": {
     "title": "መገልገሊታት",
@@ -83,77 +93,94 @@
     "perMonth": "/ ወርሒ"
   },
   "search": {
-    "eyebrow": "Guided search",
-    "title": "Tell us what you are looking for",
-    "lede": "Answer three short prompts. Your budget stays balanced across ETB and USD using today’s NBE day-rate proxy.",
-    "progressLabel": "Search steps",
+    "eyebrow": "መሪ ድለይ",
+    "title": "ዝደልዩዎ ንገሩና",
+    "lede": "ሰለስተ ኣጽቃጢ ሕቶታት መልሱ። በጀትኩም ብናይ እዋን NBE ተመን ኣብ ETBን USDን ይመጣጠን።",
+    "progressLabel": "ደረጃታት ድለይ",
     "prompts": {
-      "intent": "What is your intent type?",
-      "cluster": "Which Addis Ababa sub-city cluster do you prefer?",
-      "budget": "What is your target budget?"
+      "intent": "ዕላማኹም እንታይ እዩ?",
+      "cluster": "ኣየናይ ክፍለ ከተማ ኣዲስ ኣበባ ትመርጹ?",
+      "budget": "ዝተመዘዘ በጀትኩም ክንደይ እዩ?"
     },
     "intent": {
-      "buy": "Buy",
-      "buyHint": "Completed or ready homes for sale",
-      "rent": "Rent",
-      "rentHint": "Monthly residential or commercial leases",
-      "offPlan": "Off-plan",
-      "offPlanHint": "Developer allocations under escrow rules"
+      "buy": "ግዢ",
+      "buyHint": "ዝተዛዘሙ ወይ ዝተዳለዉ ኣባይቲ ንሽያጥ",
+      "rent": "ኪራይ",
+      "rentHint": "ወርሓዊ ኪራይ መንበሪ ወይ ንግዲ",
+      "offPlan": "ኦፍ-ፕላን",
+      "offPlanHint": "ብሕጊ ኤስክሮ ዝተሓለወ ምቕራጽ ኣራጋጺ"
     },
     "clusters": {
-      "central": "Central core",
-      "centralHint": "Arada · Kirkos · Lideta · Addis Ketema",
-      "east": "Eastern corridor",
-      "eastHint": "Bole · Yeka · Lemi Kura",
-      "west": "Western ridge",
-      "westHint": "Kolfe Keranio · Gullele",
-      "south": "Southern expansion",
-      "southHint": "Akaky Kaliti · Nifas Silk-Lafto"
+      "central": "ማእከላይ ክፋል",
+      "centralHint": "ኣራዳ · ቂርቆስ · ልደታ · ኣዲስ ከተማ",
+      "east": "ምብራቓዊ ኮሪደር",
+      "eastHint": "ቦሌ · የካ · ለሚ ኩራ",
+      "west": "ምዕራባዊ ዓጸድ",
+      "westHint": "ኮልፌ ቀራንዮ · ጉለሌ",
+      "south": "ደቡባዊ ምስፋሕ",
+      "southHint": "ኣቃቂ ቃሊቲ · ንፋስ ስልክ-ላፍቶ"
     },
-    "budgetAmount": "Target amount",
-    "budgetBalance": "Cross-currency balance:",
-    "nbeRateLabel": "NBE day-rate",
-    "rateLive": "configured",
-    "rateProxy": "proxy",
+    "budgetAmount": "ዝተመዘዘ መጠን",
+    "budgetBalance": "ናይ ተጻረርቲ ምንዛሪ ሚዛን፦",
+    "nbeRateLabel": "ናይ NBE መዓልታዊ ተመን",
+    "rateLive": "ዝተዋቀረ",
+    "rateProxy": "ተኣሳሳቢ",
     "summary": {
-      "intent": "Intent",
-      "cluster": "Cluster",
-      "budget": "Budget"
+      "intent": "ዕላማ",
+      "cluster": "ጉጅለ",
+      "budget": "በጀት"
     },
-    "back": "Back",
-    "submit": "Show matching listings"
+    "back": "ተመለስ",
+    "submit": "ተመሳሳሊ ዝርዝራት ኣርእዩ",
+    "ai": {
+      "eyebrow": "ናይ Gemini ሓገዝ",
+      "lede": "ዝደልዩዎ ብቀሊል ቋንቋ ግለጹ — ዕላማ፣ ከባቢን በጀትን ክምላእ ንገብር።",
+      "placeholder": "ኣብነት፦ ኣብ ቦሌ 2 መደቀሲ ብወርሒ ካብ 80,000 ብር ትሕቲ ንኪራይ",
+      "apply": "ብ AI ምላእ",
+      "working": "ይትርጎም ኣሎ…",
+      "error": "እቲ ድለይ ክረድእ ኣይከኣለን። ኣብ ታሕቲ ዘለዉ ስጉምትታት ፈትኑ።",
+      "toggle": "ብ AI ምላእ"
+    },
+    "simpleLede": "ዕላማ፣ ከባቢን በጀትን ምረጹ — ድሕሪኡ ተመሳሳሊ ኣባይቲ ረኣዩ።"
   },
   "building": {
-    "eyebrow": "Building stack",
-    "skeletonLabel": "Multi-floor building skeleton",
-    "scrollHint": "Scroll the stack or tap a floor",
-    "floorLabel": "Floor {level}",
-    "availableShort": "available",
-    "availableUnits": "available units",
-    "totalUnits": "total units",
-    "liveFloor": "Viewing floor {level}",
-    "inspectFloor": "Inspect floor",
-    "panelLabel": "Floor unit panel",
-    "closePanel": "Close floor panel",
-    "unnamedUnit": "Unit listing",
+    "eyebrow": "ናይ ህንጻ ክምር",
+    "skeletonLabel": "ብዙሕ ደረጃ ህንጻ ኣጽም",
+    "scrollHint": "እቲ ክምር ስክሮል ግበሩ ወይ ደረጃ ጠውቁ",
+    "floorLabel": "ደረጃ {level}",
+    "availableShort": "ክፉት",
+    "availableUnits": "ክፉታት ክፍልታት",
+    "totalUnits": "ጠቕላላ ክፍልታት",
+    "liveFloor": "ደረጃ {level} ትርእዩ ኣለኹም",
+    "inspectFloor": "ደረጃ ርኣዩ",
+    "panelLabel": "ናይ ደረጃ ክፍልታት ፓነል",
+    "closePanel": "ፓነል ዕጸዉ",
+    "unnamedUnit": "ዝርዝር ክፍሊ",
     "status": {
-      "available": "Available",
-      "reserved": "Reserved",
-      "sold": "Sold"
+      "available": "ክፉት",
+      "reserved": "ተሓዚኡ",
+      "sold": "ተሸጡ"
     }
   },
-  "consent": {
-    "title": "Consent to contact broker",
-    "body": "Broker telephone numbers stay masked for privacy. Confirm the Consent Gate to create a routed lead and unlock the contact line for this listing only.",
-    "maskedLabel": "Masked broker index",
-    "checkbox": "I consent to share my enquiry and receive the broker contact details for this listing.",
-    "mustTick": "Tick the Consent Gate checkbox to continue.",
-    "confirm": "Confirm & reveal contact",
-    "cancel": "Cancel",
-    "requestContact": "Request contact",
-    "callNow": "Call broker",
-    "contactLabel": "Listing contact",
-    "routeFailed": "Could not complete secure lead routing."
+  "demo": {
+    "buildingName": "ሳንሻይን ሃይትስ",
+    "addressLine": "ቦሌ ጽርግያ · ብሎክ ሐ",
+    "developerName": "ሳንሻይን ሆምስ ኃ.የተ.የግ.ማ",
+    "floor12": "ደረጃ 12 · ፔንትሃውስ",
+    "floor2": "ደረጃ 2 · ኦፍ-ፕላን ፍሬም",
+    "floor0": "መሬት · ናይ ሎቢ ችርቻሮ",
+    "u12a": "ኩርናዕ ፔንትሃውስ",
+    "u12b": "ናይ ሰማይ ተረስ ሱይት",
+    "u8a": "ምብራቕ ትጽበ 3 መደቀሲ",
+    "u8b": "ናይ ስድራቤት 3 መደቀሲ",
+    "u8c": "ጥቑር 2 መደቀሲ",
+    "u5a": "ናይ ኣታኽልቲ ትርኢት 2 መደቀሲ",
+    "u5b": "ንቢሮ ድልዱል ቅርጺ",
+    "u2a": "ዘይተዛዘመ ናይ ኩሽና ፍሬም",
+    "u2b": "ኮርን ሼልን ክልተ ትርኢት",
+    "u2c": "ዝተመደበ ዱፕሌክስ ሼል",
+    "u0a": "ናይ ጽርግያ ችርቻሮ ቤይ",
+    "u0b": "ኩርናዕ ካፌ ሼል"
   },
   "pages": {
     "listings": {
@@ -162,13 +189,67 @@
     },
     "projects": {
       "title": "ፕሮጀክታት",
-      "lede": "ኦፍ-ፕላንን ኣብ ህንጻ ዘለው ፕሮጀክታት ብኤስክሮ ደረጃ ርእዮ።"
+      "lede": "ኦፍ-ፕላንን ኣብ ህንጻ ዘለው ፕሮጀክታት ብኤስክሮ ደረጃ ርእዮ።",
+      "selectUnit": "Inspect a floor, then select a unit to see MLS ID and property details."
     },
     "developers": {
       "title": "ኣራጋጽቲ",
       "lede": "ኣብ EthioMLS ዝተረጋገጹ ኮርፖሬት ኣራጋጽትን ደላላን ምርምር።"
     },
     "comingOnline": "ዝርዝር ኣብ መስመር ይመጽእ ኣሎ — ናሙና ኣብ ታሕቲ።",
-    "emptyHint": "ምሉእ ካታሎግ PostgreSQL ዳታቤዝ ምስ ተተሓሓዘ ይርከብ።"
+    "emptyHint": "ምሉእ ካታሎግ PostgreSQL ዳታቤዝ ምስ ተተሓሓዘ ይርከብ።",
+    "recordCount": "{count} ቀጥታ መዝገባት ካብ ዳታቤዝኩም።",
+    "emptyDirectory": "ዝተለገቡ መዝገባት የለን። ናይ ምርኢት ክምችት ንምምላእ `npx prisma db seed` ገይርኩም።"
+  },
+  "consent": {
+    "title": "ምስ ደላላ ንምርካብ ፍቓድ",
+    "body": "ቁጽሪ ስልኪ ደላላ ንብሕታዊነት ተሸፊኑ። ንዚ ዝርዝር ጥራይ lead ንምፍጣርን መስመር ንምኽፋትን Consent Gate ኣረጋግጹ።",
+    "maskedLabel": "ዝተሸፈነ ኢንዴክስ ደላላ",
+    "checkbox": "ሕቶይ ንምክፋልን ናይዚ ዝርዝር መርትዖ ደላላ ንምቕባልን ይሰማማዕ እየ።",
+    "mustTick": "ንምቕጻል ናይ Consent Gate ሳጹን ምልክት ግበሩ።",
+    "confirm": "ኣረጋግጽን መርትዖ ኣርእይን",
+    "cancel": "ሰርዝ",
+    "requestContact": "መርትዖ ሕተት",
+    "callNow": "ደላላ ደውሉ",
+    "contactLabel": "መርትዖ ዝርዝር",
+    "routeFailed": "ውሑስ መርገጺ lead ኣይተሳእለን።"
+  },
+  "auth": {
+    "accessEyebrow": "Secure access",
+    "title": "Sign in to EthioMLS",
+    "lede": "Verify with SMS OTP, or continue with Google when configured.",
+    "loginTab": "Sign in",
+    "registerTab": "Register",
+    "fullName": "Full name",
+    "fullNamePlaceholder": "Your name",
+    "phone": "Mobile number",
+    "otp": "SMS verification code",
+    "sendCode": "Send SMS code",
+    "verify": "Verify & continue",
+    "back": "Change number",
+    "or": "or",
+    "continueGoogle": "Continue with Google",
+    "googleNotConfigured": "Google sign-in needs GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET in your environment. SMS OTP works now (mock SMS locally).",
+    "codeSent": "We sent a verification code by SMS.",
+    "mockHint": "SMS is in mock mode — use the debug code below.",
+    "debugCode": "Dev code",
+    "smsFailed": "Could not send SMS.",
+    "verifyFailed": "Verification failed.",
+    "logout": "Sign out",
+    "backHome": "Back to home"
+  },
+  "dashboard": {
+    "eyebrow": "ናይ ስራሕ ዴስክ",
+    "title": "ናይ ዕዳጋ ዴስክ",
+    "welcome": "እንቋዕ ቀኒልካ፣ {name}",
+    "lede": "ናይ ኣዲስ ኣበባ ክምችት፣ መስርሕ ግምገማን ሽፋን ትርጉም Geminiን።",
+    "metrics": {
+      "active": "ንጡፋት ዝርዝራት",
+      "activeTag": "Addis MLS",
+      "pending": "ኣብ መጸበይ",
+      "pendingTag": "ማሕበራዊ / ግምገማ",
+      "translation": "ደረጃ ትርጉም",
+      "translationTag": "ቋንቋታት Gemini"
+    }
   }
 }

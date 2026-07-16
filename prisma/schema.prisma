@@ -257,7 +257,8 @@ model Project {
 }
 
 model Listing {
-  id                 String            @id @default(cuid())
+  /// 6-char uppercase alphanumeric tracking ID (e.g. ADD48X) — assigned in app code
+  id                 String            @id
   ownerId            String
   developerId        String?
   delalaId           String?

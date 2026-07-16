@@ -135,6 +135,11 @@ function UnitSubCard({
           {t(`building.status.${unit.status}`)}
         </span>
       </div>
+      {unit.propertyId ? (
+        <p className={styles.unitTitle} style={{ fontFamily: "ui-monospace, monospace", fontSize: "0.75rem", opacity: 0.85 }}>
+          {unit.propertyId}
+        </p>
+      ) : null}
       <p className={styles.unitTitle}>
         {unit.title ?? t("building.unnamedUnit")}
       </p>
@@ -316,7 +321,7 @@ export function BuildingScrollView({
                             ? styles.unitPipReserved
                             : styles.unitPipSold
                       }
-                      title={`${unit.unitLabel} · ${unit.status}`}
+                      title={`${unit.unitLabel} · ${t(`building.status.${unit.status}`)}`}
                     />
                   ))}
                 </div>

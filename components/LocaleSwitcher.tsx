@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useId, useRef, useState, useTransition } from "react";
+import { ChevronDown } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 import { localeLabels, locales, type Locale } from "@/lib/i18n/config";
 import { useTranslation } from "@/hooks/useTranslation";
@@ -59,10 +60,10 @@ export function LocaleSwitcher() {
   }
 
   return (
-    <div className="locale-switcher" ref={rootRef}>
+    <div className="relative" ref={rootRef}>
       <button
         type="button"
-        className="locale-switcher__trigger"
+        className="inline-flex max-w-[11rem] items-center gap-1.5 rounded-full border border-slate-200 bg-white px-2.5 py-1.5 text-left shadow-sm transition hover:border-brand-200 hover:ring-2 hover:ring-brand-100 sm:max-w-none sm:gap-2 sm:px-3"
         aria-haspopup="listbox"
         aria-expanded={open}
         aria-controls={listId}
@@ -70,15 +71,22 @@ export function LocaleSwitcher() {
         disabled={pending}
         onClick={() => setOpen((value) => !value)}
       >
-        <span className="locale-switcher__code">{current.short}</span>
-        <span className="locale-switcher__name">{current.native}</span>
-        <span className="locale-switcher__chevron" aria-hidden="true" />
+        <span className="inline-flex min-w-[1.75rem] shrink-0 items-center justify-center rounded-full bg-brand-100 px-1.5 py-0.5 text-[0.65rem] font-bold tracking-wide text-brand-800">
+          {current.short}
+        </span>
+        <span className="truncate text-sm font-semibold text-slate-800">
+          {current.native}
+        </span>
+        <ChevronDown
+          className={`h-4 w-4 shrink-0 text-slate-400 transition ${open ? "rotate-180" : ""}`}
+          aria-hidden="true"
+        />
       </button>
 
       {open ? (
         <ul
           id={listId}
-          className="locale-switcher__menu"
+          className="animate-locale-rise absolute right-0 top-[calc(100%+0.45rem)] z-50 min-w-[14rem] max-w-[min(18rem,calc(100vw-2rem))] list-none rounded-2xl border border-slate-200 bg-white p-1.5 shadow-[var(--shadow-card-hover)]"
           role="listbox"
           aria-label={t("locale.label")}
         >
@@ -89,17 +97,15 @@ export function LocaleSwitcher() {
               <li key={code} role="option" aria-selected={selected}>
                 <button
                   type="button"
-                  className={
+                  className={`flex w-full flex-col items-start gap-0.5 rounded-xl px-3 py-2.5 text-left transition ${
                     selected
-                      ? "locale-switcher__option locale-switcher__option--active"
-                      : "locale-switcher__option"
-                  }
+                      ? "bg-brand-50 text-brand-800"
+                      : "text-slate-800 hover:bg-slate-50"
+                  }`}
                   onClick={() => selectLocale(code)}
                 >
-                  <span>{meta.native}</span>
-                  <span className="locale-switcher__option-en">
-                    {meta.english}
-                  </span>
+                  <span className="text-sm font-semibold leading-snug">{meta.native}</span>
+                  <span className="text-xs text-slate-500">{meta.english}</span>
                 </button>
               </li>
             );
