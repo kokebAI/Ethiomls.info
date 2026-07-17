@@ -3,10 +3,6 @@
 import { useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { SlidersHorizontal } from "lucide-react";
-import {
-  ConversationalFunnel,
-  type ConversationalSearchResult,
-} from "@/components/search/conversational-funnel";
 import { PageDirectory, type DirectoryItem } from "@/components/PageDirectory";
 import { useTranslation } from "@/hooks/useTranslation";
 
@@ -116,20 +112,6 @@ export function ListingsFunnel({
     maxPrice,
     sortBy,
   ]);
-
-  /** Apply the embedded search guide's answers directly to the filters. */
-  function handleGuideComplete(result: ConversationalSearchResult) {
-    setListingType(
-      result.intent === "buy"
-        ? "SALE"
-        : result.intent === "rent"
-          ? "RENT"
-          : "OFF_PLAN",
-    );
-    setMaxPrice(String(Math.round(result.budgetEtb)));
-    setClusterSubCities([...result.subCities]);
-    setSubCityCode("");
-  }
 
   function resetFilters() {
     setSubCityCode("");
@@ -254,10 +236,6 @@ export function ListingsFunnel({
 
   return (
     <div className="space-y-8">
-      <section className="rounded-2xl border border-slate-200/90 bg-white/80 p-4 shadow-[var(--shadow-card)] sm:p-6">
-        <ConversationalFunnel onComplete={handleGuideComplete} />
-      </section>
-
       <div className="flex flex-col gap-6 lg:flex-row lg:items-start">
         <aside className="hidden w-full shrink-0 lg:block lg:w-72 xl:w-80">
           <div className="sticky top-[5.5rem] rounded-2xl border border-slate-200/90 bg-white p-5 shadow-[var(--shadow-card)]">

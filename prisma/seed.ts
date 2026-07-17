@@ -278,43 +278,34 @@ const DEMO_USERS: DemoUserSeed[] = [
     localePrefs: ["en", "am"],
   },
   {
-    email: "buyer@ethiomls.local",
+    email: "client@ethiomls.local",
     phone: "+251911000002",
-    fullName: "Demo Buyer",
+    fullName: "Demo Client",
     role: UserRole.BUYER_RENTER,
     localePrefs: ["am", "en"],
   },
   {
-    email: "seller@ethiomls.local",
+    email: "broker@ethiomls.local",
     phone: "+251911000003",
-    fullName: "Demo Seller",
+    fullName: "Demo Broker",
     role: UserRole.INDEPENDENT_DELALA,
     localePrefs: ["am", "en"],
     delala: {
       displayName: {
-        en: "Demo Seller Brokerage",
-        am: "የማሳያ ሻጭ ደላላ",
+        en: "Demo Brokerage",
+        am: "የማሳያ ደላላ",
         om: "Daldalaa Fakkeenyaa",
       },
-      licenseNumber: "ADD-DEL-DEMO-0003",
+      licenseNumber: "ADD-BRK-DEMO-0003",
       operatingSubCityCode: "bole",
     },
   },
   {
-    email: "delala@ethiomls.local",
+    email: "owner@ethiomls.local",
     phone: "+251911000004",
-    fullName: "Demo Delala",
-    role: UserRole.INDEPENDENT_DELALA,
-    localePrefs: ["am", "om", "en"],
-    delala: {
-      displayName: {
-        en: "Demo Independent Delala",
-        am: "የማሳያ ነጻ ደላላ",
-        om: "Dalalaa Bilisaa Fakkeenyaa",
-      },
-      licenseNumber: "ADD-DEL-DEMO-0004",
-      operatingSubCityCode: "kirkos",
-    },
+    fullName: "Demo Owner",
+    role: UserRole.PROPERTY_OWNER,
+    localePrefs: ["am", "en"],
   },
   {
     email: "developer@ethiomls.local",
@@ -336,26 +327,6 @@ const DEMO_USERS: DemoUserSeed[] = [
       hqCode: "bole",
     },
   },
-  {
-    email: "realestate@ethiomls.local",
-    phone: "+251911000006",
-    fullName: "Demo Real Estate Agent",
-    role: UserRole.CORPORATE_DEVELOPER,
-    localePrefs: ["en", "am", "om"],
-    developer: {
-      tradeName: "Addis Demo Properties PLC",
-      displayName: {
-        en: "Addis Demo Properties",
-        am: "አዲስ የማሳያ ንብረቶች",
-        om: "Qabeenya Finfinnee Fakkeenyaa",
-      },
-      registrationNumber: "ET-RE-DEMO-00006",
-      licenseNumber: "MUD-RE-DEMO-0006",
-      tin: "0005999006",
-      website: "https://ethiomls.info",
-      hqCode: "yeka",
-    },
-  },
 ];
 
 async function seedDemoUsers() {
@@ -364,9 +335,9 @@ async function seedDemoUsers() {
 
   for (const demo of DEMO_USERS) {
     const user = await prisma.user.upsert({
-      where: { email: demo.email },
+      where: { phone: demo.phone },
       update: {
-        phone: demo.phone,
+        email: demo.email,
         fullName: demo.fullName,
         passwordHash: DEMO_PASSWORD_HASH,
         role: demo.role,

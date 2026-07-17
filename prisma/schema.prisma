@@ -22,6 +22,9 @@ datasource db {
 
 enum UserRole {
   BUYER_RENTER
+  /// Private property owner listing their own home (not a broker).
+  PROPERTY_OWNER
+  /// Licensed independent broker (UI label: Broker).
   INDEPENDENT_DELALA
   CORPORATE_DEVELOPER
   ADMIN

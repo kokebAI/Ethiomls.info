@@ -45,9 +45,22 @@ export default async function ListingsPage({
       listing.priceCurrency,
     );
 
+    const photos = [
+      ...new Set(
+        [
+          listing.coverImageUrl,
+          ...listing.images,
+          ...listing.galleryImageUrls,
+        ].filter((url): url is string => Boolean(url)),
+      ),
+    ];
+
     return {
       id: listing.id,
       title: pickLocalized(listing.title, locale) || listing.id,
+      href: `/${locale}/listings/${listing.id}`,
+      imageUrl: photos[0] ?? null,
+      photoCount: photos.length,
       meta: [
         subCity,
         priceFormatted,

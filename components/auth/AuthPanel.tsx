@@ -1,9 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { useTranslation } from "@/hooks/useTranslation";
+import { hubPathForRole } from "@/lib/roles/hubs";
 
 type AuthMode = "login" | "register";
 
@@ -15,24 +16,20 @@ type AuthPanelProps = {
 /** Seeded local personas — tap to fill the phone field, then request OTP. */
 const DEMO_ACCOUNTS = [
   { roleKey: "auth.demo.admin", phone: "0911000001", e164: "+251911000001" },
-  { roleKey: "auth.demo.buyer", phone: "0911000002", e164: "+251911000002" },
-  { roleKey: "auth.demo.seller", phone: "0911000003", e164: "+251911000003" },
-  { roleKey: "auth.demo.delala", phone: "0911000004", e164: "+251911000004" },
+  { roleKey: "auth.demo.client", phone: "0911000002", e164: "+251911000002" },
+  { roleKey: "auth.demo.broker", phone: "0911000003", e164: "+251911000003" },
+  { roleKey: "auth.demo.owner", phone: "0911000004", e164: "+251911000004" },
   {
     roleKey: "auth.demo.developer",
     phone: "0911000005",
     e164: "+251911000005",
-  },
-  {
-    roleKey: "auth.demo.realestate",
-    phone: "0911000006",
-    e164: "+251911000006",
   },
 ] as const;
 
 export function AuthPanel({ initialError, initialMode }: AuthPanelProps) {
   const { locale, t } = useTranslation();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [mode, setMode] = useState<AuthMode>(initialMode ?? "login");
   const [phone, setPhone] = useState("");
   const [fullName, setFullName] = useState("");
@@ -96,9 +93,17 @@ export function AuthPanel({ initialError, initialMode }: AuthPanelProps) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ phone, code, mode }),
       });
-      const data = (await res.json().catch(() => ({}))) as { message?: string };
+      const data = (await res.json().catch(() => ({}))) as {
+        message?: string;
+        user?: { role?: string };
+      };
       if (!res.ok) throw new Error(data.message ?? t("auth.verifyFailed"));
-      router.push(`/${locale}`);
+      const next = searchParams.get("next");
+      const destination =
+        next && next.startsWith("/")
+          ? next
+          : `/${locale}${hubPathForRole(data.user?.role)}`;
+      router.push(destination);
       router.refresh();
     } catch (err) {
       setError(err instanceof Error ? err.message : t("auth.verifyFailed"));

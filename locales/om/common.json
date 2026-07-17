@@ -9,12 +9,14 @@
     "listings": "Tarreewwan",
     "projects": "Pirojektoota",
     "developers": "Ijaartoota",
+    "dashboard": "Daashboordii",
+    "imports": "Galchuu",
+    "profile": "Profile",
+    "forYou": "For you",
+    "roles": "Roles",
     "about": "Waa'ee keenya",
     "signIn": "Seeni",
-    "listProperty": "Qabeenya galmeessi",
-    "dashboard": "Daashboordii",
-    "profile": "Profile",
-    "imports": "Galchuu"
+    "listProperty": "Qabeenya galmeessi"
   },
   "home": {
     "lede": "Manneen mirkanaa'an, pirojektoota ijaarsa irra jiranii fi bakkeewwan daldalaa Finfinnee keessatti — afaan afuriin.",
@@ -253,15 +255,14 @@
     "logout": "Ba'i",
     "backHome": "Gara fuula duraatti",
     "demo": {
-      "title": "Akaawuntii fakkeenyaa",
-      "lede": "Gahee tuqi — bilbilli ni guuttama. Koodii SMS ergi. Haala mock keessatti koodiin fuula irratti mul'ata.",
-      "filled": "Lakkoofsi fakkeenyaa guutameera — koodii SMS ergi.",
+      "title": "Demo accounts",
+      "lede": "Tap a role to fill the phone field, then send the SMS code. In local mock mode the code appears on screen.",
+      "filled": "Demo number filled — send the SMS code to continue.",
       "admin": "Admin",
-      "buyer": "Bitaa",
-      "seller": "Gurgurtaa / daldalaa",
-      "delala": "Dalalaa",
-      "developer": "Ijaartuu",
-      "realestate": "Qabeenya manaa"
+      "client": "Maamilaa",
+      "broker": "Daldalaa",
+      "owner": "Abbaa qabeenyaa",
+      "developer": "Developer"
     }
   },
   "profile": {
@@ -318,5 +319,87 @@
     "loadFailed": "Could not load sources.",
     "runFailed": "Scrape failed.",
     "runDone": "Scrape finished — created {created}, updated {updated}, skipped {skipped}."
+  },
+  "rolesIndex": {
+    "title": "Choose your role",
+    "lede": "Client, broker, owner, developer, or admin — each hub highlights the tools you need."
+  },
+  "roles": {
+    "switchLabel": "Other roles",
+    "client": {
+      "eyebrow": "Client",
+      "title": "Find your next home",
+      "lede": "Browse verified listings and projects. Sign in to unlock contact numbers, visits, and 360° tours.",
+      "ctas": {
+        "browse": "Browse listings",
+        "projects": "Explore projects",
+        "guide": "Start guided search",
+        "profile": "Your profile"
+      }
+    },
+    "broker": {
+      "eyebrow": "Broker",
+      "title": "List and manage inventory",
+      "lede": "Publish properties for clients, keep contacts ready for admin audit, and track the market from one place.",
+      "ctas": {
+        "list": "List a property",
+        "browse": "Browse listings",
+        "profile": "Your profile",
+        "dashboard": "Market dashboard"
+      }
+    },
+    "owner": {
+      "eyebrow": "Owner",
+      "title": "Sell or rent your property",
+      "lede": "List your own home with photos and documents. Every submission waits for admin audit before it goes live.",
+      "ctas": {
+        "list": "List my property",
+        "browse": "See live listings",
+        "profile": "Your profile",
+        "guide": "Back to home search"
+      }
+    },
+    "developer": {
+      "eyebrow": "Developer",
+      "title": "Showcase projects and off-plan units",
+      "lede": "Publish building stacks, payment plans, and unit inventory for clients who want escrow-backed off-plan homes.",
+      "ctas": {
+        "projects": "View projects",
+        "list": "Add inventory",
+        "developers": "Developer directory",
+        "profile": "Your profile"
+      }
+    },
+    "admin": {
+      "eyebrow": "Admin",
+      "title": "Audit and import the market",
+      "lede": "Scrape Telegram and websites, review pending listings, and publish only after the client-protection checklist passes.",
+      "ctas": {
+        "imports": "Import sources",
+        "dashboard": "Dashboard metrics",
+        "listings": "All listings",
+        "profile": "Your profile"
+      }
+    }
+  },
+  "listingDetail": {
+    "back": "Back to listings",
+    "facts": "Property facts",
+    "description": "About this property",
+    "amenities": "Features",
+    "contact": "Contact",
+    "noPhone": "No phone on file — admin will add one after audit.",
+    "sourcePost": "View source post",
+    "partOfProject": "Part of project",
+    "audited": "Admin audited",
+    "perMonth": "/ month",
+    "pricePerSqm": "Price per m²",
+    "offPlanTerms": "Off-plan payment terms",
+    "paymentPlan": "Payment plan",
+    "downPayment": "Down payment",
+    "milestones": "Milestone split",
+    "signUpForContact": "Sign up with your Ethiopian mobile number to see the contact phone and request a visit.",
+    "signUpForTour": "Create a free account to open the 360° virtual tour.",
+    "signUpCta": "Sign up to unlock"
   }
 }

@@ -5,14 +5,17 @@ import { LocaleSwitcher } from "@/components/LocaleSwitcher";
 import { getSession } from "@/lib/auth/session";
 import { isLocale, type Locale } from "@/lib/i18n/config";
 import { getDictionary } from "@/lib/i18n/getDictionary";
+import { hubPathForRole } from "@/lib/roles/hubs";
+import { prisma } from "@/lib/db/prisma";
 import { redirect } from "next/navigation";
+import { Suspense } from "react";
 
 export default async function LoginPage({
   params,
   searchParams,
 }: {
   params: Promise<{ locale: string }>;
-  searchParams: Promise<{ error?: string; mode?: string }>;
+  searchParams: Promise<{ error?: string; mode?: string; next?: string }>;
 }) {
   const { locale: raw } = await params;
   const locale = (isLocale(raw) ? raw : "en") as Locale;
@@ -20,8 +23,14 @@ export default async function LoginPage({
   const query = await searchParams;
   const session = await getSession();
   if (session) {
-    // Already authenticated — the account lives on the profile page.
-    redirect(`/${locale}/profile`);
+    if (query.next?.startsWith("/")) {
+      redirect(query.next);
+    }
+    const user = await prisma.user.findUnique({
+      where: { id: session.userId },
+      select: { role: true },
+    });
+    redirect(`/${locale}${hubPathForRole(user?.role)}`);
   }
 
   return (
@@ -51,10 +60,12 @@ export default async function LoginPage({
             {dictionary.auth.lede}
           </p>
           <div className="mt-6">
-            <AuthPanel
-              initialError={query.error ?? null}
-              initialMode={query.mode === "register" ? "register" : "login"}
-            />
+            <Suspense fallback={<p className="text-sm text-slate-300">{dictionary.common.loading}</p>}>
+              <AuthPanel
+                initialError={query.error ?? null}
+                initialMode={query.mode === "register" ? "register" : "login"}
+              />
+            </Suspense>
           </div>
         </div>
       </div>

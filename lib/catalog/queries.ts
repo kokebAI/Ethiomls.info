@@ -89,6 +89,31 @@ export async function fetchPublishedListings() {
   }
 }
 
+export async function fetchListingById(id: string) {
+  try {
+    return await prisma.listing.findFirst({
+      where: { id, status: ListingStatus.PUBLISHED },
+      include: {
+        subCity: {
+          select: { code: true, name: true },
+        },
+        developer: {
+          select: { tradeName: true, displayName: true, website: true },
+        },
+        project: {
+          select: { id: true, title: true },
+        },
+        owner: {
+          select: { fullName: true },
+        },
+      },
+    });
+  } catch (error) {
+    console.error("[catalog] fetchListingById failed:", error);
+    return null;
+  }
+}
+
 export async function fetchActiveSubCities() {
   try {
     return await prisma.subCity.findMany({

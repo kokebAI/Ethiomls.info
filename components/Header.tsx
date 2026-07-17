@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import { BrandMark } from "@/components/BrandMark";
 import { LocaleSwitcher } from "@/components/LocaleSwitcher";
 import { useTranslation } from "@/hooks/useTranslation";
+import { hubPathForRole } from "@/lib/roles/hubs";
 
 const NAV_ITEMS = [
   { href: "", key: "nav.home" },
@@ -60,6 +61,7 @@ export function Header() {
 
   const navItems: { href: string; key: string }[] = [...NAV_ITEMS];
   if (user) {
+    navItems.push({ href: hubPathForRole(user.role), key: "nav.forYou" });
     navItems.push({ href: "/profile", key: "nav.profile" });
   }
   if (user?.role === "ADMIN") {
