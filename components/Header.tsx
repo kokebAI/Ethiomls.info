@@ -12,6 +12,8 @@ const NAV_ITEMS = [
   { href: "/listings", key: "nav.listings" },
   { href: "/projects", key: "nav.projects" },
   { href: "/developers", key: "nav.developers" },
+  { href: "/dashboard", key: "nav.dashboard" },
+  { href: "/profile", key: "nav.profile" },
 ] as const;
 
 export function Header() {

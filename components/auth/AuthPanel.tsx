@@ -8,11 +8,10 @@ import { useTranslation } from "@/hooks/useTranslation";
 type AuthMode = "login" | "register";
 
 type AuthPanelProps = {
-  googleEnabled: boolean;
   initialError?: string | null;
 };
 
-export function AuthPanel({ googleEnabled, initialError }: AuthPanelProps) {
+export function AuthPanel({ initialError }: AuthPanelProps) {
   const { locale, t } = useTranslation();
   const router = useRouter();
   const [mode, setMode] = useState<AuthMode>("login");
@@ -48,9 +47,7 @@ export function AuthPanel({ googleEnabled, initialError }: AuthPanelProps) {
       if (!res.ok) throw new Error(data.message ?? t("auth.smsFailed"));
       setStep("code");
       setHint(
-        data.provider === "mock"
-          ? t("auth.mockHint")
-          : t("auth.codeSent"),
+        data.provider === "mock" ? t("auth.mockHint") : t("auth.codeSent"),
       );
       if (data.debugCode) setDebugCode(data.debugCode);
     } catch (err) {
@@ -135,12 +132,17 @@ export function AuthPanel({ googleEnabled, initialError }: AuthPanelProps) {
               onChange={(e) => setPhone(e.target.value)}
               inputMode="tel"
               autoComplete="tel"
-              placeholder="+2519…"
+              placeholder={t("auth.phonePlaceholder")}
             />
+            <span className="text-xs text-slate-400">{t("auth.phoneHint")}</span>
           </label>
           <button
             type="button"
-            disabled={busy || phone.trim().length < 9}
+            disabled={
+              busy ||
+              phone.trim().length < 9 ||
+              (mode === "register" && fullName.trim().length < 2)
+            }
             className="rounded-full bg-brand-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-brand-700 disabled:opacity-45"
             onClick={() => void requestOtp()}
           >
@@ -156,7 +158,9 @@ export function AuthPanel({ googleEnabled, initialError }: AuthPanelProps) {
             <input
               className="rounded-xl border border-white/15 bg-white/10 px-4 py-3 tracking-[0.35em] text-white outline-none backdrop-blur focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30"
               value={code}
-              onChange={(e) => setCode(e.target.value.replace(/\D/g, "").slice(0, 6))}
+              onChange={(e) =>
+                setCode(e.target.value.replace(/\D/g, "").slice(0, 6))
+              }
               inputMode="numeric"
               autoComplete="one-time-code"
               placeholder="••••••"
@@ -200,30 +204,6 @@ export function AuthPanel({ googleEnabled, initialError }: AuthPanelProps) {
           {error}
         </p>
       ) : null}
-
-      <div className="relative py-1">
-        <div className="absolute inset-0 flex items-center" aria-hidden>
-          <div className="w-full border-t border-white/10" />
-        </div>
-        <div className="relative flex justify-center">
-          <span className="bg-transparent px-3 text-xs uppercase tracking-wide text-slate-400">
-            {t("auth.or")}
-          </span>
-        </div>
-      </div>
-
-      {googleEnabled ? (
-        <a
-          href={`/api/auth/google?locale=${locale}`}
-          className="inline-flex items-center justify-center gap-2 rounded-full border border-white/20 bg-white/10 px-5 py-3 text-sm font-semibold text-white transition hover:bg-white/15"
-        >
-          {t("auth.continueGoogle")}
-        </a>
-      ) : (
-        <p className="rounded-xl border border-dashed border-white/15 px-4 py-3 text-xs leading-relaxed text-slate-400">
-          {t("auth.googleNotConfigured")}
-        </p>
-      )}
 
       <p className="text-center text-xs text-slate-400">
         <Link href={`/${locale}`} className="underline-offset-2 hover:underline">

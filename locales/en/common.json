@@ -10,9 +10,22 @@
     "projects": "Projects",
     "developers": "Developers",
     "dashboard": "Dashboard",
+    "profile": "Profile",
     "about": "About",
     "signIn": "Sign in",
     "listProperty": "List a property"
+  },
+  "home": {
+    "lede": "Verified homes, off-plan projects, and commercial spaces across Addis Ababa — in four languages.",
+    "browseCta": "Browse listings",
+    "listCta": "List a property",
+    "statsHeading": "The market in numbers",
+    "stats": {
+      "listings": "Live listings",
+      "projects": "Published projects",
+      "developers": "Verified developers",
+      "subCities": "Addis sub-cities"
+    }
   },
   "locale": {
     "label": "Language",
@@ -146,19 +159,18 @@
   "auth": {
     "accessEyebrow": "Secure access",
     "title": "Sign in to EthioMLS",
-    "lede": "Verify with SMS OTP, or continue with Google when configured.",
+    "lede": "Use your Ethiopian mobile number. We’ll send a one-time SMS code. Add an email later in your profile.",
     "loginTab": "Sign in",
     "registerTab": "Register",
     "fullName": "Full name",
     "fullNamePlaceholder": "Your name",
-    "phone": "Mobile number",
+    "phone": "Ethiopian mobile number",
+    "phonePlaceholder": "09XXXXXXXX or 07XXXXXXXX",
+    "phoneHint": "Local numbers only (+251 9… / +251 7…). International numbers are not accepted.",
     "otp": "SMS verification code",
     "sendCode": "Send SMS code",
     "verify": "Verify & continue",
     "back": "Change number",
-    "or": "or",
-    "continueGoogle": "Continue with Google",
-    "googleNotConfigured": "Google sign-in needs GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET in your environment. SMS OTP works now (mock SMS locally).",
     "codeSent": "We sent a verification code by SMS.",
     "mockHint": "SMS is in mock mode — use the debug code below.",
     "debugCode": "Dev code",
@@ -166,6 +178,19 @@
     "verifyFailed": "Verification failed.",
     "logout": "Sign out",
     "backHome": "Back to home"
+  },
+  "profile": {
+    "eyebrow": "Account",
+    "title": "Your profile",
+    "lede": "Your Ethiopian mobile number is your login. Email is optional and used only for contact updates.",
+    "phone": "Mobile number",
+    "phoneLocked": "Phone is your sign-in ID and cannot be changed here.",
+    "email": "Email (optional)",
+    "emailPlaceholder": "you@example.com",
+    "emailHint": "Not required for signup — add it so we can reach you about listings and offers.",
+    "save": "Save profile",
+    "saved": "Profile updated.",
+    "saveFailed": "Could not save profile."
   },
   "dashboard": {
     "eyebrow": "Operations desk",

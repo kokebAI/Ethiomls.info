@@ -24,12 +24,16 @@ function hashCode(code: string): string {
   return createHash("sha256").update(code).digest("hex");
 }
 
+/**
+ * Normalize Ethiopian mobile numbers only (Ethio telecom / Safaricom local).
+ * Accepts 09…, 07…, 2519…, +2519… and returns E.164 (+251…).
+ * International numbers are rejected — signup is local-phone only.
+ */
 export function normalizeEthiopiaPhone(raw: string): string | null {
   const digits = raw.replace(/[^\d+]/g, "").trim();
   if (/^\+251[79]\d{8}$/.test(digits)) return digits;
   if (/^0[79]\d{8}$/.test(digits)) return `+251${digits.slice(1)}`;
   if (/^251[79]\d{8}$/.test(digits)) return `+${digits}`;
-  if (/^\+[1-9]\d{7,14}$/.test(digits)) return digits;
   return null;
 }
 

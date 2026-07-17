@@ -2,7 +2,6 @@ import { AddisSkylineBackdrop } from "@/components/AddisSkylineBackdrop";
 import { BrandMark } from "@/components/BrandMark";
 import { AuthPanel } from "@/components/auth/AuthPanel";
 import { LocaleSwitcher } from "@/components/LocaleSwitcher";
-import { googleOAuthConfigured } from "@/lib/auth/oauth";
 import { getSession } from "@/lib/auth/session";
 import { isLocale, type Locale } from "@/lib/i18n/config";
 import { getDictionary } from "@/lib/i18n/getDictionary";
@@ -51,10 +50,7 @@ export default async function LoginPage({
             {dictionary.auth.lede}
           </p>
           <div className="mt-6">
-            <AuthPanel
-              googleEnabled={googleOAuthConfigured()}
-              initialError={query.error ?? null}
-            />
+            <AuthPanel initialError={query.error ?? null} />
           </div>
         </div>
       </div>

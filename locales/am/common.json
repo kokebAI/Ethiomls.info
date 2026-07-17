@@ -12,7 +12,20 @@
     "about": "ስለ እኛ",
     "signIn": "ግባ",
     "listProperty": "ንብረት ያስመዝግቡ",
-    "dashboard": "ዳሽቦርድ"
+    "dashboard": "ዳሽቦርድ",
+    "profile": "መገለጫ"
+  },
+  "home": {
+    "lede": "በአዲስ አበባ የተረጋገጡ ቤቶች፣ ገና በግንባታ ላይ ያሉ ፕሮጀክቶች እና የንግድ ቦታዎች — በአራት ቋንቋዎች።",
+    "browseCta": "ዝርዝሮችን ያስሱ",
+    "listCta": "ንብረት ያስመዝግቡ",
+    "statsHeading": "ገበያው በቁጥር",
+    "stats": {
+      "listings": "ቀጥታ ዝርዝሮች",
+      "projects": "የታተሙ ፕሮጀክቶች",
+      "developers": "የተረጋገጡ አልሚዎች",
+      "subCities": "የአዲስ አበባ ክፍለ ከተሞች"
+    }
   },
   "locale": {
     "label": "ቋንቋ",
@@ -217,26 +230,38 @@
   "auth": {
     "accessEyebrow": "ደህንነቱ የተጠበቀ መግቢያ",
     "title": "ወደ EthioMLS ይግቡ",
-    "lede": "በSMS ኮድ ይረጋገጡ፣ ወይም በGoogle ይቀጥሉ።",
+    "lede": "የኢትዮጵያ ስልክ ቁጥር ይጠቀሙ። በSMS የአንድ ጊዜ ኮድ እንልካለን። ኢሜይል በኋላ በመገለጫዎ ማከል ይችላሉ።",
     "loginTab": "ግባ",
     "registerTab": "ተመዝገብ",
     "fullName": "ሙሉ ስም",
-    "fullNamePlaceholder": "Your name",
-    "phone": "ስልክ ቁጥር",
-    "otp": "SMS verification code",
+    "fullNamePlaceholder": "ስምዎ",
+    "phone": "የኢትዮጵያ ስልክ ቁጥር",
+    "phonePlaceholder": "09XXXXXXXX ወይም 07XXXXXXXX",
+    "phoneHint": "አካባቢያዊ ቁጥሮች ብቻ (+251 9… / +251 7…)። ዓለም አቀፍ ቁጥሮች አይቀበሉም።",
+    "otp": "የSMS ማረጋገጫ ኮድ",
     "sendCode": "የSMS ኮድ ላክ",
     "verify": "አረጋግጥ እና ቀጥል",
-    "back": "Change number",
-    "or": "or",
-    "continueGoogle": "በ Google ቀጥል",
-    "googleNotConfigured": "Google sign-in needs GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET in your environment. SMS OTP works now (mock SMS locally).",
-    "codeSent": "We sent a verification code by SMS.",
-    "mockHint": "SMS is in mock mode — use the debug code below.",
-    "debugCode": "Dev code",
-    "smsFailed": "Could not send SMS.",
-    "verifyFailed": "Verification failed.",
+    "back": "ቁጥር ቀይር",
+    "codeSent": "በSMS የማረጋገጫ ኮድ ልከናል።",
+    "mockHint": "SMS በሙከራ ሁኔታ ነው — ከታች ያለውን ኮድ ይጠቀሙ።",
+    "debugCode": "የልማት ኮድ",
+    "smsFailed": "SMS መላክ አልተቻለም።",
+    "verifyFailed": "ማረጋገጥ አልተሳካም።",
     "logout": "ውጣ",
     "backHome": "ወደ መነሻ"
+  },
+  "profile": {
+    "eyebrow": "መለያ",
+    "title": "መገለጫዎ",
+    "lede": "የኢትዮጵያ ስልክ ቁጥርዎ የመግቢያዎ ነው። ኢሜይል አማራጭ ነው።",
+    "phone": "ስልክ ቁጥር",
+    "phoneLocked": "ስልክ የመግቢያ መለያዎ ነው እና እዚህ ሊቀየር አይችልም።",
+    "email": "ኢሜይል (አማራጭ)",
+    "emailPlaceholder": "you@example.com",
+    "emailHint": "ለመመዝገብ አያስፈልግም — ለዜና እና ቅናሾች እንድናገኝዎት ያክሉ።",
+    "save": "መገለጫ አስቀምጥ",
+    "saved": "መገለጫ ተዘምኗል።",
+    "saveFailed": "መገለጫ ማስቀመጥ አልተቻለም።"
   },
   "dashboard": {
     "eyebrow": "የአስተዳደር ዴስክ",

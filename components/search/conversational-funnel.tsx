@@ -39,6 +39,16 @@ const INTENT_OPTIONS: Array<{ id: SearchIntent; labelKey: string }> = [
   { id: "off_plan", labelKey: "search.intent.offPlan" },
 ];
 
+/** Format a numeric budget with thousands separators, e.g. "5,000,000". */
+function formatBudgetInput(raw: string | number): string {
+  const cleaned = String(raw).replace(/[^\d.]/g, "");
+  if (!cleaned) return "";
+  const [whole, ...fractionParts] = cleaned.split(".");
+  const grouped = whole.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  const fraction = fractionParts.join("").slice(0, 2);
+  return fractionParts.length > 0 ? `${grouped}.${fraction}` : grouped;
+}
+
 /**
  * Single-panel guided search: intent + area + budget in one view.
  * Optional Gemini "Fill with AI" prefills the same fields.
@@ -57,7 +67,7 @@ export function ConversationalFunnel({
   const [intent, setIntent] = useState<SearchIntent>("buy");
   const [clusterId, setClusterId] = useState<SubCityClusterId>("east");
   const [budgetCurrency, setBudgetCurrency] = useState<BudgetCurrency>("ETB");
-  const [budgetInput, setBudgetInput] = useState("5000000");
+  const [budgetInput, setBudgetInput] = useState("5,000,000");
   const [aiQuery, setAiQuery] = useState("");
   const [aiSummary, setAiSummary] = useState<string | null>(null);
   const [aiBusy, setAiBusy] = useState(false);
@@ -75,9 +85,11 @@ export function ConversationalFunnel({
     const converted = convertBudget(safeAmount, budgetCurrency, next, rate);
     setBudgetCurrency(next);
     setBudgetInput(
-      next === "ETB"
-        ? String(Math.round(converted))
-        : String(Math.round(converted * 100) / 100),
+      formatBudgetInput(
+        next === "ETB"
+          ? Math.round(converted)
+          : Math.round(converted * 100) / 100,
+      ),
     );
   }
 
@@ -125,9 +137,11 @@ export function ConversationalFunnel({
       setClusterId(data.clusterId);
       setBudgetCurrency(data.budgetCurrency);
       setBudgetInput(
-        data.budgetCurrency === "ETB"
-          ? String(Math.round(data.budgetAmount))
-          : String(Math.round(data.budgetAmount * 100) / 100),
+        formatBudgetInput(
+          data.budgetCurrency === "ETB"
+            ? Math.round(data.budgetAmount)
+            : Math.round(data.budgetAmount * 100) / 100,
+        ),
       );
       setAiSummary(data.summary);
       setShowAi(false);
@@ -231,7 +245,9 @@ export function ConversationalFunnel({
             className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-xl font-bold text-slate-deep outline-none transition focus:border-brand-500 focus:ring-2 focus:ring-brand-100"
             inputMode="decimal"
             value={budgetInput}
-            onChange={(event) => setBudgetInput(event.target.value)}
+            onChange={(event) =>
+              setBudgetInput(formatBudgetInput(event.target.value))
+            }
             aria-label={t("search.budgetAmount")}
           />
           <p className="text-xs text-ink-muted">

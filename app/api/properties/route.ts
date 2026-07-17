@@ -5,7 +5,6 @@ import {
   evaluateIsUnfinished,
 } from "@/lib/compliance/escrow";
 import { evaluateForeignerEligibility } from "@/lib/compliance/foreignInvestor";
-import { allocateUniquePropertyId } from "@/lib/db/allocatePropertyId";
 import { prisma } from "@/lib/db/prisma";
 import {
   DataCompletenessError,
@@ -40,6 +39,17 @@ function errorResponse(error: unknown) {
   }
 
   if (error instanceof Prisma.PrismaClientKnownRequestError) {
+    if (error.code === "P2002") {
+      return NextResponse.json(
+        {
+          error: "PropertyIdCollision",
+          message: "That property ID is already in use. Generate a new ID and retry.",
+          statusCode: 409,
+        },
+        { status: 409 },
+      );
+    }
+
     if (error.code === "P2003") {
       return NextResponse.json(
         {
@@ -139,10 +149,9 @@ export async function POST(request: NextRequest) {
       : ListingStatus.DRAFT;
 
     const listing = await prisma.$transaction(async (tx) => {
-      const listingId = await allocateUniquePropertyId(tx);
       const created = await tx.listing.create({
         data: {
-          id: listingId,
+          id: input.id,
           ownerId: input.ownerId,
           developerId: input.developerId,
           delalaId: input.delalaId,
@@ -159,7 +168,7 @@ export async function POST(request: NextRequest) {
           bathrooms: input.bathrooms,
           floorAreaSqm: input.sizeM2,
           constructionStage: input.constructionStage,
-          metadataTags: [...input.metadata, `pid:${listingId}`],
+          metadataTags: [...input.metadata, `pid:${input.id}`],
           panoramicImageUrls: input.panoramicImageUrls ?? [],
           galleryImageUrls: input.galleryImageUrls ?? [],
           addressLine: input.addressLine,
