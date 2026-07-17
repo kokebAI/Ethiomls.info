@@ -42,7 +42,7 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const check = verifyOtp(phone, code);
+  const check = await verifyOtp(phone, code);
   if (!check.ok) {
     return NextResponse.json(
       { error: "OtpInvalid", message: check.error },

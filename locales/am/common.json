@@ -13,7 +13,8 @@
     "signIn": "ግባ",
     "listProperty": "ንብረት ያስመዝግቡ",
     "dashboard": "ዳሽቦርድ",
-    "profile": "መገለጫ"
+    "profile": "መገለጫ",
+    "imports": "አስመጣ"
   },
   "home": {
     "lede": "በአዲስ አበባ የተረጋገጡ ቤቶች፣ ገና በግንባታ ላይ ያሉ ፕሮጀክቶች እና የንግድ ቦታዎች — በአራት ቋንቋዎች።",
@@ -240,6 +241,8 @@
     "phoneHint": "አካባቢያዊ ቁጥሮች ብቻ (+251 9… / +251 7…)። ዓለም አቀፍ ቁጥሮች አይቀበሉም።",
     "otp": "የSMS ማረጋገጫ ኮድ",
     "sendCode": "የSMS ኮድ ላክ",
+    "loginCta": "ግባ",
+    "registerCta": "መለያ ፍጠር",
     "verify": "አረጋግጥ እና ቀጥል",
     "back": "ቁጥር ቀይር",
     "codeSent": "በSMS የማረጋገጫ ኮድ ልከናል።",
@@ -248,7 +251,18 @@
     "smsFailed": "SMS መላክ አልተቻለም።",
     "verifyFailed": "ማረጋገጥ አልተሳካም።",
     "logout": "ውጣ",
-    "backHome": "ወደ መነሻ"
+    "backHome": "ወደ መነሻ",
+    "demo": {
+      "title": "የማሳያ መለያዎች",
+      "lede": "ሚና ይንኩ — ስልኩ ይሞላል። ከዚያ የSMS ኮድ ይላኩ። በአካባቢ ሙከራ ኮዱ በማያ ገጹ ላይ ይታያል።",
+      "filled": "የማሳያ ቁጥር ተሞልቷል — የSMS ኮድ ይላኩ።",
+      "admin": "አስተዳዳሪ",
+      "buyer": "ገዢ",
+      "seller": "ሻጭ / ደላላ",
+      "delala": "ደላላ",
+      "developer": "ገንቢ",
+      "realestate": "ሪል እስቴት"
+    }
   },
   "profile": {
     "eyebrow": "መለያ",
@@ -276,5 +290,33 @@
       "translation": "የትርጉም ሽፋን",
       "translationTag": "Gemini ቋንቋዎች"
     }
+  },
+  "imports": {
+    "eyebrow": "አስተዳዳሪ",
+    "title": "የማስመጣ ምንጮች",
+    "lede": "የቴሌግራም ቻናሎች ወይም ድረ-ገጾች ያክሉ። የተሰበሰቡ ልጥፎች ከስልክ ቁጥር ጋር ለአስተዳዳሪ ኦዲት ይገባሉ።",
+    "addTitle": "ምንጭ ጨምር",
+    "addLede": "የቴሌግራም ስም ወይም የድረ-ገጽ አድራሻ ይለጥፉ።",
+    "url": "ቴሌግራም ወይም ድረ-ገጽ",
+    "urlPlaceholder": "@gechocommission8 or https://example.com/listings",
+    "label": "Label (optional)",
+    "labelPlaceholder": "Gecho Commission",
+    "notes": "Notes (optional)",
+    "notesPlaceholder": "Broker channel — audit contacts carefully",
+    "addCta": "ምንጭ አስቀምጥ",
+    "sourcesTitle": "የተቀመጡ ምንጮች",
+    "refresh": "አድስ",
+    "empty": "ምንም ምንጭ የለም።",
+    "typeTelegram": "ቴሌግራም",
+    "typeWebsite": "ድረ-ገጽ",
+    "listingCount": "{count} የገቡ ዝርዝሮች",
+    "lastRun": "የመጨረሻ ሩጫ {status}: +{created} / ~{updated}",
+    "runCta": "አሁን ሰብስብ",
+    "running": "በመሰብሰብ ላይ…",
+    "saved": "ምንጭ ተቀምጧል።",
+    "saveFailed": "ምንጭ ማስቀመጥ አልተሳካም።",
+    "loadFailed": "ምንጮችን መጫን አልተሳካም።",
+    "runFailed": "መሰብሰብ አልተሳካም።",
+    "runDone": "ተጠናቋል — አዲስ {created}፣ የተሻሻለ {updated}፣ የተዘለለ {skipped}።"
   }
 }

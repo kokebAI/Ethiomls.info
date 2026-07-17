@@ -82,6 +82,10 @@ export function HomeClient({ stats }: HomeClientProps) {
     <div className="flex flex-col gap-8 sm:gap-12">
       <BrandMottoBanner motto={t("brand.motto")} className="animate-rise-in" />
 
+      <section className="animate-rise-in rounded-2xl border border-slate-200/90 bg-white/80 p-4 shadow-[var(--shadow-card)] sm:p-6">
+        <ConversationalFunnel onComplete={handleSearchComplete} />
+      </section>
+
       <section className="animate-rise-in max-w-3xl space-y-4 sm:space-y-5">
         <p className="text-xs font-bold uppercase tracking-[0.14em] text-brand-600">
           {t("brand.name")}
@@ -93,12 +97,6 @@ export function HomeClient({ stats }: HomeClientProps) {
           {t("home.lede")}
         </p>
         <div className="flex flex-col gap-2.5 pt-1 sm:flex-row sm:gap-3">
-          <Link
-            href={`${base}/listings`}
-            className="inline-flex items-center justify-center rounded-full bg-brand-600 px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:-translate-y-px hover:bg-brand-700"
-          >
-            {t("home.browseCta")}
-          </Link>
           <Link
             href={`${base}/listings/new`}
             className="inline-flex items-center justify-center rounded-full border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-ink transition hover:bg-slate-50"
@@ -124,10 +122,6 @@ export function HomeClient({ stats }: HomeClientProps) {
             </article>
           ))}
         </div>
-      </section>
-
-      <section className="rounded-2xl border border-slate-200/90 bg-white/80 p-4 shadow-[var(--shadow-card)] sm:p-6">
-        <ConversationalFunnel onComplete={handleSearchComplete} />
       </section>
     </div>
   );

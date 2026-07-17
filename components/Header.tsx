@@ -1,25 +1,70 @@
 "use client";
 
 import Link from "next/link";
-import { Menu, X } from "lucide-react";
-import { useState } from "react";
+import { LogOut, Menu, UserRound, X } from "lucide-react";
+import { usePathname, useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 import { BrandMark } from "@/components/BrandMark";
 import { LocaleSwitcher } from "@/components/LocaleSwitcher";
 import { useTranslation } from "@/hooks/useTranslation";
 
 const NAV_ITEMS = [
   { href: "", key: "nav.home" },
-  { href: "/listings", key: "nav.listings" },
   { href: "/projects", key: "nav.projects" },
   { href: "/developers", key: "nav.developers" },
   { href: "/dashboard", key: "nav.dashboard" },
-  { href: "/profile", key: "nav.profile" },
 ] as const;
+
+type SessionUser = {
+  id: string;
+  fullName: string;
+  phone: string | null;
+  role: string;
+};
 
 export function Header() {
   const { locale, t } = useTranslation();
+  const router = useRouter();
+  const pathname = usePathname();
   const base = `/${locale}`;
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [user, setUser] = useState<SessionUser | null>(null);
+  const [authReady, setAuthReady] = useState(false);
+
+  // Refetch on navigation so the header flips immediately after login/logout.
+  useEffect(() => {
+    let cancelled = false;
+    fetch("/api/auth/me")
+      .then((res) => (res.ok ? res.json() : { user: null }))
+      .then((payload: { user?: SessionUser | null }) => {
+        if (!cancelled) {
+          setUser(payload.user ?? null);
+          setAuthReady(true);
+        }
+      })
+      .catch(() => {
+        if (!cancelled) setAuthReady(true);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [pathname]);
+
+  async function signOut() {
+    setMobileOpen(false);
+    await fetch("/api/auth/logout", { method: "POST" }).catch(() => {});
+    setUser(null);
+    router.push(`${base}/login`);
+    router.refresh();
+  }
+
+  const navItems: { href: string; key: string }[] = [...NAV_ITEMS];
+  if (user) {
+    navItems.push({ href: "/profile", key: "nav.profile" });
+  }
+  if (user?.role === "ADMIN") {
+    navItems.push({ href: "/admin/imports", key: "nav.imports" });
+  }
 
   return (
     <header className="sticky top-0 z-40 border-b border-slate-200/80 bg-white/85 backdrop-blur-xl">
@@ -44,7 +89,7 @@ export function Header() {
           className="hidden items-center gap-1 lg:flex"
           aria-label="Primary"
         >
-          {NAV_ITEMS.map((item) => (
+          {navItems.map((item) => (
             <Link
               key={item.key}
               href={`${base}${item.href}`}
@@ -57,12 +102,32 @@ export function Header() {
 
         <div className="flex shrink-0 items-center gap-2 sm:gap-3">
           <LocaleSwitcher />
-          <Link
-            href={`${base}/login`}
-            className="hidden rounded-full border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-ink transition hover:bg-slate-50 md:inline-flex"
-          >
-            {t("nav.signIn")}
-          </Link>
+          {authReady && user ? (
+            <>
+              <Link
+                href={`${base}/profile`}
+                className="hidden max-w-[11rem] items-center gap-1.5 rounded-full border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-ink transition hover:bg-slate-50 md:inline-flex"
+              >
+                <UserRound className="h-4 w-4 shrink-0 text-brand-600" />
+                <span className="truncate">{user.fullName}</span>
+              </Link>
+              <button
+                type="button"
+                className="hidden items-center gap-1.5 rounded-full border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-ink transition hover:bg-slate-50 md:inline-flex"
+                onClick={() => void signOut()}
+              >
+                <LogOut className="h-4 w-4 shrink-0" />
+                {t("auth.logout")}
+              </button>
+            </>
+          ) : (
+            <Link
+              href={`${base}/login`}
+              className="hidden rounded-full border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-ink transition hover:bg-slate-50 md:inline-flex"
+            >
+              {t("nav.signIn")}
+            </Link>
+          )}
           <Link
             href={`${base}/listings`}
             className="hidden rounded-full bg-brand-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:-translate-y-px hover:bg-brand-700 md:inline-flex"
@@ -87,7 +152,7 @@ export function Header() {
           aria-label="Mobile"
         >
           <ul className="flex flex-col gap-1">
-            {NAV_ITEMS.map((item) => (
+            {navItems.map((item) => (
               <li key={item.key}>
                 <Link
                   href={`${base}${item.href}`}
@@ -99,13 +164,24 @@ export function Header() {
               </li>
             ))}
             <li className="pt-2">
-              <Link
-                href={`${base}/login`}
-                className="flex w-full items-center justify-center rounded-full border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-ink"
-                onClick={() => setMobileOpen(false)}
-              >
-                {t("nav.signIn")}
-              </Link>
+              {authReady && user ? (
+                <button
+                  type="button"
+                  className="flex w-full items-center justify-center gap-1.5 rounded-full border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-ink"
+                  onClick={() => void signOut()}
+                >
+                  <LogOut className="h-4 w-4" />
+                  {t("auth.logout")}
+                </button>
+              ) : (
+                <Link
+                  href={`${base}/login`}
+                  className="flex w-full items-center justify-center rounded-full border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-ink"
+                  onClick={() => setMobileOpen(false)}
+                >
+                  {t("nav.signIn")}
+                </Link>
+              )}
             </li>
             <li className="pt-1">
               <Link

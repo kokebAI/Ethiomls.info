@@ -31,16 +31,41 @@ export class SmsNotificationEngine {
 
   constructor() {
     const configured = (process.env.SMS_PROVIDER ?? "mock").toLowerCase();
-    this.provider =
+    const requested: SmsProvider =
       configured === "hahu" ||
       configured === "afromessage" ||
       configured === "smsethiopia"
         ? configured
         : "mock";
+    this.provider = SmsNotificationEngine.hasCredentials(requested)
+      ? requested
+      : "mock";
+    if (this.provider !== requested) {
+      console.warn(
+        `[sms] SMS_PROVIDER="${requested}" is missing credentials — falling back to mock mode (OTP codes are echoed to the client).`,
+      );
+    }
     this.from = process.env.SMS_FROM ?? "EthioMLS";
     this.siteBase = (
       process.env.NEXT_PUBLIC_SITE_URL ?? "https://ethiomls.info"
     ).replace(/\/$/, "");
+  }
+
+  /** A provider is usable only when its required env credentials are set. */
+  private static hasCredentials(provider: SmsProvider): boolean {
+    if (provider === "hahu") {
+      return Boolean(
+        (process.env.HAHU_API_SECRET ?? process.env.HAHU_API_KEY)?.trim() &&
+          process.env.HAHU_DEVICE_ID?.trim(),
+      );
+    }
+    if (provider === "afromessage") {
+      return Boolean(process.env.AFROMESSAGE_API_KEY?.trim());
+    }
+    if (provider === "smsethiopia") {
+      return Boolean(process.env.SMSETHIOPIA_API_KEY?.trim());
+    }
+    return true;
   }
 
   detectLocale(user: SmsUserPrefs | null | undefined): SmsLocale {

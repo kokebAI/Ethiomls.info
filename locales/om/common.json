@@ -13,7 +13,8 @@
     "signIn": "Seeni",
     "listProperty": "Qabeenya galmeessi",
     "dashboard": "Daashboordii",
-    "profile": "Profile"
+    "profile": "Profile",
+    "imports": "Galchuu"
   },
   "home": {
     "lede": "Manneen mirkanaa'an, pirojektoota ijaarsa irra jiranii fi bakkeewwan daldalaa Finfinnee keessatti — afaan afuriin.",
@@ -240,6 +241,8 @@
     "phoneHint": "Lakkoofsota naannoo qofa (+251 9… / +251 7…). Kan ala hin fudhatamu.",
     "otp": "Koodii mirkaneessaa SMS",
     "sendCode": "Koodii SMS ergi",
+    "loginCta": "Seeni",
+    "registerCta": "Herrega uumi",
     "verify": "Mirkanessiitii itti fufi",
     "back": "Lakkoofsa jijjiiri",
     "codeSent": "Koodii mirkaneessaa SMS tiin erginnee jirra.",
@@ -248,7 +251,18 @@
     "smsFailed": "SMS erguu hin dandeenye.",
     "verifyFailed": "Mirkaneessuun hin milkoofne.",
     "logout": "Ba'i",
-    "backHome": "Gara fuula duraatti"
+    "backHome": "Gara fuula duraatti",
+    "demo": {
+      "title": "Akaawuntii fakkeenyaa",
+      "lede": "Gahee tuqi — bilbilli ni guuttama. Koodii SMS ergi. Haala mock keessatti koodiin fuula irratti mul'ata.",
+      "filled": "Lakkoofsi fakkeenyaa guutameera — koodii SMS ergi.",
+      "admin": "Admin",
+      "buyer": "Bitaa",
+      "seller": "Gurgurtaa / daldalaa",
+      "delala": "Dalalaa",
+      "developer": "Ijaartuu",
+      "realestate": "Qabeenya manaa"
+    }
   },
   "profile": {
     "eyebrow": "Akaawuntii",
@@ -276,5 +290,33 @@
       "translation": "Sadarkaa hiikkaa",
       "translationTag": "Afaanota Gemini"
     }
+  },
+  "imports": {
+    "eyebrow": "Admin",
+    "title": "Import sources",
+    "lede": "Add public Telegram channels or websites. Scraped posts become pending listings with contact numbers for admin audit before publication.",
+    "addTitle": "Add a source",
+    "addLede": "Paste a Telegram handle (e.g. @gechocommission8 or t.me/gechocommission8) or a full website URL.",
+    "url": "Telegram or website URL",
+    "urlPlaceholder": "@gechocommission8 or https://example.com/listings",
+    "label": "Label (optional)",
+    "labelPlaceholder": "Gecho Commission",
+    "notes": "Notes (optional)",
+    "notesPlaceholder": "Broker channel — audit contacts carefully",
+    "addCta": "Save source",
+    "sourcesTitle": "Saved sources",
+    "refresh": "Refresh",
+    "empty": "No sources yet. Add a Telegram channel or website above.",
+    "typeTelegram": "Telegram",
+    "typeWebsite": "Website",
+    "listingCount": "{count} imported listings",
+    "lastRun": "Last run {status}: +{created} / ~{updated}",
+    "runCta": "Scrape now",
+    "running": "Scraping…",
+    "saved": "Source saved.",
+    "saveFailed": "Could not save source.",
+    "loadFailed": "Could not load sources.",
+    "runFailed": "Scrape failed.",
+    "runDone": "Scrape finished — created {created}, updated {updated}, skipped {skipped}."
   }
 }

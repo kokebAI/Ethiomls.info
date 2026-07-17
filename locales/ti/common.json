@@ -13,7 +13,8 @@
     "signIn": "እቶ",
     "listProperty": "ንብረት መዝግቡ",
     "dashboard": "ዳሽቦርድ",
-    "profile": "መገለጺ"
+    "profile": "መገለጺ",
+    "imports": "ኣእትው"
   },
   "home": {
     "lede": "ኣብ ኣዲስ ኣበባ ዝተረጋገጹ ኣባይቲ፣ ኣብ ህንጻ ዘለዉ ፕሮጀክትታትን ንግዳዊ ቦታታትን — ብኣርባዕተ ቋንቋታት።",
@@ -240,6 +241,8 @@
     "phoneHint": "ናይ ከባቢ ቁጽርታት ጥራይ (+251 9… / +251 7…)። ዓለምለኻዊ ኣይቅበሉን።",
     "otp": "ናይ SMS መረጋገጺ ኮድ",
     "sendCode": "ናይ SMS ኮድ ልኣኽ",
+    "loginCta": "እቶ",
+    "registerCta": "መለያ ፍጠር",
     "verify": "ኣረጋግጽን ቀጽልን",
     "back": "ቁጽሪ ቀይር",
     "codeSent": "ብSMS መረጋገጺ ኮድ ልኢኽና ኣለና።",
@@ -248,7 +251,18 @@
     "smsFailed": "SMS ምልኣኽ ኣይተኻእለን።",
     "verifyFailed": "ምርግጋጽ ኣይሰለጠን።",
     "logout": "ውጻእ",
-    "backHome": "ናብ መእተዊ"
+    "backHome": "ናብ መእተዊ",
+    "demo": {
+      "title": "ናይ ምርኢት ሕሳባት",
+      "lede": "ተራ ጠውቕ — ስልኪ ይምላእ። ድሕሪኡ SMS ኮድ ልኣኽ። ኣብ mock ሁነታ ኮድ ኣብ ገጹ ይርአ።",
+      "filled": "ናይ ምርኢት ቁጽሪ ተመሊኡ — SMS ኮድ ልኣኽ።",
+      "admin": "ኣስተዳደር",
+      "buyer": "ዓዳጊ",
+      "seller": "ሸጣይ / ደላላ",
+      "delala": "ደላላ",
+      "developer": "ሃናጺ",
+      "realestate": "ሪል እስቴት"
+    }
   },
   "profile": {
     "eyebrow": "ሕሳብ",
@@ -276,5 +290,33 @@
       "translation": "ደረጃ ትርጉም",
       "translationTag": "ቋንቋታት Gemini"
     }
+  },
+  "imports": {
+    "eyebrow": "Admin",
+    "title": "Import sources",
+    "lede": "Add public Telegram channels or websites. Scraped posts become pending listings with contact numbers for admin audit before publication.",
+    "addTitle": "Add a source",
+    "addLede": "Paste a Telegram handle (e.g. @gechocommission8 or t.me/gechocommission8) or a full website URL.",
+    "url": "Telegram or website URL",
+    "urlPlaceholder": "@gechocommission8 or https://example.com/listings",
+    "label": "Label (optional)",
+    "labelPlaceholder": "Gecho Commission",
+    "notes": "Notes (optional)",
+    "notesPlaceholder": "Broker channel — audit contacts carefully",
+    "addCta": "Save source",
+    "sourcesTitle": "Saved sources",
+    "refresh": "Refresh",
+    "empty": "No sources yet. Add a Telegram channel or website above.",
+    "typeTelegram": "Telegram",
+    "typeWebsite": "Website",
+    "listingCount": "{count} imported listings",
+    "lastRun": "Last run {status}: +{created} / ~{updated}",
+    "runCta": "Scrape now",
+    "running": "Scraping…",
+    "saved": "Source saved.",
+    "saveFailed": "Could not save source.",
+    "loadFailed": "Could not load sources.",
+    "runFailed": "Scrape failed.",
+    "runDone": "Scrape finished — created {created}, updated {updated}, skipped {skipped}."
   }
 }

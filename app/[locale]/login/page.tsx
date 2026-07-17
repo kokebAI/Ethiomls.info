@@ -12,7 +12,7 @@ export default async function LoginPage({
   searchParams,
 }: {
   params: Promise<{ locale: string }>;
-  searchParams: Promise<{ error?: string }>;
+  searchParams: Promise<{ error?: string; mode?: string }>;
 }) {
   const { locale: raw } = await params;
   const locale = (isLocale(raw) ? raw : "en") as Locale;
@@ -20,7 +20,8 @@ export default async function LoginPage({
   const query = await searchParams;
   const session = await getSession();
   if (session) {
-    redirect(`/${locale}`);
+    // Already authenticated — the account lives on the profile page.
+    redirect(`/${locale}/profile`);
   }
 
   return (
@@ -50,7 +51,10 @@ export default async function LoginPage({
             {dictionary.auth.lede}
           </p>
           <div className="mt-6">
-            <AuthPanel initialError={query.error ?? null} />
+            <AuthPanel
+              initialError={query.error ?? null}
+              initialMode={query.mode === "register" ? "register" : "login"}
+            />
           </div>
         </div>
       </div>

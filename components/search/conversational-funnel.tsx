@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "@/hooks/useTranslation";
 import {
   convertBudget,
@@ -59,10 +59,30 @@ export function ConversationalFunnel({
   className,
 }: ConversationalFunnelProps) {
   const { locale, t } = useTranslation();
+  const [liveRate, setLiveRate] = useState<number | null>(null);
   const rate = useMemo(
-    () => resolveNbeUsdEtbRate(nbeUsdEtbRate),
-    [nbeUsdEtbRate],
+    () => resolveNbeUsdEtbRate(nbeUsdEtbRate ?? liveRate),
+    [nbeUsdEtbRate, liveRate],
   );
+
+  useEffect(() => {
+    if (nbeUsdEtbRate) return;
+    let cancelled = false;
+    fetch("/api/exchange-rate")
+      .then((response) => response.json())
+      .then((payload: { data?: { rate?: number } }) => {
+        const value = payload.data?.rate;
+        if (!cancelled && typeof value === "number" && value > 0) {
+          setLiveRate(value);
+        }
+      })
+      .catch(() => {
+        // Keep the fallback rate; the funnel still works offline.
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [nbeUsdEtbRate]);
 
   const [intent, setIntent] = useState<SearchIntent>("buy");
   const [clusterId, setClusterId] = useState<SubCityClusterId>("east");

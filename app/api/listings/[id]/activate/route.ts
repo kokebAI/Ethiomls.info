@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { activateListing } from "@/src/services/listing-lifecycle.service";
+import { getCurrentAdmin } from "@/lib/auth/admin";
 
 export const runtime = "nodejs";
 
@@ -12,6 +13,18 @@ export async function POST(
   context: { params: Promise<{ id: string }> },
 ) {
   try {
+    const admin = await getCurrentAdmin();
+    if (!admin) {
+      return NextResponse.json(
+        {
+          error: "Forbidden",
+          message: "An active admin account is required to publish listings",
+          statusCode: 403,
+        },
+        { status: 403 },
+      );
+    }
+
     const { id } = await context.params;
     if (!id?.trim()) {
       return NextResponse.json(
@@ -33,14 +46,17 @@ export async function POST(
     );
   } catch (error) {
     console.error("[POST /api/listings/[id]/activate]", error);
+    const message =
+      error instanceof Error ? error.message : "Failed to activate listing";
+    const isAuditBlock =
+      message.includes("audit") || message.includes("pending-review");
     return NextResponse.json(
       {
-        error: "InternalServerError",
-        message:
-          error instanceof Error ? error.message : "Failed to activate listing",
-        statusCode: 500,
+        error: isAuditBlock ? "AuditRequired" : "InternalServerError",
+        message,
+        statusCode: isAuditBlock ? 422 : 500,
       },
-      { status: 500 },
+      { status: isAuditBlock ? 422 : 500 },
     );
   }
 }

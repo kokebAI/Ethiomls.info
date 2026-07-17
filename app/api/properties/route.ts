@@ -5,6 +5,7 @@ import {
   evaluateIsUnfinished,
 } from "@/lib/compliance/escrow";
 import { evaluateForeignerEligibility } from "@/lib/compliance/foreignInvestor";
+import { getLiveNbeUsdEtbRate } from "@/lib/compliance/nbeRate";
 import { prisma } from "@/lib/db/prisma";
 import {
   DataCompletenessError,
@@ -111,11 +112,15 @@ export async function POST(request: NextRequest) {
       constructionPermitVerified: input.constructionPermitVerified,
     });
 
-    const foreignEval = evaluateForeignerEligibility({
-      listingType: input.listingType,
-      price: input.price,
-      currency: input.currency,
-    });
+    const liveNbeRate = await getLiveNbeUsdEtbRate();
+    const foreignEval = evaluateForeignerEligibility(
+      {
+        listingType: input.listingType,
+        price: input.price,
+        currency: input.currency,
+      },
+      liveNbeRate,
+    );
 
     const subCity = await prisma.subCity.findUnique({
       where: { code: input.subCity },
@@ -144,9 +149,9 @@ export async function POST(request: NextRequest) {
       incomingOwnerId: input.ownerId,
     });
 
-    const status = collision.collided
-      ? ListingStatus.PENDING_REVIEW
-      : ListingStatus.DRAFT;
+    // Every submission enters the admin audit queue. No seller, importer, or
+    // collision-free payload can self-publish or bypass client-protection review.
+    const status = ListingStatus.PENDING_REVIEW;
 
     const listing = await prisma.$transaction(async (tx) => {
       const created = await tx.listing.create({

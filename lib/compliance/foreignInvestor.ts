@@ -29,8 +29,9 @@ export type ForeignEligibilityResult = {
  */
 export function evaluateForeignerEligibility(
   input: ForeignEligibilityInput,
+  rateOverride?: NbeDayRate,
 ): ForeignEligibilityResult {
-  const nbeRate = getNbeUsdEtbDayRate();
+  const nbeRate = rateOverride ?? getNbeUsdEtbDayRate();
   const priceUsdEquivalent = toUsdEquivalent(
     input.price,
     input.currency,

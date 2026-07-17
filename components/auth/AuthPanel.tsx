@@ -9,12 +9,31 @@ type AuthMode = "login" | "register";
 
 type AuthPanelProps = {
   initialError?: string | null;
+  initialMode?: AuthMode;
 };
 
-export function AuthPanel({ initialError }: AuthPanelProps) {
+/** Seeded local personas — tap to fill the phone field, then request OTP. */
+const DEMO_ACCOUNTS = [
+  { roleKey: "auth.demo.admin", phone: "0911000001", e164: "+251911000001" },
+  { roleKey: "auth.demo.buyer", phone: "0911000002", e164: "+251911000002" },
+  { roleKey: "auth.demo.seller", phone: "0911000003", e164: "+251911000003" },
+  { roleKey: "auth.demo.delala", phone: "0911000004", e164: "+251911000004" },
+  {
+    roleKey: "auth.demo.developer",
+    phone: "0911000005",
+    e164: "+251911000005",
+  },
+  {
+    roleKey: "auth.demo.realestate",
+    phone: "0911000006",
+    e164: "+251911000006",
+  },
+] as const;
+
+export function AuthPanel({ initialError, initialMode }: AuthPanelProps) {
   const { locale, t } = useTranslation();
   const router = useRouter();
-  const [mode, setMode] = useState<AuthMode>("login");
+  const [mode, setMode] = useState<AuthMode>(initialMode ?? "login");
   const [phone, setPhone] = useState("");
   const [fullName, setFullName] = useState("");
   const [code, setCode] = useState("");
@@ -23,6 +42,17 @@ export function AuthPanel({ initialError }: AuthPanelProps) {
   const [error, setError] = useState<string | null>(initialError ?? null);
   const [hint, setHint] = useState<string | null>(null);
   const [debugCode, setDebugCode] = useState<string | null>(null);
+
+  function selectDemo(account: (typeof DEMO_ACCOUNTS)[number]) {
+    setMode("login");
+    setStep("phone");
+    setPhone(account.phone);
+    setFullName("");
+    setCode("");
+    setError(null);
+    setHint(t("auth.demo.filled"));
+    setDebugCode(null);
+  }
 
   async function requestOtp() {
     setBusy(true);
@@ -39,7 +69,7 @@ export function AuthPanel({ initialError }: AuthPanelProps) {
           locale,
         }),
       });
-      const data = (await res.json()) as {
+      const data = (await res.json().catch(() => ({}))) as {
         message?: string;
         debugCode?: string;
         provider?: string;
@@ -66,7 +96,7 @@ export function AuthPanel({ initialError }: AuthPanelProps) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ phone, code, mode }),
       });
-      const data = (await res.json()) as { message?: string };
+      const data = (await res.json().catch(() => ({}))) as { message?: string };
       if (!res.ok) throw new Error(data.message ?? t("auth.verifyFailed"));
       router.push(`/${locale}`);
       router.refresh();
@@ -146,7 +176,11 @@ export function AuthPanel({ initialError }: AuthPanelProps) {
             className="rounded-full bg-brand-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-brand-700 disabled:opacity-45"
             onClick={() => void requestOtp()}
           >
-            {busy ? t("common.loading") : t("auth.sendCode")}
+            {busy
+              ? t("common.loading")
+              : mode === "login"
+                ? t("auth.loginCta")
+                : t("auth.registerCta")}
           </button>
         </div>
       ) : (
@@ -203,6 +237,38 @@ export function AuthPanel({ initialError }: AuthPanelProps) {
         <p className="text-sm text-rose-300" role="alert">
           {error}
         </p>
+      ) : null}
+
+      {step === "phone" ? (
+        <aside
+          className="rounded-2xl border border-amber-400/30 bg-amber-500/10 p-4"
+          aria-label={t("auth.demo.title")}
+        >
+          <p className="text-xs font-bold uppercase tracking-[0.14em] text-amber-300">
+            {t("auth.demo.title")}
+          </p>
+          <p className="mt-1 text-xs leading-relaxed text-slate-300">
+            {t("auth.demo.lede")}
+          </p>
+          <ul className="mt-3 grid gap-2">
+            {DEMO_ACCOUNTS.map((account) => (
+              <li key={account.e164}>
+                <button
+                  type="button"
+                  className="flex w-full items-center justify-between gap-3 rounded-xl border border-white/10 bg-white/5 px-3 py-2.5 text-left transition hover:border-amber-400/40 hover:bg-white/10"
+                  onClick={() => selectDemo(account)}
+                >
+                  <span className="text-sm font-semibold text-white">
+                    {t(account.roleKey)}
+                  </span>
+                  <span className="font-mono text-xs text-amber-200">
+                    {account.phone}
+                  </span>
+                </button>
+              </li>
+            ))}
+          </ul>
+        </aside>
       ) : null}
 
       <p className="text-center text-xs text-slate-400">

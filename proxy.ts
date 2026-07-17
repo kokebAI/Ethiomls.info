@@ -4,30 +4,17 @@ import { defaultLocale, isLocale, locales, type Locale } from "@/lib/i18n/config
 const PUBLIC_FILE = /\.[^/]+$/;
 const LOCALE_COOKIE = "NEXT_LOCALE";
 
+/**
+ * Amharic-first: every visitor lands on the default locale (am) unless they
+ * explicitly chose a language before (persisted in the NEXT_LOCALE cookie).
+ * Accept-Language is intentionally ignored so English-configured browsers
+ * still get Amharic on first visit.
+ */
 function negotiateLocale(request: NextRequest): Locale {
   const cookieLocale = request.cookies.get(LOCALE_COOKIE)?.value;
   if (cookieLocale && isLocale(cookieLocale)) {
     return cookieLocale;
   }
-
-  const header = request.headers.get("accept-language");
-  if (!header) return defaultLocale;
-
-  const preferred = header
-    .split(",")
-    .map((part) => {
-      const [tag, qValue] = part.trim().split(";q=");
-      const lang = tag?.split("-")[0]?.toLowerCase() ?? "";
-      const q = qValue ? Number(qValue) : 1;
-      return { lang, q: Number.isFinite(q) ? q : 1 };
-    })
-    .filter((entry) => entry.lang)
-    .sort((a, b) => b.q - a.q);
-
-  for (const entry of preferred) {
-    if (isLocale(entry.lang)) return entry.lang;
-  }
-
   return defaultLocale;
 }
 

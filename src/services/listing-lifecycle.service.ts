@@ -21,6 +21,26 @@ export async function activateListing(listingId: string): Promise<{
   status: ListingStatus;
   broadcastJobId: string;
 }> {
+  const audited = await prisma.listing.findUnique({
+    where: { id: listingId },
+    select: {
+      id: true,
+      status: true,
+      adminAuditApprovedAt: true,
+      adminAuditedById: true,
+    },
+  });
+
+  if (!audited) {
+    throw new Error("Listing not found");
+  }
+  if (!audited.adminAuditApprovedAt || !audited.adminAuditedById) {
+    throw new Error("Admin audit approval is required before publication");
+  }
+  if (audited.status !== ListingStatus.PENDING_REVIEW) {
+    throw new Error("Only a pending-review listing can be published");
+  }
+
   const listing = await prisma.listing.update({
     where: { id: listingId },
     data: {
