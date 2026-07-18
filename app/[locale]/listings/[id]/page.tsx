@@ -295,7 +295,6 @@ export default async function ListingDetailPage({
             approvedReady: auditCopy.approvedReady,
             statusLabel: auditCopy.statusLabel,
             checks: auditCopy.checks,
-            enrich: auditCopy.enrich,
             attach: {
               title: auditCopy.attach?.title ?? "Attach to role",
               lede:
