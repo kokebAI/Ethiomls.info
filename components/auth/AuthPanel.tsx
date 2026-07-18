@@ -10,7 +10,7 @@ import {
 } from "@/lib/auth/signup-roles";
 import { hubPathForRole } from "@/lib/roles/hubs";
 
-type AuthMode = "login" | "register";
+type AuthMode = "login" | "register" | "reset";
 
 type AuthPanelProps = {
   initialError?: string | null;
@@ -30,7 +30,11 @@ export function AuthPanel({
   const { locale, t } = useTranslation();
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [mode, setMode] = useState<AuthMode>(initialMode ?? "login");
+  const [mode, setMode] = useState<AuthMode>(
+    initialMode === "register" || initialMode === "reset"
+      ? initialMode
+      : "login",
+  );
   const [phone, setPhone] = useState("");
   const [fullName, setFullName] = useState("");
   const [password, setPassword] = useState("");
@@ -46,14 +50,19 @@ export function AuthPanel({
   const [debugCode, setDebugCode] = useState<string | null>(null);
 
   const next = searchParams.get("next");
-  const isDeveloperSignup = mode === "register" && role === "CORPORATE_DEVELOPER";
+  const isDeveloperSignup =
+    mode === "register" && role === "CORPORATE_DEVELOPER";
   const showGoogle =
     googleEnabled &&
     step === "credentials" &&
-    (mode === "login" || role === "BUYER_RENTER");
+    (mode === "login" ||
+      (mode === "register" && role === "BUYER_RENTER"));
 
   function googleHref() {
-    const params = new URLSearchParams({ locale, mode });
+    const params = new URLSearchParams({
+      locale,
+      mode: mode === "register" ? "register" : "login",
+    });
     if (next?.startsWith("/")) params.set("next", next);
     return `/api/auth/google?${params.toString()}`;
   }
@@ -65,6 +74,17 @@ export function AuthPanel({
         : `/${locale}${hubPathForRole(roleName)}`;
     router.push(destination);
     router.refresh();
+  }
+
+  function switchMode(nextMode: AuthMode) {
+    setMode(nextMode);
+    setStep("credentials");
+    setError(null);
+    setHint(null);
+    setDebugCode(null);
+    setCode("");
+    setPassword("");
+    setPasswordConfirm("");
   }
 
   async function loginWithPassword() {
@@ -169,17 +189,73 @@ export function AuthPanel({
     }
   }
 
+  async function resetRequestOtp() {
+    setBusy(true);
+    setError(null);
+    setHint(null);
+    setDebugCode(null);
+    try {
+      if (password.trim().length < 8) {
+        throw new Error(t("auth.password.tooShort"));
+      }
+      if (password !== passwordConfirm) {
+        throw new Error(t("auth.password.mismatch"));
+      }
+
+      const res = await fetch("/api/auth/password/reset/request", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ phone, locale }),
+      });
+      const data = (await res.json().catch(() => ({}))) as {
+        message?: string;
+        debugCode?: string;
+        provider?: string;
+      };
+      if (!res.ok) throw new Error(data.message ?? t("auth.smsFailed"));
+      setStep("code");
+      setHint(
+        data.provider === "mock"
+          ? t("auth.mockHint")
+          : t("auth.reset.codeSent"),
+      );
+      if (data.debugCode) setDebugCode(data.debugCode);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : t("auth.smsFailed"));
+    } finally {
+      setBusy(false);
+    }
+  }
+
   async function verifyOtp() {
     setBusy(true);
     setError(null);
     try {
+      if (mode === "reset") {
+        if (password.trim().length < 8) {
+          throw new Error(t("auth.password.tooShort"));
+        }
+        const res = await fetch("/api/auth/password/reset/confirm", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ phone, code, password }),
+        });
+        const data = (await res.json().catch(() => ({}))) as {
+          message?: string;
+          user?: { role?: string };
+        };
+        if (!res.ok) throw new Error(data.message ?? t("auth.verifyFailed"));
+        goToHub(data.user?.role);
+        return;
+      }
+
       const res = await fetch("/api/auth/sms/verify", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           phone,
           code,
-          mode,
+          mode: mode === "register" ? "register" : "login",
           password: mode === "register" ? password : undefined,
         }),
       });
@@ -196,39 +272,70 @@ export function AuthPanel({
     }
   }
 
+  function credentialsDisabled() {
+    if (busy || phone.trim().length < 9) return true;
+    if (mode === "login") return password.trim().length < 8;
+    if (mode === "reset") {
+      return (
+        password.trim().length < 8 || password !== passwordConfirm
+      );
+    }
+    return (
+      password.trim().length < 8 ||
+      fullName.trim().length < 2 ||
+      !role ||
+      password !== passwordConfirm ||
+      (role === "CORPORATE_DEVELOPER" &&
+        (tradeName.trim().length < 2 ||
+          registrationNumber.trim().length < 2))
+    );
+  }
+
   return (
     <div className="grid w-full gap-5">
-      <div
-        className="inline-flex w-fit gap-1 rounded-full bg-slate-100/80 p-1"
-        role="tablist"
-      >
-        {(["login", "register"] as const).map((tab) => (
+      {mode !== "reset" ? (
+        <div
+          className="inline-flex w-fit gap-1 rounded-full bg-slate-100/80 p-1"
+          role="tablist"
+        >
+          {(["login", "register"] as const).map((tab) => (
+            <button
+              key={tab}
+              type="button"
+              role="tab"
+              aria-selected={mode === tab}
+              className={`rounded-full px-4 py-1.5 text-sm font-semibold transition ${
+                mode === tab
+                  ? "bg-slate-deep text-white"
+                  : "text-ink-muted hover:text-slate-deep"
+              }`}
+              onClick={() => switchMode(tab)}
+            >
+              {tab === "login" ? t("auth.loginTab") : t("auth.registerTab")}
+            </button>
+          ))}
+        </div>
+      ) : (
+        <div className="flex items-center justify-between gap-3">
+          <p className="text-sm font-semibold text-white">
+            {t("auth.reset.title")}
+          </p>
           <button
-            key={tab}
             type="button"
-            role="tab"
-            aria-selected={mode === tab}
-            className={`rounded-full px-4 py-1.5 text-sm font-semibold transition ${
-              mode === tab
-                ? "bg-slate-deep text-white"
-                : "text-ink-muted hover:text-slate-deep"
-            }`}
-            onClick={() => {
-              setMode(tab);
-              setStep("credentials");
-              setError(null);
-              setHint(null);
-              setDebugCode(null);
-              setCode("");
-            }}
+            className="text-sm font-semibold text-brand-200 underline-offset-2 hover:underline"
+            onClick={() => switchMode("login")}
           >
-            {tab === "login" ? t("auth.loginTab") : t("auth.registerTab")}
+            {t("auth.reset.backToLogin")}
           </button>
-        ))}
-      </div>
+        </div>
+      )}
 
       {step === "credentials" ? (
         <div className="grid gap-3">
+          {mode === "reset" ? (
+            <p className="text-sm text-slate-300">{t("auth.reset.lede")}</p>
+          ) : null}
+
           {mode === "register" ? (
             <>
               <label className="grid gap-1.5">
@@ -333,7 +440,9 @@ export function AuthPanel({
 
           <label className="grid gap-1.5">
             <span className="text-sm font-medium text-slate-200">
-              {t("auth.password.label")}
+              {mode === "reset"
+                ? t("auth.reset.newPassword")
+                : t("auth.password.label")}
             </span>
             <input
               type="password"
@@ -346,11 +455,13 @@ export function AuthPanel({
               placeholder={t("auth.password.placeholder")}
             />
             <span className="text-xs text-slate-400">
-              {t("auth.password.hint")}
+              {mode === "reset"
+                ? t("auth.reset.passwordHint")
+                : t("auth.password.hint")}
             </span>
           </label>
 
-          {mode === "register" ? (
+          {mode === "register" || mode === "reset" ? (
             <label className="grid gap-1.5">
               <span className="text-sm font-medium text-slate-200">
                 {t("auth.password.confirm")}
@@ -368,29 +479,32 @@ export function AuthPanel({
 
           <button
             type="button"
-            disabled={
-              busy ||
-              phone.trim().length < 9 ||
-              password.trim().length < 8 ||
-              (mode === "register" &&
-                (fullName.trim().length < 2 ||
-                  !role ||
-                  password !== passwordConfirm ||
-                  (role === "CORPORATE_DEVELOPER" &&
-                    (tradeName.trim().length < 2 ||
-                      registrationNumber.trim().length < 2))))
-            }
+            disabled={credentialsDisabled()}
             className="rounded-full bg-brand-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-brand-700 disabled:opacity-45"
-            onClick={() =>
-              void (mode === "login" ? loginWithPassword() : registerRequestOtp())
-            }
+            onClick={() => {
+              if (mode === "login") void loginWithPassword();
+              else if (mode === "register") void registerRequestOtp();
+              else void resetRequestOtp();
+            }}
           >
             {busy
               ? t("common.loading")
               : mode === "login"
                 ? t("auth.loginCta")
-                : t("auth.registerCta")}
+                : mode === "register"
+                  ? t("auth.registerCta")
+                  : t("auth.reset.sendCode")}
           </button>
+
+          {mode === "login" ? (
+            <button
+              type="button"
+              className="text-center text-sm font-semibold text-brand-200 underline-offset-2 hover:underline"
+              onClick={() => switchMode("reset")}
+            >
+              {t("auth.reset.link")}
+            </button>
+          ) : null}
 
           {showGoogle ? (
             <>
@@ -413,7 +527,9 @@ export function AuthPanel({
           <p className="text-sm text-slate-300">
             {mode === "login"
               ? t("auth.newDeviceHint")
-              : t("auth.codeSent")}
+              : mode === "reset"
+                ? t("auth.reset.codeSent")
+                : t("auth.codeSent")}
           </p>
           <label className="grid gap-1.5">
             <span className="text-sm font-medium text-slate-200">
@@ -442,7 +558,11 @@ export function AuthPanel({
               className="rounded-full bg-brand-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-brand-700 disabled:opacity-45"
               onClick={() => void verifyOtp()}
             >
-              {busy ? t("common.loading") : t("auth.verify")}
+              {busy
+                ? t("common.loading")
+                : mode === "reset"
+                  ? t("auth.reset.confirm")
+                  : t("auth.verify")}
             </button>
             <button
               type="button"

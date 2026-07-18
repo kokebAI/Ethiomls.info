@@ -312,6 +312,17 @@
       "tooShort": "Jechi iccitii arfiilee 8 yoo xiqqaate qabaachuu qaba.",
       "mismatch": "Jechoonni iccitii wal hin fakkaatan."
     },
+    "reset": {
+      "link": "Jecha iccitii dagattee?",
+      "title": "Jecha iccitii haaromsii",
+      "lede": "Lakkoofsa bilbilaa fi jecha iccitii haaraa galchi. Koodii SMS tiin mirkaneessina.",
+      "newPassword": "Jecha iccitii haaraa",
+      "passwordHint": "Jecha iccitii haaraa filadhu (yoo xiqqaate 8).",
+      "sendCode": "Koodii haaromsuu ergi",
+      "codeSent": "Koodii haaromsuu SMS tiin erginneerra. Jecha iccitii haaraa olkaa'uuf galchi.",
+      "confirm": "Jecha iccitii haaraa olkaa'i",
+      "backToLogin": "Gara seenutti deebi'i"
+    },
     "logout": "Ba'i",
     "backHome": "Gara fuula duraatti",
     "role": {
@@ -350,7 +361,18 @@
     "emailHint": "Galmaa'uu hin barbaachisu — qunnamtii fi dhiyeessii tiif dabali.",
     "save": "Profile olkaa'i",
     "saved": "Profile haaromfameera.",
-    "saveFailed": "Profile olkaa'uu hin dandeenye."
+    "saveFailed": "Profile olkaa'uu hin dandeenye.",
+    "password": {
+      "title": "Jecha iccitii jijjiiri",
+      "lede": "Jecha iccitii ammaa galchi, sana booda haaraa filadhu.",
+      "ledeSet": "Bilbilaatiin seenuuf jecha iccitii qopheessi.",
+      "current": "Jecha iccitii ammaa",
+      "currentRequired": "Jecha iccitii ammaa galchi.",
+      "next": "Jecha iccitii haaraa",
+      "save": "Jecha iccitii haaromsii",
+      "saved": "Jecha iccitii haaromfameera.",
+      "failed": "Jecha iccitii haaromsuu hin dandeenye."
+    }
   },
   "dashboard": {
     "eyebrow": "Teessoo hojii",

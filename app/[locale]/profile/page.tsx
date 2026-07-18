@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
+import { ChangePasswordForm } from "@/components/auth/ChangePasswordForm";
 import { LogoutButton } from "@/components/auth/LogoutButton";
 import { ProfileForm } from "@/components/auth/ProfileForm";
+import { isPlaceholderPasswordHash } from "@/lib/auth/password";
 import { getSession } from "@/lib/auth/session";
 import { roleLabelKey } from "@/lib/auth/signup-roles";
 import { prisma } from "@/lib/db/prisma";
@@ -37,7 +39,13 @@ export default async function ProfilePage({
 
   const user = await prisma.user.findUnique({
     where: { id: session.userId },
-    select: { fullName: true, email: true, phone: true, role: true },
+    select: {
+      fullName: true,
+      email: true,
+      phone: true,
+      role: true,
+      passwordHash: true,
+    },
   });
 
   if (!user) {
@@ -45,6 +53,7 @@ export default async function ProfilePage({
   }
 
   const roleLabel = translate(dictionary, roleLabelKey(user.role));
+  const requiresCurrentPassword = !isPlaceholderPasswordHash(user.passwordHash);
 
   return (
     <div className="mx-auto flex max-w-2xl flex-col gap-6">
@@ -71,6 +80,12 @@ export default async function ProfilePage({
           initialEmail={user.email}
           phone={user.phone}
           roleLabel={roleLabel}
+        />
+      </section>
+
+      <section className="rounded-2xl border border-slate-200/90 bg-white/90 p-5 shadow-[var(--shadow-card)] sm:p-6">
+        <ChangePasswordForm
+          requiresCurrentPassword={requiresCurrentPassword}
         />
       </section>
     </div>

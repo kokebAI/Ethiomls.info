@@ -209,6 +209,17 @@
       "tooShort": "Password must be at least 8 characters.",
       "mismatch": "Passwords do not match."
     },
+    "reset": {
+      "link": "Forgot password?",
+      "title": "Reset password",
+      "lede": "Enter your phone and a new password. We will SMS a code to confirm.",
+      "newPassword": "New password",
+      "passwordHint": "Choose a new password (min. 8 characters).",
+      "sendCode": "Send reset code",
+      "codeSent": "We sent a reset code by SMS. Enter it to save your new password.",
+      "confirm": "Save new password",
+      "backToLogin": "Back to sign in"
+    },
     "logout": "Sign out",
     "backHome": "Back to home",
     "role": {
@@ -393,7 +404,18 @@
     "emailHint": "Not required for signup — add it so we can reach you about listings and offers.",
     "save": "Save profile",
     "saved": "Profile updated.",
-    "saveFailed": "Could not save profile."
+    "saveFailed": "Could not save profile.",
+    "password": {
+      "title": "Change password",
+      "lede": "Enter your current password, then choose a new one.",
+      "ledeSet": "Set a password so you can also sign in with your phone.",
+      "current": "Current password",
+      "currentRequired": "Enter your current password.",
+      "next": "New password",
+      "save": "Update password",
+      "saved": "Password updated.",
+      "failed": "Could not update password."
+    }
   },
   "listingDetail": {
     "back": "Back to listings",
