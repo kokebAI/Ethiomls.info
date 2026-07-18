@@ -83,8 +83,10 @@ export function ProjectBuildingDetail({
         </p>
       )}
 
-      <section className="overflow-hidden rounded-2xl border border-slate-200/90 bg-white p-4 shadow-[var(--shadow-card)] sm:p-6">
-        <BuildingScrollView building={building} onUnitSelect={setSelected} />
+      <section className="overflow-hidden rounded-2xl border border-slate-800/50 bg-slate-950 p-1 shadow-[0_28px_80px_rgba(8,18,36,0.28)] sm:p-1.5">
+        <div className="rounded-[0.95rem] bg-white p-4 sm:p-6">
+          <BuildingScrollView building={building} onUnitSelect={setSelected} />
+        </div>
       </section>
 
       {selected ? (

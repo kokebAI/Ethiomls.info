@@ -161,6 +161,8 @@
   },
   "building": {
     "eyebrow": "ናይ ህንጻ ክምር",
+    "showreelEyebrow": "ናይ ኦፍ-ፕላን ሾውሪል",
+    "showreelHint": "ንምሽካርካር ስሓቡ · ደረጃ ጠውቁ",
     "skeletonLabel": "ብዙሕ ደረጃ ህንጻ ኣጽም",
     "scrollHint": "እቲ ክምር ስክሮል ግበሩ ወይ ደረጃ ጠውቁ",
     "floorLabel": "ደረጃ {level}",

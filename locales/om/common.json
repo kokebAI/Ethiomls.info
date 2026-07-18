@@ -161,6 +161,8 @@
   },
   "building": {
     "eyebrow": "Ijaarsa jilli",
+    "showreelEyebrow": "Off-plan showreel",
+    "showreelHint": "Orbit gochuuf harkisi · floor tuqi",
     "skeletonLabel": "Qaama ijaarsa floor hedduu",
     "scrollHint": "Jilli scroll godhi ykn floor tuqi",
     "floorLabel": "Tajaajila {level}",

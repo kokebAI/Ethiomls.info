@@ -161,6 +161,8 @@
   },
   "building": {
     "eyebrow": "የህንፃ ክምር",
+    "showreelEyebrow": "የኦፍ-ፕላን ሾውሪል",
+    "showreelHint": "ለማሽከርከር ይጎትቱ · ወለል ይንኩ",
     "skeletonLabel": "የብዙ ወለል ህንፃ አጽም",
     "scrollHint": "ክምሩን ያሸብልሉ ወይም ወለል ይንኩ",
     "floorLabel": "ወለል {level}",

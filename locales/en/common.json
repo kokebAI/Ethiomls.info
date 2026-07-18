@@ -333,6 +333,8 @@
   },
   "building": {
     "eyebrow": "Building stack",
+    "showreelEyebrow": "Off-plan showreel",
+    "showreelHint": "Drag to orbit · click a floor",
     "skeletonLabel": "Multi-floor building skeleton",
     "scrollHint": "Scroll the stack or tap a floor",
     "floorLabel": "Floor {level}",
