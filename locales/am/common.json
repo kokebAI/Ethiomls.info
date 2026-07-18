@@ -328,6 +328,15 @@
       "brokerHint": "የደንበኛ ንብረት ያስተዳድሩ።",
       "developer": "ገንቢ",
       "developerHint": "ፕሮጀክቶችን እና ክፍሎችን ያትሙ።"
+    },
+    "developer": {
+      "hint": "እንደ ገንቢ ለመመዝገብ የንግድ ዝርዝሮች ያስፈልጋሉ።",
+      "tradeName": "የንግድ ስም",
+      "tradeNamePlaceholder": "የኩባንያ / ፕሮጀክት የንግድ ስም",
+      "tradeNameRequired": "የኩባንያዎን የንግድ ስም ያስገቡ።",
+      "registrationNumber": "የንግድ ምዝገባ ቁጥር",
+      "registrationPlaceholder": "ለምሳሌ ET-RE-…",
+      "registrationRequired": "የንግድ ምዝገባ ቁጥርዎን ያስገቡ።"
     }
   },
   "profile": {

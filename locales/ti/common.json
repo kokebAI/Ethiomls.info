@@ -328,6 +328,15 @@
       "brokerHint": "ንብረት ዓማዊል ኣመሓድር።",
       "developer": "ኣራጋጺ",
       "developerHint": "ፕሮጀክታትን ኣሃዱታትን ኣሕትም።"
+    },
+    "developer": {
+      "hint": "ከም ኣራጋጺ ንምምዝጋብ ናይ ንግዲ ዝርዝራት የድልዩ።",
+      "tradeName": "ናይ ንግዲ ስም",
+      "tradeNamePlaceholder": "ናይ ትካል / ፕሮጀክት ንግዲ ስም",
+      "tradeNameRequired": "ናይ ትካልካ ንግዲ ስም ኣእቱ።",
+      "registrationNumber": "ናይ ንግዲ ምዝገባ ቁጽሪ",
+      "registrationPlaceholder": "ኣብነት ET-RE-…",
+      "registrationRequired": "ናይ ንግዲ ምዝገባ ቁጽርኻ ኣእቱ።"
     }
   },
   "profile": {

@@ -328,6 +328,15 @@
       "brokerHint": "Qabeenya maamilaa bulchi.",
       "developer": "Ijaartuu",
       "developerHint": "Pirojektootaafi yunitoota maxxansi."
+    },
+    "developer": {
+      "hint": "Akka ijaartuu galmaa'uuf odeeffannoon daldalaa barbaachisaa dha.",
+      "tradeName": "Maqaa daldalaa",
+      "tradeNamePlaceholder": "Maqaa daldalaa dhaabbataa / pirojektii",
+      "tradeNameRequired": "Maqaa daldalaa dhaabbataa kee galchi.",
+      "registrationNumber": "Lakkoofsa galmee daldalaa",
+      "registrationPlaceholder": "fkn. ET-RE-…",
+      "registrationRequired": "Lakkoofsa galmee daldalaa kee galchi."
     }
   },
   "profile": {

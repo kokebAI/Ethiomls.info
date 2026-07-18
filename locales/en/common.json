@@ -225,6 +225,15 @@
       "brokerHint": "List and manage client inventory.",
       "developer": "Developer",
       "developerHint": "Publish projects and off-plan units."
+    },
+    "developer": {
+      "hint": "Business details are required to register as a developer.",
+      "tradeName": "Trade name",
+      "tradeNamePlaceholder": "Company / project trade name",
+      "tradeNameRequired": "Enter your company trade name.",
+      "registrationNumber": "Business registration number",
+      "registrationPlaceholder": "e.g. ET-RE-…",
+      "registrationRequired": "Enter your business registration number."
     }
   },
   "rolesIndex": {

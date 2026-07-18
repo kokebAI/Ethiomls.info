@@ -36,6 +36,8 @@ export function AuthPanel({
   const [password, setPassword] = useState("");
   const [passwordConfirm, setPasswordConfirm] = useState("");
   const [role, setRole] = useState<SignupRole | "">("");
+  const [tradeName, setTradeName] = useState("");
+  const [registrationNumber, setRegistrationNumber] = useState("");
   const [code, setCode] = useState("");
   const [step, setStep] = useState<"credentials" | "code">("credentials");
   const [busy, setBusy] = useState(false);
@@ -44,6 +46,7 @@ export function AuthPanel({
   const [debugCode, setDebugCode] = useState<string | null>(null);
 
   const next = searchParams.get("next");
+  const isDeveloperSignup = mode === "register" && role === "CORPORATE_DEVELOPER";
   const showGoogle =
     googleEnabled &&
     step === "credentials" &&
@@ -122,6 +125,14 @@ export function AuthPanel({
       if (password !== passwordConfirm) {
         throw new Error(t("auth.password.mismatch"));
       }
+      if (role === "CORPORATE_DEVELOPER") {
+        if (tradeName.trim().length < 2) {
+          throw new Error(t("auth.developer.tradeNameRequired"));
+        }
+        if (registrationNumber.trim().length < 2) {
+          throw new Error(t("auth.developer.registrationRequired"));
+        }
+      }
 
       const res = await fetch("/api/auth/sms/request", {
         method: "POST",
@@ -132,6 +143,12 @@ export function AuthPanel({
           role,
           mode: "register",
           locale,
+          ...(role === "CORPORATE_DEVELOPER"
+            ? {
+                tradeName: tradeName.trim(),
+                registrationNumber: registrationNumber.trim(),
+              }
+            : {}),
         }),
       });
       const data = (await res.json().catch(() => ({}))) as {
@@ -262,6 +279,40 @@ export function AuthPanel({
                   })}
                 </div>
               </fieldset>
+
+              {isDeveloperSignup ? (
+                <div className="grid gap-3 rounded-xl border border-white/15 bg-white/5 p-3">
+                  <p className="text-xs text-slate-300">
+                    {t("auth.developer.hint")}
+                  </p>
+                  <label className="grid gap-1.5">
+                    <span className="text-sm font-medium text-slate-200">
+                      {t("auth.developer.tradeName")}
+                    </span>
+                    <input
+                      className={fieldClass}
+                      value={tradeName}
+                      onChange={(e) => setTradeName(e.target.value)}
+                      autoComplete="organization"
+                      placeholder={t("auth.developer.tradeNamePlaceholder")}
+                    />
+                  </label>
+                  <label className="grid gap-1.5">
+                    <span className="text-sm font-medium text-slate-200">
+                      {t("auth.developer.registrationNumber")}
+                    </span>
+                    <input
+                      className={fieldClass}
+                      value={registrationNumber}
+                      onChange={(e) => setRegistrationNumber(e.target.value)}
+                      autoComplete="off"
+                      placeholder={t(
+                        "auth.developer.registrationPlaceholder",
+                      )}
+                    />
+                  </label>
+                </div>
+              ) : null}
             </>
           ) : null}
 
@@ -324,7 +375,10 @@ export function AuthPanel({
               (mode === "register" &&
                 (fullName.trim().length < 2 ||
                   !role ||
-                  password !== passwordConfirm))
+                  password !== passwordConfirm ||
+                  (role === "CORPORATE_DEVELOPER" &&
+                    (tradeName.trim().length < 2 ||
+                      registrationNumber.trim().length < 2))))
             }
             className="rounded-full bg-brand-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-brand-700 disabled:opacity-45"
             onClick={() =>
