@@ -1,3 +1,4 @@
+import { Type } from "@google/genai";
 import {
   createGeminiClient,
   GEMINI_MODEL_CANDIDATES,
@@ -23,6 +24,25 @@ export type SearchAssistResult = {
 const CLUSTER_IDS = SUB_CITY_CLUSTERS.map((c) => c.id);
 const INTENT_IDS = ["buy", "rent", "off_plan"] as const;
 
+const DEFAULT_BUDGET_ETB: Record<SearchIntent, number> = {
+  rent: 25_000,
+  buy: 5_000_000,
+  off_plan: 8_000_000,
+};
+
+const responseSchema = {
+  type: Type.OBJECT,
+  properties: {
+    intent: { type: Type.STRING },
+    clusterId: { type: Type.STRING },
+    budgetAmount: { type: Type.NUMBER },
+    budgetCurrency: { type: Type.STRING },
+    minCompletionPercent: { type: Type.NUMBER },
+    summary: { type: Type.STRING },
+  },
+  required: ["intent", "clusterId", "budgetAmount", "budgetCurrency", "summary"],
+};
+
 function buildPrompt(query: string, locale: string): string {
   const clusterGuide = SUB_CITY_CLUSTERS.map(
     (c) => `- ${c.id}: ${c.subCities.join(", ")}`,
@@ -37,22 +57,13 @@ Allowed intent values: buy, rent, off_plan
 Allowed clusterId values:
 ${clusterGuide}
 
-Rules for money:
-- budgetCurrency must be exactly "ETB" or "USD" (default ETB if unclear).
-- budgetAmount must be a JSON number (not a string). Use full digits, e.g. 5000000 not "5 million".
-- Rent budgets are monthly; buy/off_plan are purchase targets.
+Money rules (critical):
+- budgetCurrency must be exactly "ETB" or "USD". Prefer ETB.
+- budgetAmount must be a JSON number (digits only). Examples: 25000, 5000000.
+- Never return null/empty for budgetAmount. If the user did not state a budget, estimate a typical Addis Ababa figure (rent ~25000 ETB/month, buy ~5000000 ETB, off_plan ~8000000 ETB).
+- Convert phrases like "5 million" to 5000000.
 
-For off_plan only, include minCompletionPercent as 0, 25, 50, 80, or 100 when the user mentions construction progress; otherwise use 0.
-
-Respond with ONLY valid JSON (no markdown), shape:
-{
-  "intent": "buy",
-  "clusterId": "central",
-  "budgetAmount": 5000000,
-  "budgetCurrency": "ETB",
-  "minCompletionPercent": 0,
-  "summary": "one short sentence in the user's language confirming understanding"
-}
+For off_plan, set minCompletionPercent to 0, 25, 50, 80, or 100 when mentioned; otherwise 0.
 
 User request:
 """${query.trim().slice(0, 800)}"""`;
@@ -97,44 +108,84 @@ function coerceClusterId(value: unknown): SubCityClusterId | null {
   return null;
 }
 
-function coerceCurrency(value: unknown): BudgetCurrency {
-  if (typeof value === "string") {
-    const normalized = value.trim().toUpperCase();
-    if (normalized === "USD" || normalized.includes("DOLLAR") || normalized === "$") {
-      return "USD";
-    }
-    if (
-      normalized === "ETB" ||
-      normalized.includes("BIRR") ||
-      normalized.includes("ETHIOP")
-    ) {
-      return "ETB";
-    }
+function coerceCurrency(value: unknown, query?: string): BudgetCurrency {
+  const blob = `${value ?? ""} ${query ?? ""}`.toLowerCase();
+  if (
+    blob.includes("usd") ||
+    blob.includes("dollar") ||
+    blob.includes("$") ||
+    blob.includes("ዶላር")
+  ) {
+    return "USD";
   }
   return "ETB";
 }
 
 /** Parse model money fields that often come back as strings like "5 million". */
-function coerceBudgetAmount(value: unknown): number | null {
+export function coerceBudgetAmount(value: unknown): number | null {
   if (typeof value === "number" && Number.isFinite(value) && value > 0) {
     return value;
   }
+  if (typeof value === "object" && value !== null) {
+    const obj = value as Record<string, unknown>;
+    const nested =
+      coerceBudgetAmount(obj.amount) ??
+      coerceBudgetAmount(obj.value) ??
+      coerceBudgetAmount(obj.budget);
+    if (nested != null) {
+      const unit = String(obj.unit ?? obj.scale ?? "").toLowerCase();
+      if (unit.includes("million") || unit === "m") return nested * 1_000_000;
+      if (unit.includes("thousand") || unit === "k") return nested * 1_000;
+      return nested;
+    }
+  }
   if (typeof value !== "string") return null;
 
-  const raw = value.trim().toLowerCase().replace(/,/g, "");
-  if (!raw) return null;
+  const raw = value
+    .trim()
+    .toLowerCase()
+    .replace(/,/g, "")
+    .replace(/\u00a0/g, " ");
+  if (!raw || raw === "null" || raw === "undefined" || raw === "n/a") {
+    return null;
+  }
 
   const match = raw.match(
-    /(\d+(?:\.\d+)?)\s*(k|m|million|billion|bn|thousand)?/,
+    /(\d+(?:\.\d+)?)\s*(k|m|mn|million|billion|bn|thousand|ሺ|ሚሊየን)?/u,
   );
   if (!match) return null;
   const base = Number(match[1]);
   if (!Number.isFinite(base) || base <= 0) return null;
   const unit = match[2] ?? "";
-  if (unit === "k" || unit === "thousand") return base * 1_000;
-  if (unit === "m" || unit === "million") return base * 1_000_000;
+  if (unit === "k" || unit === "thousand" || unit === "ሺ") return base * 1_000;
+  if (
+    unit === "m" ||
+    unit === "mn" ||
+    unit === "million" ||
+    unit === "ሚሊየን"
+  ) {
+    return base * 1_000_000;
+  }
   if (unit === "billion" || unit === "bn") return base * 1_000_000_000;
   return base;
+}
+
+function inferBudgetFromQuery(
+  query: string,
+  intent: SearchIntent,
+): number | null {
+  const fromText = coerceBudgetAmount(query);
+  if (fromText != null) {
+    // Heuristic: bare "5" in a buy query usually means 5 million ETB.
+    if (fromText < 100 && (intent === "buy" || intent === "off_plan")) {
+      return fromText * 1_000_000;
+    }
+    if (fromText < 1000 && intent === "rent") {
+      return fromText * 1_000;
+    }
+    return fromText;
+  }
+  return null;
 }
 
 function parseJsonObject(text: string): Record<string, unknown> {
@@ -150,27 +201,30 @@ function parseJsonObject(text: string): Record<string, unknown> {
 
 export function normalizeSearchAssist(
   raw: Record<string, unknown>,
+  opts?: { query?: string },
 ): SearchAssistResult {
-  const intent = coerceIntent(raw.intent);
-  if (!intent) {
-    throw new Error("Invalid intent from model");
-  }
+  const query = opts?.query ?? "";
+  const intent =
+    coerceIntent(raw.intent) ??
+    coerceIntent(query) ??
+    ("buy" as SearchIntent);
 
-  const clusterId = coerceClusterId(raw.clusterId);
-  if (!clusterId) {
-    throw new Error("Invalid clusterId from model");
-  }
+  const clusterId =
+    coerceClusterId(raw.clusterId) ??
+    coerceClusterId(query) ??
+    ("central" as SubCityClusterId);
 
   const budgetCurrency = coerceCurrency(
     raw.budgetCurrency ?? raw.currency ?? raw.budget_currency,
+    query,
   );
 
-  const amount = coerceBudgetAmount(
-    raw.budgetAmount ?? raw.budget ?? raw.amount ?? raw.budget_amount,
-  );
-  if (amount == null) {
-    throw new Error("Invalid budgetAmount from model");
-  }
+  const amount =
+    coerceBudgetAmount(
+      raw.budgetAmount ?? raw.budget ?? raw.amount ?? raw.budget_amount,
+    ) ??
+    inferBudgetFromQuery(query, intent) ??
+    DEFAULT_BUDGET_ETB[intent];
 
   const summary =
     typeof raw.summary === "string" && raw.summary.trim()
@@ -211,7 +265,6 @@ export async function runSearchAssist(input: {
   const ai = createGeminiClient();
   const prompt = buildPrompt(query, input.locale ?? "en");
   let lastError: unknown;
-  let lastParseError: unknown;
 
   for (const model of GEMINI_MODEL_CANDIDATES) {
     try {
@@ -219,8 +272,9 @@ export async function runSearchAssist(input: {
         model,
         contents: prompt,
         config: {
-          temperature: 0.1,
+          temperature: 0,
           responseMimeType: "application/json",
+          responseSchema,
         },
       });
 
@@ -229,30 +283,27 @@ export async function runSearchAssist(input: {
         throw new Error(`Empty model response from ${model}`);
       }
 
-      return normalizeSearchAssist(parseJsonObject(text));
+      const parsed = parseJsonObject(text);
+      return normalizeSearchAssist(parsed, { query });
     } catch (error) {
       lastError = error;
       const mapped = mapGeminiError(error);
       if (mapped.code === "AiInvalidKey" || mapped.code === "AiPermissionDenied") {
         throw new Error(mapped.message);
       }
-      // Prefer parse/normalize failures over later "model unavailable" noise.
-      if (
-        mapped.code !== "AiModelUnavailable" &&
-        error instanceof Error &&
-        (error.message.includes("Invalid ") ||
-          error.message.includes("JSON") ||
-          error.message.includes("Empty model"))
-      ) {
-        lastParseError = error;
-      }
-      console.warn(`[search-assist] model ${model} failed:`, mapped.message);
+      console.warn(
+        `[search-assist] model ${model} failed:`,
+        mapped.message,
+        error instanceof Error ? error.message : error,
+      );
     }
   }
 
-  if (lastParseError instanceof Error) {
-    throw lastParseError;
+  // Last resort: fill from the query alone so guided search still works.
+  try {
+    return normalizeSearchAssist({}, { query });
+  } catch {
+    const mapped = mapGeminiError(lastError);
+    throw new Error(mapped.message);
   }
-  const mapped = mapGeminiError(lastError);
-  throw new Error(mapped.message);
 }

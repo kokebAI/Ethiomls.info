@@ -272,9 +272,9 @@ type DemoUserSeed = {
 
 const DEMO_USERS: DemoUserSeed[] = [
   {
-    email: "admin@ethiomls.local",
+    email: "support@agtplc.com",
     phone: "+251911000001",
-    fullName: "Demo Admin",
+    fullName: "AGT Support Admin",
     role: UserRole.ADMIN,
     localePrefs: ["en", "am"],
   },
