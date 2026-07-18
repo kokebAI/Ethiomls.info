@@ -1,7 +1,7 @@
 {
   "source": "curated-public-directory",
   "description": "Publicly known Addis Ababa / Ethiopia corporate real-estate developers compiled from company websites and industry directories. Not an official government registry. registrationNumber values are EthioMLS directory keys (ET-DIR-*), not MoUD/license IDs unless noted.",
-  "updatedAt": "2026-07-16",
+  "updatedAt": "2026-07-18",
   "developers": [
     {
       "tradeName": "Noah Real Estate PLC",
@@ -278,6 +278,20 @@
       "hqCode": "yeka",
       "licenseNumber": null,
       "tin": null
+    },
+    {
+      "tradeName": "Kavod Commercial PLC",
+      "displayName": {
+        "en": "Kavod Commercial",
+        "am": "ካቮድ ኮመርሻል"
+      },
+      "registrationNumber": "ET-DIR-KAVOD-024",
+      "website": "https://kavodcommercial.com",
+      "hqCode": "bole",
+      "licenseNumber": null,
+      "tin": null,
+      "email": "yemwedih.tadele@kavodcommercial.com",
+      "fullName": "Yemwedih Tadele"
     }
   ]
 }

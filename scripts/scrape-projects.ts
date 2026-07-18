@@ -52,6 +52,7 @@ type CuratedUnit = {
   title: Localized;
   description: Localized;
   amenities?: string[];
+  category?: "RESIDENTIAL" | "COMMERCIAL" | "MIXED_USE" | "LAND";
 };
 
 type CuratedFloor = {
@@ -74,6 +75,7 @@ type CuratedProject = {
   telegram?: string | null;
   sourceUpdatedAt: string;
   amenities?: string[];
+  category?: "RESIDENTIAL" | "COMMERCIAL" | "MIXED_USE" | "LAND";
   building: { floors: CuratedFloor[] };
 };
 
@@ -171,6 +173,21 @@ function parseListingType(raw: string): ListingType {
 function parseCurrency(raw: string): CurrencyCode {
   if (raw === "ETB" || raw === "USD") return raw;
   throw new Error(`Invalid currency: ${raw}`);
+}
+
+function parseCategory(
+  raw: string | undefined,
+): PropertyCategory {
+  if (!raw) return PropertyCategory.RESIDENTIAL;
+  if (
+    raw === "RESIDENTIAL" ||
+    raw === "COMMERCIAL" ||
+    raw === "MIXED_USE" ||
+    raw === "LAND"
+  ) {
+    return raw;
+  }
+  throw new Error(`Invalid category: ${raw}`);
 }
 
 async function loadCurated(filePath: string): Promise<CuratedProject[]> {
@@ -296,6 +313,7 @@ async function upsertProject(
   for (const unit of units) {
     const listingType = parseListingType(unit.listingType);
     const currency = parseCurrency(unit.currency);
+    const category = parseCategory(unit.category ?? rec.category);
     const sourceKey = buildListingSourceKey({
       projectId,
       floor: unit.floor,
@@ -318,6 +336,7 @@ async function upsertProject(
       `unit:${unit.unitLabel}`,
       `pid:${listingId}`,
       `status:${unit.status}`,
+      `category:${category.toLowerCase()}`,
       ...(unit.amenities ?? []).map((a) => `amenity:${a}`),
     ];
 
@@ -344,7 +363,7 @@ async function upsertProject(
       title: unit.title,
       description: unit.description,
       listingType,
-      category: PropertyCategory.RESIDENTIAL,
+      category,
       status: ListingStatus.PENDING_REVIEW,
       priceAmount: unit.price,
       priceCurrency: currency,

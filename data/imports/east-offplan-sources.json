@@ -28,10 +28,10 @@
       "notes": "east-offplan · Temer developer Telegram"
     },
     {
-      "label": "Gecho Commission (broker)",
-      "url": "@gechocommission8",
-      "track": "broker",
-      "notes": "east-offplan · starter broker channel — audit contacts; add more east-corridor brokers via Admin → Imports"
+      "label": "Kavod Commercial (website)",
+      "url": "https://kavodcommercial.com",
+      "track": "developer",
+      "notes": "east-offplan · Kavod Commercial malls (Kazanchis / Shiromeda / Megenagna) — public site"
     }
   ]
 }

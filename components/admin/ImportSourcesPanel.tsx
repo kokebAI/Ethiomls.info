@@ -19,7 +19,7 @@ type ScrapeRunSummary = {
 type ImportSourceRow = {
   id: string;
   label: string;
-  sourceType: "TELEGRAM" | "WEBSITE";
+  sourceType: "TELEGRAM" | "WEBSITE" | "FACEBOOK";
   url: string;
   normalizedUrl: string;
   telegramHandle: string | null;
@@ -260,7 +260,9 @@ export function ImportSourcesPanel() {
                         <span className="mr-2 rounded-full bg-slate-900 px-2 py-0.5 font-bold uppercase tracking-wide text-amber-300">
                           {source.sourceType === "TELEGRAM"
                             ? t("imports.typeTelegram")
-                            : t("imports.typeWebsite")}
+                            : source.sourceType === "FACEBOOK"
+                              ? t("imports.typeFacebook")
+                              : t("imports.typeWebsite")}
                         </span>
                         {isEastOffPlan ? (
                           <span className="mr-2 rounded-full bg-emerald-800 px-2 py-0.5 font-bold uppercase tracking-wide text-emerald-100">

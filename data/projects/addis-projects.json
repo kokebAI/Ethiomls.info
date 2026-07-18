@@ -1,7 +1,7 @@
 {
   "source": "curated-recent-projects",
   "description": "Recent (2024–2026) Addis Ababa developer projects compiled for EthioMLS import. Linked to data/developers/addis-developers.json via registrationNumber (ET-DIR-*). Not an official registry extract.",
-  "updatedAt": "2026-07-16",
+  "updatedAt": "2026-07-18",
   "projects": [
     {
       "slug": "SKYTOWER-2025",
@@ -2147,6 +2147,520 @@
                 "amenities": [
                   "escrow",
                   "water"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "slug": "KAVOD-MALL-KAZANCHIS",
+      "registrationNumber": "ET-DIR-KAVOD-024",
+      "subCityCode": "kirkos",
+      "category": "COMMERCIAL",
+      "title": {
+        "en": "Kavod Mall · Kazanchis",
+        "am": "ካቮድ ሞል · ካዛንቺስ"
+      },
+      "description": {
+        "en": "Off-plan commercial mall in Kazanchis (2B+G+11): ~6,762 m² site / ~86,000 m² built-up. Custom shops from 15 m², 14 lifts, escalators, rooftop leisure, 24/7 power and CCTV. Subsidiary of Ovid Holding. Price on request — https://kavodcommercial.com/Kavodmall.html",
+        "am": "በካዛንቺስ የሚገኝ ለንግድ ሞል (2B+G+11)። ከ15 ካሬ ጀምሮ ሱቆች፣ 14 ሊፍት፣ የጣሪያ መዝናኛ። ዋጋ ለማወቅ ያግኙን።"
+      },
+      "addressLine": "Kazanchis · near former 6th police station · Friendship / Unity Park axis",
+      "constructionStage": "SUPERSTRUCTURE",
+      "completionPercent": 35,
+      "requiresEscrow": true,
+      "website": "https://kavodcommercial.com/Kavodmall.html",
+      "telegram": null,
+      "sourceUpdatedAt": "2026-07-18",
+      "amenities": [
+        "parking",
+        "elevator",
+        "security",
+        "power-backup",
+        "water",
+        "cctv"
+      ],
+      "building": {
+        "floors": [
+          {
+            "level": 0,
+            "label": {
+              "en": "Ground · retail",
+              "am": "መሬት ወለል · ሱቆች"
+            },
+            "units": [
+              {
+                "unitLabel": "G-15",
+                "floor": 0,
+                "bedrooms": 0,
+                "bathrooms": 0,
+                "floorAreaSqm": 15,
+                "price": 1,
+                "currency": "ETB",
+                "listingType": "OFF_PLAN",
+                "status": "available",
+                "category": "COMMERCIAL",
+                "title": {
+                  "en": "Ground-floor shop shell · from 15 m²",
+                  "am": "የመሬት ወለል ሱቅ · ከ15 ካሬ"
+                },
+                "description": {
+                  "en": "Customizable off-plan commercial shop on ground floor of Kavod Mall Kazanchis. From 15 m²; interest-free loan options up to 50% and milestone payment plans. Contact +251 989 222 227 / 6227. Price on request.",
+                  "am": "በካቮድ ሞል ካዛንቺስ የመሬት ወለል ሱቅ ከ15 ካሬ። የክፍያ እቅድ እና ከወለድ ነፃ ብድር አማራጭ። ዋጋ ለማወቅ ያግኙ።"
+                },
+                "amenities": [
+                  "parking",
+                  "elevator",
+                  "security",
+                  "power-backup"
+                ]
+              },
+              {
+                "unitLabel": "G-40",
+                "floor": 0,
+                "bedrooms": 0,
+                "bathrooms": 0,
+                "floorAreaSqm": 40,
+                "price": 1,
+                "currency": "ETB",
+                "listingType": "OFF_PLAN",
+                "status": "available",
+                "category": "COMMERCIAL",
+                "title": {
+                  "en": "Ground retail bay · ~40 m²",
+                  "am": "የመሬት ሱቅ · ~40 ካሬ"
+                },
+                "description": {
+                  "en": "Larger ground-level retail bay in Kavod Mall Kazanchis (175 shops on G). Custom size available. Delivery targeted ~9–12 months per sales kit. Price on request.",
+                  "am": "በካዛንቺስ ሞል ሰፊ የመሬት ሱቅ። መጠን እንደ ምርጫ። ዋጋ ለማወቅ ያግኙ።"
+                },
+                "amenities": [
+                  "parking",
+                  "elevator",
+                  "cctv"
+                ]
+              }
+            ]
+          },
+          {
+            "level": 2,
+            "label": {
+              "en": "Floors 2–8 · shops",
+              "am": "ፎቅ 2–8 · ሱቆች"
+            },
+            "units": [
+              {
+                "unitLabel": "02-25",
+                "floor": 2,
+                "bedrooms": 0,
+                "bathrooms": 0,
+                "floorAreaSqm": 25,
+                "price": 1,
+                "currency": "ETB",
+                "listingType": "OFF_PLAN",
+                "status": "available",
+                "category": "COMMERCIAL",
+                "title": {
+                  "en": "Upper-floor shop · ~25 m²",
+                  "am": "የላይኛ ፎቅ ሱቅ · ~25 ካሬ"
+                },
+                "description": {
+                  "en": "Off-plan shop on floors 2–8 of Kavod Mall Kazanchis with display options. 2B+G+11 tower, water park / leisure floors above. Price on request via kavodcommercial.com.",
+                  "am": "ከ2ኛ–8ኛ ፎቅ ሱቅ። ዋጋ ለማወቅ kavodcommercial.com።"
+                },
+                "amenities": [
+                  "elevator",
+                  "security",
+                  "power-backup"
+                ]
+              }
+            ]
+          },
+          {
+            "level": 9,
+            "label": {
+              "en": "Floor 9 · leisure / F&B",
+              "am": "ፎቅ 9 · መዝናኛ / ምግብ"
+            },
+            "units": [
+              {
+                "unitLabel": "09-FNB",
+                "floor": 9,
+                "bedrooms": 0,
+                "bathrooms": 1,
+                "floorAreaSqm": 60,
+                "price": 1,
+                "currency": "ETB",
+                "listingType": "OFF_PLAN",
+                "status": "available",
+                "category": "COMMERCIAL",
+                "title": {
+                  "en": "Leisure / F&B unit · Floor 9",
+                  "am": "የመዝናኛ / ምግብ ክፍል · ፎቅ 9"
+                },
+                "description": {
+                  "en": "Floor 9 hosts beauty salons, cinemas, juice bar, gym, water park, spa and clinic zones. Off-plan F&B / leisure unit. Price on request.",
+                  "am": "ፎቅ 9 ሲኒማ፣ ጂም፣ ውሃ ፓርክ፣ ስፓ። የንግድ ቦታ ዋጋ ለማወቅ ያግኙ።"
+                },
+                "amenities": [
+                  "elevator",
+                  "parking",
+                  "security"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "slug": "TIBEB-MALL-SHIROMEDA",
+      "registrationNumber": "ET-DIR-KAVOD-024",
+      "subCityCode": "gullele",
+      "category": "COMMERCIAL",
+      "title": {
+        "en": "Tibeb Mall · Shiromeda",
+        "am": "ጥበብ ሞል · ሽሮሜዳ"
+      },
+      "description": {
+        "en": "Off-plan fashion & commercial mall opposite the Spanish Embassy, Shiromeda (5B+G+6+T). ~11,328–11,362 m²; roller coaster terrace; 14 lifts. Shops from 15 m². https://kavodcommercial.com/Tibebmall.html",
+        "am": "በሽሮሜዳ ከስፔን ኤምባሲ ፊትለፊት ጥበብ ሞል (5B+G+6)። ከ15 ካሬ ሱቆች።"
+      },
+      "addressLine": "Shiromeda · opposite Spanish Embassy · Entoto axis",
+      "constructionStage": "SUPERSTRUCTURE",
+      "completionPercent": 30,
+      "requiresEscrow": true,
+      "website": "https://kavodcommercial.com/Tibebmall.html",
+      "telegram": null,
+      "sourceUpdatedAt": "2026-07-18",
+      "amenities": [
+        "parking",
+        "elevator",
+        "security",
+        "power-backup",
+        "cctv"
+      ],
+      "building": {
+        "floors": [
+          {
+            "level": 0,
+            "label": {
+              "en": "Ground · shops",
+              "am": "መሬት · ሱቆች"
+            },
+            "units": [
+              {
+                "unitLabel": "G-15",
+                "floor": 0,
+                "bedrooms": 0,
+                "bathrooms": 0,
+                "floorAreaSqm": 15,
+                "price": 1,
+                "currency": "ETB",
+                "listingType": "OFF_PLAN",
+                "status": "available",
+                "category": "COMMERCIAL",
+                "title": {
+                  "en": "Tibeb Mall shop · from 15 m²",
+                  "am": "ጥበብ ሞል ሱቅ · ከ15 ካሬ"
+                },
+                "description": {
+                  "en": "Custom off-plan shop at Tibeb Mall Shiromeda (modern & traditional Ethiopian fashion / retail hub). Semi-basement to 6th floor options; handover ~9–12 months. 50% interest-free loan facilitation per sales kit. Price on request. +251 989 222 227",
+                  "am": "ጥበብ ሞል ሽሮሜዳ ሱቅ ከ15 ካሬ። ከ9 ወር–1 ዓመት ማስረከብ። ዋጋ ለማወቅ ያግኙ።"
+                },
+                "amenities": [
+                  "parking",
+                  "elevator",
+                  "security"
+                ]
+              },
+              {
+                "unitLabel": "G-50",
+                "floor": 0,
+                "bedrooms": 0,
+                "bathrooms": 0,
+                "floorAreaSqm": 50,
+                "price": 1,
+                "currency": "ETB",
+                "listingType": "OFF_PLAN",
+                "status": "available",
+                "category": "COMMERCIAL",
+                "title": {
+                  "en": "Ground fashion retail · ~50 m²",
+                  "am": "የመሬት ፋሽን ሱቅ · ~50 ካሬ"
+                },
+                "description": {
+                  "en": "Larger ground retail for tailor / boutique at Tibeb Mall. High foot-traffic Shiromeda location. Price on request.",
+                  "am": "ለቡቲክ / ስፌት ሰፊ የመሬት ሱቅ በሽሮሜዳ። ዋጋ ለማወቅ ያግኙ።"
+                },
+                "amenities": [
+                  "parking",
+                  "elevator",
+                  "cctv"
+                ]
+              }
+            ]
+          },
+          {
+            "level": 4,
+            "label": {
+              "en": "Floor 4 · banks / shops",
+              "am": "ፎቅ 4 · ባንክ / ሱቆች"
+            },
+            "units": [
+              {
+                "unitLabel": "04-BANK",
+                "floor": 4,
+                "bedrooms": 0,
+                "bathrooms": 1,
+                "floorAreaSqm": 80,
+                "price": 1,
+                "currency": "ETB",
+                "listingType": "OFF_PLAN",
+                "status": "available",
+                "category": "COMMERCIAL",
+                "title": {
+                  "en": "Bank / institutional bay · Floor 4",
+                  "am": "ባንክ / ተቋም ቦታ · ፎቅ 4"
+                },
+                "description": {
+                  "en": "Floor 4 includes shop rows and bank spaces (sales kit). Off-plan institutional / finance bay at Tibeb Mall. Price on request.",
+                  "am": "ፎቅ 4 ሱቆች እና ባንኮች። ዋጋ ለማወቅ ያግኙ።"
+                },
+                "amenities": [
+                  "elevator",
+                  "security",
+                  "power-backup"
+                ]
+              }
+            ]
+          },
+          {
+            "level": 6,
+            "label": {
+              "en": "Roof · F&B / entertainment",
+              "am": "ጣሪያ · ምግብ / መዝናኛ"
+            },
+            "units": [
+              {
+                "unitLabel": "RF-FNB",
+                "floor": 6,
+                "bedrooms": 0,
+                "bathrooms": 1,
+                "floorAreaSqm": 100,
+                "price": 1,
+                "currency": "ETB",
+                "listingType": "OFF_PLAN",
+                "status": "available",
+                "category": "COMMERCIAL",
+                "title": {
+                  "en": "Rooftop F&B / entertainment unit",
+                  "am": "የጣሪያ ምግብ / መዝናኛ ክፍል"
+                },
+                "description": {
+                  "en": "Roof terrace with fusion / ethnic restaurants and game zone; roller coaster amenity. Off-plan F&B unit. Price on request.",
+                  "am": "ጣሪያ ላይ ምግብ ቤቶች እና ጌም ዞን። ዋጋ ለማወቅ ያግኙ።"
+                },
+                "amenities": [
+                  "elevator",
+                  "parking",
+                  "security"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "slug": "CAR-MALL-MEGENAGNA",
+      "registrationNumber": "ET-DIR-KAVOD-024",
+      "subCityCode": "yeka",
+      "category": "COMMERCIAL",
+      "title": {
+        "en": "Car Mall · Megenagna",
+        "am": "ካር ሞል · መገናኛ"
+      },
+      "description": {
+        "en": "Off-plan automotive commercial mall opposite Israel Embassy, Megenagna (3B+G+6+T). ~13,040–16,700 m²; 15 lifts + 3 car lifts; rooftop go-kart. Shops and showrooms from 15 m². https://kavodcommercial.com/Carmall.html",
+        "am": "በመገናኛ ከእስራኤል ኤምባሲ ፊትለፊት ካር ሞል (3B+G+6)። የመኪና ማሳያ እና ሱቆች ከ15 ካሬ።"
+      },
+      "addressLine": "Megenagna · opposite Israel Embassy · near Mamas Kitchen",
+      "constructionStage": "SUPERSTRUCTURE",
+      "completionPercent": 28,
+      "requiresEscrow": true,
+      "website": "https://kavodcommercial.com/Carmall.html",
+      "telegram": null,
+      "sourceUpdatedAt": "2026-07-18",
+      "amenities": [
+        "parking",
+        "elevator",
+        "security",
+        "power-backup",
+        "cctv"
+      ],
+      "building": {
+        "floors": [
+          {
+            "level": 0,
+            "label": {
+              "en": "Ground · shops & cafés",
+              "am": "መሬት · ሱቆች እና ካፌ"
+            },
+            "units": [
+              {
+                "unitLabel": "G-15",
+                "floor": 0,
+                "bedrooms": 0,
+                "bathrooms": 0,
+                "floorAreaSqm": 15,
+                "price": 1,
+                "currency": "ETB",
+                "listingType": "OFF_PLAN",
+                "status": "available",
+                "category": "COMMERCIAL",
+                "title": {
+                  "en": "Car Mall shop · from 15 m²",
+                  "am": "ካር ሞል ሱቅ · ከ15 ካሬ"
+                },
+                "description": {
+                  "en": "Off-plan retail shop at Car Mall Megenagna. Custom size from 15 m²; G to 6th floor. Interest-free loan options per sales kit. Handover ~9–12 months. Price on request. Hotline 6227 / +251 989 222 227",
+                  "am": "ካር ሞል መገናኛ ሱቅ ከ15 ካሬ። ዋጋ ለማወቅ 6227 ይደውሉ።"
+                },
+                "amenities": [
+                  "parking",
+                  "elevator",
+                  "security"
+                ]
+              },
+              {
+                "unitLabel": "G-CAFE",
+                "floor": 0,
+                "bedrooms": 0,
+                "bathrooms": 1,
+                "floorAreaSqm": 35,
+                "price": 1,
+                "currency": "ETB",
+                "listingType": "OFF_PLAN",
+                "status": "available",
+                "category": "COMMERCIAL",
+                "title": {
+                  "en": "Ground café unit",
+                  "am": "የመሬት ካፌ"
+                },
+                "description": {
+                  "en": "Ground floor includes hundreds of shops plus cafés (sales kit). Off-plan café / F&B shell. Price on request.",
+                  "am": "የመሬት ወለል ካፌ / ምግብ ቦታ። ዋጋ ለማወቅ ያግኙ።"
+                },
+                "amenities": [
+                  "parking",
+                  "elevator",
+                  "power-backup"
+                ]
+              }
+            ]
+          },
+          {
+            "level": 1,
+            "label": {
+              "en": "Floors 1–2 · auto showrooms",
+              "am": "ፎቅ 1–2 · የመኪና ማሳያ"
+            },
+            "units": [
+              {
+                "unitLabel": "01-SHOW",
+                "floor": 1,
+                "bedrooms": 0,
+                "bathrooms": 0,
+                "floorAreaSqm": 120,
+                "price": 1,
+                "currency": "ETB",
+                "listingType": "OFF_PLAN",
+                "status": "available",
+                "category": "COMMERCIAL",
+                "title": {
+                  "en": "Automotive showroom bay",
+                  "am": "የመኪና ማሳያ ቦታ"
+                },
+                "description": {
+                  "en": "Dedicated car showroom space on floors 1–2 (sales kit: shops + auto display). Car lifts available. Price on request.",
+                  "am": "የመኪና ማሳያ ሱቅ ከመኪና ሊፍት ጋር። ዋጋ ለማወቅ ያግኙ።"
+                },
+                "amenities": [
+                  "parking",
+                  "elevator",
+                  "security",
+                  "cctv"
+                ]
+              }
+            ]
+          },
+          {
+            "level": 5,
+            "label": {
+              "en": "Floor 5 · finance / offices",
+              "am": "ፎቅ 5 · ፋይናንስ / ቢሮ"
+            },
+            "units": [
+              {
+                "unitLabel": "05-FIN",
+                "floor": 5,
+                "bedrooms": 0,
+                "bathrooms": 1,
+                "floorAreaSqm": 70,
+                "price": 1,
+                "currency": "ETB",
+                "listingType": "OFF_PLAN",
+                "status": "available",
+                "category": "COMMERCIAL",
+                "title": {
+                  "en": "Finance / office bay · Floor 5",
+                  "am": "ፋይናንስ / ቢሮ · ፎቅ 5"
+                },
+                "description": {
+                  "en": "Floor 5 includes shops, finance institutions and offices. Off-plan commercial office/finance unit. Price on request.",
+                  "am": "ፎቅ 5 ፋይናንስ ተቋማት እና ቢሮዎች። ዋጋ ለማወቅ ያግኙ።"
+                },
+                "amenities": [
+                  "elevator",
+                  "security",
+                  "power-backup"
+                ]
+              }
+            ]
+          },
+          {
+            "level": 6,
+            "label": {
+              "en": "Roof · go-kart / F&B",
+              "am": "ጣሪያ · ጎ-ካርት / ምግብ"
+            },
+            "units": [
+              {
+                "unitLabel": "RF-GK",
+                "floor": 6,
+                "bedrooms": 0,
+                "bathrooms": 1,
+                "floorAreaSqm": 90,
+                "price": 1,
+                "currency": "ETB",
+                "listingType": "OFF_PLAN",
+                "status": "available",
+                "category": "COMMERCIAL",
+                "title": {
+                  "en": "Rooftop F&B beside go-kart",
+                  "am": "ከጎ-ካርት አጠገብ የጣሪያ ምግብ ቤት"
+                },
+                "description": {
+                  "en": "Roof: restaurants and go-kart recreation. Off-plan F&B unit at Car Mall Megenagna. Price on request.",
+                  "am": "ጣሪያ ላይ ምግብ ቤት እና ጎ-ካርት። ዋጋ ለማወቅ ያግኙ።"
+                },
+                "amenities": [
+                  "elevator",
+                  "parking",
+                  "security"
                 ]
               }
             ]

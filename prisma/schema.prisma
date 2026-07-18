@@ -46,6 +46,7 @@ enum ConstructionStage {
 enum ImportSourceType {
   TELEGRAM
   WEBSITE
+  FACEBOOK
 }
 
 /// Landholding / tenure for off-plan sites (gates title vs lease evidence).
@@ -524,7 +525,7 @@ model ImportSource {
   url           String
   /// Normalized canonical URL used for uniqueness checks
   normalizedUrl String           @unique
-  /// Telegram @handle when sourceType is TELEGRAM
+  /// Telegram @handle when sourceType is TELEGRAM (unused for WEBSITE / FACEBOOK)
   telegramHandle String?
   isActive      Boolean          @default(true)
   notes         String?

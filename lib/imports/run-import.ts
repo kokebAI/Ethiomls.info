@@ -9,6 +9,7 @@ import {
 import { prisma } from "@/lib/db/prisma";
 import { generatePropertyId } from "@/src/utils/generateId";
 import { filterEastOffPlanCandidates } from "@/lib/imports/east-offplan-filter";
+import { scrapeFacebookPage } from "@/lib/imports/facebook-scraper";
 import { scrapeTelegramChannel } from "@/lib/imports/telegram-scraper";
 import { scrapeWebsite } from "@/lib/imports/website-scraper";
 import type { ScrapedCandidate } from "@/lib/imports/telegram-scraper";
@@ -153,13 +154,17 @@ export async function runImportSource(input: {
   });
 
   try {
-    let candidates =
-      source.sourceType === ImportSourceType.TELEGRAM
-        ? await scrapeTelegramChannel(
-            source.normalizedUrl,
-            source.telegramHandle ?? "channel",
-          )
-        : await scrapeWebsite(source.normalizedUrl);
+    let candidates: ScrapedCandidate[];
+    if (source.sourceType === ImportSourceType.TELEGRAM) {
+      candidates = await scrapeTelegramChannel(
+        source.normalizedUrl,
+        source.telegramHandle ?? "channel",
+      );
+    } else if (source.sourceType === ImportSourceType.FACEBOOK) {
+      candidates = await scrapeFacebookPage(source.normalizedUrl);
+    } else {
+      candidates = await scrapeWebsite(source.normalizedUrl);
+    }
 
     const postsSeen = candidates.length;
     if (input.filters?.eastOffPlanOnly) {
