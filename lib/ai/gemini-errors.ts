@@ -47,7 +47,7 @@ export function mapGeminiError(error: unknown): {
     return {
       code: "AiModelUnavailable",
       message:
-        "This Gemini model is not available for your project. Update GEMINI_MODEL (try gemini-3-flash-preview or gemini-flash-latest).",
+        "This Gemini model is not available for your project. Update GEMINI_MODEL (try gemini-3.5-flash or gemini-flash-latest).",
       statusCode: 404,
     };
   }

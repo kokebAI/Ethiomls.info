@@ -3,21 +3,22 @@ import { GoogleGenAI } from "@google/genai";
 /**
  * Preferred model, then lighter / alternate Gemini models.
  * Env `GEMINI_MODEL` wins as first preference.
- * New AI Studio projects often reject older 2.x flash IDs — prefer 3 / *-latest.
+ * AQ.* AI Studio keys often reject older 2.5 flash IDs — prefer 3.x / *-latest.
  */
 export const GEMINI_MODEL_CANDIDATES = uniqueModels([
   process.env.GEMINI_MODEL?.trim(),
-  "gemini-3-flash-preview",
+  "gemini-3.5-flash",
   "gemini-flash-latest",
+  "gemini-3-flash-preview",
+  "gemini-3.1-flash-lite",
   "gemini-flash-lite-latest",
-  "gemini-pro-latest",
   "gemini-2.5-flash",
   "gemini-2.5-flash-lite",
 ]);
 
 /** @deprecated Prefer GEMINI_MODEL_CANDIDATES[0] */
 export const DEFAULT_GEMINI_MODEL =
-  GEMINI_MODEL_CANDIDATES[0] ?? "gemini-3-flash-preview";
+  GEMINI_MODEL_CANDIDATES[0] ?? "gemini-3.5-flash";
 
 function uniqueModels(values: Array<string | undefined>): string[] {
   const seen = new Set<string>();
@@ -27,7 +28,7 @@ function uniqueModels(values: Array<string | undefined>): string[] {
     seen.add(value);
     out.push(value);
   }
-  return out.length > 0 ? out : ["gemini-3-flash-preview"];
+  return out.length > 0 ? out : ["gemini-3.5-flash"];
 }
 
 function useVertexAi(): boolean {
