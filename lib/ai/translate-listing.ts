@@ -1,12 +1,9 @@
-import { GoogleGenAI } from "@google/genai";
+import { createGeminiClient } from "@/lib/ai/gemini";
 
 export type TranslateTargetLanguage = "am" | "en";
 
 const SYSTEM_PROMPT =
   "You are an expert real estate translator for EthioMLS, specializing in translating Addis Ababa property listings between English and Amharic. Translate the following text cleanly, keeping the real estate industry context intact. Return only the translated text.";
-
-// Automatically loads process.env.GEMINI_API_KEY (+ GOOGLE_GEMINI_BASE_URL if set).
-const ai = new GoogleGenAI({});
 
 /**
  * Translate listing copy between English and Amharic via Gemini.
@@ -21,6 +18,7 @@ export async function translateListingText(
 
   const sourceLanguage = targetLanguage === "am" ? "English" : "Amharic";
   const targetLabel = targetLanguage === "am" ? "Amharic" : "English";
+  const ai = createGeminiClient();
 
   const response = await ai.models.generateContent({
     model: process.env.GEMINI_MODEL?.trim() || "gemini-2.5-flash",

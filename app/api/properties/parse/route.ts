@@ -1,5 +1,9 @@
 import { NextResponse } from "next/server";
-import { GoogleGenAI, Type } from "@google/genai";
+import { Type } from "@google/genai";
+import {
+  createGeminiClient,
+  isGeminiConfigured,
+} from "@/lib/ai/gemini";
 import { ADDIS_SUB_CITY_CODES, ADDIS_SUB_CITY_SET } from "@/lib/properties/subCities";
 
 export const runtime = "nodejs";
@@ -78,7 +82,7 @@ function resolveMime(file: File): string {
 
 export async function POST(request: Request) {
   try {
-    if (!process.env.GEMINI_API_KEY?.trim() && !process.env.GOOGLE_GEMINI_BASE_URL?.trim()) {
+    if (!isGeminiConfigured()) {
       return NextResponse.json(
         {
           error:
@@ -119,7 +123,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const ai = new GoogleGenAI({});
+    const ai = createGeminiClient();
     const data = Buffer.from(await file.arrayBuffer()).toString("base64");
 
     const response = await ai.models.generateContent({
