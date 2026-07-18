@@ -1,13 +1,14 @@
 /**
  * Client-safe NBE day-rate helpers.
- * Prefer `NEXT_PUBLIC_NBE_USD_ETB_RATE` in the browser; fall back to the proxy baseline.
+ * The live rate comes from `/api/exchange-rate` (official NBE feed, 1-hour
+ * server cache); these helpers only provide the resolution/fallback chain.
  */
 
-export const NBE_USD_ETB_PROXY_BASELINE = 128.75;
+export const NBE_USD_ETB_PROXY_BASELINE = 160.0;
 
 export type NbeDayRateView = {
   usdEtb: number;
-  source: "env" | "proxy";
+  source: "nbe" | "env" | "proxy";
   asOf: string;
 };
 

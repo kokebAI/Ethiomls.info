@@ -9,10 +9,26 @@
     "listings": "Tarreewwan",
     "projects": "Pirojektoota",
     "developers": "Ijaartoota",
+    "dashboard": "Daashboordii",
+    "imports": "Galchuu",
+    "profile": "Profile",
+    "forYou": "For you",
+    "roles": "Roles",
     "about": "Waa'ee keenya",
     "signIn": "Seeni",
-    "listProperty": "Qabeenya galmeessi",
-    "dashboard": "Daashboordii"
+    "listProperty": "Qabeenya galmeessi"
+  },
+  "home": {
+    "lede": "Manneen mirkanaa'an, pirojektoota ijaarsa irra jiranii fi bakkeewwan daldalaa Finfinnee keessatti — afaan afuriin.",
+    "browseCta": "Tarreeffama ilaali",
+    "listCta": "Qabeenya galmeessi",
+    "statsHeading": "Gabaa lakkoofsaan",
+    "stats": {
+      "listings": "Tarreeffama kallattii",
+      "projects": "Pirojektoota maxxanfaman",
+      "developers": "Ijaartota mirkanaa'an",
+      "subCities": "Kutaalee magaalaa Finfinnee"
+    }
   },
   "locale": {
     "label": "Afaan",
@@ -215,28 +231,52 @@
     "emptyDirectory": "Galmeewwan maxxanfaman hin jiru. Kuusaa fakkeenyaa guutuuf `npx prisma db seed` hordofaa."
   },
   "auth": {
-    "accessEyebrow": "Secure access",
-    "title": "Sign in to EthioMLS",
-    "lede": "Verify with SMS OTP, or continue with Google when configured.",
-    "loginTab": "Sign in",
-    "registerTab": "Register",
-    "fullName": "Full name",
-    "fullNamePlaceholder": "Your name",
-    "phone": "Mobile number",
-    "otp": "SMS verification code",
-    "sendCode": "Send SMS code",
-    "verify": "Verify & continue",
-    "back": "Change number",
-    "or": "or",
-    "continueGoogle": "Continue with Google",
-    "googleNotConfigured": "Google sign-in needs GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET in your environment. SMS OTP works now (mock SMS locally).",
-    "codeSent": "We sent a verification code by SMS.",
-    "mockHint": "SMS is in mock mode — use the debug code below.",
-    "debugCode": "Dev code",
-    "smsFailed": "Could not send SMS.",
-    "verifyFailed": "Verification failed.",
-    "logout": "Sign out",
-    "backHome": "Back to home"
+    "accessEyebrow": "Seensa nageenyaa",
+    "title": "Gara EthioMLS seentaa",
+    "lede": "Lakkoofsa bilbilaa Itoophiyaa fayyadami. Koodii SMS tokko yeroo siif ergina. Imeelii booda profile keessatti dabaluu dandeessa.",
+    "loginTab": "Seeni",
+    "registerTab": "Galmaa'i",
+    "fullName": "Maqaa guutuu",
+    "fullNamePlaceholder": "Maqaa kee",
+    "phone": "Lakkoofsa bilbilaa Itoophiyaa",
+    "phonePlaceholder": "09XXXXXXXX ykn 07XXXXXXXX",
+    "phoneHint": "Lakkoofsota naannoo qofa (+251 9… / +251 7…). Kan ala hin fudhatamu.",
+    "otp": "Koodii mirkaneessaa SMS",
+    "sendCode": "Koodii SMS ergi",
+    "loginCta": "Seeni",
+    "registerCta": "Herrega uumi",
+    "verify": "Mirkanessiitii itti fufi",
+    "back": "Lakkoofsa jijjiiri",
+    "codeSent": "Koodii mirkaneessaa SMS tiin erginnee jirra.",
+    "mockHint": "SMS haala mock irratti — koodii debug armaan gadii fayyadami.",
+    "debugCode": "Koodii misoomaa",
+    "smsFailed": "SMS erguu hin dandeenye.",
+    "verifyFailed": "Mirkaneessuun hin milkoofne.",
+    "logout": "Ba'i",
+    "backHome": "Gara fuula duraatti",
+    "demo": {
+      "title": "Demo accounts",
+      "lede": "Tap a role to fill the phone field, then send the SMS code. In local mock mode the code appears on screen.",
+      "filled": "Demo number filled — send the SMS code to continue.",
+      "admin": "Admin",
+      "client": "Maamilaa",
+      "broker": "Daldalaa",
+      "owner": "Abbaa qabeenyaa",
+      "developer": "Developer"
+    }
+  },
+  "profile": {
+    "eyebrow": "Akaawuntii",
+    "title": "Profile kee",
+    "lede": "Lakkoofsi bilbilaa Itoophiyaa kee seensa keeti. Imeeliin filannoo dha.",
+    "phone": "Lakkoofsa bilbilaa",
+    "phoneLocked": "Bilbilli ID seensaa keeti; asitti hin jijjiiramu.",
+    "email": "Imeelii (filannoo)",
+    "emailPlaceholder": "you@example.com",
+    "emailHint": "Galmaa'uu hin barbaachisu — qunnamtii fi dhiyeessii tiif dabali.",
+    "save": "Profile olkaa'i",
+    "saved": "Profile haaromfameera.",
+    "saveFailed": "Profile olkaa'uu hin dandeenye."
   },
   "dashboard": {
     "eyebrow": "Teessoo hojii",
@@ -251,5 +291,115 @@
       "translation": "Sadarkaa hiikkaa",
       "translationTag": "Afaanota Gemini"
     }
+  },
+  "imports": {
+    "eyebrow": "Admin",
+    "title": "Import sources",
+    "lede": "Add public Telegram channels or websites. Scraped posts become pending listings with contact numbers for admin audit before publication.",
+    "addTitle": "Add a source",
+    "addLede": "Paste a Telegram handle (e.g. @gechocommission8 or t.me/gechocommission8) or a full website URL.",
+    "url": "Telegram or website URL",
+    "urlPlaceholder": "@gechocommission8 or https://example.com/listings",
+    "label": "Label (optional)",
+    "labelPlaceholder": "Gecho Commission",
+    "notes": "Notes (optional)",
+    "notesPlaceholder": "Broker channel — audit contacts carefully",
+    "addCta": "Save source",
+    "sourcesTitle": "Saved sources",
+    "refresh": "Refresh",
+    "empty": "No sources yet. Add a Telegram channel or website above.",
+    "typeTelegram": "Telegram",
+    "typeWebsite": "Website",
+    "listingCount": "{count} imported listings",
+    "lastRun": "Last run {status}: +{created} / ~{updated}",
+    "runCta": "Scrape now",
+    "running": "Scraping…",
+    "saved": "Source saved.",
+    "saveFailed": "Could not save source.",
+    "loadFailed": "Could not load sources.",
+    "runFailed": "Scrape failed.",
+    "runDone": "Scrape finished — created {created}, updated {updated}, skipped {skipped}."
+  },
+  "rolesIndex": {
+    "title": "Choose your role",
+    "lede": "Client, broker, owner, developer, or admin — each hub highlights the tools you need."
+  },
+  "roles": {
+    "switchLabel": "Other roles",
+    "client": {
+      "eyebrow": "Client",
+      "title": "Find your next home",
+      "lede": "Browse verified listings and projects. Sign in to unlock contact numbers, visits, and 360° tours.",
+      "ctas": {
+        "browse": "Browse listings",
+        "projects": "Explore projects",
+        "guide": "Start guided search",
+        "profile": "Your profile"
+      }
+    },
+    "broker": {
+      "eyebrow": "Broker",
+      "title": "List and manage inventory",
+      "lede": "Publish properties for clients, keep contacts ready for admin audit, and track the market from one place.",
+      "ctas": {
+        "list": "List a property",
+        "browse": "Browse listings",
+        "profile": "Your profile",
+        "dashboard": "Market dashboard"
+      }
+    },
+    "owner": {
+      "eyebrow": "Owner",
+      "title": "Sell or rent your property",
+      "lede": "List your own home with photos and documents. Every submission waits for admin audit before it goes live.",
+      "ctas": {
+        "list": "List my property",
+        "browse": "See live listings",
+        "profile": "Your profile",
+        "guide": "Back to home search"
+      }
+    },
+    "developer": {
+      "eyebrow": "Developer",
+      "title": "Showcase projects and off-plan units",
+      "lede": "Publish building stacks, payment plans, and unit inventory for clients who want escrow-backed off-plan homes.",
+      "ctas": {
+        "projects": "View projects",
+        "list": "Add inventory",
+        "developers": "Developer directory",
+        "profile": "Your profile"
+      }
+    },
+    "admin": {
+      "eyebrow": "Admin",
+      "title": "Audit and import the market",
+      "lede": "Scrape Telegram and websites, review pending listings, and publish only after the client-protection checklist passes.",
+      "ctas": {
+        "imports": "Import sources",
+        "dashboard": "Dashboard metrics",
+        "listings": "All listings",
+        "profile": "Your profile"
+      }
+    }
+  },
+  "listingDetail": {
+    "back": "Back to listings",
+    "facts": "Property facts",
+    "description": "About this property",
+    "amenities": "Features",
+    "contact": "Contact",
+    "noPhone": "No phone on file — admin will add one after audit.",
+    "sourcePost": "View source post",
+    "partOfProject": "Part of project",
+    "audited": "Admin audited",
+    "perMonth": "/ month",
+    "pricePerSqm": "Price per m²",
+    "offPlanTerms": "Off-plan payment terms",
+    "paymentPlan": "Payment plan",
+    "downPayment": "Down payment",
+    "milestones": "Milestone split",
+    "signUpForContact": "Sign up with your Ethiopian mobile number to see the contact phone and request a visit.",
+    "signUpForTour": "Create a free account to open the 360° virtual tour.",
+    "signUpCta": "Sign up to unlock"
   }
 }

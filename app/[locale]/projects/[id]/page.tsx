@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { PageIntro } from "@/components/PageIntro";
-import { ProjectBuildingDetail } from "@/app/[locale]/projects/[id]/project-building-detail";
+import { ProjectBuildingDetail } from "./project-building-detail";
 import {
   projectToBuilding,
   projectWalkthroughMeta,
@@ -10,6 +10,9 @@ import { fetchProjectById } from "@/lib/catalog/queries";
 import { isLocale, type Locale } from "@/lib/i18n/config";
 import { getDictionary, translate } from "@/lib/i18n/getDictionary";
 import { pickLocalized } from "@/lib/i18n/pickLocalized";
+
+/** DB-backed page — skip SSG so Vercel builds succeed without live Postgres. */
+export const dynamic = "force-dynamic";
 
 export default async function ProjectDetailPage({
   params,

@@ -240,6 +240,185 @@ const MOCK_DEVELOPERS: Array<{
 const SEED_PASSWORD_HASH =
   "$2y$10$68EdlveS1tr1M7qKMc1LRe8IxSCP6i29X8KVP13zCSTACTJjw9WTq";
 
+/**
+ * Shared demo login password: `Demo123!`
+ * (bcrypt cost 10 — local/dev only; rotate before any real deploy.)
+ */
+const DEMO_PASSWORD_HASH =
+  "$2b$10$YcR/lokBIO83YekKTPAOX.8wmPSi9HV/80/yriHPBtP0nPhUzeBui";
+
+type DemoUserSeed = {
+  email: string;
+  phone: string;
+  fullName: string;
+  role: UserRole;
+  localePrefs: string[];
+  delala?: {
+    displayName: { en: string; am: string; om: string };
+    licenseNumber: string;
+    operatingSubCityCode: string;
+  };
+  developer?: {
+    tradeName: string;
+    displayName: { en: string; am: string; om: string };
+    registrationNumber: string;
+    licenseNumber: string;
+    tin: string;
+    website: string;
+    hqCode: string;
+  };
+};
+
+const DEMO_USERS: DemoUserSeed[] = [
+  {
+    email: "admin@ethiomls.local",
+    phone: "+251911000001",
+    fullName: "Demo Admin",
+    role: UserRole.ADMIN,
+    localePrefs: ["en", "am"],
+  },
+  {
+    email: "client@ethiomls.local",
+    phone: "+251911000002",
+    fullName: "Demo Client",
+    role: UserRole.BUYER_RENTER,
+    localePrefs: ["am", "en"],
+  },
+  {
+    email: "broker@ethiomls.local",
+    phone: "+251911000003",
+    fullName: "Demo Broker",
+    role: UserRole.INDEPENDENT_DELALA,
+    localePrefs: ["am", "en"],
+    delala: {
+      displayName: {
+        en: "Demo Brokerage",
+        am: "የማሳያ ደላላ",
+        om: "Daldalaa Fakkeenyaa",
+      },
+      licenseNumber: "ADD-BRK-DEMO-0003",
+      operatingSubCityCode: "bole",
+    },
+  },
+  {
+    email: "owner@ethiomls.local",
+    phone: "+251911000004",
+    fullName: "Demo Owner",
+    role: UserRole.PROPERTY_OWNER,
+    localePrefs: ["am", "en"],
+  },
+  {
+    email: "developer@ethiomls.local",
+    phone: "+251911000005",
+    fullName: "Demo Developer",
+    role: UserRole.CORPORATE_DEVELOPER,
+    localePrefs: ["en", "am"],
+    developer: {
+      tradeName: "Demo Real Estate PLC",
+      displayName: {
+        en: "Demo Real Estate",
+        am: "የማሳያ ሪል እስቴት",
+        om: "Qabeenya Manaa Fakkeenyaa",
+      },
+      registrationNumber: "ET-RE-DEMO-00005",
+      licenseNumber: "MUD-RE-DEMO-0005",
+      tin: "0005999005",
+      website: "https://ethiomls.info",
+      hqCode: "bole",
+    },
+  },
+];
+
+async function seedDemoUsers() {
+  const subCities = await prisma.subCity.findMany();
+  const byCode = new Map(subCities.map((s) => [s.code, s.id]));
+
+  for (const demo of DEMO_USERS) {
+    const user = await prisma.user.upsert({
+      where: { phone: demo.phone },
+      update: {
+        email: demo.email,
+        fullName: demo.fullName,
+        passwordHash: DEMO_PASSWORD_HASH,
+        role: demo.role,
+        isActive: true,
+        localePrefs: demo.localePrefs,
+      },
+      create: {
+        email: demo.email,
+        phone: demo.phone,
+        passwordHash: DEMO_PASSWORD_HASH,
+        fullName: demo.fullName,
+        role: demo.role,
+        localePrefs: demo.localePrefs,
+      },
+    });
+
+    if (demo.delala) {
+      const operatingSubCityId = byCode.get(demo.delala.operatingSubCityCode);
+      if (!operatingSubCityId) {
+        throw new Error(
+          `Missing sub-city for delala ${demo.email}: ${demo.delala.operatingSubCityCode}`,
+        );
+      }
+
+      await prisma.delalaProfile.upsert({
+        where: { userId: user.id },
+        update: {
+          displayName: demo.delala.displayName,
+          licenseNumber: demo.delala.licenseNumber,
+          operatingSubCityId,
+          isVerified: true,
+        },
+        create: {
+          userId: user.id,
+          displayName: demo.delala.displayName,
+          licenseNumber: demo.delala.licenseNumber,
+          operatingSubCityId,
+          isVerified: true,
+        },
+      });
+    }
+
+    if (demo.developer) {
+      const hqId = byCode.get(demo.developer.hqCode);
+      if (!hqId) {
+        throw new Error(
+          `Missing HQ sub-city for developer ${demo.email}: ${demo.developer.hqCode}`,
+        );
+      }
+
+      await prisma.developerProfile.upsert({
+        where: { registrationNumber: demo.developer.registrationNumber },
+        update: {
+          tradeName: demo.developer.tradeName,
+          displayName: demo.developer.displayName,
+          licenseNumber: demo.developer.licenseNumber,
+          tin: demo.developer.tin,
+          website: demo.developer.website,
+          headquartersSubCityId: hqId,
+          isVerified: true,
+          userId: user.id,
+        },
+        create: {
+          userId: user.id,
+          tradeName: demo.developer.tradeName,
+          displayName: demo.developer.displayName,
+          registrationNumber: demo.developer.registrationNumber,
+          licenseNumber: demo.developer.licenseNumber,
+          tin: demo.developer.tin,
+          website: demo.developer.website,
+          headquartersSubCityId: hqId,
+          isVerified: true,
+          licenseExpiresAt: new Date("2029-12-31T00:00:00.000Z"),
+        },
+      });
+    }
+  }
+
+  console.log(`Seeded ${DEMO_USERS.length} demo persona users (password: Demo123!).`);
+}
+
 async function seedSubCities() {
   for (const sc of ADDIS_SUB_CITIES) {
     const existing = await prisma.subCity.findUnique({
@@ -526,6 +705,7 @@ async function seedSubCityListings() {
 
 async function main() {
   await seedSubCities();
+  await seedDemoUsers();
   await seedMockDevelopers();
   await seedMockProjects();
   await seedSubCityListings();

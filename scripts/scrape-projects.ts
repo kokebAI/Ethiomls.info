@@ -263,7 +263,9 @@ async function upsertProject(
       constructionStage: stage,
       completionPercent: rec.completionPercent,
       requiresEscrow: rec.requiresEscrow ?? true,
-      status: ListingStatus.PUBLISHED,
+      // Imported inventory is never trusted automatically. An admin must
+      // complete the audit checklist before activation/publication.
+      status: ListingStatus.PENDING_REVIEW,
       virtualWalkthroughConfig: walkthrough,
     },
     create: {
@@ -276,7 +278,7 @@ async function upsertProject(
       constructionStage: stage,
       completionPercent: rec.completionPercent,
       requiresEscrow: rec.requiresEscrow ?? true,
-      status: ListingStatus.PUBLISHED,
+      status: ListingStatus.PENDING_REVIEW,
       virtualWalkthroughConfig: walkthrough,
     },
   });
@@ -337,7 +339,7 @@ async function upsertProject(
       description: unit.description,
       listingType,
       category: PropertyCategory.RESIDENTIAL,
-      status: ListingStatus.PUBLISHED,
+      status: ListingStatus.PENDING_REVIEW,
       priceAmount: unit.price,
       priceCurrency: currency,
       bedrooms: unit.bedrooms,
@@ -351,7 +353,7 @@ async function upsertProject(
       virtualWalkthroughConfig: unitConfig,
       waterAvailable: (unit.amenities ?? []).includes("water"),
       powerBackup: (unit.amenities ?? []).includes("power-backup"),
-      publishedAt,
+      publishedAt: null,
       lastRefreshDate: publishedAt,
     };
 

@@ -34,12 +34,15 @@ export async function POST(request: NextRequest) {
   const phone = normalizeEthiopiaPhone(phoneRaw);
   if (!phone || !/^\d{6}$/.test(code)) {
     return NextResponse.json(
-      { error: "ValidationError", message: "Phone and 6-digit code required" },
+      {
+        error: "ValidationError",
+        message: "Ethiopian mobile number and 6-digit code required",
+      },
       { status: 400 },
     );
   }
 
-  const check = verifyOtp(phone, code);
+  const check = await verifyOtp(phone, code);
   if (!check.ok) {
     return NextResponse.json(
       { error: "OtpInvalid", message: check.error },
@@ -50,17 +53,22 @@ export async function POST(request: NextRequest) {
   let user = await prisma.user.findUnique({ where: { phone } });
 
   if (!user && mode === "login") {
-    // Auto-register on first successful OTP (common SMS auth UX)
+    return NextResponse.json(
+      {
+        error: "AccountNotFound",
+        message: "No account for this number. Register with your local phone first.",
+      },
+      { status: 404 },
+    );
   }
 
   if (!user) {
     const fullName =
       check.record.fullName?.trim() ||
       `EthioMLS User ${phone.slice(-4)}`;
-    const email = `sms.${phone.replace(/\D/g, "")}@users.ethiomls.local`;
+    // Email is optional and collected later on the profile — never invent one.
     user = await prisma.user.create({
       data: {
-        email,
         phone,
         fullName,
         passwordHash: oauthPlaceholderPasswordHash(phone),
@@ -86,6 +94,7 @@ export async function POST(request: NextRequest) {
       fullName: user.fullName,
       phone: user.phone,
       email: user.email,
+      role: user.role,
     },
   });
 }

@@ -41,7 +41,7 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const { code, ttlSec } = issueOtp({ phone, fullName, locale });
+  const { code, ttlSec } = await issueOtp({ phone, fullName, locale });
   const sms = await smsNotificationEngine.sendRaw({
     toE164: phone,
     locale,

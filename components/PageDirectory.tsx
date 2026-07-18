@@ -14,6 +14,10 @@ export type DirectoryItem = {
   footer?: ReactNode;
   /** When set, the card title (and card surface) link to this href. */
   href?: string;
+  /** Cover photo shown at the top of the card. */
+  imageUrl?: string | null;
+  /** Extra photo count shown as a "+N" chip over the cover photo. */
+  photoCount?: number;
 };
 
 type PageDirectoryProps = {
@@ -55,9 +59,26 @@ export function PageDirectory({
     <ul className={`${gridClass} list-none p-0 m-0`}>
       {items.map((item) => {
         const cardClass =
-          "group rounded-2xl border border-slate-200/90 bg-white p-5 shadow-[var(--shadow-card)] transition duration-200 hover:-translate-y-0.5 hover:border-emerald-200 hover:shadow-[var(--shadow-card-hover)]";
+          "group overflow-hidden rounded-2xl border border-slate-200/90 bg-white shadow-[var(--shadow-card)] transition duration-200 hover:-translate-y-0.5 hover:border-emerald-200 hover:shadow-[var(--shadow-card-hover)]";
         const body = (
           <>
+            {item.imageUrl ? (
+              <div className="relative aspect-[16/10] w-full overflow-hidden bg-slate-100">
+                {/* eslint-disable-next-line @next/next/no-img-element -- remote listing photos from arbitrary hosts */}
+                <img
+                  src={item.imageUrl}
+                  alt=""
+                  loading="lazy"
+                  className="h-full w-full object-cover transition duration-300 group-hover:scale-[1.03]"
+                />
+                {item.photoCount && item.photoCount > 1 ? (
+                  <span className="absolute bottom-2 right-2 rounded-full bg-slate-950/70 px-2.5 py-1 text-xs font-semibold text-white backdrop-blur-sm">
+                    +{item.photoCount - 1}
+                  </span>
+                ) : null}
+              </div>
+            ) : null}
+            <div className="p-5">
             {item.badges && item.badges.length > 0 ? (
               <div className="mb-3 flex flex-wrap gap-1.5">
                 {item.badges.map((badge) => (
@@ -79,6 +100,7 @@ export function PageDirectory({
               {item.meta}
             </p>
             {item.footer ? <div className="mt-3">{item.footer}</div> : null}
+            </div>
           </>
         );
 

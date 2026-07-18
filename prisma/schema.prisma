@@ -22,6 +22,9 @@ datasource db {
 
 enum UserRole {
   BUYER_RENTER
+  /// Private property owner listing their own home (not a broker).
+  PROPERTY_OWNER
+  /// Licensed independent broker (UI label: Broker).
   INDEPENDENT_DELALA
   CORPORATE_DEVELOPER
   ADMIN
@@ -40,6 +43,19 @@ enum ConstructionStage {
   FULLY_COMPLETED
 }
 
+enum ImportSourceType {
+  TELEGRAM
+  WEBSITE
+}
+
+enum ScrapeRunStatus {
+  PENDING
+  RUNNING
+  SUCCEEDED
+  FAILED
+  PARTIAL
+}
+
 enum ListingStatus {
   DRAFT
   PENDING_REVIEW
@@ -48,6 +64,22 @@ enum ListingStatus {
   SOLD
   RENTED
   ARCHIVED
+}
+
+/// Lifecycle of a parent building stack for off-plan / multi-unit inventory.
+/// (Kept separate from `ListingStatus`, which tracks moderation/publication.)
+enum BuildingStackStatus {
+  UPCOMING_OFF_PLAN
+  UNDER_CONSTRUCTION
+  COMPLETED
+  SOLD_OUT
+}
+
+/// Off-plan financial deal profiles offered by developers.
+enum PaymentPlan {
+  MILESTONE_BASED
+  CASH_DISCOUNT_USD
+  SEMI_FINISHED_DISCOUNT
 }
 
 enum ListingType {
@@ -115,7 +147,9 @@ enum LeadStatus {
 
 model User {
   id           String   @id @default(cuid())
-  email        String   @unique
+  /// Optional contact email — collected on the profile, not at signup
+  email        String?  @unique
+  /// Ethiopian mobile in E.164 (+2519… / +2517…) — primary signup identifier
   phone        String?  @unique
   passwordHash String
   fullName     String
@@ -136,6 +170,9 @@ model User {
   leadsRequested   Lead[]                 @relation("LeadRequester")
   leadsAsBroker    Lead[]                 @relation("LeadBroker")
   billingEvents    BillingWebhookEvent[]
+  auditedListings  Listing[]              @relation("ListingAuditor")
+  importSources    ImportSource[]         @relation("ImportSourceCreator")
+  scrapeRuns       ScrapeRun[]            @relation("ScrapeRunStarter")
 
   @@index([role])
   @@map("users")
@@ -264,6 +301,20 @@ model Listing {
   delalaId           String?
   projectId          String?
   subCityId          String?
+  /// Parent building stack (self-reference) for off-plan / multi-unit inventory
+  parentId           String?
+  /// Building-stack lifecycle for parent stacks and their units
+  stackStatus        BuildingStackStatus @default(UPCOMING_OFF_PLAN)
+  /// Off-plan financial deal profile (parent-level; inherited by child units)
+  paymentStructure   PaymentPlan       @default(MILESTONE_BASED)
+  /// Upfront percentage, e.g. 15 for a 15% down payment
+  downPaymentPercent Int?
+  /// Standard developer valuation metric (price per m²)
+  pricePerSqMeterFloat Float?
+  /// Eligible for foreign-currency (USD) purchase channels
+  isForeignCurrencyEligible Boolean    @default(true)
+  /// Ordered milestone payout tranches in percent, e.g. [20, 20, 20, 40]
+  milestoneTranchePercents Int[]       @default([])
   /// Multi-language listing title
   title              Json
   /// Multi-language listing description
@@ -291,6 +342,10 @@ model Listing {
   virtualWalkthroughConfig Json?
   coverImageUrl      String?
   galleryImageUrls   String[]          @default([])
+  /// Standard property photo URLs (Supabase Storage `property-media` bucket)
+  images             String[]          @default([])
+  /// Optional 360° equirectangular panoramic tour URL
+  tourUrl            String?
   /// Unfinished / under-construction stock (triggers Proc. 1357 escrow rules)
   isUnfinished       Boolean           @default(false)
   /// Verified municipal / MUD construction permit reference
@@ -311,6 +366,22 @@ model Listing {
   expiryReminderSentAt DateTime?
   telegramBroadcastAt DateTime?
   publishedAt        DateTime?
+  /// Admin audit gate: listings cannot be published until this is set.
+  adminAuditApprovedAt DateTime?
+  adminAuditedById    String?
+  adminAuditNotes     String?
+  /// Snapshot of the required identity, title, price, media, and compliance checks.
+  adminAuditChecklist Json?
+  /// Public contact phone extracted from the source post / page (E.164 preferred).
+  contactPhone       String?
+  /// Contact person or broker name shown on the source.
+  contactName        String?
+  /// Canonical source page/post URL used for provenance and deduplication.
+  sourceUrl          String?
+  /// External post/content ID within the source (e.g. Telegram message id).
+  sourceExternalId   String?
+  importSourceId     String?
+  scrapeRunId        String?
   createdAt          DateTime          @default(now())
   updatedAt          DateTime          @updatedAt
 
@@ -319,17 +390,100 @@ model Listing {
   delala    DelalaProfile?    @relation(fields: [delalaId], references: [id])
   project   Project?          @relation(fields: [projectId], references: [id])
   subCity   SubCity?          @relation(fields: [subCityId], references: [id])
+  parent    Listing?          @relation("BuildingStack", fields: [parentId], references: [id], onDelete: Cascade)
+  units     Listing[]         @relation("BuildingStack")
+  adminAuditedBy User?        @relation("ListingAuditor", fields: [adminAuditedById], references: [id], onDelete: SetNull)
+  importSource ImportSource?  @relation(fields: [importSourceId], references: [id], onDelete: SetNull)
+  scrapeRun ScrapeRun?        @relation(fields: [scrapeRunId], references: [id], onDelete: SetNull)
   escrow    EscrowAccount?
   clearances ForeignInvestorClearance[]
   adminAlerts AdminAlert[]
   leads       Lead[]
 
+  @@unique([importSourceId, sourceExternalId])
   @@index([status, listingType])
   @@index([subCityId])
   @@index([ownerId])
   @@index([subCityId, priceAmount, bedrooms, category])
   @@index([status, lastRefreshDate])
+  @@index([parentId])
+  @@index([stackStatus])
+  @@index([adminAuditApprovedAt])
+  @@index([adminAuditedById])
+  @@index([contactPhone])
+  @@index([importSourceId])
+  @@index([sourceUrl])
   @@map("listings")
+}
+
+/// Short-lived SMS OTP codes (DB-backed so verification works across
+/// serverless instances and server restarts). Rows are upserted per phone.
+model OtpCode {
+  phone     String   @id
+  codeHash  String
+  fullName  String?
+  locale    String?
+  expiresAt DateTime
+  attempts  Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([expiresAt])
+  @@map("otp_codes")
+}
+
+/// Admin-managed Telegram channel or website the platform may scrape.
+model ImportSource {
+  id            String           @id @default(cuid())
+  label         String
+  sourceType    ImportSourceType
+  /// Original URL entered by the admin (t.me/... or https://...)
+  url           String
+  /// Normalized canonical URL used for uniqueness checks
+  normalizedUrl String           @unique
+  /// Telegram @handle when sourceType is TELEGRAM
+  telegramHandle String?
+  isActive      Boolean          @default(true)
+  notes         String?
+  createdById   String
+  lastRunAt     DateTime?
+  lastSuccessAt DateTime?
+  createdAt     DateTime         @default(now())
+  updatedAt     DateTime         @updatedAt
+
+  createdBy User       @relation("ImportSourceCreator", fields: [createdById], references: [id], onDelete: Cascade)
+  runs      ScrapeRun[]
+  listings  Listing[]
+
+  @@index([sourceType, isActive])
+  @@index([createdById])
+  @@map("import_sources")
+}
+
+/// One scrape execution against an ImportSource.
+model ScrapeRun {
+  id              String         @id @default(cuid())
+  importSourceId  String
+  startedById     String
+  status          ScrapeRunStatus @default(PENDING)
+  startedAt       DateTime       @default(now())
+  finishedAt      DateTime?
+  postsSeen       Int            @default(0)
+  listingsCreated Int            @default(0)
+  listingsUpdated Int            @default(0)
+  listingsSkipped Int            @default(0)
+  errorMessage    String?
+  summary         Json?
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+
+  importSource ImportSource @relation(fields: [importSourceId], references: [id], onDelete: Cascade)
+  startedBy    User         @relation("ScrapeRunStarter", fields: [startedById], references: [id], onDelete: Cascade)
+  listings     Listing[]
+
+  @@index([importSourceId, startedAt])
+  @@index([status, startedAt])
+  @@map("scrape_runs")
 }
 
 /// Dashboard alerts for admins (duplicate collisions, compliance flags, etc.).

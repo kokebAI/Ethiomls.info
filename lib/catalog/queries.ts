@@ -1,73 +1,127 @@
 import { ListingStatus } from "@prisma/client";
 import { prisma } from "@/lib/db/prisma";
 
+/**
+ * Catalog reads must not crash `next build` / SSG when Postgres is unreachable
+ * (common on Vercel preview builds or local builds without Docker).
+ */
 export async function fetchVerifiedDevelopers() {
-  return prisma.developerProfile.findMany({
-    include: {
-      headquartersSubCity: {
-        select: { code: true, name: true },
+  try {
+    return await prisma.developerProfile.findMany({
+      include: {
+        headquartersSubCity: {
+          select: { code: true, name: true },
+        },
       },
-    },
-    orderBy: { tradeName: "asc" },
-  });
+      orderBy: { tradeName: "asc" },
+    });
+  } catch (error) {
+    console.error("[catalog] fetchVerifiedDevelopers failed:", error);
+    return [];
+  }
 }
 
 export async function fetchPublishedProjects() {
-  return prisma.project.findMany({
-    where: { status: ListingStatus.PUBLISHED },
-    include: {
-      developer: {
-        select: { tradeName: true, displayName: true },
+  try {
+    return await prisma.project.findMany({
+      where: { status: ListingStatus.PUBLISHED },
+      include: {
+        developer: {
+          select: { tradeName: true, displayName: true },
+        },
+        subCity: {
+          select: { code: true, name: true },
+        },
       },
-      subCity: {
-        select: { code: true, name: true },
-      },
-    },
-    orderBy: [{ completionPercent: "desc" }, { updatedAt: "desc" }],
-  });
+      orderBy: [{ completionPercent: "desc" }, { updatedAt: "desc" }],
+    });
+  } catch (error) {
+    console.error("[catalog] fetchPublishedProjects failed:", error);
+    return [];
+  }
 }
 
 export async function fetchProjectById(id: string) {
-  return prisma.project.findFirst({
-    where: { id, status: ListingStatus.PUBLISHED },
-    include: {
-      developer: {
-        select: {
-          tradeName: true,
-          displayName: true,
-          website: true,
-          registrationNumber: true,
+  try {
+    return await prisma.project.findFirst({
+      where: { id, status: ListingStatus.PUBLISHED },
+      include: {
+        developer: {
+          select: {
+            tradeName: true,
+            displayName: true,
+            website: true,
+            registrationNumber: true,
+          },
+        },
+        subCity: {
+          select: { code: true, name: true },
+        },
+        listings: {
+          where: { status: ListingStatus.PUBLISHED },
+          orderBy: [{ createdAt: "asc" }],
         },
       },
-      subCity: {
-        select: { code: true, name: true },
-      },
-      listings: {
-        where: { status: ListingStatus.PUBLISHED },
-        orderBy: [{ createdAt: "asc" }],
-      },
-    },
-  });
+    });
+  } catch (error) {
+    console.error("[catalog] fetchProjectById failed:", error);
+    return null;
+  }
 }
 
 export async function fetchPublishedListings() {
-  return prisma.listing.findMany({
-    where: { status: ListingStatus.PUBLISHED },
-    include: {
-      subCity: {
-        select: { code: true, name: true },
+  try {
+    return await prisma.listing.findMany({
+      where: { status: ListingStatus.PUBLISHED },
+      include: {
+        subCity: {
+          select: { code: true, name: true },
+        },
+        developer: {
+          select: { tradeName: true, displayName: true },
+        },
       },
-      developer: {
-        select: { tradeName: true, displayName: true },
+      orderBy: [{ publishedAt: "desc" }, { createdAt: "desc" }],
+    });
+  } catch (error) {
+    console.error("[catalog] fetchPublishedListings failed:", error);
+    return [];
+  }
+}
+
+export async function fetchListingById(id: string) {
+  try {
+    return await prisma.listing.findFirst({
+      where: { id, status: ListingStatus.PUBLISHED },
+      include: {
+        subCity: {
+          select: { code: true, name: true },
+        },
+        developer: {
+          select: { tradeName: true, displayName: true, website: true },
+        },
+        project: {
+          select: { id: true, title: true },
+        },
+        owner: {
+          select: { fullName: true },
+        },
       },
-    },
-    orderBy: [{ publishedAt: "desc" }, { createdAt: "desc" }],
-  });
+    });
+  } catch (error) {
+    console.error("[catalog] fetchListingById failed:", error);
+    return null;
+  }
 }
 
 export async function fetchActiveSubCities() {
-  return prisma.subCity.findMany({
-    where: { isActive: true },
-    orderBy: { sortOrder: "asc" },
-  });
+  try {
+    return await prisma.subCity.findMany({
+      where: { isActive: true },
+      orderBy: { sortOrder: "asc" },
+    });
+  } catch (error) {
+    console.error("[catalog] fetchActiveSubCities failed:", error);
+    return [];
+  }
 }

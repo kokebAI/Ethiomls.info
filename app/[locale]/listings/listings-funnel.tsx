@@ -1,8 +1,8 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { SlidersHorizontal } from "lucide-react";
-import { ConversationalFunnel } from "@/components/search/conversational-funnel";
 import { PageDirectory, type DirectoryItem } from "@/components/PageDirectory";
 import { useTranslation } from "@/hooks/useTranslation";
 
@@ -44,11 +44,30 @@ export function ListingsFunnel({
   emptyMessage,
 }: ListingsFunnelProps) {
   const { t } = useTranslation();
+  const searchParams = useSearchParams();
+
+  // Seed filters from URL params sent by the home-page search guide.
+  const initialType = searchParams.get("type") ?? "";
+  const initialMax = searchParams.get("max") ?? "";
+  const initialClusterSubCities = (searchParams.get("subCities") ?? "")
+    .split(",")
+    .map((code) => code.trim())
+    .filter(Boolean);
+
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
   const [subCityCode, setSubCityCode] = useState("");
-  const [listingType, setListingType] = useState("");
+  const [clusterSubCities, setClusterSubCities] = useState<string[]>(
+    initialClusterSubCities,
+  );
+  const [listingType, setListingType] = useState(
+    (LISTING_TYPES as readonly string[]).includes(initialType)
+      ? initialType
+      : "",
+  );
   const [minPrice, setMinPrice] = useState("");
-  const [maxPrice, setMaxPrice] = useState("");
+  const [maxPrice, setMaxPrice] = useState(
+    /^\d+$/.test(initialMax) ? initialMax : "",
+  );
   const [sortBy, setSortBy] = useState<"newest" | "price-asc" | "price-desc">(
     "newest",
   );
@@ -59,6 +78,13 @@ export function ListingsFunnel({
 
     let result = listings.filter((item) => {
       if (subCityCode && item.subCityCode !== subCityCode) return false;
+      if (
+        !subCityCode &&
+        clusterSubCities.length > 0 &&
+        !clusterSubCities.includes(item.subCityCode)
+      ) {
+        return false;
+      }
       if (listingType && item.listingType !== listingType) return false;
       if (min != null && Number.isFinite(min) && item.priceAmount < min) {
         return false;
@@ -77,10 +103,19 @@ export function ListingsFunnel({
     }
 
     return result;
-  }, [listings, subCityCode, listingType, minPrice, maxPrice, sortBy]);
+  }, [
+    listings,
+    subCityCode,
+    clusterSubCities,
+    listingType,
+    minPrice,
+    maxPrice,
+    sortBy,
+  ]);
 
   function resetFilters() {
     setSubCityCode("");
+    setClusterSubCities([]);
     setListingType("");
     setMinPrice("");
     setMaxPrice("");
@@ -88,8 +123,13 @@ export function ListingsFunnel({
   }
 
   const hasActiveFilters =
-    Boolean(subCityCode || listingType || minPrice || maxPrice) ||
-    sortBy !== "newest";
+    Boolean(
+      subCityCode ||
+        clusterSubCities.length > 0 ||
+        listingType ||
+        minPrice ||
+        maxPrice,
+    ) || sortBy !== "newest";
 
   const filterPanel = (
     <div className="space-y-5">
@@ -196,10 +236,6 @@ export function ListingsFunnel({
 
   return (
     <div className="space-y-8">
-      <section className="rounded-2xl border border-slate-200/90 bg-white/80 p-4 shadow-[var(--shadow-card)] sm:p-6">
-        <ConversationalFunnel />
-      </section>
-
       <div className="flex flex-col gap-6 lg:flex-row lg:items-start">
         <aside className="hidden w-full shrink-0 lg:block lg:w-72 xl:w-80">
           <div className="sticky top-[5.5rem] rounded-2xl border border-slate-200/90 bg-white p-5 shadow-[var(--shadow-card)]">

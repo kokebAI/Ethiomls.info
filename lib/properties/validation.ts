@@ -31,6 +31,12 @@ const nonEmptyStringArray = z
  */
 export const createPropertySchema = z
   .object({
+    id: z
+      .string()
+      .regex(
+        /^[A-Z0-9]{6}$/,
+        "id must be exactly 6 uppercase alphanumeric characters",
+      ),
     ownerId: z.string().min(1, "ownerId is required"),
     title: z.object({
       en: z.string().trim().min(1),
