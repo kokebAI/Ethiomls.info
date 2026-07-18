@@ -6,6 +6,7 @@ import type {
 } from "@/lib/building/types";
 import type { Locale } from "@/lib/i18n/config";
 import { pickLocalized } from "@/lib/i18n/pickLocalized";
+import { amenitySlugsFromFlags } from "@/lib/properties/amenities";
 import {
   parseFloorFromTags,
   parseUnitLabelFromTags,
@@ -69,6 +70,18 @@ function amenitiesFromListing(listing: Listing): string[] {
   if (Array.isArray(fromConfig) && fromConfig.length > 0) {
     return fromConfig.filter((a): a is string => typeof a === "string");
   }
+
+  const fromFlags = amenitySlugsFromFlags({
+    waterAvailable: listing.waterAvailable,
+    powerBackup: listing.powerBackup,
+    gatedCompound: listing.gatedCompound,
+    parking: listing.parking,
+    elevator: listing.elevator,
+    furnished: listing.furnished,
+    escrowVerified: listing.escrowVerified,
+  });
+  if (fromFlags.length > 0) return fromFlags;
+
   return listing.metadataTags
     .map((tag) => {
       const match = /^amenity:(.+)$/i.exec(tag.trim());

@@ -3,15 +3,19 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import {
   ArrowLeft,
+  ArrowUpDown,
   BadgeCheck,
   Bath,
   BedDouble,
   Building2,
+  Car,
   Droplets,
   Globe,
   MapPin,
   Phone,
   Ruler,
+  Shield,
+  Sofa,
   Zap,
 } from "lucide-react";
 import { ListingGallery } from "@/components/property/ListingGallery";
@@ -19,6 +23,7 @@ import { VrViewer } from "@/components/property/vr-viewer";
 import { getSession } from "@/lib/auth/session";
 import { fetchListingById } from "@/lib/catalog/queries";
 import { formatMoney } from "@/lib/compliance/currency";
+import { formatConstructionStage } from "@/lib/domain/construction-stage";
 import { isLocale, type Locale } from "@/lib/i18n/config";
 import { getDictionary, translate } from "@/lib/i18n/getDictionary";
 import { pickLocalized } from "@/lib/i18n/pickLocalized";
@@ -126,7 +131,7 @@ export default async function ListingDetailPage({
     listing.constructionStage
       ? {
           label: t("listing.constructionStage"),
-          value: prettyEnum(listing.constructionStage),
+          value: formatConstructionStage(listing.constructionStage),
         }
       : null,
     listing.completionPercent != null
@@ -143,15 +148,11 @@ export default async function ListingDetailPage({
   const amenities: string[] = [
     listing.waterAvailable ? t("listing.waterAvailability") : null,
     listing.powerBackup ? t("listing.powerBackup") : null,
-    ...listing.metadataTags
-      .filter(
-        (tag) =>
-          !tag.startsWith("import") &&
-          !tag.startsWith("source:") &&
-          !tag.startsWith("telegram:") &&
-          !tag.startsWith("phone:"),
-      )
-      .map((tag) => prettyEnum(tag)),
+    listing.gatedCompound ? t("listing.gatedCompound") : null,
+    listing.parking ? t("listing.parking") : null,
+    listing.elevator ? t("listing.elevator") : null,
+    listing.furnished ? t("listing.furnished") : null,
+    listing.escrowVerified ? t("listing.escrowVerified") : null,
   ].filter((item): item is string => Boolean(item));
 
   const developerName =
@@ -280,19 +281,34 @@ export default async function ListingDetailPage({
                 {t("listingDetail.amenities")}
               </h2>
               <ul className="mt-3 flex flex-wrap gap-2">
-                {amenities.map((amenity) => (
-                  <li
-                    key={amenity}
-                    className="inline-flex items-center gap-1.5 rounded-full bg-slate-50 px-3 py-1.5 text-sm font-medium text-slate-700 ring-1 ring-inset ring-slate-200"
-                  >
-                    {amenity === t("listing.waterAvailability") ? (
+                {amenities.map((amenity) => {
+                  const icon =
+                    amenity === t("listing.waterAvailability") ? (
                       <Droplets className="h-3.5 w-3.5 text-sky-600" aria-hidden="true" />
                     ) : amenity === t("listing.powerBackup") ? (
                       <Zap className="h-3.5 w-3.5 text-amber-500" aria-hidden="true" />
-                    ) : null}
-                    {amenity}
-                  </li>
-                ))}
+                    ) : amenity === t("listing.gatedCompound") ? (
+                      <Shield className="h-3.5 w-3.5 text-emerald-600" aria-hidden="true" />
+                    ) : amenity === t("listing.parking") ? (
+                      <Car className="h-3.5 w-3.5 text-slate-600" aria-hidden="true" />
+                    ) : amenity === t("listing.elevator") ? (
+                      <ArrowUpDown className="h-3.5 w-3.5 text-violet-600" aria-hidden="true" />
+                    ) : amenity === t("listing.furnished") ? (
+                      <Sofa className="h-3.5 w-3.5 text-orange-600" aria-hidden="true" />
+                    ) : amenity === t("listing.escrowVerified") ? (
+                      <BadgeCheck className="h-3.5 w-3.5 text-emerald-600" aria-hidden="true" />
+                    ) : null;
+
+                  return (
+                    <li
+                      key={amenity}
+                      className="inline-flex items-center gap-1.5 rounded-full bg-slate-50 px-3 py-1.5 text-sm font-medium text-slate-700 ring-1 ring-inset ring-slate-200"
+                    >
+                      {icon}
+                      {amenity}
+                    </li>
+                  );
+                })}
               </ul>
             </section>
           ) : null}

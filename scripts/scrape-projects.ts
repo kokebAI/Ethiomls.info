@@ -24,6 +24,7 @@ import {
   PropertyCategory,
 } from "@prisma/client";
 import { allocateUniquePropertyId } from "../lib/db/allocatePropertyId";
+import { amenityFlagsFromTags } from "../lib/properties/amenities";
 import {
   buildListingSourceKey,
   buildProjectId,
@@ -330,6 +331,11 @@ async function upsertProject(
       unitLabel: unit.unitLabel,
     };
 
+    const amenityFlags = amenityFlagsFromTags([
+      ...(unit.amenities ?? []),
+      ...(rec.amenities ?? []),
+    ]);
+
     const listingData = {
       ownerId: developer.userId,
       developerId: developer.id,
@@ -351,8 +357,7 @@ async function upsertProject(
       isUnfinished: listingType === ListingType.OFF_PLAN,
       metadataTags,
       virtualWalkthroughConfig: unitConfig,
-      waterAvailable: (unit.amenities ?? []).includes("water"),
-      powerBackup: (unit.amenities ?? []).includes("power-backup"),
+      ...amenityFlags,
       publishedAt: null,
       lastRefreshDate: publishedAt,
     };

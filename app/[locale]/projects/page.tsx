@@ -1,6 +1,7 @@
 import { PageDirectory, type DirectoryBadge } from "@/components/PageDirectory";
 import { PageIntro } from "@/components/PageIntro";
 import { fetchPublishedProjects } from "@/lib/catalog/queries";
+import { formatConstructionStage } from "@/lib/domain/construction-stage";
 import { isLocale, type Locale } from "@/lib/i18n/config";
 import { getDictionary, translate } from "@/lib/i18n/getDictionary";
 import { pickLocalized } from "@/lib/i18n/pickLocalized";
@@ -22,7 +23,7 @@ export default async function ProjectsPage({
     const subCity = project.subCity
       ? pickLocalized(project.subCity.name, locale) || project.subCity.code
       : "—";
-    const stageLabel = project.constructionStage.replaceAll("_", " ");
+    const stageLabel = formatConstructionStage(project.constructionStage);
     const completion = `${Number(project.completionPercent)}%`;
 
     const badges: DirectoryBadge[] = [
