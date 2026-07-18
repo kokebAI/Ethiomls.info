@@ -115,6 +115,12 @@ function toPendingItem(
     ownerRole: listing.owner.role,
   });
 
+  const groupLabel =
+    listing.developer?.tradeName?.trim() ||
+    delalaDisplayName(listing.delala?.displayName) ||
+    listing.owner.fullName?.trim() ||
+    "Other";
+
   const badges: DirectoryItem["badges"] = [
     {
       label: listing.status.replaceAll("_", " "),
@@ -142,6 +148,7 @@ function toPendingItem(
     photoCount: listing.galleryImageUrls.length,
     badges,
     party,
+    groupLabel,
   };
 }
 

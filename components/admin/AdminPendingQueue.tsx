@@ -6,6 +6,8 @@ import type { AuditPartyCategory } from "@/lib/admin/listing-party";
 
 export type AdminPendingDirectoryItem = DirectoryItem & {
   party: AuditPartyCategory;
+  /** Section heading for group-by-developer (or broker/owner fallback). */
+  groupLabel: string;
 };
 
 export type AdminPendingQueueCopy = {
@@ -54,6 +56,21 @@ export function AdminPendingQueue({ items, copy }: AdminPendingQueueProps) {
     [items, tab],
   );
 
+  const groups = useMemo(() => {
+    const map = new Map<string, AdminPendingDirectoryItem[]>();
+    for (const item of filtered) {
+      const key = item.groupLabel.trim() || "Other";
+      const bucket = map.get(key);
+      if (bucket) bucket.push(item);
+      else map.set(key, [item]);
+    }
+    return [...map.entries()].sort(([a], [b]) => {
+      if (a === "Other") return 1;
+      if (b === "Other") return -1;
+      return a.localeCompare(b, undefined, { sensitivity: "base" });
+    });
+  }, [filtered]);
+
   return (
     <section
       id="admin-pending"
@@ -101,11 +118,31 @@ export function AdminPendingQueue({ items, copy }: AdminPendingQueueProps) {
         })}
       </div>
 
-      <PageDirectory
-        items={filtered}
-        emptyMessage={tab === "all" ? copy.pendingEmpty : copy.partyEmpty}
-        layout="grid"
-      />
+      {groups.length === 0 ? (
+        <PageDirectory
+          items={[]}
+          emptyMessage={tab === "all" ? copy.pendingEmpty : copy.partyEmpty}
+          layout="grid"
+        />
+      ) : (
+        <div className="space-y-8">
+          {groups.map(([label, groupItems]) => (
+            <section key={label} className="space-y-3" aria-label={label}>
+              <h3 className="flex items-baseline justify-between gap-3 text-sm font-bold uppercase tracking-[0.12em] text-slate-500">
+                <span>{label}</span>
+                <span className="tabular-nums text-slate-400">
+                  {groupItems.length}
+                </span>
+              </h3>
+              <PageDirectory
+                items={groupItems}
+                emptyMessage={copy.partyEmpty}
+                layout="grid"
+              />
+            </section>
+          ))}
+        </div>
+      )}
     </section>
   );
 }
