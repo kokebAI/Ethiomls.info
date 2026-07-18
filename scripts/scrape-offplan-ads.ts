@@ -1,11 +1,12 @@
 /**
- * Seed east-corridor off-plan ImportSources and scrape them with the
- * OFF_PLAN + east-area filter.
+ * Seed citywide corridor off-plan ImportSources and scrape them with the
+ * OFF_PLAN + any-corridor filter (central / east / west / south).
  *
  * Usage:
  *   npm run scrape:offplan-ads
  *   npm run scrape:offplan-ads -- --dry-run
  *   npm run scrape:offplan-ads -- --seed-only
+ *   npm run scrape:offplan-ads -- --file=data/imports/corridor-offplan-sources.json
  *   npm run scrape:offplan-ads -- --file=data/imports/east-offplan-sources.json
  */
 
@@ -19,7 +20,7 @@ loadEnvFile(path.join(process.cwd(), ".env"));
 
 const DEFAULT_JSON = path.join(
   process.cwd(),
-  "data/imports/east-offplan-sources.json",
+  "data/imports/corridor-offplan-sources.json",
 );
 
 const prisma = new PrismaClient();
@@ -28,6 +29,7 @@ type SeedSource = {
   label: string;
   url: string;
   track?: string;
+  corridor?: string;
   notes?: string;
 };
 
@@ -39,6 +41,7 @@ type CliOptions = {
   dryRun: boolean;
   seedOnly: boolean;
   file: string;
+  corridor: string | null;
 };
 
 function loadEnvFile(filePath: string) {
@@ -69,12 +72,15 @@ function parseArgs(argv: string[]): CliOptions {
     dryRun: false,
     seedOnly: false,
     file: DEFAULT_JSON,
+    corridor: null,
   };
   for (const arg of argv) {
     if (arg === "--dry-run") options.dryRun = true;
     else if (arg === "--seed-only") options.seedOnly = true;
     else if (arg.startsWith("--file=")) {
       options.file = path.resolve(process.cwd(), arg.slice("--file=".length));
+    } else if (arg.startsWith("--corridor=")) {
+      options.corridor = arg.slice("--corridor=".length).trim().toLowerCase();
     }
   }
   return options;
@@ -113,9 +119,10 @@ async function seedSources(
 
   for (const entry of seed.sources) {
     const normalized = normalizeImportSourceInput(entry.url);
+    const corridor = entry.corridor?.trim() || "all";
     const notes =
       entry.notes?.trim() ||
-      `east-offplan${entry.track ? ` · ${entry.track}` : ""}`;
+      `corridor-offplan · ${corridor}${entry.track ? ` · ${entry.track}` : ""}`;
 
     if (dryRun) {
       console.log(
@@ -165,10 +172,29 @@ async function main() {
     throw new Error(`No sources in ${options.file}`);
   }
 
+  const filtered = options.corridor
+    ? {
+        ...seed,
+        sources: seed.sources.filter((s) => {
+          const c = (s.corridor || "all").toLowerCase();
+          return c === options.corridor || c === "all";
+        }),
+      }
+    : seed;
+
+  if (filtered.sources.length === 0) {
+    throw new Error(
+      `No sources for corridor=${options.corridor} in ${options.file}`,
+    );
+  }
+
   const adminUserId = await resolveAdminUserId();
   console.log(`Using admin user ${adminUserId}`);
+  if (options.corridor) {
+    console.log(`Corridor filter: ${options.corridor}`);
+  }
 
-  const sources = await seedSources(seed, adminUserId, options.dryRun);
+  const sources = await seedSources(filtered, adminUserId, options.dryRun);
   console.log(`Sources ready: ${sources.length}`);
 
   if (options.seedOnly || options.dryRun) {
@@ -190,7 +216,7 @@ async function main() {
       const run = await runImportSource({
         sourceId: source.id,
         adminUserId,
-        filters: { eastOffPlanOnly: true },
+        filters: { corridorOffPlanOnly: true },
       });
       totalCreated += run.listingsCreated;
       totalUpdated += run.listingsUpdated;

@@ -1,37 +1,42 @@
 {
   "source": "curated-east-offplan",
-  "description": "East Addis corridor off-plan import sources: Ayat / Temer developer sites and Telegram plus starter broker channels. Notes tagged east-offplan for the scrape:offplan-ads pipeline. Admins can add more brokers via the Imports UI.",
+  "description": "Legacy east-only seed. Prefer data/imports/corridor-offplan-sources.json for citywide (central/east/west/south) scrapes via npm run scrape:offplan-ads.",
   "updatedAt": "2026-07-18",
   "sources": [
     {
       "label": "Ayat Real Estate (website)",
       "url": "https://ayatrealestate.com",
       "track": "developer",
-      "notes": "east-offplan · Ayat developer site"
+      "corridor": "east",
+      "notes": "corridor-offplan · east · Ayat developer site"
     },
     {
       "label": "Ayat Real Estate (Telegram)",
       "url": "https://t.me/ayatrealestate",
       "track": "developer",
-      "notes": "east-offplan · Ayat developer Telegram"
+      "corridor": "east",
+      "notes": "corridor-offplan · east · Ayat developer Telegram"
     },
     {
       "label": "Temer Properties (website)",
       "url": "https://temerproperties.com",
       "track": "developer",
-      "notes": "east-offplan · Temer developer site (Ayat Feres Bet / Achanté)"
+      "corridor": "east",
+      "notes": "corridor-offplan · east · Temer developer site"
     },
     {
       "label": "Temer Properties (Telegram)",
       "url": "https://t.me/temer_properties",
       "track": "developer",
-      "notes": "east-offplan · Temer developer Telegram"
+      "corridor": "east",
+      "notes": "corridor-offplan · east · Temer developer Telegram"
     },
     {
       "label": "Kavod Commercial (website)",
       "url": "https://kavodcommercial.com",
       "track": "developer",
-      "notes": "east-offplan · Kavod Commercial malls (Kazanchis / Shiromeda / Megenagna) — public site"
+      "corridor": "central",
+      "notes": "corridor-offplan · central · Kavod Commercial"
     }
   ]
 }

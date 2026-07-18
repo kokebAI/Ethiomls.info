@@ -3,6 +3,10 @@
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { CheckCircle2, Circle, LoaderCircle } from "lucide-react";
+import {
+  ListingAuditEnrichPanel,
+  type AuditEnrichCopy,
+} from "@/components/admin/ListingAuditEnrichPanel";
 
 const CHECKLIST_KEYS = [
   "sellerIdentity",
@@ -46,6 +50,7 @@ export type ListingAuditPanelCopy = {
   approvedReady: string;
   statusLabel: string;
   checks: Record<ChecklistKey, string>;
+  enrich: AuditEnrichCopy;
   attach: ListingAuditAttachCopy;
 };
 
@@ -421,6 +426,8 @@ export function ListingAuditPanel({
           </button>
         ) : null}
       </div>
+
+      <ListingAuditEnrichPanel listingId={listingId} copy={copy.enrich} />
     </section>
   );
 }

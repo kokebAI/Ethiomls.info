@@ -27,6 +27,7 @@ type ListingsFunnelProps = {
   listings: ListingFilterItem[];
   subCities: SubCityOption[];
   emptyMessage: string;
+  imagePlaceholder?: string;
 };
 
 const LISTING_TYPES = ["SALE", "RENT", "OFF_PLAN"] as const;
@@ -48,6 +49,7 @@ export function ListingsFunnel({
   listings,
   subCities,
   emptyMessage,
+  imagePlaceholder,
 }: ListingsFunnelProps) {
   const { t } = useTranslation();
   const searchParams = useSearchParams();
@@ -319,6 +321,7 @@ export function ListingsFunnel({
             items={filtered}
             emptyMessage={emptyMessage}
             layout="grid"
+            imagePlaceholder={imagePlaceholder}
           />
         </div>
       </div>

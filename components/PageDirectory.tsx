@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import Link from "next/link";
+import { DirectoryCover } from "@/components/DirectoryCover";
 
 export type DirectoryBadge = {
   label: string;
@@ -24,6 +25,8 @@ type PageDirectoryProps = {
   items: DirectoryItem[];
   emptyMessage: string;
   layout?: "grid" | "list";
+  /** Label when a card has no usable cover photo. */
+  imagePlaceholder?: string;
 };
 
 const BADGE_TONES: Record<NonNullable<DirectoryBadge["tone"]>, string> = {
@@ -38,6 +41,7 @@ export function PageDirectory({
   items,
   emptyMessage,
   layout = "grid",
+  imagePlaceholder,
 }: PageDirectoryProps) {
   if (items.length === 0) {
     return (
@@ -62,22 +66,11 @@ export function PageDirectory({
           "group overflow-hidden rounded-2xl border border-slate-200/90 bg-white shadow-[var(--shadow-card)] transition duration-200 hover:-translate-y-0.5 hover:border-emerald-200 hover:shadow-[var(--shadow-card-hover)]";
         const body = (
           <>
-            {item.imageUrl ? (
-              <div className="relative aspect-[16/10] w-full overflow-hidden bg-slate-100">
-                {/* eslint-disable-next-line @next/next/no-img-element -- remote listing photos from arbitrary hosts */}
-                <img
-                  src={item.imageUrl}
-                  alt=""
-                  loading="lazy"
-                  className="h-full w-full object-cover transition duration-300 group-hover:scale-[1.03]"
-                />
-                {item.photoCount && item.photoCount > 1 ? (
-                  <span className="absolute bottom-2 right-2 rounded-full bg-slate-950/70 px-2.5 py-1 text-xs font-semibold text-white backdrop-blur-sm">
-                    +{item.photoCount - 1}
-                  </span>
-                ) : null}
-              </div>
-            ) : null}
+            <DirectoryCover
+              imageUrl={item.imageUrl}
+              photoCount={item.photoCount}
+              placeholderLabel={imagePlaceholder}
+            />
             <div className="p-5">
             {item.badges && item.badges.length > 0 ? (
               <div className="mb-3 flex flex-wrap gap-1.5">

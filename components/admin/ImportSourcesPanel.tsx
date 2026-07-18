@@ -245,7 +245,8 @@ export function ImportSourcesPanel() {
           <ul className="mt-5 grid gap-3">
             {sources.map((source) => {
               const lastRun = source.runs[0];
-              const isEastOffPlan = /east-offplan/i.test(source.notes ?? "");
+              const isCorridorOffPlan =
+                /corridor-offplan|east-offplan/i.test(source.notes ?? "");
               return (
                 <li
                   key={source.id}
@@ -264,9 +265,9 @@ export function ImportSourcesPanel() {
                               ? t("imports.typeFacebook")
                               : t("imports.typeWebsite")}
                         </span>
-                        {isEastOffPlan ? (
+                        {isCorridorOffPlan ? (
                           <span className="mr-2 rounded-full bg-emerald-800 px-2 py-0.5 font-bold uppercase tracking-wide text-emerald-100">
-                            {t("imports.eastOffPlanBadge")}
+                            {t("imports.corridorOffPlanBadge")}
                           </span>
                         ) : null}
                         {source.normalizedUrl}

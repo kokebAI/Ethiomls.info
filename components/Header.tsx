@@ -5,6 +5,7 @@ import { LogOut, Menu, UserRound, X } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { BrandMark } from "@/components/BrandMark";
+import { AdminAlertsBell } from "@/components/admin/AdminAlertsBell";
 import { LocaleSwitcher } from "@/components/LocaleSwitcher";
 import { useTranslation } from "@/hooks/useTranslation";
 import { hubPathForRole } from "@/lib/roles/hubs";
@@ -126,6 +127,7 @@ export function Header() {
 
         <div className="flex shrink-0 items-center gap-2 sm:gap-3">
           <LocaleSwitcher />
+          {authReady && user?.role === "ADMIN" ? <AdminAlertsBell /> : null}
           {authReady && user ? (
             <>
               <Link

@@ -8,14 +8,16 @@ import {
 } from "@prisma/client";
 import { prisma } from "@/lib/db/prisma";
 import { generatePropertyId } from "@/src/utils/generateId";
-import { filterEastOffPlanCandidates } from "@/lib/imports/east-offplan-filter";
+import { filterCorridorOffPlanCandidates } from "@/lib/imports/corridor-offplan-filter";
 import { scrapeFacebookPage } from "@/lib/imports/facebook-scraper";
 import { scrapeTelegramChannel } from "@/lib/imports/telegram-scraper";
 import { scrapeWebsite } from "@/lib/imports/website-scraper";
 import type { ScrapedCandidate } from "@/lib/imports/telegram-scraper";
 
 export type RunImportFilters = {
-  /** Only upsert OFF_PLAN ads that match the east corridor (Ayat, Temer, CMC, …). */
+  /** Only upsert OFF_PLAN ads that match any Addis corridor (central/east/west/south). */
+  corridorOffPlanOnly?: boolean;
+  /** @deprecated Prefer corridorOffPlanOnly */
   eastOffPlanOnly?: boolean;
 };
 
@@ -167,16 +169,18 @@ export async function runImportSource(input: {
     }
 
     const postsSeen = candidates.length;
-    if (input.filters?.eastOffPlanOnly) {
-      candidates = filterEastOffPlanCandidates(candidates);
+    const corridorFilter =
+      input.filters?.corridorOffPlanOnly || input.filters?.eastOffPlanOnly;
+    if (corridorFilter) {
+      candidates = filterCorridorOffPlanCandidates(candidates);
     }
 
     let created = 0;
     let updated = 0;
     let skipped = 0;
 
-    // Candidates filtered out by east-offplan count as skipped.
-    if (input.filters?.eastOffPlanOnly) {
+    // Candidates filtered out by corridor-offplan count as skipped.
+    if (corridorFilter) {
       skipped += postsSeen - candidates.length;
     }
 
@@ -209,6 +213,7 @@ export async function runImportSource(input: {
         summary: {
           sourceType: source.sourceType,
           url: source.normalizedUrl,
+          corridorOffPlanOnly: Boolean(corridorFilter),
           eastOffPlanOnly: Boolean(input.filters?.eastOffPlanOnly),
           matchedAfterFilter: candidates.length,
           sampleTitles: candidates.slice(0, 5).map((c) => c.parsed.title),

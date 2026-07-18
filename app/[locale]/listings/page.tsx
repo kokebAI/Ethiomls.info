@@ -163,6 +163,7 @@ export default async function ListingsPage({
         listings={items}
         subCities={subCities}
         emptyMessage={translate(dictionary, "pages.emptyDirectory")}
+        imagePlaceholder={t("listing.photoComingSoon")}
       />
     </PageIntro>
   );

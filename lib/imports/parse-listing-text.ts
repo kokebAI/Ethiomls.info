@@ -20,27 +20,55 @@ const SUB_CITY_ALIASES: Record<string, AddisSubCityCode> = {
 };
 
 /**
- * East-corridor neighborhoods / project brands → canonical sub-city.
- * Longer aliases first so "ayat feres bet" wins over bare "ayat".
+ * Corridor neighborhoods / landmarks / project brands → canonical sub-city.
+ * Longer aliases first so multi-word names win.
  */
-const EAST_NEIGHBORHOOD_ALIASES: Array<{
+const CORRIDOR_NEIGHBORHOOD_ALIASES: Array<{
   alias: string;
   subCity: AddisSubCityCode;
   label: string;
   areaTag: string;
+  corridor: "central" | "east" | "west" | "south";
 }> = [
-  { alias: "ayat feres bet", subCity: "yeka", label: "Ayat Feres Bet", areaTag: "ayat-feres-bet" },
-  { alias: "feres bet", subCity: "yeka", label: "Feres Bet", areaTag: "feres-bet" },
-  { alias: "ayat achante", subCity: "yeka", label: "Ayat Achanté", areaTag: "ayat-achante" },
-  { alias: "ayat achanté", subCity: "yeka", label: "Ayat Achanté", areaTag: "ayat-achante" },
-  { alias: "achante", subCity: "yeka", label: "Achanté", areaTag: "achante" },
-  { alias: "achanté", subCity: "yeka", label: "Achanté", areaTag: "achante" },
-  { alias: "ayat hills", subCity: "yeka", label: "Ayat Hills", areaTag: "ayat" },
-  { alias: "ayat", subCity: "yeka", label: "Ayat", areaTag: "ayat" },
-  { alias: "temer", subCity: "yeka", label: "Temer", areaTag: "temer" },
-  { alias: "cmc", subCity: "yeka", label: "CMC", areaTag: "cmc" },
-  { alias: "summit", subCity: "lemi-kura", label: "Summit", areaTag: "summit" },
-  { alias: "lemi kura", subCity: "lemi-kura", label: "Lemi Kura", areaTag: "lemi-kura" },
+  // East
+  { alias: "ayat feres bet", subCity: "yeka", label: "Ayat Feres Bet", areaTag: "ayat-feres-bet", corridor: "east" },
+  { alias: "feres bet", subCity: "yeka", label: "Feres Bet", areaTag: "feres-bet", corridor: "east" },
+  { alias: "ayat achante", subCity: "yeka", label: "Ayat Achanté", areaTag: "ayat-achante", corridor: "east" },
+  { alias: "ayat achanté", subCity: "yeka", label: "Ayat Achanté", areaTag: "ayat-achante", corridor: "east" },
+  { alias: "achante", subCity: "yeka", label: "Achanté", areaTag: "achante", corridor: "east" },
+  { alias: "achanté", subCity: "yeka", label: "Achanté", areaTag: "achante", corridor: "east" },
+  { alias: "ayat hills", subCity: "yeka", label: "Ayat Hills", areaTag: "ayat", corridor: "east" },
+  { alias: "megenagna", subCity: "yeka", label: "Megenagna", areaTag: "megenagna", corridor: "east" },
+  { alias: "gerji", subCity: "bole", label: "Gerji", areaTag: "gerji", corridor: "east" },
+  { alias: "ayat", subCity: "yeka", label: "Ayat", areaTag: "ayat", corridor: "east" },
+  { alias: "temer", subCity: "yeka", label: "Temer", areaTag: "temer", corridor: "east" },
+  { alias: "cmc", subCity: "yeka", label: "CMC", areaTag: "cmc", corridor: "east" },
+  { alias: "summit", subCity: "lemi-kura", label: "Summit", areaTag: "summit", corridor: "east" },
+  { alias: "lemi kura", subCity: "lemi-kura", label: "Lemi Kura", areaTag: "lemi-kura", corridor: "east" },
+  { alias: "bole airport", subCity: "bole", label: "Bole Airport", areaTag: "bole", corridor: "east" },
+  { alias: "atlas", subCity: "bole", label: "Atlas", areaTag: "atlas", corridor: "east" },
+  // Central
+  { alias: "kazanchis", subCity: "kirkos", label: "Kazanchis", areaTag: "kazanchis", corridor: "central" },
+  { alias: "meskel square", subCity: "kirkos", label: "Meskel Square", areaTag: "meskel", corridor: "central" },
+  { alias: "mexico", subCity: "kirkos", label: "Mexico", areaTag: "mexico", corridor: "central" },
+  { alias: "piassa", subCity: "arada", label: "Piassa", areaTag: "piassa", corridor: "central" },
+  { alias: "piazza", subCity: "arada", label: "Piazza", areaTag: "piassa", corridor: "central" },
+  { alias: "4 kilo", subCity: "arada", label: "4 Kilo", areaTag: "4-kilo", corridor: "central" },
+  { alias: "6 kilo", subCity: "gullele", label: "6 Kilo", areaTag: "6-kilo", corridor: "central" },
+  { alias: "sidist kilo", subCity: "gullele", label: "Sidist Kilo", areaTag: "sidist-kilo", corridor: "central" },
+  { alias: "merkato", subCity: "addis-ketema", label: "Merkato", areaTag: "merkato", corridor: "central" },
+  // West
+  { alias: "tor hailoch", subCity: "kolfe-keranio", label: "Tor Hailoch", areaTag: "tor-hailoch", corridor: "west" },
+  { alias: "asko", subCity: "kolfe-keranio", label: "Asko", areaTag: "asko", corridor: "west" },
+  { alias: "shiromeda", subCity: "gullele", label: "Shiromeda", areaTag: "shiromeda", corridor: "west" },
+  { alias: "shiro meda", subCity: "gullele", label: "Shiro Meda", areaTag: "shiromeda", corridor: "west" },
+  { alias: "entoto", subCity: "gullele", label: "Entoto", areaTag: "entoto", corridor: "west" },
+  // South
+  { alias: "jemo", subCity: "nifas-silk-lafto", label: "Jemo", areaTag: "jemo", corridor: "south" },
+  { alias: "gelan", subCity: "akaky-kaliti", label: "Gelan", areaTag: "gelan", corridor: "south" },
+  { alias: "kaliti", subCity: "akaky-kaliti", label: "Kaliti", areaTag: "kaliti", corridor: "south" },
+  { alias: "akaky", subCity: "akaky-kaliti", label: "Akaky Kaliti", areaTag: "akaky-kaliti", corridor: "south" },
+  { alias: "lafto", subCity: "nifas-silk-lafto", label: "Lafto", areaTag: "lafto", corridor: "south" },
 ];
 
 export type ParsedListingDraft = {
@@ -73,27 +101,34 @@ function decodeEntities(text: string): string {
     .trim();
 }
 
-function detectEastNeighborhood(text: string): {
+function detectCorridorNeighborhood(text: string): {
   subCity: AddisSubCityCode;
   label: string;
   areaTag: string;
+  corridor: "central" | "east" | "west" | "south";
 } | null {
   const lower = text.toLowerCase();
-  for (const entry of EAST_NEIGHBORHOOD_ALIASES) {
+  for (const entry of CORRIDOR_NEIGHBORHOOD_ALIASES) {
     if (lower.includes(entry.alias)) {
       return {
         subCity: entry.subCity,
         label: entry.label,
         areaTag: entry.areaTag,
+        corridor: entry.corridor,
       };
     }
   }
   return null;
 }
 
+/** @deprecated Prefer detectCorridorNeighborhood */
+function detectEastNeighborhood(text: string) {
+  return detectCorridorNeighborhood(text);
+}
+
 function detectSubCity(text: string): AddisSubCityCode | null {
-  const east = detectEastNeighborhood(text);
-  if (east) return east.subCity;
+  const corridor = detectCorridorNeighborhood(text);
+  if (corridor) return corridor.subCity;
 
   const lower = text.toLowerCase();
   for (const [alias, code] of Object.entries(SUB_CITY_ALIASES)) {
@@ -202,14 +237,14 @@ export function parseListingText(rawHtmlOrText: string): ParsedListingDraft {
   const bedrooms = extractBedrooms(text);
   const bathrooms = extractBathrooms(text);
   const floorAreaSqm = extractArea(text);
-  const east = detectEastNeighborhood(text);
-  const subCityCode = east?.subCity ?? detectSubCity(text);
+  const corridorHit = detectCorridorNeighborhood(text);
+  const subCityCode = corridorHit?.subCity ?? detectSubCity(text);
   const listingType = detectListingType(text);
   const category = detectCategory(text);
-  const areaTag = east?.areaTag ?? null;
+  const areaTag = corridorHit?.areaTag ?? null;
 
-  const addressLine = east
-    ? east.label
+  const addressLine = corridorHit
+    ? corridorHit.label
     : subCityCode
       ? formatSubCityLabel(subCityCode)
       : null;
@@ -256,5 +291,9 @@ export function looksLikeListing(text: string): boolean {
   return hasHousingCue && hasContactOrPrice;
 }
 
-/** Exported for the east-corridor off-plan filter. */
-export { EAST_NEIGHBORHOOD_ALIASES, detectEastNeighborhood };
+/** Exported for corridor off-plan filters. */
+export {
+  CORRIDOR_NEIGHBORHOOD_ALIASES,
+  detectCorridorNeighborhood,
+  detectEastNeighborhood,
+};

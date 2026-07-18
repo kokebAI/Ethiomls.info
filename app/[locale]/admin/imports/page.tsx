@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { ImportSourcesPanel } from "@/components/admin/ImportSourcesPanel";
+import { SalesKitImportPanel } from "@/components/admin/SalesKitImportPanel";
 import { PageIntro } from "@/components/PageIntro";
 import { getCurrentAdmin } from "@/lib/auth/admin";
 import { isLocale, type Locale } from "@/lib/i18n/config";
@@ -40,6 +41,7 @@ export default async function AdminImportsPage({
         title={dictionary.imports.title}
         lede={dictionary.imports.lede}
       />
+      <SalesKitImportPanel />
       <ImportSourcesPanel />
     </div>
   );
