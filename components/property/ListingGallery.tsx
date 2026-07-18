@@ -26,12 +26,12 @@ export function ListingGallery({
   if (photos.length === 0 || usableIndexes.length === 0) {
     return (
       <div
-        className="flex aspect-[16/9] w-full flex-col items-center justify-center gap-2 rounded-2xl border border-dashed border-slate-300 bg-gradient-to-br from-slate-50 via-white to-emerald-50/50 text-slate-400"
+        className="mx-auto flex aspect-[16/9] w-1/2 max-w-sm flex-col items-center justify-center gap-1.5 rounded-xl border border-dashed border-slate-300 bg-gradient-to-br from-slate-50 via-white to-emerald-50/50 text-slate-400"
         role="img"
         aria-label={emptyLabel}
       >
-        <ImageIcon className="h-10 w-10 opacity-70" aria-hidden="true" />
-        <span className="text-sm font-medium text-slate-500">{emptyLabel}</span>
+        <ImageIcon className="h-5 w-5 opacity-70" aria-hidden="true" />
+        <span className="text-xs font-medium text-slate-500">{emptyLabel}</span>
       </div>
     );
   }

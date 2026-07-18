@@ -273,6 +273,7 @@ export default async function AdminWorkspacePage({
     unreadAlertCount,
     readyCount,
     pending,
+    drafts,
     ready,
     alertRows,
   ] = await Promise.all([
@@ -297,6 +298,12 @@ export default async function AdminWorkspacePage({
       orderBy: { createdAt: "desc" },
       take: 80,
       select: pendingSelect,
+    }),
+    prisma.listing.findMany({
+      where: { status: ListingStatus.DRAFT },
+      orderBy: { updatedAt: "desc" },
+      take: 40,
+      select: readySelect,
     }),
     prisma.listing.findMany({
       where: {
@@ -344,6 +351,7 @@ export default async function AdminWorkspacePage({
         pendingItems={pending.map((listing) =>
           toPendingItem(locale, listing, partyLabels),
         )}
+        draftItems={drafts.map((listing) => toDirectoryItem(locale, listing))}
         readyItems={ready.map((listing) =>
           toDirectoryItem(locale, listing, "Audit passed"),
         )}
@@ -361,21 +369,10 @@ export default async function AdminWorkspacePage({
           snapshotPending: ws.snapshotPending,
           snapshotAlerts: ws.snapshotAlerts,
           snapshotReady: ws.snapshotReady,
-          checklistTitle: ws.checklistTitle,
-          checklistLede: ws.checklistLede,
-          checklistItems: [
-            ws.checkSellerIdentity,
-            ws.checkOwnership,
-            ws.checkPrice,
-            ws.checkLocation,
-            ws.checkMedia,
-            ws.checkPermit,
-            ws.checkEscrow,
-            ws.checkContact,
-            ws.checkDuplicate,
-          ],
           pendingTitle: ws.pendingTitle,
           pendingEmpty: ws.pendingEmpty,
+          draftsTitle: ws.draftsTitle ?? "Drafts",
+          draftsEmpty: ws.draftsEmpty ?? "No draft listings.",
           readyTitle: ws.readyTitle,
           readyEmpty: ws.readyEmpty,
           alertsTitle: ws.alertsTitle,

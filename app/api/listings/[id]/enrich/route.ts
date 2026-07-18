@@ -29,6 +29,7 @@ const draftSchema = z.object({
 
 const enrichSchema = z.object({
   draft: draftSchema.optional(),
+  editReason: z.string().trim().min(10).max(4000).optional(),
   contactPhone: z.string().trim().max(40).optional().nullable(),
   contactName: z.string().trim().max(120).optional().nullable(),
   tourUrl: z.string().trim().url().max(2000).optional().nullable(),
@@ -85,6 +86,7 @@ export async function PATCH(
       coverImageUrl: true,
       panoramicImageUrls: true,
       metadataTags: true,
+      adminAuditNotes: true,
     },
   });
   if (!listing) {
@@ -104,6 +106,16 @@ export async function PATCH(
   }
 
   const data = parsed.data;
+  if (data.draft && (!data.editReason || data.editReason.length < 10)) {
+    return NextResponse.json(
+      {
+        error: "ValidationError",
+        message:
+          "Provide an edit reason (min. 10 characters) before applying changes",
+      },
+      { status: 400 },
+    );
+  }
   if (
     !data.draft &&
     data.contactPhone === undefined &&
@@ -153,12 +165,21 @@ export async function PATCH(
     tags.add(`floor:${data.draft.floor}`);
   }
 
+  const editNote = data.editReason?.trim();
+  const nextAuditNotes = editNote
+    ? [listing.adminAuditNotes?.trim(), `Edit: ${editNote}`]
+        .filter(Boolean)
+        .join("\n")
+        .slice(0, 4000)
+    : undefined;
+
   const updated = await prisma.listing.update({
     where: { id },
     data: {
       ...(data.draft
         ? listingUpdateFromSalesKitDraft(data.draft, subCityId ?? null)
         : {}),
+      ...(nextAuditNotes ? { adminAuditNotes: nextAuditNotes } : {}),
       ...(data.contactPhone !== undefined
         ? { contactPhone: data.contactPhone || null }
         : {}),

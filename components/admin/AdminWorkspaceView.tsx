@@ -20,11 +20,10 @@ export type AdminWorkspaceCopy = {
   snapshotPending: string;
   snapshotAlerts: string;
   snapshotReady: string;
-  checklistTitle: string;
-  checklistLede: string;
-  checklistItems: string[];
   pendingTitle: string;
   pendingEmpty: string;
+  draftsTitle: string;
+  draftsEmpty: string;
   readyTitle: string;
   readyEmpty: string;
   alertsTitle: string;
@@ -53,6 +52,7 @@ export type AdminWorkspaceProps = {
   unreadAlertCount: number;
   readyCount: number;
   pendingItems: AdminPendingDirectoryItem[];
+  draftItems: DirectoryItem[];
   readyItems: DirectoryItem[];
   alerts: AdminAlertItem[];
 };
@@ -75,6 +75,7 @@ export function AdminWorkspaceView({
   unreadAlertCount,
   readyCount,
   pendingItems,
+  draftItems,
   readyItems,
   alerts,
 }: AdminWorkspaceProps) {
@@ -165,33 +166,25 @@ export function AdminWorkspaceView({
             </ul>
           </section>
 
+          <AdminPendingQueue items={pendingItems} copy={pendingQueueCopy} />
+
           <section
-            className="rounded-2xl border border-slate-200/90 bg-slate-deep px-5 py-6 text-white shadow-[var(--shadow-card)] sm:px-7 sm:py-7"
-            aria-labelledby="admin-checklist-heading"
+            id="admin-drafts"
+            className="space-y-4 scroll-mt-28"
+            aria-labelledby="admin-drafts-heading"
           >
             <h2
-              id="admin-checklist-heading"
-              className="text-lg font-semibold tracking-tight sm:text-xl"
+              id="admin-drafts-heading"
+              className="text-lg font-semibold tracking-tight text-slate-deep"
             >
-              {copy.checklistTitle}
+              {copy.draftsTitle}
             </h2>
-            <p className="mt-2 max-w-2xl text-sm leading-relaxed text-slate-300">
-              {copy.checklistLede}
-            </p>
-            <ul className="mt-5 grid gap-2 sm:grid-cols-2">
-              {copy.checklistItems.map((item) => (
-                <li
-                  key={item}
-                  className="flex items-center gap-2 text-sm text-slate-200"
-                >
-                  <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-amber-400" />
-                  {item}
-                </li>
-              ))}
-            </ul>
+            <PageDirectory
+              items={draftItems}
+              emptyMessage={copy.draftsEmpty}
+              layout="list"
+            />
           </section>
-
-          <AdminPendingQueue items={pendingItems} copy={pendingQueueCopy} />
 
           <section className="space-y-4" aria-labelledby="admin-ready-heading">
             <h2

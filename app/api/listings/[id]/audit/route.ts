@@ -18,11 +18,25 @@ const checklistSchema = z.object({
   duplicateAndFraudScreen: z.boolean(),
 });
 
-const auditSchema = z.object({
-  decision: z.enum(["APPROVE", "REJECT"]),
-  notes: z.string().trim().min(10).max(4000),
-  checklist: checklistSchema,
-});
+const auditSchema = z
+  .object({
+    decision: z.enum(["APPROVE", "REJECT"]),
+    notes: z.string().trim().max(4000).default(""),
+    checklist: checklistSchema,
+  })
+  .superRefine((value, ctx) => {
+    // Approve and reject both need a written reason for the audit trail.
+    if (value.notes.length < 10) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["notes"],
+        message:
+          value.decision === "REJECT"
+            ? "Provide a reject reason (min. 10 characters)"
+            : "Provide an approval reason (min. 10 characters)",
+      });
+    }
+  });
 
 /**
  * POST /api/listings/[id]/audit
@@ -57,7 +71,9 @@ export async function POST(
     return NextResponse.json(
       {
         error: "ValidationError",
-        message: "A complete checklist and audit notes are required",
+        message:
+          parsed.error.issues[0]?.message ??
+          "Invalid audit payload — check notes and checklist",
         issues: parsed.error.issues,
       },
       { status: 400 },

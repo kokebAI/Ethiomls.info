@@ -295,7 +295,17 @@ export default async function ListingDetailPage({
             approvedReady: auditCopy.approvedReady,
             statusLabel: auditCopy.statusLabel,
             checks: auditCopy.checks,
-            enrich: auditCopy.enrich,
+            enrich: {
+              ...auditCopy.enrich,
+              editReasonLabel:
+                auditCopy.enrich?.editReasonLabel ?? "Edit reason",
+              editReasonPlaceholder:
+                auditCopy.enrich?.editReasonPlaceholder ??
+                "Why are you changing this listing? (min. 10 characters)",
+              editReasonRequired:
+                auditCopy.enrich?.editReasonRequired ??
+                "Add an edit reason before applying.",
+            },
             attach: {
               title: auditCopy.attach?.title ?? "Attach to role",
               lede:

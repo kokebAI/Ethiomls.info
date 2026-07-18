@@ -14,6 +14,9 @@ export type AuditEnrichCopy = {
   parsing: string;
   applyCta: string;
   applying: string;
+  editReasonLabel: string;
+  editReasonPlaceholder: string;
+  editReasonRequired: string;
   photosLabel: string;
   photosHint: string;
   uploadPhotosCta: string;
@@ -64,6 +67,7 @@ export function ListingAuditEnrichPanel({
   const [parsing, setParsing] = useState(false);
   const [applying, setApplying] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [editReason, setEditReason] = useState("");
   const [message, setMessage] = useState<{
     tone: "success" | "error";
     text: string;
@@ -131,12 +135,16 @@ export function ListingAuditEnrichPanel({
       setMessage({ tone: "error", text: copy.needDraft });
       return;
     }
+    if (editReason.trim().length < 10) {
+      setMessage({ tone: "error", text: copy.editReasonRequired });
+      return;
+    }
     setApplying(true);
     try {
       const response = await fetch(`/api/listings/${listingId}/enrich`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ draft }),
+        body: JSON.stringify({ draft, editReason: editReason.trim() }),
       });
       const payload = (await response.json().catch(() => ({}))) as {
         message?: string;
@@ -341,9 +349,21 @@ export function ListingAuditEnrichPanel({
                   aria-label="Size m2"
                 />
               </div>
+              <label className="grid gap-1.5">
+                <span className="text-sm font-medium text-slate-700">
+                  {copy.editReasonLabel}
+                </span>
+                <textarea
+                  value={editReason}
+                  onChange={(event) => setEditReason(event.target.value)}
+                  rows={2}
+                  placeholder={copy.editReasonPlaceholder}
+                  className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20"
+                />
+              </label>
               <button
                 type="button"
-                disabled={applying}
+                disabled={applying || editReason.trim().length < 10}
                 onClick={() => void applyDraft()}
                 className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-brand-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-brand-700 disabled:opacity-50"
               >
