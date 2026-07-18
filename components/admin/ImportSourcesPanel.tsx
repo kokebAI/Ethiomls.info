@@ -232,6 +232,7 @@ export function ImportSourcesPanel() {
             {t("imports.refresh")}
           </button>
         </div>
+        <p className="mt-2 text-xs text-ink-muted">{t("imports.cliHint")}</p>
 
         {loading ? (
           <p className="mt-6 flex items-center gap-2 text-sm text-ink-muted">
@@ -244,6 +245,7 @@ export function ImportSourcesPanel() {
           <ul className="mt-5 grid gap-3">
             {sources.map((source) => {
               const lastRun = source.runs[0];
+              const isEastOffPlan = /east-offplan/i.test(source.notes ?? "");
               return (
                 <li
                   key={source.id}
@@ -260,6 +262,11 @@ export function ImportSourcesPanel() {
                             ? t("imports.typeTelegram")
                             : t("imports.typeWebsite")}
                         </span>
+                        {isEastOffPlan ? (
+                          <span className="mr-2 rounded-full bg-emerald-800 px-2 py-0.5 font-bold uppercase tracking-wide text-emerald-100">
+                            {t("imports.eastOffPlanBadge")}
+                          </span>
+                        ) : null}
                         {source.normalizedUrl}
                       </p>
                       <p className="text-xs text-ink-muted">

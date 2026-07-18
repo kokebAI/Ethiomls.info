@@ -1,15 +1,22 @@
 import {
   ImportSourceType,
   ListingStatus,
+  ListingType,
   Prisma,
   ScrapeRunStatus,
   type ImportSource,
 } from "@prisma/client";
 import { prisma } from "@/lib/db/prisma";
 import { generatePropertyId } from "@/src/utils/generateId";
+import { filterEastOffPlanCandidates } from "@/lib/imports/east-offplan-filter";
 import { scrapeTelegramChannel } from "@/lib/imports/telegram-scraper";
 import { scrapeWebsite } from "@/lib/imports/website-scraper";
 import type { ScrapedCandidate } from "@/lib/imports/telegram-scraper";
+
+export type RunImportFilters = {
+  /** Only upsert OFF_PLAN ads that match the east corridor (Ayat, Temer, CMC, …). */
+  eastOffPlanOnly?: boolean;
+};
 
 async function allocateListingId(): Promise<string> {
   for (let attempt = 0; attempt < 8; attempt += 1) {
@@ -92,6 +99,10 @@ async function upsertCandidate(input: {
       "import",
       `source:${source.sourceType.toLowerCase()}`,
       ...(source.telegramHandle ? [`telegram:${source.telegramHandle}`] : []),
+      ...(candidate.parsed.areaTag ? [`area:${candidate.parsed.areaTag}`] : []),
+      ...(candidate.parsed.listingType === ListingType.OFF_PLAN
+        ? ["off-plan"]
+        : []),
       ...candidate.contactPhones.map((phone) => `phone:${phone}`),
     ],
     adminAuditApprovedAt: null,
@@ -120,6 +131,7 @@ async function upsertCandidate(input: {
 export async function runImportSource(input: {
   sourceId: string;
   adminUserId: string;
+  filters?: RunImportFilters;
 }) {
   const source = await prisma.importSource.findUnique({
     where: { id: input.sourceId },
@@ -141,7 +153,7 @@ export async function runImportSource(input: {
   });
 
   try {
-    const candidates =
+    let candidates =
       source.sourceType === ImportSourceType.TELEGRAM
         ? await scrapeTelegramChannel(
             source.normalizedUrl,
@@ -149,9 +161,19 @@ export async function runImportSource(input: {
           )
         : await scrapeWebsite(source.normalizedUrl);
 
+    const postsSeen = candidates.length;
+    if (input.filters?.eastOffPlanOnly) {
+      candidates = filterEastOffPlanCandidates(candidates);
+    }
+
     let created = 0;
     let updated = 0;
     let skipped = 0;
+
+    // Candidates filtered out by east-offplan count as skipped.
+    if (input.filters?.eastOffPlanOnly) {
+      skipped += postsSeen - candidates.length;
+    }
 
     for (const candidate of candidates) {
       const result = await upsertCandidate({
@@ -166,24 +188,24 @@ export async function runImportSource(input: {
     }
 
     const status =
-      created + updated === 0 && candidates.length > 0
+      created + updated === 0
         ? ScrapeRunStatus.PARTIAL
-        : created + updated === 0
-          ? ScrapeRunStatus.PARTIAL
-          : ScrapeRunStatus.SUCCEEDED;
+        : ScrapeRunStatus.SUCCEEDED;
 
     const finished = await prisma.scrapeRun.update({
       where: { id: run.id },
       data: {
         status,
         finishedAt: new Date(),
-        postsSeen: candidates.length,
+        postsSeen,
         listingsCreated: created,
         listingsUpdated: updated,
         listingsSkipped: skipped,
         summary: {
           sourceType: source.sourceType,
           url: source.normalizedUrl,
+          eastOffPlanOnly: Boolean(input.filters?.eastOffPlanOnly),
+          matchedAfterFilter: candidates.length,
           sampleTitles: candidates.slice(0, 5).map((c) => c.parsed.title),
         },
       },

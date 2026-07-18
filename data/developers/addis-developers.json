@@ -266,6 +266,18 @@
       "hqCode": "bole",
       "licenseNumber": null,
       "tin": null
+    },
+    {
+      "tradeName": "Temer Properties PLC",
+      "displayName": {
+        "en": "Temer Properties",
+        "am": "ቴምር ፕሮፐርቲስ"
+      },
+      "registrationNumber": "ET-DIR-TEMER-023",
+      "website": "https://temerproperties.com",
+      "hqCode": "yeka",
+      "licenseNumber": null,
+      "tin": null
     }
   ]
 }

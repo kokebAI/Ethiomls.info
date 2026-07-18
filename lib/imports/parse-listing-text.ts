@@ -19,6 +19,30 @@ const SUB_CITY_ALIASES: Record<string, AddisSubCityCode> = {
   lemikura: "lemi-kura",
 };
 
+/**
+ * East-corridor neighborhoods / project brands → canonical sub-city.
+ * Longer aliases first so "ayat feres bet" wins over bare "ayat".
+ */
+const EAST_NEIGHBORHOOD_ALIASES: Array<{
+  alias: string;
+  subCity: AddisSubCityCode;
+  label: string;
+  areaTag: string;
+}> = [
+  { alias: "ayat feres bet", subCity: "yeka", label: "Ayat Feres Bet", areaTag: "ayat-feres-bet" },
+  { alias: "feres bet", subCity: "yeka", label: "Feres Bet", areaTag: "feres-bet" },
+  { alias: "ayat achante", subCity: "yeka", label: "Ayat Achanté", areaTag: "ayat-achante" },
+  { alias: "ayat achanté", subCity: "yeka", label: "Ayat Achanté", areaTag: "ayat-achante" },
+  { alias: "achante", subCity: "yeka", label: "Achanté", areaTag: "achante" },
+  { alias: "achanté", subCity: "yeka", label: "Achanté", areaTag: "achante" },
+  { alias: "ayat hills", subCity: "yeka", label: "Ayat Hills", areaTag: "ayat" },
+  { alias: "ayat", subCity: "yeka", label: "Ayat", areaTag: "ayat" },
+  { alias: "temer", subCity: "yeka", label: "Temer", areaTag: "temer" },
+  { alias: "cmc", subCity: "yeka", label: "CMC", areaTag: "cmc" },
+  { alias: "summit", subCity: "lemi-kura", label: "Summit", areaTag: "summit" },
+  { alias: "lemi kura", subCity: "lemi-kura", label: "Lemi Kura", areaTag: "lemi-kura" },
+];
+
 export type ParsedListingDraft = {
   title: string;
   description: string;
@@ -31,6 +55,8 @@ export type ParsedListingDraft = {
   floorAreaSqm: number | null;
   subCityCode: AddisSubCityCode | null;
   addressLine: string | null;
+  /** Neighborhood slug for metadataTags, e.g. ayat */
+  areaTag: string | null;
 };
 
 function decodeEntities(text: string): string {
@@ -47,7 +73,28 @@ function decodeEntities(text: string): string {
     .trim();
 }
 
+function detectEastNeighborhood(text: string): {
+  subCity: AddisSubCityCode;
+  label: string;
+  areaTag: string;
+} | null {
+  const lower = text.toLowerCase();
+  for (const entry of EAST_NEIGHBORHOOD_ALIASES) {
+    if (lower.includes(entry.alias)) {
+      return {
+        subCity: entry.subCity,
+        label: entry.label,
+        areaTag: entry.areaTag,
+      };
+    }
+  }
+  return null;
+}
+
 function detectSubCity(text: string): AddisSubCityCode | null {
+  const east = detectEastNeighborhood(text);
+  if (east) return east.subCity;
+
   const lower = text.toLowerCase();
   for (const [alias, code] of Object.entries(SUB_CITY_ALIASES)) {
     if (lower.includes(alias)) return code;
@@ -56,6 +103,13 @@ function detectSubCity(text: string): AddisSubCityCode | null {
     if (lower.includes(code.replace(/-/g, " "))) return code;
   }
   return null;
+}
+
+function formatSubCityLabel(code: AddisSubCityCode): string {
+  return code
+    .split("-")
+    .map((part) => part[0]?.toUpperCase() + part.slice(1))
+    .join(" ");
 }
 
 function detectListingType(text: string): ListingType {
@@ -148,9 +202,17 @@ export function parseListingText(rawHtmlOrText: string): ParsedListingDraft {
   const bedrooms = extractBedrooms(text);
   const bathrooms = extractBathrooms(text);
   const floorAreaSqm = extractArea(text);
-  const subCityCode = detectSubCity(text);
+  const east = detectEastNeighborhood(text);
+  const subCityCode = east?.subCity ?? detectSubCity(text);
   const listingType = detectListingType(text);
   const category = detectCategory(text);
+  const areaTag = east?.areaTag ?? null;
+
+  const addressLine = east
+    ? east.label
+    : subCityCode
+      ? formatSubCityLabel(subCityCode)
+      : null;
 
   const firstLine =
     text
@@ -161,7 +223,7 @@ export function parseListingText(rawHtmlOrText: string): ParsedListingDraft {
   const title =
     firstLine.slice(0, 120) ||
     `${listingType === ListingType.RENT ? "Rental" : "Property"} in ${
-      subCityCode ?? "Addis Ababa"
+      addressLine ?? subCityCode ?? "Addis Ababa"
     }`;
 
   return {
@@ -175,12 +237,8 @@ export function parseListingText(rawHtmlOrText: string): ParsedListingDraft {
     bathrooms,
     floorAreaSqm,
     subCityCode,
-    addressLine: subCityCode
-      ? subCityCode
-          .split("-")
-          .map((part) => part[0]?.toUpperCase() + part.slice(1))
-          .join(" ")
-      : null,
+    addressLine,
+    areaTag,
   };
 }
 
@@ -197,3 +255,6 @@ export function looksLikeListing(text: string): boolean {
     /(?:\+?251|0)?[79]\d{8}/.test(text.replace(/\s+/g, ""));
   return hasHousingCue && hasContactOrPrice;
 }
+
+/** Exported for the east-corridor off-plan filter. */
+export { EAST_NEIGHBORHOOD_ALIASES, detectEastNeighborhood };

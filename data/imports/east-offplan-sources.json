@@ -1,0 +1,37 @@
+{
+  "source": "curated-east-offplan",
+  "description": "East Addis corridor off-plan import sources: Ayat / Temer developer sites and Telegram plus starter broker channels. Notes tagged east-offplan for the scrape:offplan-ads pipeline. Admins can add more brokers via the Imports UI.",
+  "updatedAt": "2026-07-18",
+  "sources": [
+    {
+      "label": "Ayat Real Estate (website)",
+      "url": "https://ayatrealestate.com",
+      "track": "developer",
+      "notes": "east-offplan · Ayat developer site"
+    },
+    {
+      "label": "Ayat Real Estate (Telegram)",
+      "url": "https://t.me/ayatrealestate",
+      "track": "developer",
+      "notes": "east-offplan · Ayat developer Telegram"
+    },
+    {
+      "label": "Temer Properties (website)",
+      "url": "https://temerproperties.com",
+      "track": "developer",
+      "notes": "east-offplan · Temer developer site (Ayat Feres Bet / Achanté)"
+    },
+    {
+      "label": "Temer Properties (Telegram)",
+      "url": "https://t.me/temer_properties",
+      "track": "developer",
+      "notes": "east-offplan · Temer developer Telegram"
+    },
+    {
+      "label": "Gecho Commission (broker)",
+      "url": "@gechocommission8",
+      "track": "broker",
+      "notes": "east-offplan · starter broker channel — audit contacts; add more east-corridor brokers via Admin → Imports"
+    }
+  ]
+}
