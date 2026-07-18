@@ -18,8 +18,8 @@ const SUB_CITIES = [
   ["lemi-kura", "Lemi Kura"],
 ] as const;
 
-/** Keep under Netlify's ~4.5 MB effective binary payload limit. */
-const MAX_FILE_BYTES = 4 * 1024 * 1024;
+/** Stay under Vercel’s 4.5 MB function body limit (multipart overhead included). */
+const MAX_FILE_BYTES = 2.5 * 1024 * 1024;
 const MAX_FILES = 10;
 const ACCEPTED_TYPES = new Set([
   "application/pdf",
@@ -27,6 +27,58 @@ const ACCEPTED_TYPES = new Set([
   "image/png",
   "image/webp",
 ]);
+
+function isAcceptedFile(file: File): boolean {
+  if (ACCEPTED_TYPES.has(file.type)) return true;
+  const name = file.name.toLowerCase();
+  return (
+    name.endsWith(".pdf") ||
+    name.endsWith(".jpg") ||
+    name.endsWith(".jpeg") ||
+    name.endsWith(".png") ||
+    name.endsWith(".webp")
+  );
+}
+
+function formatMb(bytes: number): string {
+  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+}
+
+/** Shrink large phone photos before upload so they fit the serverless body limit. */
+async function prepareFileForUpload(file: File): Promise<File> {
+  if (!file.type.startsWith("image/") || file.size <= MAX_FILE_BYTES) {
+    return file;
+  }
+
+  try {
+    const bitmap = await createImageBitmap(file);
+    const maxEdge = 1600;
+    const scale = Math.min(1, maxEdge / Math.max(bitmap.width, bitmap.height));
+    const width = Math.max(1, Math.round(bitmap.width * scale));
+    const height = Math.max(1, Math.round(bitmap.height * scale));
+    const canvas = document.createElement("canvas");
+    canvas.width = width;
+    canvas.height = height;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return file;
+    ctx.drawImage(bitmap, 0, 0, width, height);
+    bitmap.close();
+
+    const blob = await new Promise<Blob | null>((resolve) => {
+      canvas.toBlob((result) => resolve(result), "image/jpeg", 0.72);
+    });
+    if (!blob || blob.size === 0) return file;
+
+    const compressed = new File(
+      [blob],
+      file.name.replace(/\.\w+$/, ".jpg"),
+      { type: "image/jpeg", lastModified: Date.now() },
+    );
+    return compressed.size < file.size ? compressed : file;
+  } catch {
+    return file;
+  }
+}
 
 type FormValues = {
   title: string;
@@ -75,10 +127,6 @@ type PropertyFormProps = {
   onCreated?: (propertyId: string) => void;
 };
 
-function formatMb(bytes: number): string {
-  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
-}
-
 function preferText(current: string, next: string): string {
   const a = current.trim();
   const b = next.trim();
@@ -122,29 +170,6 @@ function mergeParsed(parts: ParsedPayload[]): ParsedPayload {
   return base;
 }
 
-/** Pack files into batches that each stay under the upload size limit. */
-function batchFiles(files: File[]): File[][] {
-  const batches: File[][] = [];
-  let current: File[] = [];
-  let currentBytes = 0;
-
-  for (const file of files) {
-    if (
-      current.length > 0 &&
-      currentBytes + file.size > MAX_FILE_BYTES
-    ) {
-      batches.push(current);
-      current = [];
-      currentBytes = 0;
-    }
-    current.push(file);
-    currentBytes += file.size;
-  }
-
-  if (current.length > 0) batches.push(current);
-  return batches;
-}
-
 async function readJsonSafe(response: Response): Promise<{
   data?: ParsedPayload;
   error?: string;
@@ -159,10 +184,13 @@ async function readJsonSafe(response: Response): Promise<{
       message?: string;
     };
   } catch {
-    if (/request entity too large/i.test(text) || response.status === 413) {
+    if (
+      /request entity too large|FUNCTION_PAYLOAD_TOO_LARGE|413/i.test(text) ||
+      response.status === 413
+    ) {
       return {
         error:
-          "Upload is too large for the server. Use files under 4 MB each, or upload them in smaller batches.",
+          "Upload is too large for the server. Use files under 2.5 MB (photos are compressed automatically).",
       };
     }
     return {
@@ -219,20 +247,11 @@ export function PropertyForm({ ownerId, onCreated }: PropertyFormProps) {
     const files = Array.from(fileList).slice(0, MAX_FILES);
     if (files.length === 0) return;
 
-    const invalidType = files.find((file) => !ACCEPTED_TYPES.has(file.type));
+    const invalidType = files.find((file) => !isAcceptedFile(file));
     if (invalidType) {
       setMessage({
         tone: "error",
         text: `${invalidType.name}: only PDF, JPEG, PNG, and WebP are supported.`,
-      });
-      return;
-    }
-
-    const oversized = files.find((file) => file.size > MAX_FILE_BYTES);
-    if (oversized) {
-      setMessage({
-        tone: "error",
-        text: `${oversized.name} is ${formatMb(oversized.size)}. Each file must be under 4 MB.`,
       });
       return;
     }
@@ -250,21 +269,28 @@ export function PropertyForm({ ownerId, onCreated }: PropertyFormProps) {
     setIsParsing(true);
 
     try {
-      const batches = batchFiles(files);
+      const prepared: File[] = [];
+      for (const file of files) {
+        setParseProgress(`Preparing ${file.name}...`);
+        const next = await prepareFileForUpload(file);
+        if (next.size > MAX_FILE_BYTES) {
+          throw new Error(
+            `${file.name} is still ${formatMb(next.size)} after compression. Use a file under 2.5 MB.`,
+          );
+        }
+        prepared.push(next);
+      }
+
       const parsedParts: ParsedPayload[] = [];
 
-      for (let i = 0; i < batches.length; i += 1) {
-        const batch = batches[i]!;
+      for (let i = 0; i < prepared.length; i += 1) {
+        const file = prepared[i]!;
         setParseProgress(
-          batches.length === 1
-            ? `Parsing ${files.length} document${files.length === 1 ? "" : "s"}...`
-            : `Parsing batch ${i + 1} of ${batches.length} (${batch.map((f) => f.name).join(", ")})...`,
+          `Parsing ${i + 1} of ${prepared.length}: ${file.name}...`,
         );
 
         const formData = new FormData();
-        for (const file of batch) {
-          formData.append("documents", file);
-        }
+        formData.append("documents", file);
 
         const response = await fetch("/api/properties/parse", {
           method: "POST",
@@ -466,7 +492,7 @@ export function PropertyForm({ ownerId, onCreated }: PropertyFormProps) {
                 </p>
                 <p className="mt-1 text-sm text-slate-500">
                   Drop multiple PDF, JPEG, PNG, or WebP files · up to {MAX_FILES}{" "}
-                  files · {formatMb(MAX_FILE_BYTES)} each
+                  files · photos auto-compress · max {formatMb(MAX_FILE_BYTES)} each
                 </p>
               </>
             )}

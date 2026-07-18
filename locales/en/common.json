@@ -310,8 +310,14 @@
     "signUpForTour": "Create a free account to open the 360° virtual tour.",
     "signUpCta": "Sign up to unlock",
     "share": "Share listing",
+    "shareMenu": "Share this listing",
+    "shareWhatsApp": "WhatsApp",
+    "shareTelegram": "Telegram",
+    "shareEmail": "Email",
+    "shareCopy": "Copy link",
     "shareCopied": "Link copied",
-    "shareDone": "Shared"
+    "shareDone": "Shared",
+    "shareMore": "More apps…"
   },
   "imports": {
     "eyebrow": "Admin",

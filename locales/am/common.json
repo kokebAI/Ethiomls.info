@@ -448,7 +448,13 @@
     "signUpForTour": "360° ጉብኝት ለመክፈት ነጻ መለያ ይፍጠሩ።",
     "signUpCta": "ለመክፈት ይመዝገቡ",
     "share": "ዝርዝር አጋራ",
+    "shareMenu": "ይህን ዝርዝር አጋራ",
+    "shareWhatsApp": "WhatsApp",
+    "shareTelegram": "ቴሌግራም",
+    "shareEmail": "ኢሜይል",
+    "shareCopy": "ሊንክ ቅዳ",
     "shareCopied": "ሊንኩ ተቀድቷል",
-    "shareDone": "ተጋርቷል"
+    "shareDone": "ተጋርቷል",
+    "shareMore": "ተጨማሪ…"
   }
 }

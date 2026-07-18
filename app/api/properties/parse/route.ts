@@ -5,18 +5,15 @@ import { ADDIS_SUB_CITY_CODES, ADDIS_SUB_CITY_SET } from "@/lib/properties/subCi
 export const runtime = "nodejs";
 export const maxDuration = 60;
 
-/** Stay under ~4.5 MB effective binary payload limit on serverless hosts. */
-const MAX_DOCUMENT_BYTES = 4 * 1024 * 1024;
-const MAX_DOCUMENTS = 10;
+/** Stay under Vercel’s 4.5 MB function body limit (multipart overhead included). */
+const MAX_DOCUMENT_BYTES = 2.5 * 1024 * 1024;
+const MAX_DOCUMENTS = 1;
 const ACCEPTED_MIME_TYPES = new Set([
   "application/pdf",
   "image/jpeg",
   "image/png",
   "image/webp",
 ]);
-
-// Automatically loads process.env.GEMINI_API_KEY (+ GOOGLE_GEMINI_BASE_URL if set).
-const ai = new GoogleGenAI({});
 
 const responseSchema = {
   type: Type.OBJECT,
@@ -39,7 +36,6 @@ function collectDocuments(formData: FormData): File[] {
       if (value instanceof File && value.size > 0) files.push(value);
     }
   }
-  // Dedupe by name+size+lastModified when the same file is appended under multiple keys.
   const seen = new Set<string>();
   return files.filter((file) => {
     const id = `${file.name}:${file.size}:${file.lastModified}`;
@@ -70,8 +66,28 @@ function normalizeSubCity(raw: string): string {
   return slug || "bole";
 }
 
+function resolveMime(file: File): string {
+  if (ACCEPTED_MIME_TYPES.has(file.type)) return file.type;
+  const name = file.name.toLowerCase();
+  if (name.endsWith(".pdf")) return "application/pdf";
+  if (name.endsWith(".jpg") || name.endsWith(".jpeg")) return "image/jpeg";
+  if (name.endsWith(".png")) return "image/png";
+  if (name.endsWith(".webp")) return "image/webp";
+  return file.type;
+}
+
 export async function POST(request: Request) {
   try {
+    if (!process.env.GEMINI_API_KEY?.trim() && !process.env.GOOGLE_GEMINI_BASE_URL?.trim()) {
+      return NextResponse.json(
+        {
+          error:
+            "Document parsing is unavailable. Set GEMINI_API_KEY in the deploy environment, then redeploy.",
+        },
+        { status: 503 },
+      );
+    }
+
     const formData = await request.formData();
     const documents = collectDocuments(formData).slice(0, MAX_DOCUMENTS);
 
@@ -82,53 +98,39 @@ export async function POST(request: Request) {
       );
     }
 
-    let totalBytes = 0;
-    for (const file of documents) {
-      if (!ACCEPTED_MIME_TYPES.has(file.type)) {
-        return NextResponse.json(
-          {
-            error: `Unsupported type for ${file.name}. Only PDF, JPEG, PNG, and WebP are supported.`,
-          },
-          { status: 415 },
-        );
-      }
-      if (file.size > MAX_DOCUMENT_BYTES) {
-        return NextResponse.json(
-          {
-            error: `${file.name} must be under 4 MB.`,
-          },
-          { status: 413 },
-        );
-      }
-      totalBytes += file.size;
-    }
+    const file = documents[0]!;
+    const mimeType = resolveMime(file);
 
-    if (totalBytes > MAX_DOCUMENT_BYTES) {
+    if (!ACCEPTED_MIME_TYPES.has(mimeType)) {
       return NextResponse.json(
         {
-          error:
-            "Combined upload exceeds 4 MB. Upload documents one at a time, or compress large files.",
+          error: `Unsupported type for ${file.name}. Only PDF, JPEG, PNG, and WebP are supported.`,
+        },
+        { status: 415 },
+      );
+    }
+
+    if (file.size > MAX_DOCUMENT_BYTES) {
+      return NextResponse.json(
+        {
+          error: `${file.name} must be under 2.5 MB. Compress the photo/PDF and try again.`,
         },
         { status: 413 },
       );
     }
 
-    const documentParts = await Promise.all(
-      documents.map(async (file) => {
-        const arrayBuffer = await file.arrayBuffer();
-        return {
-          inlineData: {
-            data: Buffer.from(arrayBuffer).toString("base64"),
-            mimeType: file.type || "application/octet-stream",
-          },
-        };
-      }),
-    );
+    const ai = new GoogleGenAI({});
+    const data = Buffer.from(await file.arrayBuffer()).toString("base64");
 
     const response = await ai.models.generateContent({
       model: process.env.GEMINI_MODEL?.trim() || "gemini-2.5-flash",
       contents: [
-        ...documentParts,
+        {
+          inlineData: {
+            data,
+            mimeType,
+          },
+        },
         `Analyze this Ethiopian real-estate document or receipt.
 Extract the property title, listing price, description, Addis Ababa sub-city,
 number of bedrooms, bathrooms, and size in m² when present.
@@ -153,28 +155,30 @@ Return a clean JSON object matching the requested structure.`,
       description?: string;
     };
 
-    const data = {
-      title: String(parsedJson.title ?? "").trim(),
-      price: Number(parsedJson.price) || 0,
-      subCity: normalizeSubCity(String(parsedJson.subCity ?? "")),
-      bedrooms: Math.max(0, Math.floor(Number(parsedJson.bedrooms) || 0)),
-      bathrooms: Math.max(0, Math.floor(Number(parsedJson.bathrooms) || 0)),
-      sizeM2: Math.max(0, Number(parsedJson.sizeM2) || 0),
-      description: String(parsedJson.description ?? "").trim(),
-    };
-
-    return NextResponse.json({ data });
+    return NextResponse.json({
+      data: {
+        title: String(parsedJson.title ?? "").trim(),
+        price: Number(parsedJson.price) || 0,
+        subCity: normalizeSubCity(String(parsedJson.subCity ?? "")),
+        bedrooms: Math.max(0, Math.floor(Number(parsedJson.bedrooms) || 0)),
+        bathrooms: Math.max(0, Math.floor(Number(parsedJson.bathrooms) || 0)),
+        sizeM2: Math.max(0, Number(parsedJson.sizeM2) || 0),
+        description: String(parsedJson.description ?? "").trim(),
+      },
+    });
   } catch (error: unknown) {
     console.error("Document Parsing Failure:", error);
     const message =
       error instanceof Error ? error.message : "Parsing failed";
     const unavailable =
-      /api key|GEMINI_API_KEY|not set|not configured|401|403/i.test(message);
+      /api key|GEMINI_API_KEY|not set|not configured|401|403|API_KEY_INVALID/i.test(
+        message,
+      );
     return NextResponse.json(
       {
         error: unavailable
           ? "Document parsing is unavailable right now. Check GEMINI_API_KEY and redeploy."
-          : message || "The document could not be parsed. Please enter details manually.",
+          : "The document could not be parsed. Please enter details manually.",
       },
       { status: unavailable ? 503 : 500 },
     );

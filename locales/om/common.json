@@ -448,7 +448,13 @@
     "signUpForTour": "Create a free account to open the 360° virtual tour.",
     "signUpCta": "Sign up to unlock",
     "share": "Tarree qoodi",
+    "shareMenu": "Tarree kana qoodi",
+    "shareWhatsApp": "WhatsApp",
+    "shareTelegram": "Telegram",
+    "shareEmail": "Imeelii",
+    "shareCopy": "Linkii copy godhi",
     "shareCopied": "Linkii copy ta'eera",
-    "shareDone": "Qoodameera"
+    "shareDone": "Qoodameera",
+    "shareMore": "Kan biroo…"
   }
 }

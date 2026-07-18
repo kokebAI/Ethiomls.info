@@ -448,7 +448,13 @@
     "signUpForTour": "Create a free account to open the 360° virtual tour.",
     "signUpCta": "Sign up to unlock",
     "share": "ዝርዝር ኣካፍል",
+    "shareMenu": "ነዚ ዝርዝር ኣካፍል",
+    "shareWhatsApp": "WhatsApp",
+    "shareTelegram": "ቴሌግራም",
+    "shareEmail": "ኢመይል",
+    "shareCopy": "ሊንክ ቅዳሕ",
     "shareCopied": "ሊንክ ተቐዲሑ",
-    "shareDone": "ተኻፊሉ"
+    "shareDone": "ተኻፊሉ",
+    "shareMore": "ተወሳኺ…"
   }
 }
