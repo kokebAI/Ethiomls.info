@@ -3,6 +3,11 @@ import { PropertyForm } from "@/src/components/PropertyForm";
 import { getSession } from "@/lib/auth/session";
 import { prisma } from "@/lib/db/prisma";
 import { isLocale } from "@/lib/i18n/config";
+import {
+  canCreateListings,
+  canSubmitOffPlan,
+} from "@/lib/properties/listing-roles";
+import { hubPathForRole } from "@/lib/roles/hubs";
 
 export const dynamic = "force-dynamic";
 
@@ -46,13 +51,21 @@ export default async function NewPropertyPage({
     redirect(`/${locale}/login`);
   }
 
+  if (!canCreateListings(user.role)) {
+    redirect(`/${locale}${hubPathForRole(user.role)}`);
+  }
+
   const typeRaw = (query.type ?? "").toUpperCase().replace(/-/g, "_");
-  const defaultListingType =
+  let defaultListingType: "OFF_PLAN" | "SALE" | "RENT" | undefined =
     typeRaw === "OFF_PLAN" || typeRaw === "SALE" || typeRaw === "RENT"
       ? typeRaw
       : user.role === "CORPORATE_DEVELOPER"
         ? "OFF_PLAN"
         : undefined;
+
+  if (defaultListingType === "OFF_PLAN" && !canSubmitOffPlan(user.role)) {
+    defaultListingType = "SALE";
+  }
 
   const projectOptions =
     user.developerProfile?.projects.map((project) => {
@@ -76,6 +89,7 @@ export default async function NewPropertyPage({
         developerTin={user.developerProfile?.tin ?? null}
         projectOptions={projectOptions}
         defaultListingType={defaultListingType}
+        allowOffPlan={canSubmitOffPlan(user.role)}
       />
     </main>
   );

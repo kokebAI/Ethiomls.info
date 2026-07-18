@@ -281,7 +281,7 @@
   "auth": {
     "accessEyebrow": "ደህንነቱ የተጠበቀ መግቢያ",
     "title": "ወደ EthioMLS ይግቡ",
-    "lede": "የኢትዮጵያ ስልክ ቁጥር ይጠቀሙ። በSMS የአንድ ጊዜ ኮድ እንልካለን። ኢሜይል በኋላ በመገለጫዎ ማከል ይችላሉ።",
+    "lede": "በስልክ ቁጥር እና የይለፍ ቃል ይግቡ። SMS ማረጋገጫ በአዲስ መሣሪያ ላይ ብቻ ነው። ኢሜይል በኋላ በመገለጫዎ ማከል ይችላሉ።",
     "loginTab": "ግባ",
     "registerTab": "ተመዝገብ",
     "fullName": "ሙሉ ስም",
@@ -294,12 +294,24 @@
     "loginCta": "ግባ",
     "registerCta": "መለያ ፍጠር",
     "verify": "አረጋግጥ እና ቀጥል",
-    "back": "ቁጥር ቀይር",
+    "back": "ተመለስ",
     "codeSent": "በSMS የማረጋገጫ ኮድ ልከናል።",
+    "newDeviceHint": "አዲስ መሣሪያ — ለመግባት የSMS ኮድ ያስገቡ።",
     "mockHint": "SMS በሙከራ ሁኔታ ነው — ከታች ያለውን ኮድ ይጠቀሙ።",
     "debugCode": "የልማት ኮድ",
     "smsFailed": "SMS መላክ አልተቻለም።",
     "verifyFailed": "ማረጋገጥ አልተሳካም።",
+    "loginFailed": "መግባት አልተሳካም።",
+    "or": "ወይም",
+    "googleCta": "በGoogle ይቀጥሉ",
+    "password": {
+      "label": "የይለፍ ቃል",
+      "confirm": "የይለፍ ቃል ያረጋግጡ",
+      "placeholder": "ቢያንስ 8 ቁምፊዎች",
+      "hint": "ቢያንስ 8 ቁምፊዎች። SMS ኮድ በአዲስ መሣሪያ ላይ ብቻ።",
+      "tooShort": "የይለፍ ቃል ቢያንስ 8 ቁምፊዎች መሆን አለበት።",
+      "mismatch": "የይለፍ ቃላት አይዛመዱም።"
+    },
     "logout": "ውጣ",
     "backHome": "ወደ መነሻ",
     "role": {
@@ -307,6 +319,7 @@
       "hint": "ለዚህ መለያ አንድ ሚና ይምረጡ። በኋላ መቀየር አይችሉም።",
       "required": "መለያ ለመፍጠር አንድ ሚና ይምረጡ።",
       "locked": "ሚናዎ በምዝገባ ጊዜ ተቀምጧል እና መቀየር አይቻልም።",
+      "admin": "አስተዳዳሪ",
       "client": "ደንበኛ / ተከራይ",
       "clientHint": "ቤቶችን ይፈልጉ እና ይጠይቁ።",
       "owner": "የንብረት ባለቤት",
@@ -315,16 +328,6 @@
       "brokerHint": "የደንበኛ ንብረት ያስተዳድሩ።",
       "developer": "ገንቢ",
       "developerHint": "ፕሮጀክቶችን እና ክፍሎችን ያትሙ።"
-    },
-    "demo": {
-      "title": "የማሳያ መለያዎች",
-      "lede": "ሚና ይንኩ — ስልኩ ይሞላል። ከዚያ የSMS ኮድ ይላኩ። በአካባቢ ሙከራ ኮዱ በማያ ገጹ ላይ ይታያል።",
-      "filled": "የማሳያ ቁጥር ተሞልቷል — የSMS ኮድ ይላኩ።",
-      "admin": "አስተዳዳሪ",
-      "client": "ደንበኛ",
-      "broker": "ደላላ / ብሮከር",
-      "owner": "ባለቤት",
-      "developer": "ገንቢ"
     }
   },
   "profile": {
@@ -357,11 +360,11 @@
   "imports": {
     "eyebrow": "አስተዳዳሪ",
     "title": "የማስመጣ ምንጮች",
-    "lede": "የቴሌግራም ቻናሎች ወይም ድረ-ገጾች ያክሉ። የተሰበሰቡ ልጥፎች ከስልክ ቁጥር ጋር ለአስተዳዳሪ ኦዲት ይገባሉ። የምስራቅ ኮሪደር off-plan ምንጮች (አያት፣ ቴምር)፡ npm run scrape:offplan-ads",
+    "lede": "የቴሌግራም ቻናሎች፣ የፌስቡክ ገጾች ወይም ድረ-ገጾች ያክሉ። የተሰበሰቡ ልጥፎች ከስልክ ቁጥር ጋር ለአስተዳዳሪ ኦዲት ይገባሉ። የምስራቅ ኮሪደር off-plan ምንጮች (አያት፣ ቴምር)፡ npm run scrape:offplan-ads",
     "addTitle": "ምንጭ ጨምር",
-    "addLede": "የቴሌግራም ስም ወይም የድረ-ገጽ አድራሻ ይለጥፉ። ለምስራቅ off-plan ምንጮች ማስታወሻ ላይ east-offplan ያስገቡ።",
-    "url": "ቴሌግራም ወይም ድረ-ገጽ",
-    "urlPlaceholder": "@gechocommission8 or https://example.com/listings",
+    "addLede": "የቴሌግራም ስም፣ የፌስቡክ ገጽ ወይም የድረ-ገጽ አድራሻ ይለጥፉ። ለምስራቅ off-plan ምንጮች ማስታወሻ ላይ east-offplan ያስገቡ።",
+    "url": "ቴሌግራም፣ ፌስቡክ ወይም ድረ-ገጽ",
+    "urlPlaceholder": "@gechocommission8 or https://facebook.com/YourPage",
     "label": "Label (optional)",
     "labelPlaceholder": "Gecho Commission",
     "notes": "Notes (optional)",
@@ -374,6 +377,7 @@
     "empty": "ምንም ምንጭ የለም።",
     "typeTelegram": "ቴሌግራም",
     "typeWebsite": "ድረ-ገጽ",
+    "typeFacebook": "ፌስቡክ",
     "listingCount": "{count} የገቡ ዝርዝሮች",
     "lastRun": "የመጨረሻ ሩጫ {status}: +{created} / ~{updated}",
     "runCta": "አሁን ሰብስብ",

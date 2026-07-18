@@ -2,6 +2,7 @@ import { z } from "zod";
 import {
   ConstructionStage,
   CurrencyCode,
+  LandHoldType,
   ListingType,
   PropertyCategory,
 } from "@prisma/client";
@@ -90,6 +91,7 @@ export const createPropertySchema = z
     evidenceUploadIds: z.array(z.string().min(1)).max(24).optional(),
     tradeName: z.string().trim().min(2).max(120).optional(),
     registrationNumber: z.string().trim().min(2).max(80).optional(),
+    landHoldType: z.nativeEnum(LandHoldType).optional(),
   })
   .strict();
 

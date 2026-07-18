@@ -178,7 +178,7 @@
   "auth": {
     "accessEyebrow": "Secure access",
     "title": "Sign in to EthioMLS",
-    "lede": "Use your Ethiopian mobile number. We’ll send a one-time SMS code. Add an email later in your profile.",
+    "lede": "Sign in with your Ethiopian mobile number and password. SMS verification is only required on new devices. Add email later in your profile.",
     "loginTab": "Sign in",
     "registerTab": "Register",
     "fullName": "Full name",
@@ -191,12 +191,24 @@
     "loginCta": "Sign in",
     "registerCta": "Create account",
     "verify": "Verify & continue",
-    "back": "Change number",
+    "back": "Back",
     "codeSent": "We sent a verification code by SMS.",
+    "newDeviceHint": "New device detected — enter the SMS code to finish signing in. Trusted devices skip this next time.",
     "mockHint": "SMS is in mock mode — use the debug code below.",
     "debugCode": "Dev code",
     "smsFailed": "Could not send SMS.",
     "verifyFailed": "Verification failed.",
+    "loginFailed": "Sign-in failed.",
+    "or": "or",
+    "googleCta": "Continue with Google",
+    "password": {
+      "label": "Password",
+      "confirm": "Confirm password",
+      "placeholder": "At least 8 characters",
+      "hint": "Min. 8 characters. SMS code is only required on new devices.",
+      "tooShort": "Password must be at least 8 characters.",
+      "mismatch": "Passwords do not match."
+    },
     "logout": "Sign out",
     "backHome": "Back to home",
     "role": {
@@ -204,6 +216,7 @@
       "hint": "Pick one role for this account. You cannot change it later.",
       "required": "Choose one role to create your account.",
       "locked": "Your role was set at signup and cannot be changed.",
+      "admin": "Admin",
       "client": "Client / renter",
       "clientHint": "Browse and enquire about homes.",
       "owner": "Property owner",
@@ -212,16 +225,6 @@
       "brokerHint": "List and manage client inventory.",
       "developer": "Developer",
       "developerHint": "Publish projects and off-plan units."
-    },
-    "demo": {
-      "title": "Demo accounts",
-      "lede": "Tap a role to fill the phone field, then send the SMS code. In local mock mode the code appears on screen.",
-      "filled": "Demo number filled — send the SMS code to continue.",
-      "admin": "Admin (support@agtplc.com)",
-      "client": "Client",
-      "broker": "Broker",
-      "owner": "Owner",
-      "developer": "Developer"
     }
   },
   "rolesIndex": {

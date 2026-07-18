@@ -19,8 +19,6 @@ export type RoleHubCta = {
 export type RoleHubDef = {
   slug: RoleHubSlug;
   role: UserRole;
-  /** Demo phone shown on login (local format) */
-  demoPhone: string;
   ctas: RoleHubCta[];
 };
 
@@ -28,7 +26,6 @@ export const ROLE_HUBS: Record<RoleHubSlug, RoleHubDef> = {
   client: {
     slug: "client",
     role: UserRole.BUYER_RENTER,
-    demoPhone: "0911000002",
     ctas: [
       { id: "browse", href: "/listings", primary: true },
       { id: "projects", href: "/projects" },
@@ -39,7 +36,6 @@ export const ROLE_HUBS: Record<RoleHubSlug, RoleHubDef> = {
   broker: {
     slug: "broker",
     role: UserRole.INDEPENDENT_DELALA,
-    demoPhone: "0911000003",
     ctas: [
       { id: "list", href: "/listings/new", primary: true },
       { id: "profile", href: "/profile" },
@@ -49,7 +45,6 @@ export const ROLE_HUBS: Record<RoleHubSlug, RoleHubDef> = {
   owner: {
     slug: "owner",
     role: UserRole.PROPERTY_OWNER,
-    demoPhone: "0911000004",
     ctas: [
       { id: "list", href: "/listings/new", primary: true },
       { id: "profile", href: "/profile" },
@@ -58,7 +53,6 @@ export const ROLE_HUBS: Record<RoleHubSlug, RoleHubDef> = {
   developer: {
     slug: "developer",
     role: UserRole.CORPORATE_DEVELOPER,
-    demoPhone: "0911000005",
     ctas: [
       { id: "workspace", href: "/workspace/developer", primary: true },
       { id: "list", href: "/listings/new?type=OFF_PLAN" },
@@ -69,7 +63,6 @@ export const ROLE_HUBS: Record<RoleHubSlug, RoleHubDef> = {
   admin: {
     slug: "admin",
     role: UserRole.ADMIN,
-    demoPhone: "0911000001",
     ctas: [
       { id: "workspace", href: "/workspace/admin", primary: true },
       { id: "imports", href: "/admin/imports" },

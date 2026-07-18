@@ -51,6 +51,19 @@ export async function POST(request: NextRequest) {
     );
   }
 
+  // Sign-in uses phone + password (/api/auth/login). OTP is only for
+  // registration and new-device challenges issued by that login route.
+  if (mode !== "register") {
+    return NextResponse.json(
+      {
+        error: "PasswordRequired",
+        message:
+          "Sign in with your phone and password. SMS is only sent on new devices after password is verified.",
+      },
+      { status: 400 },
+    );
+  }
+
   let business: DeveloperBusinessSignup | undefined;
 
   if (mode === "register") {

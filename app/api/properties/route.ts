@@ -32,6 +32,10 @@ import {
   missingEvidenceKinds,
   requiresDeveloperFullPack,
 } from "@/lib/properties/evidence";
+import {
+  assertListingCreateAllowed,
+  canCreateListings,
+} from "@/lib/properties/listing-roles";
 import { validateCreatePropertyPayload } from "@/lib/properties/validation";
 
 export const runtime = "nodejs";
@@ -150,6 +154,17 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    if (!canCreateListings(user.role)) {
+      return NextResponse.json(
+        {
+          error: "Forbidden",
+          message: "Clients cannot publish listings — browse and enquire only",
+          statusCode: 403,
+        },
+        { status: 403 },
+      );
+    }
+
     let body: unknown;
     try {
       body = await request.json();
@@ -167,6 +182,20 @@ export async function POST(request: NextRequest) {
       ...(body as object),
       ownerId: user.id,
     });
+
+    try {
+      assertListingCreateAllowed({
+        role: user.role,
+        listingType: input.listingType,
+      });
+    } catch (err) {
+      const message =
+        err instanceof Error ? err.message : "Listing type not allowed for your role";
+      return NextResponse.json(
+        { error: "Forbidden", message, statusCode: 403 },
+        { status: 403 },
+      );
+    }
 
     let developerId = input.developerId ?? user.developerProfile?.id ?? null;
     let profileTin = user.developerProfile?.tin ?? null;
@@ -252,6 +281,7 @@ export async function POST(request: NextRequest) {
         .map((u) => u.kind);
       const missing = missingEvidenceKinds(docKinds, {
         skipTin: Boolean(profileTin),
+        holdType: input.landHoldType ?? "FREEHOLD",
       });
       if (missing.length > 0) {
         throw new DataCompletenessError("Developer off-plan checklist incomplete", [
@@ -426,6 +456,7 @@ export async function POST(request: NextRequest) {
               nbeUsdEtbRateUsed: foreignEval.nbeRate.usdEtb,
               openToForeignBuyers:
                 input.openToForeignBuyers ?? foreignEval.foreignerEligible,
+              landHoldType: input.landHoldType ?? null,
             },
             include: {
               subCity: {

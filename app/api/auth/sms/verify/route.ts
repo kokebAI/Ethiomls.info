@@ -1,9 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
 import { Prisma, UserRole } from "@prisma/client";
 import { verifyOtp, normalizeEthiopiaPhone } from "@/lib/auth/otp";
-import { oauthPlaceholderPasswordHash } from "@/lib/auth/oauth";
+import {
+  hashPassword,
+  isPasswordStrong,
+} from "@/lib/auth/password";
 import { isSignupRole } from "@/lib/auth/signup-roles";
 import { setSessionCookie } from "@/lib/auth/session";
+import {
+  clearPendingPasswordLogin,
+  getPendingPasswordLogin,
+  setTrustedDeviceCookie,
+} from "@/lib/auth/trusted-device";
 import { prisma } from "@/lib/db/prisma";
 
 export const runtime = "nodejs";
@@ -31,6 +39,10 @@ export async function POST(request: NextRequest) {
     body && typeof body === "object" && !Array.isArray(body)
       ? String((body as { mode?: unknown }).mode ?? "login")
       : "login";
+  const password =
+    body && typeof body === "object" && !Array.isArray(body)
+      ? String((body as { password?: unknown }).password ?? "")
+      : "";
 
   const phone = normalizeEthiopiaPhone(phoneRaw);
   if (!phone || !/^\d{6}$/.test(code)) {
@@ -53,14 +65,47 @@ export async function POST(request: NextRequest) {
 
   let user = await prisma.user.findUnique({ where: { phone } });
 
-  if (!user && mode === "login") {
-    return NextResponse.json(
-      {
-        error: "AccountNotFound",
-        message: "No account for this number. Register with your local phone first.",
+  // Password-login new-device challenge: password already verified; OTP finishes session.
+  if (mode === "login") {
+    if (!user) {
+      return NextResponse.json(
+        {
+          error: "AccountNotFound",
+          message:
+            "No account for this number. Register with your local phone first.",
+        },
+        { status: 404 },
+      );
+    }
+    const pendingUserId = await getPendingPasswordLogin();
+    if (!pendingUserId || pendingUserId !== user.id) {
+      return NextResponse.json(
+        {
+          error: "PasswordRequired",
+          message:
+            "Sign in with phone and password first. SMS codes alone cannot open a session.",
+        },
+        { status: 403 },
+      );
+    }
+    await clearPendingPasswordLogin();
+    await setSessionCookie({
+      userId: user.id,
+      email: user.email,
+      phone: user.phone,
+      fullName: user.fullName,
+    });
+    await setTrustedDeviceCookie(user.id);
+    return NextResponse.json({
+      ok: true,
+      user: {
+        id: user.id,
+        fullName: user.fullName,
+        phone: user.phone,
+        email: user.email,
+        role: user.role as UserRole,
       },
-      { status: 404 },
-    );
+    });
   }
 
   if (!user) {
@@ -71,6 +116,16 @@ export async function POST(request: NextRequest) {
           error: "ValidationError",
           message:
             "Choose one account role before verifying. Restart registration.",
+        },
+        { status: 400 },
+      );
+    }
+
+    if (!isPasswordStrong(password)) {
+      return NextResponse.json(
+        {
+          error: "ValidationError",
+          message: "Password must be at least 8 characters",
         },
         { status: 400 },
       );
@@ -90,6 +145,7 @@ export async function POST(request: NextRequest) {
     const fullName =
       check.record.fullName?.trim() ||
       `EthioMLS User ${phone.slice(-4)}`;
+    const passwordHash = await hashPassword(password);
 
     try {
       user = await prisma.$transaction(async (tx) => {
@@ -97,7 +153,7 @@ export async function POST(request: NextRequest) {
           data: {
             phone,
             fullName,
-            passwordHash: oauthPlaceholderPasswordHash(phone),
+            passwordHash,
             role,
             localePrefs: check.record.locale
               ? [check.record.locale, "en"]
@@ -137,9 +193,14 @@ export async function POST(request: NextRequest) {
       }
       throw err;
     }
-  } else if (mode === "register" && check.record.role) {
-    // Existing accounts keep their original role — one role per user.
-    // Do not overwrite role on re-registration attempts.
+  } else if (mode === "register") {
+    // Existing account — allow setting password if they verified OTP with a new password.
+    if (isPasswordStrong(password)) {
+      user = await prisma.user.update({
+        where: { id: user.id },
+        data: { passwordHash: await hashPassword(password) },
+      });
+    }
   }
 
   await setSessionCookie({
@@ -148,6 +209,7 @@ export async function POST(request: NextRequest) {
     phone: user.phone,
     fullName: user.fullName,
   });
+  await setTrustedDeviceCookie(user.id);
 
   return NextResponse.json({
     ok: true,

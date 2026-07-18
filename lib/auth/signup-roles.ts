@@ -61,7 +61,7 @@ export function roleLabelKey(role: string): string {
     case UserRole.CORPORATE_DEVELOPER:
       return "auth.role.developer";
     case UserRole.ADMIN:
-      return "auth.demo.admin";
+      return "auth.role.admin";
     default:
       return "auth.role.client";
   }

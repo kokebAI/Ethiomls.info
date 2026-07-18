@@ -12,9 +12,9 @@ import {
 } from "lucide-react";
 import { CONSTRUCTION_STAGE_OPTIONS } from "@/lib/domain/construction-stage";
 import {
-  DEVELOPER_OFFPLAN_EVIDENCE_KINDS,
   EVIDENCE_KIND_LABELS,
   MIN_GALLERY_PHOTOS,
+  requiredEvidenceKindsForHoldType,
 } from "@/lib/properties/evidence";
 import { generatePropertyId } from "@/src/utils/generateId";
 
@@ -42,7 +42,9 @@ const ACCEPTED_TYPES = new Set([
   "image/webp",
 ]);
 
-type EvidenceKind = (typeof DEVELOPER_OFFPLAN_EVIDENCE_KINDS)[number] | "UNIT_GALLERY";
+type EvidenceKind =
+  | ReturnType<typeof requiredEvidenceKindsForHoldType>[number]
+  | "UNIT_GALLERY";
 
 type StagedEvidence = {
   id: string;
@@ -121,6 +123,7 @@ type FormValues = {
   constructionPermitVerified: boolean;
   tradeName: string;
   registrationNumber: string;
+  landHoldType: "FREEHOLD" | "LEASEHOLD";
 };
 
 type ParsedPayload = {
@@ -160,6 +163,7 @@ const EMPTY_FORM: FormValues = {
   constructionPermitVerified: false,
   tradeName: "",
   registrationNumber: "",
+  landHoldType: "FREEHOLD",
 };
 
 export type PropertyFormProps = {
@@ -170,6 +174,7 @@ export type PropertyFormProps = {
   developerTin?: string | null;
   projectOptions?: { id: string; title: string }[];
   defaultListingType?: FormValues["listingType"];
+  allowOffPlan?: boolean;
   onCreated?: (propertyId: string) => void;
 };
 
@@ -271,6 +276,7 @@ export function PropertyForm({
   developerTin = null,
   projectOptions = [],
   defaultListingType,
+  allowOffPlan = false,
   onCreated,
 }: PropertyFormProps) {
   const inputRef = useRef<HTMLInputElement>(null);
@@ -500,9 +506,9 @@ export function PropertyForm({
     return evidence.some((item) => item.kind === kind);
   }
 
-  const requiredDocKinds = DEVELOPER_OFFPLAN_EVIDENCE_KINDS.filter((kind) => {
-    if (kind === "ORG_TIN" && developerTin) return false;
-    return true;
+  const requiredDocKinds = requiredEvidenceKindsForHoldType({
+    holdType: values.landHoldType,
+    skipTin: Boolean(developerTin),
   });
 
   const galleryCount = evidence.filter((e) => e.kind === "UNIT_GALLERY").length;
@@ -567,6 +573,7 @@ export function PropertyForm({
         body.constructionPermitId = values.constructionPermitId.trim();
         body.constructionPermitVerified = values.constructionPermitVerified;
         body.isUnfinished = true;
+        body.landHoldType = values.landHoldType;
       }
 
       if (needsFullPack) {
@@ -1024,7 +1031,9 @@ export function PropertyForm({
             >
               <option value="SALE">For sale</option>
               <option value="RENT">For rent</option>
-              <option value="OFF_PLAN">Off plan</option>
+              {allowOffPlan ? (
+                <option value="OFF_PLAN">Off plan</option>
+              ) : null}
             </select>
           </label>
           <label>
@@ -1048,6 +1057,22 @@ export function PropertyForm({
 
           {values.listingType === "OFF_PLAN" ? (
             <>
+              <label>
+                <span className={labelClass}>Land hold type</span>
+                <select
+                  value={values.landHoldType}
+                  onChange={(event) =>
+                    update(
+                      "landHoldType",
+                      event.target.value as FormValues["landHoldType"],
+                    )
+                  }
+                  className={fieldClass}
+                >
+                  <option value="FREEHOLD">Freehold (title deed)</option>
+                  <option value="LEASEHOLD">Leasehold (lease agreement)</option>
+                </select>
+              </label>
               <label>
                 <span className={labelClass}>Construction stage</span>
                 <select
