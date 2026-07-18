@@ -20,7 +20,7 @@ export function mapGeminiError(error: unknown): {
     return {
       code: "AiPermissionDenied",
       message:
-        "Google denied this Gemini project (403 PERMISSION_DENIED). This is usually an account/project block—not a wrong model. In AI Studio check the project banner, enable Billing if required, create a fresh project + key, or contact Google support. You can also set GEMINI_VERTEXAI=true / GOOGLE_CLOUD_PROJECT=… or GEMINI_FORCE_GOOGLE_API=1 and retry.",
+        "Google denied this Gemini project (403). Create a new API key in Google AI Studio under a project with Generative Language API access (or enable billing), update GEMINI_API_KEY on Vercel, and redeploy.",
       statusCode: 403,
     };
   }

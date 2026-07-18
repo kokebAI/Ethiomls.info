@@ -4,6 +4,7 @@ import {
   createGeminiClient,
   isGeminiConfigured,
 } from "@/lib/ai/gemini";
+import { mapGeminiError } from "@/lib/ai/gemini-errors";
 import { ADDIS_SUB_CITY_CODES, ADDIS_SUB_CITY_SET } from "@/lib/properties/subCities";
 
 export const runtime = "nodejs";
@@ -172,19 +173,23 @@ Return a clean JSON object matching the requested structure.`,
     });
   } catch (error: unknown) {
     console.error("Document Parsing Failure:", error);
-    const message =
-      error instanceof Error ? error.message : "Parsing failed";
-    const unavailable =
-      /api key|GEMINI_API_KEY|not set|not configured|401|403|API_KEY_INVALID/i.test(
-        message,
+    const mapped = mapGeminiError(error);
+    if (
+      mapped.code === "AiPermissionDenied" ||
+      mapped.code === "AiInvalidKey" ||
+      mapped.code === "AiQuotaExceeded"
+    ) {
+      return NextResponse.json(
+        { error: mapped.message },
+        { status: mapped.statusCode === 401 ? 503 : mapped.statusCode },
       );
+    }
     return NextResponse.json(
       {
-        error: unavailable
-          ? "Document parsing is unavailable right now. Check GEMINI_API_KEY and redeploy."
-          : "The document could not be parsed. Please enter details manually.",
+        error:
+          "The document could not be parsed. Please enter details manually.",
       },
-      { status: unavailable ? 503 : 500 },
+      { status: 500 },
     );
   }
 }
