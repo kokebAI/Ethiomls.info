@@ -5,6 +5,10 @@ import {
   normalizeEthiopiaPhone,
   type DeveloperBusinessSignup,
 } from "@/lib/auth/otp";
+import {
+  registrationNumberFromTin,
+  verifyTinOnEtrade,
+} from "@/lib/auth/etrade-tin";
 import { isSignupRole } from "@/lib/auth/signup-roles";
 import { isLocale } from "@/lib/i18n/config";
 import { smsNotificationEngine } from "@/src/services/sms.service";
@@ -88,23 +92,37 @@ export async function POST(request: NextRequest) {
 
     if (roleRaw === UserRole.CORPORATE_DEVELOPER) {
       const tradeName = readBodyString(body, "tradeName");
-      const registrationNumber = readBodyString(body, "registrationNumber");
-      const tin = readBodyString(body, "tin");
+      const tinRaw = readBodyString(body, "tin");
       const licenseNumber = readBodyString(body, "licenseNumber");
-      if (tradeName.length < 2 || registrationNumber.length < 2) {
+      if (tradeName.length < 2) {
         return NextResponse.json(
           {
             error: "ValidationError",
-            message:
-              "Developer signup requires trade name and business registration number",
+            message: "Developer signup requires company trade name",
           },
           { status: 400 },
         );
       }
+
+      const tinCheck = await verifyTinOnEtrade(
+        tinRaw,
+        locale === "am" || locale === "om" || locale === "ti" ? locale : "en",
+      );
+      if (!tinCheck.ok) {
+        return NextResponse.json(
+          {
+            error: "TinInvalid",
+            message: tinCheck.message,
+            etradeUrl: "https://etrade.gov.et/business-license-checker",
+          },
+          { status: 400 },
+        );
+      }
+
       business = {
         tradeName,
-        registrationNumber,
-        ...(tin.length >= 2 ? { tin } : {}),
+        tin: tinCheck.tin,
+        registrationNumber: registrationNumberFromTin(tinCheck.tin),
         ...(licenseNumber.length >= 2 ? { licenseNumber } : {}),
       };
     }

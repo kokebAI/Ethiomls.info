@@ -341,13 +341,14 @@
       "developerHint": "Pirojektootaafi yunitoota maxxansi."
     },
     "developer": {
-      "hint": "Akka ijaartuu galmaa'uuf odeeffannoon daldalaa barbaachisaa dha.",
+      "hint": "Akka ijaartuu galmaa'uuf maqaa daldalaa fi lakkoofsa TIN barbaachisu. TIN etrade.gov.et irratti mirkaneessina.",
       "tradeName": "Maqaa daldalaa",
       "tradeNamePlaceholder": "Maqaa daldalaa dhaabbataa / pirojektii",
       "tradeNameRequired": "Maqaa daldalaa dhaabbataa kee galchi.",
-      "registrationNumber": "Lakkoofsa galmee daldalaa",
-      "registrationPlaceholder": "fkn. ET-RE-…",
-      "registrationRequired": "Lakkoofsa galmee daldalaa kee galchi."
+      "tin": "Lakkoofsa TIN (Tax ID)",
+      "tinPlaceholder": "TIN digirii 10",
+      "tinRequired": "Lakkoofsa TIN digirii 10 sirrii ta'e galchi.",
+      "tinHint": "Itti mirkaneessa e-Trade business license checker:"
     }
   },
   "profile": {

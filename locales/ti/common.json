@@ -341,13 +341,14 @@
       "developerHint": "ፕሮጀክታትን ኣሃዱታትን ኣሕትም።"
     },
     "developer": {
-      "hint": "ከም ኣራጋጺ ንምምዝጋብ ናይ ንግዲ ዝርዝራት የድልዩ።",
+      "hint": "ከም ኣራጋጺ ንምምዝጋብ ናይ ንግዲ ስምን TINን የድልዩ። TIN ኣብ etrade.gov.et ንረጋግጽ።",
       "tradeName": "ናይ ንግዲ ስም",
       "tradeNamePlaceholder": "ናይ ትካል / ፕሮጀክት ንግዲ ስም",
       "tradeNameRequired": "ናይ ትካልካ ንግዲ ስም ኣእቱ።",
-      "registrationNumber": "ናይ ንግዲ ምዝገባ ቁጽሪ",
-      "registrationPlaceholder": "ኣብነት ET-RE-…",
-      "registrationRequired": "ናይ ንግዲ ምዝገባ ቁጽርኻ ኣእቱ።"
+      "tin": "ናይ ግብሪ መለለዪ ቁጽሪ (TIN)",
+      "tinPlaceholder": "10 ኣሃዝ TIN",
+      "tinRequired": "ቅኑዕ 10 ኣሃዝ TIN ኣእቱ።",
+      "tinHint": "ብe-Trade business license checker ይረጋገጽ፦"
     }
   },
   "profile": {

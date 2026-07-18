@@ -41,7 +41,7 @@ export function AuthPanel({
   const [passwordConfirm, setPasswordConfirm] = useState("");
   const [role, setRole] = useState<SignupRole | "">("");
   const [tradeName, setTradeName] = useState("");
-  const [registrationNumber, setRegistrationNumber] = useState("");
+  const [tin, setTin] = useState("");
   const [code, setCode] = useState("");
   const [step, setStep] = useState<"credentials" | "code">("credentials");
   const [busy, setBusy] = useState(false);
@@ -149,8 +149,8 @@ export function AuthPanel({
         if (tradeName.trim().length < 2) {
           throw new Error(t("auth.developer.tradeNameRequired"));
         }
-        if (registrationNumber.trim().length < 2) {
-          throw new Error(t("auth.developer.registrationRequired"));
+        if (!/^\d{10}$/.test(tin.replace(/\D/g, ""))) {
+          throw new Error(t("auth.developer.tinRequired"));
         }
       }
 
@@ -166,7 +166,7 @@ export function AuthPanel({
           ...(role === "CORPORATE_DEVELOPER"
             ? {
                 tradeName: tradeName.trim(),
-                registrationNumber: registrationNumber.trim(),
+                tin: tin.replace(/\D/g, ""),
               }
             : {}),
         }),
@@ -287,7 +287,7 @@ export function AuthPanel({
       password !== passwordConfirm ||
       (role === "CORPORATE_DEVELOPER" &&
         (tradeName.trim().length < 2 ||
-          registrationNumber.trim().length < 2))
+          !/^\d{10}$/.test(tin.replace(/\D/g, ""))))
     );
   }
 
@@ -406,17 +406,29 @@ export function AuthPanel({
                   </label>
                   <label className="grid gap-1.5">
                     <span className="text-sm font-medium text-slate-200">
-                      {t("auth.developer.registrationNumber")}
+                      {t("auth.developer.tin")}
                     </span>
                     <input
                       className={fieldClass}
-                      value={registrationNumber}
-                      onChange={(e) => setRegistrationNumber(e.target.value)}
+                      value={tin}
+                      onChange={(e) =>
+                        setTin(e.target.value.replace(/\D/g, "").slice(0, 10))
+                      }
+                      inputMode="numeric"
                       autoComplete="off"
-                      placeholder={t(
-                        "auth.developer.registrationPlaceholder",
-                      )}
+                      placeholder={t("auth.developer.tinPlaceholder")}
                     />
+                    <span className="text-xs text-slate-400">
+                      {t("auth.developer.tinHint")}{" "}
+                      <a
+                        href="https://etrade.gov.et/business-license-checker"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="font-semibold text-brand-200 underline-offset-2 hover:underline"
+                      >
+                        etrade.gov.et
+                      </a>
+                    </span>
                   </label>
                 </div>
               ) : null}

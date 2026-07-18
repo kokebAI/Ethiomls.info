@@ -238,13 +238,14 @@
       "developerHint": "Publish projects and off-plan units."
     },
     "developer": {
-      "hint": "Business details are required to register as a developer.",
+      "hint": "Trade name and Tax Identification Number (TIN) are required. We verify your TIN on etrade.gov.et.",
       "tradeName": "Trade name",
       "tradeNamePlaceholder": "Company / project trade name",
       "tradeNameRequired": "Enter your company trade name.",
-      "registrationNumber": "Business registration number",
-      "registrationPlaceholder": "e.g. ET-RE-…",
-      "registrationRequired": "Enter your business registration number."
+      "tin": "Tax Identification Number (TIN)",
+      "tinPlaceholder": "10-digit TIN",
+      "tinRequired": "Enter a valid 10-digit Tax Identification Number (TIN).",
+      "tinHint": "Verified against the e-Trade business license checker:"
     }
   },
   "rolesIndex": {

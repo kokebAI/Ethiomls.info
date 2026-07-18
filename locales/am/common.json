@@ -341,13 +341,14 @@
       "developerHint": "ፕሮጀክቶችን እና ክፍሎችን ያትሙ።"
     },
     "developer": {
-      "hint": "እንደ ገንቢ ለመመዝገብ የንግድ ዝርዝሮች ያስፈልጋሉ።",
+      "hint": "እንደ ገንቢ ለመመዝገብ የንግድ ስም እና የግብር መለያ ቁጥር (TIN) ያስፈልጋሉ። TIN በetrade.gov.et እናረጋግጣለን።",
       "tradeName": "የንግድ ስም",
       "tradeNamePlaceholder": "የኩባንያ / ፕሮጀክት የንግድ ስም",
       "tradeNameRequired": "የኩባንያዎን የንግድ ስም ያስገቡ።",
-      "registrationNumber": "የንግድ ምዝገባ ቁጥር",
-      "registrationPlaceholder": "ለምሳሌ ET-RE-…",
-      "registrationRequired": "የንግድ ምዝገባ ቁጥርዎን ያስገቡ።"
+      "tin": "የግብር መለያ ቁጥር (TIN)",
+      "tinPlaceholder": "10-አሃዝ TIN",
+      "tinRequired": "ትክክለኛ 10-አሃዝ የግብር መለያ ቁጥር (TIN) ያስገቡ።",
+      "tinHint": "በe-Trade የንግድ ፈቃድ መፈተሻ ይረጋገጣል፦"
     }
   },
   "profile": {

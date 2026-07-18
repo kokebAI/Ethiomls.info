@@ -4,8 +4,10 @@ import { isSignupRole, type SignupRole } from "@/lib/auth/signup-roles";
 
 export type DeveloperBusinessSignup = {
   tradeName: string;
+  /** Stored as DeveloperProfile.registrationNumber (unique); usually TIN-{digits} */
   registrationNumber: string;
-  tin?: string;
+  /** Ethiopian Tax Identification Number (10 digits) */
+  tin: string;
   licenseNumber?: string;
 };
 
@@ -109,12 +111,13 @@ export async function verifyOtp(
 
   const tradeName = record.tradeName?.trim();
   const registrationNumber = record.registrationNumber?.trim();
+  const tin = record.tin?.trim();
   const business =
-    tradeName && registrationNumber
+    tradeName && registrationNumber && tin
       ? {
           tradeName,
           registrationNumber,
-          tin: record.tin?.trim() || undefined,
+          tin,
           licenseNumber: record.licenseNumber?.trim() || undefined,
         }
       : undefined;

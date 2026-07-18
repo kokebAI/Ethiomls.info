@@ -136,7 +136,7 @@ export async function POST(request: NextRequest) {
         {
           error: "ValidationError",
           message:
-            "Developer signup requires business registration. Restart registration and enter trade name and registration number.",
+            "Developer signup requires trade name and Tax Identification Number (TIN). Restart registration.",
         },
         { status: 400 },
       );
@@ -169,7 +169,7 @@ export async function POST(request: NextRequest) {
               tradeName: biz.tradeName,
               displayName: { en: biz.tradeName },
               registrationNumber: biz.registrationNumber,
-              tin: biz.tin ?? null,
+              tin: biz.tin,
               licenseNumber: biz.licenseNumber ?? null,
             },
           });
@@ -186,7 +186,7 @@ export async function POST(request: NextRequest) {
           {
             error: "Conflict",
             message:
-              "That business registration number is already registered. Sign in or use a different number.",
+              "That Tax Identification Number (TIN) is already registered. Sign in or use a different TIN.",
           },
           { status: 409 },
         );
