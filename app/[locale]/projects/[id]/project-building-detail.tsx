@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { BuildingScrollView } from "@/components/building/building-scroll-view";
 import { useTranslation } from "@/hooks/useTranslation";
 import type { Building, BuildingUnit } from "@/lib/building/types";
@@ -11,6 +12,7 @@ type ProjectBuildingDetailProps = {
   stageLabel: string;
   completionPercent: number;
   developerName: string;
+  developerHref?: string | null;
   telegram?: string | null;
   website?: string | null;
   projectAmenities?: string[];
@@ -32,6 +34,7 @@ export function ProjectBuildingDetail({
   stageLabel,
   completionPercent,
   developerName,
+  developerHref,
   telegram,
   website,
   projectAmenities = [],
@@ -53,9 +56,18 @@ export function ProjectBuildingDetail({
         <span className="rounded-full bg-emerald-50 px-3 py-1 font-medium text-emerald-800 ring-1 ring-emerald-600/15 ring-inset">
           {t("listing.completionPercent")}: {completionPercent}%
         </span>
-        <span className="rounded-full bg-slate-100 px-3 py-1 font-medium text-slate-700 ring-1 ring-slate-500/15 ring-inset">
-          {developerName}
-        </span>
+        {developerHref ? (
+          <Link
+            href={developerHref}
+            className="rounded-full bg-slate-100 px-3 py-1 font-medium text-slate-700 ring-1 ring-slate-500/15 ring-inset hover:bg-slate-200"
+          >
+            {developerName}
+          </Link>
+        ) : (
+          <span className="rounded-full bg-slate-100 px-3 py-1 font-medium text-slate-700 ring-1 ring-slate-500/15 ring-inset">
+            {developerName}
+          </span>
+        )}
       </div>
 
       {(telegram || website) && (

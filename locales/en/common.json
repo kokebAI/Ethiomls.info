@@ -425,6 +425,13 @@
       "listingCount": "{count} listings",
       "projectCount": "{count} projects",
       "emptyListings": "No published properties for this developer yet.",
+      "facts": {
+        "headquarters": "Headquarters",
+        "registration": "Registration No.",
+        "license": "License",
+        "expires": "expires {date}",
+        "tin": "TIN"
+      },
       "inventory": {
         "heading": "Unit inventory",
         "lede": "Projects and buildings grouped by unit type, with availability counts.",

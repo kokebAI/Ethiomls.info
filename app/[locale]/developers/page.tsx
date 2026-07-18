@@ -55,6 +55,7 @@ export default async function DevelopersPage({
       : "—";
 
     const listingCount = developer._count.listings;
+    const projectCount = developer._count.projects;
     const badges: DirectoryBadge[] = [];
     if (developer.isVerified) {
       badges.push({
@@ -68,12 +69,20 @@ export default async function DevelopersPage({
       }),
       tone: "emerald",
     });
+    if (projectCount > 0) {
+      badges.push({
+        label: translate(dictionary, "pages.developers.projectCount", {
+          count: projectCount,
+        }),
+        tone: "violet",
+      });
+    }
 
     return {
       id: developer.id,
       title:
         pickLocalized(developer.displayName, locale) || developer.tradeName,
-      meta: [hq].filter(Boolean).join(" · "),
+      meta: [hq, developer.registrationNumber].filter(Boolean).join(" · "),
       badges,
       href: `/${locale}/developers/${encodeURIComponent(developer.id)}`,
     };

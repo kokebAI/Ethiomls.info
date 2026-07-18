@@ -121,6 +121,7 @@ export async function fetchProjectById(id: string) {
       include: {
         developer: {
           select: {
+            id: true,
             tradeName: true,
             displayName: true,
             website: true,
@@ -171,7 +172,12 @@ export async function fetchListingById(id: string) {
           select: { code: true, name: true },
         },
         developer: {
-          select: { tradeName: true, displayName: true, website: true },
+          select: {
+            id: true,
+            tradeName: true,
+            displayName: true,
+            website: true,
+          },
         },
         project: {
           select: { id: true, title: true },

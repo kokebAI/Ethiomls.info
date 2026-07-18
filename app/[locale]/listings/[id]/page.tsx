@@ -202,6 +202,9 @@ export default async function ListingDetailPage({
       ? pickLocalized(listing.developer.displayName, locale)
       : "") ||
     null;
+  const developerHref = listing.developer?.id
+    ? `${base}/developers/${encodeURIComponent(listing.developer.id)}`
+    : null;
   const contactName =
     listing.contactName || developerName || listing.owner?.fullName || null;
 
@@ -475,10 +478,20 @@ export default async function ListingDetailPage({
                   </p>
                 ) : null}
                 {developerName && developerName !== contactName ? (
-                  <p className="mt-1 flex items-center gap-1.5 text-sm text-slate-600">
-                    <Building2 className="h-4 w-4 text-slate-400" aria-hidden="true" />
-                    {developerName}
-                  </p>
+                  developerHref ? (
+                    <Link
+                      href={developerHref}
+                      className="mt-1 flex items-center gap-1.5 text-sm font-medium text-emerald-800 underline-offset-2 hover:underline"
+                    >
+                      <Building2 className="h-4 w-4 text-slate-400" aria-hidden="true" />
+                      {developerName}
+                    </Link>
+                  ) : (
+                    <p className="mt-1 flex items-center gap-1.5 text-sm text-slate-600">
+                      <Building2 className="h-4 w-4 text-slate-400" aria-hidden="true" />
+                      {developerName}
+                    </p>
+                  )
                 ) : null}
                 {listing.contactPhone ? (
                   <a

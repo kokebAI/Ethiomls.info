@@ -227,6 +227,13 @@
       "listingCount": "{count} ዝርዝራት",
       "projectCount": "{count} ፕሮጀክታት",
       "emptyListings": "ንዚ ኣራጋጺ ዝተሓትመ ንብረት የለን።",
+      "facts": {
+        "headquarters": "ቀንዲ ቤት ጽሕፈት",
+        "registration": "ቁጽሪ ምዝገባ",
+        "license": "ፍቓድ",
+        "expires": "ይውድእ {date}",
+        "tin": "TIN"
+      },
       "inventory": {
         "heading": "ናይ ኣሃዱ ክምችት",
         "lede": "ፕሮጀክታትን ህንጻታትን ብዓይነት ኣሃዱ ተኸፋፊሎም፣ ምስ ቁጽሪ ርክበት።",

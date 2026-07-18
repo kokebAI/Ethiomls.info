@@ -240,6 +240,13 @@
       "listingCount": "Tarree {count}",
       "projectCount": "Pirojektoota {count}",
       "emptyListings": "Qabeenya maxxanfamee ijaartuu kanaaf hin jiru.",
+      "facts": {
+        "headquarters": "Waajjira guddaa",
+        "registration": "Lakkoofsa galmee",
+        "license": "Hayyama",
+        "expires": "xumura {date}",
+        "tin": "TIN"
+      },
       "inventory": {
         "heading": "Kuusaa yunitii",
         "lede": "Pirojektootaafi ijaarsi gosa yunitiin qoodaman, lakkoofsa argamuu waliin.",

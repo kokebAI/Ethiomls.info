@@ -227,6 +227,13 @@
       "listingCount": "{count} ዝርዝሮች",
       "projectCount": "{count} ፕሮጀክቶች",
       "emptyListings": "ለዚህ ገንቢ እስካሁን የታተመ ንብረት የለም።",
+      "facts": {
+        "headquarters": "ዋና መሥሪያ ቤት",
+        "registration": "የምዝገባ ቁጥር",
+        "license": "ፈቃድ",
+        "expires": "ያበቃል {date}",
+        "tin": "TIN"
+      },
       "inventory": {
         "heading": "የክፍል ክምችት",
         "lede": "ፕሮጀክቶች እና ህንጻዎች በክፍል አይነት፣ ከተገኝነት ቆጠራ ጋር።",

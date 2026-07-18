@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { ArrowLeft } from "lucide-react";
 import { DeveloperInventoryTree } from "@/components/developers/DeveloperInventoryTree";
+import { DeveloperProfileHeader } from "@/components/developers/DeveloperProfileHeader";
 import { PageDirectory } from "@/components/PageDirectory";
 import { PageIntro } from "@/components/PageIntro";
 import { buildDeveloperInventoryTree } from "@/lib/catalog/developer-inventory";
@@ -15,8 +16,22 @@ import { formatConstructionStage } from "@/lib/domain/construction-stage";
 import { isLocale, type Locale } from "@/lib/i18n/config";
 import { getDictionary, translate } from "@/lib/i18n/getDictionary";
 import { pickLocalized } from "@/lib/i18n/pickLocalized";
+import { buildPageMetadata } from "@/lib/seo/build-metadata";
 
 export const dynamic = "force-dynamic";
+
+function formatLicenseExpiry(value: Date | null | undefined, locale: Locale) {
+  if (!value) return null;
+  try {
+    return new Intl.DateTimeFormat(locale === "en" ? "en-GB" : locale, {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    }).format(value);
+  } catch {
+    return value.toISOString().slice(0, 10);
+  }
+}
 
 export async function generateMetadata({
   params,
@@ -25,12 +40,42 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { locale: raw, id } = await params;
   const locale = (isLocale(raw) ? raw : "en") as Locale;
+  const dictionary = getDictionary(locale);
   const developer = await fetchDeveloperById(id);
-  if (!developer) return { title: "Developer" };
-  return {
+  if (!developer) {
+    return { title: translate(dictionary, "pages.developers.title") };
+  }
+
+  const name =
+    pickLocalized(developer.displayName, locale) || developer.tradeName;
+  const hq = developer.headquartersSubCity
+    ? pickLocalized(developer.headquartersSubCity.name, locale) ||
+      developer.headquartersSubCity.code
+    : null;
+
+  const description =
+    locale === "en"
+      ? `Verified developer ${name}${hq ? ` based in ${hq}` : ""} — off-plan and completed inventory for diaspora and investors on EthioMLS.`
+      : translate(dictionary, "pages.developers.detailLede", {
+          area: hq || name,
+        });
+
+  return buildPageMetadata({
+    locale,
+    path: `/developers/${encodeURIComponent(id)}`,
     title:
-      pickLocalized(developer.displayName, locale) || developer.tradeName,
-  };
+      locale === "en"
+        ? `${name} | Verified Developer | EthioMLS`
+        : name,
+    description,
+    keywords: [
+      name,
+      developer.tradeName,
+      "Addis Ababa developer",
+      "Ethiopia real estate developer",
+      "diaspora property Ethiopia",
+    ].filter(Boolean) as string[],
+  });
 }
 
 export default async function DeveloperDetailPage({
@@ -59,6 +104,48 @@ export default async function DeveloperDetailPage({
       developer.headquartersSubCity.code
     : null;
   const base = `/${locale}`;
+  const licenseExpiry = formatLicenseExpiry(
+    developer.licenseExpiresAt,
+    locale,
+  );
+
+  const facts = [
+    hq
+      ? {
+          label: t("pages.developers.facts.headquarters"),
+          value: hq,
+          kind: "hq" as const,
+        }
+      : null,
+    developer.registrationNumber
+      ? {
+          label: t("pages.developers.facts.registration"),
+          value: developer.registrationNumber,
+        }
+      : null,
+    developer.licenseNumber
+      ? {
+          label: t("pages.developers.facts.license"),
+          value: licenseExpiry
+            ? `${developer.licenseNumber} · ${t("pages.developers.facts.expires", { date: licenseExpiry })}`
+            : developer.licenseNumber,
+        }
+      : null,
+    developer.tin
+      ? {
+          label: t("pages.developers.facts.tin"),
+          value: developer.tin,
+        }
+      : null,
+    developer.website
+      ? {
+          label: t("listing.website"),
+          value: developer.website.replace(/^https?:\/\//i, ""),
+          href: developer.website,
+          external: true,
+        }
+      : null,
+  ].filter((fact): fact is NonNullable<typeof fact> => Boolean(fact));
 
   const inventoryParents = buildDeveloperInventoryTree({
     listings,
@@ -79,6 +166,7 @@ export default async function DeveloperDetailPage({
       title: pickLocalized(project.title, locale) || project.id,
       href: `${base}/projects/${encodeURIComponent(project.id)}`,
       meta: [subCity, stageLabel, completion].join(" · "),
+      imageUrl: project.coverImageUrl || undefined,
       badges: [
         { label: stageLabel, tone: "violet" as const },
         { label: completion, tone: "emerald" as const },
@@ -105,31 +193,31 @@ export default async function DeveloperDetailPage({
         {t("pages.developers.back")}
       </Link>
 
-      <div className="flex flex-wrap gap-2 text-sm">
-        {developer.isVerified ? (
-          <span className="rounded-full bg-amber-50 px-3 py-1 font-medium text-amber-800 ring-1 ring-amber-600/15 ring-inset">
-            {t("common.verified")}
-          </span>
-        ) : null}
-        <span className="rounded-full bg-slate-100 px-3 py-1 font-medium text-slate-700 ring-1 ring-slate-500/15 ring-inset">
-          {t("pages.developers.listingCount", { count: listings.length })}
-        </span>
-        {projects.length > 0 ? (
-          <span className="rounded-full bg-violet-50 px-3 py-1 font-medium text-violet-800 ring-1 ring-violet-600/15 ring-inset">
-            {t("pages.developers.projectCount", { count: projects.length })}
-          </span>
-        ) : null}
-        {developer.website ? (
-          <a
-            href={developer.website}
-            target="_blank"
-            rel="noreferrer"
-            className="rounded-full bg-emerald-50 px-3 py-1 font-medium text-emerald-800 ring-1 ring-emerald-600/15 ring-inset hover:underline"
-          >
-            {t("listing.website")}
-          </a>
-        ) : null}
-      </div>
+      <DeveloperProfileHeader
+        name={name}
+        tradeName={developer.tradeName}
+        verified={developer.isVerified}
+        verifiedLabel={t("common.verified")}
+        facts={facts}
+        badges={[
+          {
+            label: t("pages.developers.listingCount", {
+              count: listings.length,
+            }),
+            tone: "emerald" as const,
+          },
+          ...(projects.length > 0
+            ? [
+                {
+                  label: t("pages.developers.projectCount", {
+                    count: projects.length,
+                  }),
+                  tone: "violet" as const,
+                },
+              ]
+            : []),
+        ]}
+      />
 
       <section className="space-y-3">
         <div className="space-y-1">

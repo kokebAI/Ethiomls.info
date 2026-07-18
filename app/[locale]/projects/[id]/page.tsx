@@ -36,6 +36,9 @@ export default async function ProjectDetailPage({
   const developerName =
     pickLocalized(project.developer.displayName, locale) ||
     project.developer.tradeName;
+  const developerHref = project.developer.id
+    ? `/${locale}/developers/${encodeURIComponent(project.developer.id)}`
+    : null;
   const stageLabel = formatConstructionStage(project.constructionStage);
   const website =
     (typeof walkthrough.website === "string" && walkthrough.website) ||
@@ -69,6 +72,7 @@ export default async function ProjectDetailPage({
         stageLabel={stageLabel}
         completionPercent={Number(project.completionPercent)}
         developerName={developerName}
+        developerHref={developerHref}
         telegram={telegram}
         website={website}
         projectAmenities={projectAmenities}
