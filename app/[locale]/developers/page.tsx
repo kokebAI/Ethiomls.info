@@ -24,9 +24,20 @@ export default async function DevelopersPage({
         developer.headquartersSubCity.code
       : "—";
 
-    const badges: DirectoryBadge[] = developer.isVerified
-      ? [{ label: translate(dictionary, "common.verified"), tone: "amber" }]
-      : [];
+    const listingCount = developer._count.listings;
+    const badges: DirectoryBadge[] = [];
+    if (developer.isVerified) {
+      badges.push({
+        label: translate(dictionary, "common.verified"),
+        tone: "amber",
+      });
+    }
+    badges.push({
+      label: translate(dictionary, "pages.developers.listingCount", {
+        count: listingCount,
+      }),
+      tone: "emerald",
+    });
 
     return {
       id: developer.id,
@@ -34,6 +45,7 @@ export default async function DevelopersPage({
         pickLocalized(developer.displayName, locale) || developer.tradeName,
       meta: [hq].filter(Boolean).join(" · "),
       badges,
+      href: `/${locale}/developers/${encodeURIComponent(developer.id)}`,
     };
   });
 
