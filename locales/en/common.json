@@ -256,10 +256,11 @@
     "developer": {
       "eyebrow": "Developer",
       "title": "Showcase projects and off-plan units",
-      "lede": "Publish building stacks, payment plans, and unit inventory for clients who want escrow-backed off-plan homes.",
+      "lede": "Publish escrow-backed off-plan inventory with the full document pack: org credentials, floor plan, title or lease, permit, escrow letter, unit photos, and Fayda verify for your company rep.",
       "ctas": {
-        "projects": "View projects",
         "list": "Add inventory",
+        "projects": "View projects",
+        "myPage": "My developer page",
         "developers": "Developer directory",
         "profile": "Your profile"
       }

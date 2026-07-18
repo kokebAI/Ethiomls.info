@@ -1,7 +1,7 @@
 import { ConstructionStage } from "@prisma/client";
 
 /** Human-readable labels for construction / escrow stages. */
-const STAGE_LABELS: Record<ConstructionStage, string> = {
+export const STAGE_LABELS: Record<ConstructionStage, string> = {
   EARTHWORKS_FOUNDATION: "Earthworks & foundation",
   SUBSTRUCTURE: "Substructure",
   SUPERSTRUCTURE: "Superstructure",
@@ -11,6 +11,10 @@ const STAGE_LABELS: Record<ConstructionStage, string> = {
   EXTERNAL_WORKS: "External works",
   FULLY_COMPLETED: "Fully completed",
 };
+
+export const CONSTRUCTION_STAGE_OPTIONS = (
+  Object.keys(STAGE_LABELS) as ConstructionStage[]
+).map((value) => ({ value, label: STAGE_LABELS[value] }));
 
 export function formatConstructionStage(
   stage: ConstructionStage | string | null | undefined,

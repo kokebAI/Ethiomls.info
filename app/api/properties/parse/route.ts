@@ -31,6 +31,11 @@ const responseSchema = {
     bathrooms: { type: Type.NUMBER },
     sizeM2: { type: Type.NUMBER },
     description: { type: Type.STRING },
+    listingType: { type: Type.STRING },
+    constructionStage: { type: Type.STRING },
+    escrowAccountNumber: { type: Type.STRING },
+    bankEscrowProvider: { type: Type.STRING },
+    constructionPermitId: { type: Type.STRING },
   },
   required: ["title", "price", "subCity", "description"],
 };
@@ -134,11 +139,15 @@ export async function POST(request: Request) {
           mimeType,
         },
       },
-      `Analyze this Ethiopian real-estate document or receipt.
-Extract the property title, listing price, description, Addis Ababa sub-city,
-number of bedrooms, bathrooms, and size in m² when present.
+      `Analyze this Ethiopian real-estate document, brochure, permit, or escrow letter.
+Extract when present: property title, listing price, description, Addis Ababa sub-city,
+bedrooms, bathrooms, size in m², listing type (SALE, RENT, or OFF_PLAN),
+construction stage (one of EARTHWORKS_FOUNDATION, SUBSTRUCTURE, SUPERSTRUCTURE,
+ROOFING_ENVELOPE, MEP_INSTALLATION, INTERIOR_FINISHING, EXTERNAL_WORKS, FULLY_COMPLETED),
+escrow account number, bank escrow provider name, and construction permit ID
+(prefer MUD-CP-YYYY-NNNNN form).
 Return the sub-city as one of: ${ADDIS_SUB_CITY_CODES.join(", ")}.
-Use 0 for missing numbers. Do not invent details.
+Use 0 for missing numbers and empty strings for missing text. Do not invent details.
 Return a clean JSON object matching the requested structure.`,
     ];
 
@@ -184,7 +193,39 @@ Return a clean JSON object matching the requested structure.`,
       bathrooms?: number;
       sizeM2?: number;
       description?: string;
+      listingType?: string;
+      constructionStage?: string;
+      escrowAccountNumber?: string;
+      bankEscrowProvider?: string;
+      constructionPermitId?: string;
     };
+
+    const listingTypeRaw = String(parsedJson.listingType ?? "")
+      .trim()
+      .toUpperCase()
+      .replace(/[\s-]+/g, "_");
+    const listingType =
+      listingTypeRaw === "SALE" ||
+      listingTypeRaw === "RENT" ||
+      listingTypeRaw === "OFF_PLAN"
+        ? listingTypeRaw
+        : undefined;
+
+    const stageRaw = String(parsedJson.constructionStage ?? "")
+      .trim()
+      .toUpperCase()
+      .replace(/[\s-]+/g, "_");
+    const stages = new Set([
+      "EARTHWORKS_FOUNDATION",
+      "SUBSTRUCTURE",
+      "SUPERSTRUCTURE",
+      "ROOFING_ENVELOPE",
+      "MEP_INSTALLATION",
+      "INTERIOR_FINISHING",
+      "EXTERNAL_WORKS",
+      "FULLY_COMPLETED",
+    ]);
+    const constructionStage = stages.has(stageRaw) ? stageRaw : undefined;
 
     return NextResponse.json({
       data: {
@@ -195,6 +236,11 @@ Return a clean JSON object matching the requested structure.`,
         bathrooms: Math.max(0, Math.floor(Number(parsedJson.bathrooms) || 0)),
         sizeM2: Math.max(0, Number(parsedJson.sizeM2) || 0),
         description: String(parsedJson.description ?? "").trim(),
+        listingType,
+        constructionStage,
+        escrowAccountNumber: String(parsedJson.escrowAccountNumber ?? "").trim(),
+        bankEscrowProvider: String(parsedJson.bankEscrowProvider ?? "").trim(),
+        constructionPermitId: String(parsedJson.constructionPermitId ?? "").trim(),
       },
     });
   } catch (error: unknown) {

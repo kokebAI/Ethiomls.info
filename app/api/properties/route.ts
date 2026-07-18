@@ -1,5 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
-import { EscrowStatus, ListingStatus, Prisma } from "@prisma/client";
+import {
+  EscrowStatus,
+  ListingEvidenceKind,
+  ListingStatus,
+  ListingType,
+  Prisma,
+  UserRole,
+} from "@prisma/client";
 import { ensureBilingualListingCopy } from "@/lib/ai/translate-listing";
 import {
   assertEscrowCompliance,
@@ -16,7 +23,15 @@ import {
 import {
   isEscrowComplianceException,
 } from "@/lib/errors/EscrowComplianceException";
+import { getSession } from "@/lib/auth/session";
 import { trackDuplicateCollisions } from "@/lib/properties/duplicateCollision";
+import {
+  EVIDENCE_KIND_LABELS,
+  isLiveFaydaConfigured,
+  MIN_GALLERY_PHOTOS,
+  missingEvidenceKinds,
+  requiresDeveloperFullPack,
+} from "@/lib/properties/evidence";
 import { validateCreatePropertyPayload } from "@/lib/properties/validation";
 
 export const runtime = "nodejs";
@@ -108,6 +123,33 @@ async function resolveListingId(preferredId: string): Promise<string> {
  */
 export async function POST(request: NextRequest) {
   try {
+    const session = await getSession();
+    if (!session) {
+      return NextResponse.json(
+        { error: "Unauthorized", message: "Sign in required", statusCode: 401 },
+        { status: 401 },
+      );
+    }
+
+    const user = await prisma.user.findFirst({
+      where: { id: session.userId, isActive: true },
+      select: {
+        id: true,
+        role: true,
+        fullName: true,
+        developerProfile: {
+          select: { id: true, tin: true, registrationNumber: true },
+        },
+        faydaIdentity: { select: { id: true } },
+      },
+    });
+    if (!user) {
+      return NextResponse.json(
+        { error: "Unauthorized", message: "Account not found", statusCode: 401 },
+        { status: 401 },
+      );
+    }
+
     let body: unknown;
     try {
       body = await request.json();
@@ -121,7 +163,47 @@ export async function POST(request: NextRequest) {
       ]);
     }
 
-    const input = validateCreatePropertyPayload(body);
+    const input = validateCreatePropertyPayload({
+      ...(body as object),
+      ownerId: user.id,
+    });
+
+    let developerId = input.developerId ?? user.developerProfile?.id ?? null;
+    let profileTin = user.developerProfile?.tin ?? null;
+    if (
+      user.role === UserRole.CORPORATE_DEVELOPER &&
+      !developerId &&
+      input.tradeName &&
+      input.registrationNumber
+    ) {
+      const createdProfile = await prisma.developerProfile.create({
+        data: {
+          userId: user.id,
+          tradeName: input.tradeName,
+          displayName: { en: input.tradeName },
+          registrationNumber: input.registrationNumber,
+        },
+        select: { id: true, tin: true },
+      });
+      developerId = createdProfile.id;
+      profileTin = createdProfile.tin;
+    }
+
+    if (input.projectId && developerId) {
+      const project = await prisma.project.findFirst({
+        where: { id: input.projectId, developerId },
+        select: { id: true },
+      });
+      if (!project) {
+        throw new DataCompletenessError("projectId must belong to your developer profile", [
+          {
+            path: "projectId",
+            message: "Unknown or unauthorized project",
+            code: "invalid_project",
+          },
+        ]);
+      }
+    }
 
     const isUnfinished = evaluateIsUnfinished({
       isUnfinished: input.isUnfinished,
@@ -138,6 +220,100 @@ export async function POST(request: NextRequest) {
       constructionPermitId: input.constructionPermitId,
       constructionPermitVerified: input.constructionPermitVerified,
     });
+
+    const fullPack = requiresDeveloperFullPack({
+      role: user.role,
+      listingType: input.listingType,
+    });
+
+    const evidenceIds = input.evidenceUploadIds ?? [];
+    const uploads =
+      evidenceIds.length > 0
+        ? await prisma.evidenceUpload.findMany({
+            where: { id: { in: evidenceIds }, userId: user.id },
+          })
+        : [];
+
+    let galleryImageUrls = [...(input.galleryImageUrls ?? [])];
+
+    if (fullPack) {
+      if (uploads.length !== evidenceIds.length) {
+        throw new DataCompletenessError("Some evidence uploads are missing or expired", [
+          {
+            path: "evidenceUploadIds",
+            message: "Re-upload required documents",
+            code: "evidence_missing",
+          },
+        ]);
+      }
+
+      const docKinds = uploads
+        .filter((u) => u.kind !== ListingEvidenceKind.UNIT_GALLERY)
+        .map((u) => u.kind);
+      const missing = missingEvidenceKinds(docKinds, {
+        skipTin: Boolean(profileTin),
+      });
+      if (missing.length > 0) {
+        throw new DataCompletenessError("Developer off-plan checklist incomplete", [
+          {
+            path: "evidenceUploadIds",
+            message: `Missing: ${missing.map((k) => EVIDENCE_KIND_LABELS[k]).join(", ")}`,
+            code: "evidence_checklist_incomplete",
+          },
+        ]);
+      }
+
+      const galleryFromUploads = uploads
+        .filter((u) => u.kind === ListingEvidenceKind.UNIT_GALLERY)
+        .map((u) => u.publicUrl);
+      galleryImageUrls = [
+        ...new Set([...galleryImageUrls, ...galleryFromUploads]),
+      ].slice(0, 12);
+      if (galleryImageUrls.length < MIN_GALLERY_PHOTOS) {
+        throw new DataCompletenessError(
+          `At least ${MIN_GALLERY_PHOTOS} unit photos are required`,
+          [
+            {
+              path: "galleryImageUrls",
+              message: `Upload at least ${MIN_GALLERY_PHOTOS} photos`,
+              code: "gallery_insufficient",
+            },
+          ],
+        );
+      }
+
+      if (isLiveFaydaConfigured() && !user.faydaIdentity) {
+        throw new DataCompletenessError("Fayda eSignet verification required", [
+          {
+            path: "faydaVerify",
+            message: "Complete Fayda verification before submitting off-plan inventory",
+            code: "fayda_required",
+          },
+        ]);
+      }
+      if (!isLiveFaydaConfigured() && !user.faydaIdentity) {
+        throw new DataCompletenessError("Fayda demo verification required", [
+          {
+            path: "faydaVerify",
+            message: "Tap Verify with Fayda (demo) on the checklist",
+            code: "fayda_required",
+          },
+        ]);
+      }
+
+      if (!developerId) {
+        throw new DataCompletenessError(
+          "Developer profile required — provide trade name and registration number",
+          [
+            {
+              path: "tradeName",
+              message: "tradeName and registrationNumber are required once",
+              code: "developer_profile_required",
+            },
+          ],
+        );
+      }
+    }
 
     const liveNbeRate = await getLiveNbeUsdEtbRate();
     const foreignEval = evaluateForeignerEligibility(
@@ -173,7 +349,7 @@ export async function POST(request: NextRequest) {
       price: input.price,
       bedrooms: input.bedrooms,
       propertyType: input.propertyType,
-      incomingOwnerId: input.ownerId,
+      incomingOwnerId: user.id,
     });
 
     // Every submission enters the admin audit queue. No seller, importer, or
@@ -185,6 +361,9 @@ export async function POST(request: NextRequest) {
       title: input.title,
       description: input.description,
     });
+
+    const galleryImageUrlsFinal = galleryImageUrls;
+    const coverImageUrl = galleryImageUrlsFinal[0] ?? null;
 
     let listingId = await resolveListingId(input.id);
     let listing: {
@@ -211,8 +390,8 @@ export async function POST(request: NextRequest) {
           const created = await tx.listing.create({
             data: {
               id: listingId,
-              ownerId: input.ownerId,
-              developerId: input.developerId,
+              ownerId: user.id,
+              developerId: developerId ?? null,
               delalaId: input.delalaId,
               projectId: input.projectId,
               subCityId: subCity.id,
@@ -233,7 +412,9 @@ export async function POST(request: NextRequest) {
               constructionStage: input.constructionStage,
               metadataTags: [...input.metadata, `pid:${listingId}`],
               panoramicImageUrls: input.panoramicImageUrls ?? [],
-              galleryImageUrls: input.galleryImageUrls ?? [],
+              galleryImageUrls: galleryImageUrlsFinal,
+              coverImageUrl,
+              images: galleryImageUrlsFinal,
               addressLine: input.addressLine,
               isUnfinished,
               constructionPermitId: input.constructionPermitId,
@@ -270,6 +451,37 @@ export async function POST(request: NextRequest) {
             });
           }
 
+          if (uploads.length > 0) {
+            const site =
+              process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") ||
+              "https://ethiomls.info";
+            for (const u of uploads) {
+              const row = await tx.listingEvidence.create({
+                data: {
+                  listingId: created.id,
+                  kind: u.kind,
+                  fileName: u.fileName,
+                  mimeType: u.mimeType,
+                  byteSize: u.byteSize,
+                  storagePath: u.storagePath,
+                  publicUrl: u.publicUrl,
+                  contentBytes: u.contentBytes,
+                },
+              });
+              if (u.contentBytes && !u.storagePath) {
+                await tx.listingEvidence.update({
+                  where: { id: row.id },
+                  data: {
+                    publicUrl: `${site}/api/properties/evidence/${row.id}/file`,
+                  },
+                });
+              }
+            }
+            await tx.evidenceUpload.deleteMany({
+              where: { id: { in: uploads.map((u) => u.id) } },
+            });
+          }
+
           return created;
         });
         lastError = undefined;
@@ -294,7 +506,7 @@ export async function POST(request: NextRequest) {
             price: input.price,
             bedrooms: input.bedrooms,
             propertyType: input.propertyType,
-            incomingOwnerId: input.ownerId,
+            incomingOwnerId: user.id,
             incomingListingId: listing.id,
             matchedListingIds: collision.flaggedListingIds,
             detectedAt: new Date().toISOString(),
@@ -336,6 +548,8 @@ export async function POST(request: NextRequest) {
           escrowRequired: isUnfinished,
           escrowEnforced: isUnfinished,
           foreignerEligibility: foreignEval,
+          listingType: ListingType.OFF_PLAN,
+          fullPack,
         },
         collision: {
           detected: collision.collided,

@@ -63,9 +63,9 @@ export const ROLE_HUBS: Record<RoleHubSlug, RoleHubDef> = {
     role: UserRole.CORPORATE_DEVELOPER,
     demoPhone: "0911000005",
     ctas: [
-      { id: "projects", href: "/projects", primary: true },
-      { id: "list", href: "/listings/new" },
-      { id: "developers", href: "/developers" },
+      { id: "list", href: "/listings/new?type=OFF_PLAN", primary: true },
+      { id: "projects", href: "/projects" },
+      { id: "myPage", href: "/developers" },
       { id: "profile", href: "/profile" },
     ],
   },

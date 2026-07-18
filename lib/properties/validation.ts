@@ -87,6 +87,9 @@ export const createPropertySchema = z
     bankEscrowProvider: z.string().trim().min(1).optional(),
     constructionPermitId: z.string().trim().min(1).optional(),
     constructionPermitVerified: z.boolean().optional(),
+    evidenceUploadIds: z.array(z.string().min(1)).max(24).optional(),
+    tradeName: z.string().trim().min(2).max(120).optional(),
+    registrationNumber: z.string().trim().min(2).max(80).optional(),
   })
   .strict();
 

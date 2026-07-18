@@ -1,9 +1,16 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { RoleHubView } from "@/components/roles/RoleHubView";
+import { getSession } from "@/lib/auth/session";
+import { prisma } from "@/lib/db/prisma";
 import { isLocale, type Locale } from "@/lib/i18n/config";
 import { getDictionary, translate } from "@/lib/i18n/getDictionary";
-import { isRoleHubSlug, ROLE_HUBS, ROLE_HUB_SLUGS } from "@/lib/roles/hubs";
+import {
+  isRoleHubSlug,
+  ROLE_HUBS,
+  ROLE_HUB_SLUGS,
+  type RoleHubDef,
+} from "@/lib/roles/hubs";
 
 export const dynamic = "force-dynamic";
 
@@ -38,10 +45,28 @@ export default async function RoleHubPage({
   if (!isRoleHubSlug(slug)) notFound();
 
   const dictionary = getDictionary(locale);
-  const hub = ROLE_HUBS[slug];
+  let hub: RoleHubDef = ROLE_HUBS[slug];
   const t = (key: string) => translate(dictionary, key);
 
   if (!dictionary.roles?.[slug]) notFound();
+
+  if (slug === "developer") {
+    const session = await getSession();
+    if (session) {
+      const profile = await prisma.developerProfile.findUnique({
+        where: { userId: session.userId },
+        select: { id: true },
+      });
+      hub = {
+        ...hub,
+        ctas: hub.ctas.map((cta) =>
+          cta.id === "myPage" && profile
+            ? { ...cta, href: `/developers/${profile.id}` }
+            : cta,
+        ),
+      };
+    }
+  }
 
   return (
     <RoleHubView locale={locale} hub={hub} dictionary={dictionary} t={t} />

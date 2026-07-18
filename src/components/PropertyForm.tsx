@@ -1,7 +1,21 @@
 "use client";
 
 import { useEffect, useRef, useState, type DragEvent, type FormEvent } from "react";
-import { LoaderCircle, ScanLine, Sparkles, UploadCloud, X } from "lucide-react";
+import {
+  CheckCircle2,
+  Circle,
+  LoaderCircle,
+  ScanLine,
+  Sparkles,
+  UploadCloud,
+  X,
+} from "lucide-react";
+import { CONSTRUCTION_STAGE_OPTIONS } from "@/lib/domain/construction-stage";
+import {
+  DEVELOPER_OFFPLAN_EVIDENCE_KINDS,
+  EVIDENCE_KIND_LABELS,
+  MIN_GALLERY_PHOTOS,
+} from "@/lib/properties/evidence";
 import { generatePropertyId } from "@/src/utils/generateId";
 
 const SUB_CITIES = [
@@ -28,6 +42,15 @@ const ACCEPTED_TYPES = new Set([
   "image/webp",
 ]);
 
+type EvidenceKind = (typeof DEVELOPER_OFFPLAN_EVIDENCE_KINDS)[number] | "UNIT_GALLERY";
+
+type StagedEvidence = {
+  id: string;
+  kind: EvidenceKind;
+  fileName: string;
+  publicUrl: string;
+};
+
 function isAcceptedFile(file: File): boolean {
   if (ACCEPTED_TYPES.has(file.type)) return true;
   const name = file.name.toLowerCase();
@@ -44,7 +67,6 @@ function formatMb(bytes: number): string {
   return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
 }
 
-/** Shrink large phone photos before upload so they fit the serverless body limit. */
 async function prepareFileForUpload(file: File): Promise<File> {
   if (!file.type.startsWith("image/") || file.size <= MAX_FILE_BYTES) {
     return file;
@@ -92,6 +114,13 @@ type FormValues = {
   addressLine: string;
   listingType: "SALE" | "RENT" | "OFF_PLAN";
   propertyType: "RESIDENTIAL" | "COMMERCIAL" | "MIXED_USE" | "LAND";
+  constructionStage: string;
+  escrowAccountNumber: string;
+  bankEscrowProvider: string;
+  constructionPermitId: string;
+  constructionPermitVerified: boolean;
+  tradeName: string;
+  registrationNumber: string;
 };
 
 type ParsedPayload = {
@@ -106,6 +135,10 @@ type ParsedPayload = {
   addressLine?: string;
   listingType?: FormValues["listingType"];
   propertyType?: FormValues["propertyType"];
+  constructionStage?: string;
+  escrowAccountNumber?: string;
+  bankEscrowProvider?: string;
+  constructionPermitId?: string;
 };
 
 const EMPTY_FORM: FormValues = {
@@ -120,10 +153,23 @@ const EMPTY_FORM: FormValues = {
   addressLine: "",
   listingType: "SALE",
   propertyType: "RESIDENTIAL",
+  constructionStage: "SUPERSTRUCTURE",
+  escrowAccountNumber: "",
+  bankEscrowProvider: "",
+  constructionPermitId: "",
+  constructionPermitVerified: false,
+  tradeName: "",
+  registrationNumber: "",
 };
 
-type PropertyFormProps = {
+export type PropertyFormProps = {
   ownerId: string;
+  role?: string | null;
+  hasFayda?: boolean;
+  hasDeveloperProfile?: boolean;
+  developerTin?: string | null;
+  projectOptions?: { id: string; title: string }[];
+  defaultListingType?: FormValues["listingType"];
   onCreated?: (propertyId: string) => void;
 };
 
@@ -163,6 +209,22 @@ function mergeParsed(parts: ParsedPayload[]): ParsedPayload {
     base.addressLine = preferText(base.addressLine ?? "", part.addressLine ?? "");
     if (part.listingType) base.listingType = part.listingType;
     if (part.propertyType) base.propertyType = part.propertyType;
+    if (part.constructionStage) base.constructionStage = part.constructionStage;
+    if (part.escrowAccountNumber)
+      base.escrowAccountNumber = preferText(
+        base.escrowAccountNumber ?? "",
+        part.escrowAccountNumber,
+      );
+    if (part.bankEscrowProvider)
+      base.bankEscrowProvider = preferText(
+        base.bankEscrowProvider ?? "",
+        part.bankEscrowProvider,
+      );
+    if (part.constructionPermitId)
+      base.constructionPermitId = preferText(
+        base.constructionPermitId ?? "",
+        part.constructionPermitId,
+      );
     if (part.description.trim()) descriptions.push(part.description.trim());
   }
 
@@ -201,23 +263,47 @@ async function readJsonSafe(response: Response): Promise<{
   }
 }
 
-export function PropertyForm({ ownerId, onCreated }: PropertyFormProps) {
+export function PropertyForm({
+  ownerId,
+  role,
+  hasFayda: hasFaydaProp = false,
+  hasDeveloperProfile = false,
+  developerTin = null,
+  projectOptions = [],
+  defaultListingType,
+  onCreated,
+}: PropertyFormProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [propertyId, setPropertyId] = useState("");
-  const [values, setValues] = useState<FormValues>(EMPTY_FORM);
+  const [values, setValues] = useState<FormValues>(() => ({
+    ...EMPTY_FORM,
+    listingType: defaultListingType ?? EMPTY_FORM.listingType,
+  }));
+  const [projectId, setProjectId] = useState("");
   const [isDragging, setIsDragging] = useState(false);
   const [isParsing, setIsParsing] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [uploadingKind, setUploadingKind] = useState<string | null>(null);
   const [documentNames, setDocumentNames] = useState<string[]>([]);
   const [parseProgress, setParseProgress] = useState("");
+  const [evidence, setEvidence] = useState<StagedEvidence[]>([]);
+  const [hasFayda, setHasFayda] = useState(hasFaydaProp);
+  const [faydaBusy, setFaydaBusy] = useState(false);
   const [message, setMessage] = useState<{
     tone: "success" | "error";
     text: string;
   } | null>(null);
 
+  const isDeveloper = role === "CORPORATE_DEVELOPER";
+  const needsFullPack = isDeveloper && values.listingType === "OFF_PLAN";
+
   useEffect(() => {
     setPropertyId(generatePropertyId());
   }, []);
+
+  useEffect(() => {
+    setHasFayda(hasFaydaProp);
+  }, [hasFaydaProp]);
 
   function update<K extends keyof FormValues>(key: K, value: FormValues[K]) {
     setValues((current) => ({ ...current, [key]: value }));
@@ -238,6 +324,15 @@ export function PropertyForm({ ownerId, onCreated }: PropertyFormProps) {
       addressLine: data.addressLine || current.addressLine,
       listingType: data.listingType ?? current.listingType,
       propertyType: data.propertyType ?? current.propertyType,
+      constructionStage: data.constructionStage || current.constructionStage,
+      escrowAccountNumber:
+        data.escrowAccountNumber || current.escrowAccountNumber,
+      bankEscrowProvider: data.bankEscrowProvider || current.bankEscrowProvider,
+      constructionPermitId:
+        data.constructionPermitId || current.constructionPermitId,
+      constructionPermitVerified: data.constructionPermitId
+        ? /^MUD-CP-\d{4}-\d{5}$/i.test(data.constructionPermitId)
+        : current.constructionPermitVerified,
     }));
   }
 
@@ -251,66 +346,42 @@ export function PropertyForm({ ownerId, onCreated }: PropertyFormProps) {
     if (invalidType) {
       setMessage({
         tone: "error",
-        text: `${invalidType.name}: only PDF, JPEG, PNG, and WebP are supported.`,
+        text: "Only PDF, JPEG, PNG, and WebP are supported.",
       });
       return;
     }
 
-    const empty = files.find((file) => file.size === 0);
-    if (empty) {
-      setMessage({
-        tone: "error",
-        text: `${empty.name} is empty.`,
-      });
-      return;
-    }
-
-    setDocumentNames(files.map((file) => file.name));
     setIsParsing(true);
+    setDocumentNames(files.map((file) => file.name));
+    const parsedParts: ParsedPayload[] = [];
 
     try {
-      const prepared: File[] = [];
-      for (const file of files) {
-        setParseProgress(`Preparing ${file.name}...`);
-        const next = await prepareFileForUpload(file);
-        if (next.size > MAX_FILE_BYTES) {
+      for (let index = 0; index < files.length; index += 1) {
+        const file = await prepareFileForUpload(files[index]);
+        if (file.size > MAX_FILE_BYTES) {
           throw new Error(
-            `${file.name} is still ${formatMb(next.size)} after compression. Use a file under 2.5 MB.`,
+            `${files[index].name} is still over ${formatMb(MAX_FILE_BYTES)} after compression.`,
           );
         }
-        prepared.push(next);
-      }
-
-      const parsedParts: ParsedPayload[] = [];
-
-      for (let i = 0; i < prepared.length; i += 1) {
-        const file = prepared[i]!;
-        setParseProgress(
-          `Parsing ${i + 1} of ${prepared.length}: ${file.name}...`,
-        );
-
+        setParseProgress(`Parsing ${index + 1} of ${files.length}…`);
         const formData = new FormData();
         formData.append("documents", file);
-
         const response = await fetch("/api/properties/parse", {
           method: "POST",
           body: formData,
         });
         const payload = await readJsonSafe(response);
-
         if (!response.ok || !payload.data) {
           throw new Error(
             payload.error ||
               payload.message ||
-              "Document parsing failed.",
+              `Could not parse ${files[index].name}`,
           );
         }
-
         parsedParts.push(payload.data);
       }
 
-      const merged = mergeParsed(parsedParts);
-      applyParsed(merged);
+      applyParsed(mergeParsed(parsedParts));
       setMessage({
         tone: "success",
         text:
@@ -322,9 +393,7 @@ export function PropertyForm({ ownerId, onCreated }: PropertyFormProps) {
       setMessage({
         tone: "error",
         text:
-          error instanceof Error
-            ? error.message
-            : "Document parsing failed. Enter the details manually.",
+          error instanceof Error ? error.message : "Document parsing failed.",
       });
     } finally {
       setIsParsing(false);
@@ -340,16 +409,135 @@ export function PropertyForm({ ownerId, onCreated }: PropertyFormProps) {
     if (files.length > 0) void parseDocuments(files);
   }
 
+  async function uploadEvidence(kind: EvidenceKind, file: File) {
+    setMessage(null);
+    setUploadingKind(kind);
+    try {
+      const prepared = await prepareFileForUpload(file);
+      if (prepared.size > MAX_FILE_BYTES) {
+        throw new Error(`File must be under ${formatMb(MAX_FILE_BYTES)}`);
+      }
+      const formData = new FormData();
+      formData.append("kind", kind);
+      formData.append("file", prepared);
+      const response = await fetch("/api/properties/evidence", {
+        method: "POST",
+        body: formData,
+      });
+      const text = await response.text();
+      const payload = text
+        ? (JSON.parse(text) as {
+            data?: StagedEvidence;
+            error?: string;
+            message?: string;
+          })
+        : {};
+      if (!response.ok || !payload.data) {
+        throw new Error(payload.message || payload.error || "Upload failed");
+      }
+      setEvidence((current) => {
+        const next =
+          kind === "UNIT_GALLERY"
+            ? current
+            : current.filter((item) => item.kind !== kind);
+        return [...next, payload.data!];
+      });
+      // Also run AI parse for document kinds
+      if (kind !== "UNIT_GALLERY") {
+        void parseDocuments([prepared]);
+      }
+    } catch (error) {
+      setMessage({
+        tone: "error",
+        text: error instanceof Error ? error.message : "Upload failed",
+      });
+    } finally {
+      setUploadingKind(null);
+    }
+  }
+
+  async function verifyFayda() {
+    setFaydaBusy(true);
+    setMessage(null);
+    try {
+      const response = await fetch("/api/auth/fayda/verify", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({}),
+      });
+      const payload = (await response.json()) as {
+        ok?: boolean;
+        live?: boolean;
+        authorizeUrl?: string;
+        message?: string;
+        error?: string;
+      };
+      if (!response.ok || !payload.ok) {
+        throw new Error(payload.message || payload.error || "Fayda failed");
+      }
+      if (payload.live && payload.authorizeUrl) {
+        window.location.href = payload.authorizeUrl;
+        return;
+      }
+      setHasFayda(true);
+      setMessage({
+        tone: "success",
+        text:
+          payload.message ||
+          "Demo Fayda verification complete.",
+      });
+    } catch (error) {
+      setMessage({
+        tone: "error",
+        text: error instanceof Error ? error.message : "Fayda verification failed",
+      });
+    } finally {
+      setFaydaBusy(false);
+    }
+  }
+
+  function hasKind(kind: EvidenceKind) {
+    return evidence.some((item) => item.kind === kind);
+  }
+
+  const requiredDocKinds = DEVELOPER_OFFPLAN_EVIDENCE_KINDS.filter((kind) => {
+    if (kind === "ORG_TIN" && developerTin) return false;
+    return true;
+  });
+
+  const galleryCount = evidence.filter((e) => e.kind === "UNIT_GALLERY").length;
+  const checklistComplete =
+    !needsFullPack ||
+    (requiredDocKinds.every((kind) => hasKind(kind)) &&
+      galleryCount >= MIN_GALLERY_PHOTOS &&
+      hasFayda &&
+      (hasDeveloperProfile ||
+        (values.tradeName.trim().length >= 2 &&
+          values.registrationNumber.trim().length >= 2)) &&
+      values.escrowAccountNumber.trim() &&
+      values.bankEscrowProvider.trim() &&
+      values.constructionPermitId.trim() &&
+      values.constructionPermitVerified);
+
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setMessage(null);
+
+    if (needsFullPack && !checklistComplete) {
+      setMessage({
+        tone: "error",
+        text: "Complete the developer checklist (documents, photos, Fayda, and escrow fields) before submitting.",
+      });
+      return;
+    }
+
     setIsSubmitting(true);
 
     try {
       let id = propertyId || generatePropertyId();
       if (!propertyId) setPropertyId(id);
 
-      const body = {
+      const body: Record<string, unknown> = {
         id,
         ownerId,
         title: { en: values.title },
@@ -367,9 +555,28 @@ export function PropertyForm({ ownerId, onCreated }: PropertyFormProps) {
           ...(documentNames.length > 0
             ? [`docs:${documentNames.length}`]
             : []),
+          ...(needsFullPack ? ["developer-full-pack"] : []),
         ],
         ...(values.addressLine ? { addressLine: values.addressLine } : {}),
       };
+
+      if (values.listingType === "OFF_PLAN" || needsFullPack) {
+        body.constructionStage = values.constructionStage;
+        body.escrowAccountNumber = values.escrowAccountNumber.trim();
+        body.bankEscrowProvider = values.bankEscrowProvider.trim();
+        body.constructionPermitId = values.constructionPermitId.trim();
+        body.constructionPermitVerified = values.constructionPermitVerified;
+        body.isUnfinished = true;
+      }
+
+      if (needsFullPack) {
+        body.evidenceUploadIds = evidence.map((item) => item.id);
+        if (!hasDeveloperProfile) {
+          body.tradeName = values.tradeName.trim();
+          body.registrationNumber = values.registrationNumber.trim();
+        }
+        if (projectId) body.projectId = projectId;
+      }
 
       let response = await fetch("/api/properties", {
         method: "POST",
@@ -387,11 +594,7 @@ export function PropertyForm({ ownerId, onCreated }: PropertyFormProps) {
         );
       }
 
-      // If the client-chosen ID raced with another listing, mint a new one and retry once.
-      if (
-        !response.ok &&
-        payload.error === "PropertyIdCollision"
-      ) {
+      if (!response.ok && payload.error === "PropertyIdCollision") {
         id = generatePropertyId();
         setPropertyId(id);
         response = await fetch("/api/properties", {
@@ -417,10 +620,9 @@ export function PropertyForm({ ownerId, onCreated }: PropertyFormProps) {
         );
       }
 
-      setPropertyId(payload.data.id);
       setMessage({
         tone: "success",
-        text: `Property ${payload.data.id} was submitted successfully.`,
+        text: `Submitted ${payload.data.id} for admin review.`,
       });
       onCreated?.(payload.data.id);
     } catch (error) {
@@ -449,105 +651,252 @@ export function PropertyForm({ ownerId, onCreated }: PropertyFormProps) {
           AI-assisted listing
         </p>
         <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">
-          Submit a property
+          {needsFullPack ? "Submit off-plan inventory" : "Submit a property"}
         </h1>
         <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-300">
-          Upload one or more deeds, brochures, or listing sheets to prefill the
-          form, then review every value before submission.
+          {needsFullPack
+            ? "Upload the full developer pack (org docs, floor plan, title/lease, permit, escrow, photos), verify Fayda, then review fields before submit."
+            : "Upload deeds, brochures, or listing sheets to prefill the form, then review every value before submission."}
         </p>
       </header>
 
       <div className="space-y-8 p-6 sm:p-10">
-        <section className="space-y-3">
-          <div
-            role="button"
-            tabIndex={0}
-            aria-label="Upload property documents or scan deeds"
-            onClick={() => !isParsing && inputRef.current?.click()}
-            onKeyDown={(event) => {
-              if (event.key === "Enter" || event.key === " ") {
-                inputRef.current?.click();
-              }
-            }}
-            onDragEnter={(event) => {
-              event.preventDefault();
-              setIsDragging(true);
-            }}
-            onDragOver={(event) => event.preventDefault()}
-            onDragLeave={() => setIsDragging(false)}
-            onDrop={handleDrop}
-            className={`group flex min-h-52 cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed p-6 text-center transition ${
-              isDragging
-                ? "border-amber-500 bg-amber-50"
-                : "border-slate-300 bg-slate-50 hover:border-amber-500 hover:bg-amber-50/50"
-            }`}
-          >
-            <input
-              ref={inputRef}
-              type="file"
-              multiple
-              accept="application/pdf,image/jpeg,image/png,image/webp"
-              className="sr-only"
-              onChange={(event) => {
-                const files = Array.from(event.target.files ?? []);
-                if (files.length > 0) void parseDocuments(files);
-              }}
-            />
-            {isParsing ? (
-              <>
-                <LoaderCircle className="mb-4 h-10 w-10 animate-spin text-amber-600" />
-                <p className="font-semibold text-slate-950">
-                  Gemini is parsing your documents...
-                </p>
-                <p className="mt-1 text-sm text-slate-500">
-                  {parseProgress || documentNames.join(", ")}
-                </p>
-              </>
-            ) : (
-              <>
-                <span className="mb-4 rounded-2xl bg-slate-950 p-3 text-amber-400 shadow-lg">
-                  {isDragging ? (
-                    <UploadCloud className="h-7 w-7" />
-                  ) : (
-                    <ScanLine className="h-7 w-7" />
-                  )}
-                </span>
-                <p className="font-semibold text-slate-950">
-                  Upload property documents / scan deeds
-                </p>
-                <p className="mt-1 text-sm text-slate-500">
-                  Drop multiple PDF, JPEG, PNG, or WebP files · up to {MAX_FILES}{" "}
-                  files · photos auto-compress · max {formatMb(MAX_FILE_BYTES)} each
-                </p>
-              </>
-            )}
-          </div>
-
-          {documentNames.length > 0 && !isParsing ? (
-            <ul className="flex flex-wrap gap-2">
-              {documentNames.map((name) => (
-                <li
-                  key={name}
-                  className="inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-medium text-slate-700"
-                >
-                  {name}
-                  <button
-                    type="button"
-                    aria-label={`Remove ${name}`}
-                    className="rounded-full p-0.5 text-slate-400 hover:bg-slate-200 hover:text-slate-700"
-                    onClick={() =>
-                      setDocumentNames((current) =>
-                        current.filter((item) => item !== name),
-                      )
-                    }
+        {needsFullPack ? (
+          <section className="space-y-4 rounded-2xl border border-slate-200 bg-slate-50/80 p-5">
+            <div>
+              <h2 className="text-base font-semibold text-slate-950">
+                Required checklist
+              </h2>
+              <p className="mt-1 text-sm text-slate-600">
+                PDF, JPEG, PNG, or WebP · max {formatMb(MAX_FILE_BYTES)} each ·
+                at least {MIN_GALLERY_PHOTOS} photos
+              </p>
+            </div>
+            <ul className="space-y-3">
+              {requiredDocKinds.map((kind) => {
+                const done = hasKind(kind);
+                return (
+                  <li
+                    key={kind}
+                    className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-slate-200 bg-white px-3 py-2.5"
                   >
-                    <X className="h-3 w-3" />
-                  </button>
-                </li>
-              ))}
+                    <span className="inline-flex items-center gap-2 text-sm font-medium text-slate-800">
+                      {done ? (
+                        <CheckCircle2 className="h-4 w-4 text-emerald-600" />
+                      ) : (
+                        <Circle className="h-4 w-4 text-slate-300" />
+                      )}
+                      {EVIDENCE_KIND_LABELS[kind]}
+                      {done
+                        ? ` · ${evidence.find((e) => e.kind === kind)?.fileName}`
+                        : ""}
+                    </span>
+                    <label className="cursor-pointer rounded-full border border-slate-200 px-3 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-50">
+                      {uploadingKind === kind ? "Uploading…" : "Upload"}
+                      <input
+                        type="file"
+                        accept="application/pdf,image/jpeg,image/png,image/webp"
+                        className="sr-only"
+                        disabled={Boolean(uploadingKind)}
+                        onChange={(event) => {
+                          const file = event.target.files?.[0];
+                          if (file) void uploadEvidence(kind, file);
+                          event.target.value = "";
+                        }}
+                      />
+                    </label>
+                  </li>
+                );
+              })}
+              <li className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-slate-200 bg-white px-3 py-2.5">
+                <span className="inline-flex items-center gap-2 text-sm font-medium text-slate-800">
+                  {galleryCount >= MIN_GALLERY_PHOTOS ? (
+                    <CheckCircle2 className="h-4 w-4 text-emerald-600" />
+                  ) : (
+                    <Circle className="h-4 w-4 text-slate-300" />
+                  )}
+                  Unit / project photos ({galleryCount}/{MIN_GALLERY_PHOTOS})
+                </span>
+                <label className="cursor-pointer rounded-full border border-slate-200 px-3 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-50">
+                  {uploadingKind === "UNIT_GALLERY" ? "Uploading…" : "Add photos"}
+                  <input
+                    type="file"
+                    accept="image/jpeg,image/png,image/webp"
+                    multiple
+                    className="sr-only"
+                    disabled={Boolean(uploadingKind)}
+                    onChange={(event) => {
+                      const files = Array.from(event.target.files ?? []);
+                      void (async () => {
+                        for (const file of files.slice(0, 12 - galleryCount)) {
+                          await uploadEvidence("UNIT_GALLERY", file);
+                        }
+                      })();
+                      event.target.value = "";
+                    }}
+                  />
+                </label>
+              </li>
+              <li className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-slate-200 bg-white px-3 py-2.5">
+                <span className="inline-flex items-center gap-2 text-sm font-medium text-slate-800">
+                  {hasFayda ? (
+                    <CheckCircle2 className="h-4 w-4 text-emerald-600" />
+                  ) : (
+                    <Circle className="h-4 w-4 text-slate-300" />
+                  )}
+                  Fayda eSignet (company rep)
+                </span>
+                <button
+                  type="button"
+                  disabled={hasFayda || faydaBusy}
+                  onClick={() => void verifyFayda()}
+                  className="rounded-full border border-slate-200 px-3 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-50 disabled:opacity-50"
+                >
+                  {hasFayda
+                    ? "Verified"
+                    : faydaBusy
+                      ? "Verifying…"
+                      : "Verify with Fayda"}
+                </button>
+              </li>
             </ul>
-          ) : null}
-        </section>
+            {!hasDeveloperProfile ? (
+              <div className="grid gap-4 sm:grid-cols-2">
+                <label>
+                  <span className={labelClass}>Trade name</span>
+                  <input
+                    required={needsFullPack}
+                    value={values.tradeName}
+                    onChange={(event) => update("tradeName", event.target.value)}
+                    className={fieldClass}
+                    placeholder="Sunshine Homes PLC"
+                  />
+                </label>
+                <label>
+                  <span className={labelClass}>Registration number</span>
+                  <input
+                    required={needsFullPack}
+                    value={values.registrationNumber}
+                    onChange={(event) =>
+                      update("registrationNumber", event.target.value)
+                    }
+                    className={fieldClass}
+                    placeholder="ET-DEV-…"
+                  />
+                </label>
+              </div>
+            ) : null}
+            {projectOptions.length > 0 ? (
+              <label>
+                <span className={labelClass}>Link to project (optional)</span>
+                <select
+                  value={projectId}
+                  onChange={(event) => setProjectId(event.target.value)}
+                  className={fieldClass}
+                >
+                  <option value="">No project link</option>
+                  {projectOptions.map((project) => (
+                    <option key={project.id} value={project.id}>
+                      {project.title}
+                    </option>
+                  ))}
+                </select>
+              </label>
+            ) : null}
+          </section>
+        ) : (
+          <section className="space-y-3">
+            <div
+              role="button"
+              tabIndex={0}
+              aria-label="Upload property documents or scan deeds"
+              onClick={() => !isParsing && inputRef.current?.click()}
+              onKeyDown={(event) => {
+                if (event.key === "Enter" || event.key === " ") {
+                  inputRef.current?.click();
+                }
+              }}
+              onDragEnter={(event) => {
+                event.preventDefault();
+                setIsDragging(true);
+              }}
+              onDragOver={(event) => event.preventDefault()}
+              onDragLeave={() => setIsDragging(false)}
+              onDrop={handleDrop}
+              className={`group flex min-h-52 cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed p-6 text-center transition ${
+                isDragging
+                  ? "border-amber-500 bg-amber-50"
+                  : "border-slate-300 bg-slate-50 hover:border-amber-500 hover:bg-amber-50/50"
+              }`}
+            >
+              <input
+                ref={inputRef}
+                type="file"
+                multiple
+                accept="application/pdf,image/jpeg,image/png,image/webp"
+                className="sr-only"
+                onChange={(event) => {
+                  const files = Array.from(event.target.files ?? []);
+                  if (files.length > 0) void parseDocuments(files);
+                }}
+              />
+              {isParsing ? (
+                <>
+                  <LoaderCircle className="mb-4 h-10 w-10 animate-spin text-amber-600" />
+                  <p className="font-semibold text-slate-950">
+                    Gemini is parsing your documents...
+                  </p>
+                  <p className="mt-1 text-sm text-slate-500">
+                    {parseProgress || documentNames.join(", ")}
+                  </p>
+                </>
+              ) : (
+                <>
+                  <span className="mb-4 rounded-2xl bg-slate-950 p-3 text-amber-400 shadow-lg">
+                    {isDragging ? (
+                      <UploadCloud className="h-7 w-7" />
+                    ) : (
+                      <ScanLine className="h-7 w-7" />
+                    )}
+                  </span>
+                  <p className="font-semibold text-slate-950">
+                    Upload property documents / scan deeds
+                  </p>
+                  <p className="mt-1 text-sm text-slate-500">
+                    Drop multiple PDF, JPEG, PNG, or WebP files · up to{" "}
+                    {MAX_FILES} files · photos auto-compress · max{" "}
+                    {formatMb(MAX_FILE_BYTES)} each
+                  </p>
+                </>
+              )}
+            </div>
+
+            {documentNames.length > 0 && !isParsing ? (
+              <ul className="flex flex-wrap gap-2">
+                {documentNames.map((name) => (
+                  <li
+                    key={name}
+                    className="inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-medium text-slate-700"
+                  >
+                    {name}
+                    <button
+                      type="button"
+                      aria-label={`Remove ${name}`}
+                      className="rounded-full p-0.5 text-slate-400 hover:bg-slate-200 hover:text-slate-700"
+                      onClick={() =>
+                        setDocumentNames((current) =>
+                          current.filter((item) => item !== name),
+                        )
+                      }
+                    >
+                      <X className="h-3 w-3" />
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            ) : null}
+          </section>
+        )}
 
         <div className="flex items-center gap-3">
           <div className="h-px flex-1 bg-slate-200" />
@@ -696,6 +1045,79 @@ export function PropertyForm({ ownerId, onCreated }: PropertyFormProps) {
               <option value="LAND">Land</option>
             </select>
           </label>
+
+          {values.listingType === "OFF_PLAN" ? (
+            <>
+              <label>
+                <span className={labelClass}>Construction stage</span>
+                <select
+                  value={values.constructionStage}
+                  onChange={(event) =>
+                    update("constructionStage", event.target.value)
+                  }
+                  className={fieldClass}
+                >
+                  {CONSTRUCTION_STAGE_OPTIONS.map((option) => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <label>
+                <span className={labelClass}>Escrow account number</span>
+                <input
+                  required
+                  value={values.escrowAccountNumber}
+                  onChange={(event) =>
+                    update("escrowAccountNumber", event.target.value)
+                  }
+                  className={fieldClass}
+                  placeholder="Closed-bank escrow account"
+                />
+              </label>
+              <label>
+                <span className={labelClass}>Escrow bank</span>
+                <input
+                  required
+                  value={values.bankEscrowProvider}
+                  onChange={(event) =>
+                    update("bankEscrowProvider", event.target.value)
+                  }
+                  className={fieldClass}
+                  placeholder="e.g. Commercial Bank of Ethiopia"
+                />
+              </label>
+              <label>
+                <span className={labelClass}>
+                  Construction permit (MUD-CP-YYYY-NNNNN)
+                </span>
+                <input
+                  required
+                  value={values.constructionPermitId}
+                  onChange={(event) =>
+                    update("constructionPermitId", event.target.value)
+                  }
+                  className={fieldClass}
+                  placeholder="MUD-CP-2025-00042"
+                />
+              </label>
+              <label className="sm:col-span-2 flex items-center gap-3 rounded-xl border border-slate-200 bg-slate-50 px-4 py-3">
+                <input
+                  type="checkbox"
+                  checked={values.constructionPermitVerified}
+                  onChange={(event) =>
+                    update("constructionPermitVerified", event.target.checked)
+                  }
+                  className="h-4 w-4 rounded border-slate-300 text-amber-600 focus:ring-amber-500"
+                />
+                <span className="text-sm font-medium text-slate-800">
+                  Permit ID is verified (Proc. 1357 / MUD serial)
+                </span>
+              </label>
+            </>
+          ) : null}
+
           <label className="sm:col-span-2">
             <span className={labelClass}>Description</span>
             <textarea
@@ -724,7 +1146,13 @@ export function PropertyForm({ ownerId, onCreated }: PropertyFormProps) {
 
         <button
           type="submit"
-          disabled={isParsing || isSubmitting || !propertyId}
+          disabled={
+            isParsing ||
+            isSubmitting ||
+            !propertyId ||
+            Boolean(uploadingKind) ||
+            (needsFullPack && !checklistComplete)
+          }
           className="flex w-full items-center justify-center gap-2 rounded-xl bg-slate-950 px-5 py-3.5 font-semibold text-white shadow-lg transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-50"
         >
           {isSubmitting ? (

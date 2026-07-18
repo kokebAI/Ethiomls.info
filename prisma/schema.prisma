@@ -48,6 +48,19 @@ enum ImportSourceType {
   WEBSITE
 }
 
+/// Developer / off-plan submission evidence kinds (Proc. 1357 pack + org docs).
+enum ListingEvidenceKind {
+  ORG_REGISTRATION
+  ORG_LICENSE
+  ORG_TIN
+  PROJECT_BROCHURE
+  FLOOR_PLAN
+  TITLE_OR_LEASE
+  CONSTRUCTION_PERMIT
+  ESCROW_PROOF
+  UNIT_GALLERY
+}
+
 enum ScrapeRunStatus {
   PENDING
   RUNNING
@@ -413,6 +426,7 @@ model Listing {
   clearances ForeignInvestorClearance[]
   adminAlerts AdminAlert[]
   leads       Lead[]
+  evidence    ListingEvidence[]
 
   @@unique([importSourceId, sourceExternalId])
   @@index([status, listingType])
@@ -428,6 +442,44 @@ model Listing {
   @@index([importSourceId])
   @@index([sourceUrl])
   @@map("listings")
+}
+
+/// Staged upload before listing create (session-bound).
+model EvidenceUpload {
+  id           String              @id @default(cuid())
+  userId       String
+  kind         ListingEvidenceKind
+  fileName     String
+  mimeType     String
+  byteSize     Int
+  storagePath  String?
+  publicUrl    String
+  /// Inline bytes when Supabase Storage is not configured (max ~2.5 MB).
+  contentBytes Bytes?
+  createdAt    DateTime            @default(now())
+
+  @@index([userId, kind])
+  @@index([createdAt])
+  @@map("evidence_uploads")
+}
+
+/// Evidence attached to a listing after submit (admin audit pack).
+model ListingEvidence {
+  id          String              @id @default(cuid())
+  listingId   String
+  kind        ListingEvidenceKind
+  fileName    String
+  mimeType    String
+  byteSize    Int
+  storagePath String?
+  publicUrl   String
+  contentBytes Bytes?
+  createdAt   DateTime            @default(now())
+
+  listing Listing @relation(fields: [listingId], references: [id], onDelete: Cascade)
+
+  @@index([listingId, kind])
+  @@map("listing_evidence")
 }
 
 /// Short-lived SMS OTP codes (DB-backed so verification works across
