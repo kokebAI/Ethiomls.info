@@ -2,11 +2,19 @@ import { createHash, randomInt } from "node:crypto";
 import { prisma } from "@/lib/db/prisma";
 import { isSignupRole, type SignupRole } from "@/lib/auth/signup-roles";
 
+export type DeveloperBusinessSignup = {
+  tradeName: string;
+  registrationNumber: string;
+  tin?: string;
+  licenseNumber?: string;
+};
+
 type OtpRecord = {
   phone: string;
   fullName?: string;
   locale?: string;
   role?: SignupRole;
+  business?: DeveloperBusinessSignup;
 };
 
 function hashCode(code: string): string {
@@ -35,6 +43,7 @@ export async function issueOtp(input: {
   fullName?: string;
   locale?: string;
   role?: SignupRole;
+  business?: DeveloperBusinessSignup;
 }): Promise<{ code: string; ttlSec: number }> {
   const code = String(randomInt(100000, 999999));
   const ttlSec = 10 * 60;
@@ -47,6 +56,10 @@ export async function issueOtp(input: {
       fullName: input.fullName ?? null,
       locale: input.locale ?? null,
       role: input.role ?? null,
+      tradeName: input.business?.tradeName ?? null,
+      registrationNumber: input.business?.registrationNumber ?? null,
+      tin: input.business?.tin ?? null,
+      licenseNumber: input.business?.licenseNumber ?? null,
       expiresAt,
       attempts: 0,
     },
@@ -56,6 +69,10 @@ export async function issueOtp(input: {
       fullName: input.fullName ?? null,
       locale: input.locale ?? null,
       role: input.role ?? null,
+      tradeName: input.business?.tradeName ?? null,
+      registrationNumber: input.business?.registrationNumber ?? null,
+      tin: input.business?.tin ?? null,
+      licenseNumber: input.business?.licenseNumber ?? null,
       expiresAt,
     },
   });
@@ -89,6 +106,19 @@ export async function verifyOtp(
   }
 
   await prisma.otpCode.delete({ where: { phone } }).catch(() => {});
+
+  const tradeName = record.tradeName?.trim();
+  const registrationNumber = record.registrationNumber?.trim();
+  const business =
+    tradeName && registrationNumber
+      ? {
+          tradeName,
+          registrationNumber,
+          tin: record.tin?.trim() || undefined,
+          licenseNumber: record.licenseNumber?.trim() || undefined,
+        }
+      : undefined;
+
   return {
     ok: true,
     record: {
@@ -96,6 +126,7 @@ export async function verifyOtp(
       fullName: record.fullName ?? undefined,
       locale: record.locale ?? undefined,
       role: isSignupRole(record.role) ? record.role : undefined,
+      business,
     },
   };
 }

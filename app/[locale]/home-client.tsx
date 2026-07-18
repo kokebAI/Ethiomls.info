@@ -75,6 +75,13 @@ export function HomeClient({ stats }: HomeClientProps) {
       max: String(Math.round(result.budgetEtb)),
       subCities: result.subCities.join(","),
     });
+    if (
+      result.intent === "off_plan" &&
+      typeof result.minCompletionPercent === "number" &&
+      result.minCompletionPercent > 0
+    ) {
+      params.set("minCompletion", String(result.minCompletionPercent));
+    }
     router.push(`${base}/listings?${params.toString()}`);
   }
 

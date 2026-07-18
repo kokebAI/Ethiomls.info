@@ -15,6 +15,7 @@ export type ListingFilterItem = DirectoryItem & {
   listingType: string;
   priceAmount: number;
   priceCurrency: "ETB" | "USD";
+  completionPercent: number | null;
 };
 
 type SubCityOption = {
@@ -54,6 +55,7 @@ export function ListingsFunnel({
   // Seed filters from URL params sent by the home-page search guide.
   const initialType = searchParams.get("type") ?? "";
   const initialMax = searchParams.get("max") ?? "";
+  const initialMinCompletion = searchParams.get("minCompletion") ?? "";
   const initialClusterSubCities = (searchParams.get("subCities") ?? "")
     .split(",")
     .map((code) => code.trim())
@@ -68,6 +70,9 @@ export function ListingsFunnel({
     (LISTING_TYPES as readonly string[]).includes(initialType)
       ? initialType
       : "",
+  );
+  const [minCompletion, setMinCompletion] = useState(
+    /^\d{1,3}$/.test(initialMinCompletion) ? initialMinCompletion : "",
   );
   const [minPrice, setMinPrice] = useState("");
   const [maxPrice, setMaxPrice] = useState(
@@ -96,6 +101,15 @@ export function ListingsFunnel({
         return false;
       }
       if (listingType && item.listingType !== listingType) return false;
+      const minComplete = minCompletion ? Number(minCompletion) : null;
+      if (
+        minComplete != null &&
+        Number.isFinite(minComplete) &&
+        minComplete > 0
+      ) {
+        const pct = item.completionPercent ?? 0;
+        if (pct < minComplete) return false;
+      }
       const etb = toEtb(item);
       if (min != null && Number.isFinite(min) && etb < min) {
         return false;
@@ -119,6 +133,7 @@ export function ListingsFunnel({
     subCityCode,
     clusterSubCities,
     listingType,
+    minCompletion,
     minPrice,
     maxPrice,
     sortBy,
@@ -129,6 +144,7 @@ export function ListingsFunnel({
     setSubCityCode("");
     setClusterSubCities([]);
     setListingType("");
+    setMinCompletion("");
     setMinPrice("");
     setMaxPrice("");
     setSortBy("newest");
@@ -139,6 +155,7 @@ export function ListingsFunnel({
       subCityCode ||
         clusterSubCities.length > 0 ||
         listingType ||
+        minCompletion ||
         minPrice ||
         maxPrice,
     ) || sortBy !== "newest";
@@ -195,6 +212,25 @@ export function ListingsFunnel({
           ))}
         </select>
       </label>
+
+      {(listingType === "OFF_PLAN" || minCompletion) && (
+        <label className="block space-y-1.5">
+          <span className="text-sm font-medium text-slate-700">
+            {t("filters.minCompletion")}
+          </span>
+          <select
+            className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-800 shadow-sm outline-none transition focus:border-emerald-400 focus:ring-2 focus:ring-emerald-100"
+            value={minCompletion}
+            onChange={(event) => setMinCompletion(event.target.value)}
+          >
+            <option value="">{t("search.completion.any")}</option>
+            <option value="25">{t("search.completion.from25")}</option>
+            <option value="50">{t("search.completion.from50")}</option>
+            <option value="80">{t("search.completion.from80")}</option>
+            <option value="100">{t("search.completion.complete")}</option>
+          </select>
+        </label>
+      )}
 
       <div className="grid grid-cols-2 gap-3">
         <label className="block space-y-1.5">

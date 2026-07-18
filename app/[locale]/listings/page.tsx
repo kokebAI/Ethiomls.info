@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { redirect } from "next/navigation";
 import { PageIntro } from "@/components/PageIntro";
 import { ListingsFunnel } from "./listings-funnel";
 import { fetchPublishedListings } from "@/lib/catalog/queries";
@@ -8,6 +9,7 @@ import { pickLocalized } from "@/lib/i18n/pickLocalized";
 import { formatMoney } from "@/lib/compliance/currency";
 import { countNoun } from "@/lib/i18n/plural";
 import type { DirectoryBadge } from "@/components/PageDirectory";
+import { nonClientCatalogRedirect } from "@/lib/roles/catalog-access";
 import { buildPageMetadata } from "@/lib/seo/build-metadata";
 
 function listingBadge(type: string, t: (key: string) => string): DirectoryBadge {
@@ -62,6 +64,9 @@ export default async function ListingsPage({
 }) {
   const { locale: raw } = await params;
   const locale = (isLocale(raw) ? raw : "en") as Locale;
+  const toHub = await nonClientCatalogRedirect(locale);
+  if (toHub) redirect(toHub);
+
   const dictionary = getDictionary(locale);
   const listings = await fetchPublishedListings();
 
@@ -118,6 +123,10 @@ export default async function ListingsPage({
       listingType: listing.listingType,
       priceAmount: Number(listing.priceAmount),
       priceCurrency: listing.priceCurrency,
+      completionPercent:
+        listing.completionPercent != null
+          ? Number(listing.completionPercent)
+          : null,
     };
   });
 

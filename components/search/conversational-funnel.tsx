@@ -24,6 +24,8 @@ export type ConversationalSearchResult = {
   budgetEtb: number;
   budgetUsd: number;
   nbeRate: number;
+  /** Minimum construction completion % — only set for off_plan intent. */
+  minCompletionPercent?: number;
   aiSummary?: string;
 };
 
@@ -88,6 +90,7 @@ export function ConversationalFunnel({
   const [clusterId, setClusterId] = useState<SubCityClusterId>("east");
   const [budgetCurrency, setBudgetCurrency] = useState<BudgetCurrency>("ETB");
   const [budgetInput, setBudgetInput] = useState("5,000,000");
+  const [minCompletionPercent, setMinCompletionPercent] = useState(0);
   const [aiQuery, setAiQuery] = useState("");
   const [aiSummary, setAiSummary] = useState<string | null>(null);
   const [aiBusy, setAiBusy] = useState(false);
@@ -124,6 +127,8 @@ export function ConversationalFunnel({
       budgetEtb,
       budgetUsd,
       nbeRate: rate.usdEtb,
+      minCompletionPercent:
+        intent === "off_plan" ? minCompletionPercent : undefined,
       aiSummary: aiSummary ?? undefined,
     });
   }
@@ -146,6 +151,7 @@ export function ConversationalFunnel({
           budgetAmount: number;
           budgetCurrency: BudgetCurrency;
           summary: string;
+          minCompletionPercent?: number;
         };
         message?: string;
       };
@@ -163,6 +169,14 @@ export function ConversationalFunnel({
             : Math.round(data.budgetAmount * 100) / 100,
         ),
       );
+      if (
+        data.intent === "off_plan" &&
+        typeof data.minCompletionPercent === "number"
+      ) {
+        setMinCompletionPercent(
+          Math.max(0, Math.min(100, Math.round(data.minCompletionPercent))),
+        );
+      }
       setAiSummary(data.summary);
       setShowAi(false);
     } catch (error) {
@@ -235,6 +249,30 @@ export function ConversationalFunnel({
             ))}
           </select>
         </label>
+
+        {intent === "off_plan" ? (
+          <label className="grid gap-1.5">
+            <span className="text-sm font-semibold text-slate-deep">
+              {t("search.prompts.completion")}
+            </span>
+            <select
+              className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-deep outline-none transition focus:border-brand-500 focus:ring-2 focus:ring-brand-100"
+              value={String(minCompletionPercent)}
+              onChange={(event) =>
+                setMinCompletionPercent(Number(event.target.value) || 0)
+              }
+            >
+              <option value="0">{t("search.completion.any")}</option>
+              <option value="25">{t("search.completion.from25")}</option>
+              <option value="50">{t("search.completion.from50")}</option>
+              <option value="80">{t("search.completion.from80")}</option>
+              <option value="100">{t("search.completion.complete")}</option>
+            </select>
+            <p className="text-xs text-ink-muted">
+              {t("search.completion.hint")}
+            </p>
+          </label>
+        ) : null}
 
         <div className="grid gap-3">
           <div className="flex flex-wrap items-center justify-between gap-2">

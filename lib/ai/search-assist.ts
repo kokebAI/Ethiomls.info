@@ -17,6 +17,7 @@ export type SearchAssistResult = {
   budgetAmount: number;
   budgetCurrency: BudgetCurrency;
   summary: string;
+  minCompletionPercent?: number;
 };
 
 const CLUSTER_IDS = SUB_CITY_CLUSTERS.map((c) => c.id);
@@ -39,6 +40,7 @@ ${clusterGuide}
 
 Allowed budgetCurrency: ETB or USD
 budgetAmount must be a positive number (monthly for rent, purchase target for buy/off_plan).
+For off_plan only, include minCompletionPercent as 0, 25, 50, 80, or 100 when the user mentions construction progress; otherwise omit or use 0.
 
 Respond with ONLY valid JSON (no markdown), shape:
 {
@@ -46,6 +48,7 @@ Respond with ONLY valid JSON (no markdown), shape:
   "clusterId": "central" | "east" | "west" | "south",
   "budgetAmount": number,
   "budgetCurrency": "ETB" | "USD",
+  "minCompletionPercent": number,
   "summary": "one short sentence in the user's language confirming understanding"
 }
 
@@ -97,12 +100,21 @@ export function normalizeSearchAssist(raw: Record<string, unknown>): SearchAssis
       ? raw.summary.trim().slice(0, 280)
       : "Search preferences understood.";
 
+  let minCompletionPercent: number | undefined;
+  if (raw.intent === "off_plan" && raw.minCompletionPercent != null) {
+    const pct = Math.round(Number(raw.minCompletionPercent));
+    if (Number.isFinite(pct)) {
+      minCompletionPercent = Math.max(0, Math.min(100, pct));
+    }
+  }
+
   return {
     intent: raw.intent,
     clusterId: raw.clusterId,
     budgetAmount: amount,
     budgetCurrency: raw.budgetCurrency,
     summary,
+    minCompletionPercent,
   };
 }
 

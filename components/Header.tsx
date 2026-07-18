@@ -9,11 +9,12 @@ import { LocaleSwitcher } from "@/components/LocaleSwitcher";
 import { useTranslation } from "@/hooks/useTranslation";
 import { hubPathForRole } from "@/lib/roles/hubs";
 
-const NAV_ITEMS = [
+/** Public catalog tabs — only for guests and client (BUYER_RENTER) accounts. */
+const CLIENT_CATALOG_NAV = [
   { href: "", key: "nav.home" },
+  { href: "/listings", key: "nav.listings" },
   { href: "/projects", key: "nav.projects" },
   { href: "/developers", key: "nav.developers" },
-  { href: "/dashboard", key: "nav.dashboard" },
 ] as const;
 
 type SessionUser = {
@@ -22,6 +23,10 @@ type SessionUser = {
   phone: string | null;
   role: string;
 };
+
+function isClientRole(role: string | null | undefined): boolean {
+  return role === "BUYER_RENTER";
+}
 
 export function Header() {
   const { locale, t } = useTranslation();
@@ -59,20 +64,37 @@ export function Header() {
     router.refresh();
   }
 
-  const navItems: { href: string; key: string }[] = [...NAV_ITEMS];
+  const showCatalog = !user || isClientRole(user.role);
+  const homeHref =
+    user && !isClientRole(user.role)
+      ? `${base}${hubPathForRole(user.role)}`
+      : base;
+
+  const navItems: { href: string; key: string }[] = [];
+  if (showCatalog) {
+    for (const item of CLIENT_CATALOG_NAV) {
+      navItems.push({ href: item.href, key: item.key });
+    }
+  }
   if (user) {
-    navItems.push({ href: hubPathForRole(user.role), key: "nav.forYou" });
+    navItems.push({
+      href: hubPathForRole(user.role),
+      key: isClientRole(user.role) ? "nav.forYou" : "nav.home",
+    });
     navItems.push({ href: "/profile", key: "nav.profile" });
   }
   if (user?.role === "ADMIN") {
     navItems.push({ href: "/admin/imports", key: "nav.imports" });
+  }
+  if (user?.role === "ADMIN" || user?.role === "INDEPENDENT_DELALA") {
+    navItems.push({ href: "/dashboard", key: "nav.dashboard" });
   }
 
   return (
     <header className="sticky top-0 z-40 border-b border-slate-200/80 bg-white/85 backdrop-blur-xl">
       <div className="mx-auto flex min-h-[4.5rem] w-full max-w-6xl items-center justify-between gap-3 px-4 sm:px-6">
         <Link
-          href={base}
+          href={homeHref}
           className="flex min-w-0 shrink items-center gap-3"
           onClick={() => setMobileOpen(false)}
         >
@@ -130,12 +152,21 @@ export function Header() {
               {t("nav.signIn")}
             </Link>
           )}
-          <Link
-            href={`${base}/listings`}
-            className="hidden rounded-full bg-brand-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:-translate-y-px hover:bg-brand-700 md:inline-flex"
-          >
-            {t("header.browseListings")}
-          </Link>
+          {showCatalog ? (
+            <Link
+              href={`${base}/listings`}
+              className="hidden rounded-full bg-brand-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:-translate-y-px hover:bg-brand-700 md:inline-flex"
+            >
+              {t("header.browseListings")}
+            </Link>
+          ) : user ? (
+            <Link
+              href={`${base}${hubPathForRole(user.role)}`}
+              className="hidden rounded-full bg-brand-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:-translate-y-px hover:bg-brand-700 md:inline-flex"
+            >
+              {t("nav.home")}
+            </Link>
+          ) : null}
           <button
             type="button"
             className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-700 transition hover:bg-slate-50 lg:hidden"
@@ -185,15 +216,27 @@ export function Header() {
                 </Link>
               )}
             </li>
-            <li className="pt-1">
-              <Link
-                href={`${base}/listings`}
-                className="flex w-full items-center justify-center rounded-full bg-brand-600 px-4 py-2.5 text-sm font-semibold text-white"
-                onClick={() => setMobileOpen(false)}
-              >
-                {t("header.browseListings")}
-              </Link>
-            </li>
+            {showCatalog ? (
+              <li className="pt-1">
+                <Link
+                  href={`${base}/listings`}
+                  className="flex w-full items-center justify-center rounded-full bg-brand-600 px-4 py-2.5 text-sm font-semibold text-white"
+                  onClick={() => setMobileOpen(false)}
+                >
+                  {t("header.browseListings")}
+                </Link>
+              </li>
+            ) : user ? (
+              <li className="pt-1">
+                <Link
+                  href={`${base}${hubPathForRole(user.role)}`}
+                  className="flex w-full items-center justify-center rounded-full bg-brand-600 px-4 py-2.5 text-sm font-semibold text-white"
+                  onClick={() => setMobileOpen(false)}
+                >
+                  {t("nav.home")}
+                </Link>
+              </li>
+            ) : null}
           </ul>
         </nav>
       ) : null}

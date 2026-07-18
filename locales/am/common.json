@@ -82,6 +82,7 @@
     "allAreas": "ሁሉም ክ/ከተሞች",
     "minPrice": "ዝቅተኛ ዋጋ",
     "maxPrice": "ከፍተኛ ዋጋ",
+    "minCompletion": "ዝቅተኛ የግንባታ %",
     "showingCount": "{total} ውስጥ {filtered} በማሳየት"
   },
   "amenities": {
@@ -122,7 +123,8 @@
     "prompts": {
       "intent": "ዓላማዎ ምንድን ነው?",
       "cluster": "የትኛውን የአዲስ አበባ ክፍለ ከተማ ቡድን ይመርጣሉ?",
-      "budget": "የታለመ በጀትዎ ስንት ነው?"
+      "budget": "የታለመ በጀትዎ ስንት ነው?",
+      "completion": "ዝቅተኛ የግንባታ ሂደት?"
     },
     "intent": {
       "buy": "ግዢ",
@@ -154,6 +156,14 @@
     },
     "back": "ተመለስ",
     "submit": "ተመሳሳይ ዝርዝሮችን አሳይ",
+    "completion": {
+      "any": "ማንኛውም የግንባታ ደረጃ",
+      "from25": "ቢያንስ 25% ተጠናቅቋል",
+      "from50": "ቢያንስ 50% ተጠናቅቋል",
+      "from80": "ቢያንስ 80% ተጠናቅቋል",
+      "complete": "ሙሉ በሙሉ ተጠናቅቋል (100%)",
+      "hint": "ኦፍ-ፕላን ክፍሎችን በተረጋገጠ የግንባታ ሂደት ያጣሩ።"
+    },
     "ai": {
       "eyebrow": "የ Gemini እገዛ",
       "lede": "የሚፈልጉትን በቀላል ቋንቋ ይግለጹ — ዓላማ፣ የአከባቢ ቡድን እና በጀት እንዲሞላ እናደርጋለን።",
@@ -418,6 +428,7 @@
       "title": "ፕሮጀክቶችን እና ኦፍ-ፕላን ክፍሎችን ያሳዩ",
       "lede": "ሙሉ ሰነድ ጥቅል፣ ፎቶዎች እና ፋይዳ ማረጋገጫ ጨምሮ የኤስክሮ የተደገፈ ኦፍ-ፕላን ክምችት ያትሙ።",
       "ctas": {
+        "workspace": "Open workspace",
         "list": "ክምችት ጨምር",
         "projects": "ፕሮጀክቶችን ይመልከቱ",
         "myPage": "የገንቢ ገጽዎ",
@@ -430,11 +441,93 @@
       "title": "ገበያውን ኦዲት ያድርጉ እና ያስመጡ",
       "lede": "ቴሌግራም እና ድረ-ገጾችን ይቃኙ፣ በመጠባበቅ ላይ ያሉ ዝርዝሮችን ይገምግሙ።",
       "ctas": {
+        "workspace": "የስራ ቦታ ክፈት",
         "imports": "የማስመጫ ምንጮች",
         "dashboard": "የዳሽቦርድ መለኪያዎች",
-        "listings": "ሁሉም ዝርዝሮች",
         "profile": "መገለጫዎ"
       }
+    }
+  },
+  "workspace": {
+    "developer": {
+      "eyebrow": "የገንቢ የስራ ቦታ",
+      "title": "የኤስክሮ የተደገፈ ክምችት ያትሙ",
+      "lede": "ዝግጁነትን ይከታተሉ፣ ሙሉ ሰነድ ጥቅል ያስገቡ፣ እና ክፍሎችን ከአንድ ቦታ ይከታተሉ።",
+      "addInventory": "ኦፍ-ፕላን ክምችት ጨምር",
+      "viewProjects": "ፕሮጀክቶችን ይመልከቱ",
+      "myPage": "የእርስዎ ህዝባዊ ገጽ",
+      "accountProfile": "የመለያ መገለጫ",
+      "readinessTitle": "ዝግጁነት",
+      "readinessProfileOk": "የገንቢ መገለጫ ተገናኝቷል — {name}",
+      "readinessProfileNeeded": "እስካሁን የገንቢ መገለጫ የለም — በመጀመሪያ ክምችት ሲያስገቡ ይሰበሰባል።",
+      "readinessFaydaOk": "ፋይዳ ለመለያዎ ተረጋግጧል",
+      "readinessFaydaNeeded": "ፋይዳ ማረጋገጫ ያስፈልጋል (በክምችት ቅጽ ላይ ዴሞ)",
+      "readinessPending": "{count} ዝርዝር(ዎች) አስተዳዳሪ ግምገማ በመጠባበቅ ላይ",
+      "packTitle": "አስፈላጊ ኦፍ-ፕላን ጥቅል",
+      "packLede": "እያንዳንዱ ያልተጠናቀቀ ክፍል ድርጅት ሰነዶች፣ ፕላን፣ ማዕረግ ወይም ሊዝ፣ ፈቃድ፣ ኤስክሮ፣ ፎቶዎች እና ፋይዳ ያስፈልገዋል።",
+      "packPhotos": "ቢያንስ {min} የክፍል / ፕሮጀክት ፎቶዎች",
+      "packFayda": "ፋይዳ ለኩባንያ ተወካይ",
+      "packCta": "ሙሉ ጥቅል ማስገባት ጀምር",
+      "pendingTitle": "በመጠባበቅ ላይ",
+      "pendingEmpty": "ለኦዲት የሚጠብቅ ዝርዝር የለም።",
+      "publishedTitle": "የታተሙ ዝርዝሮችዎ",
+      "publishedEmpty": "እስካሁን የታተመ ነገር የለም።",
+      "backToRoles": "ወደ የገንቢ ማዕከል ተመለስ"
+    },
+    "admin": {
+      "eyebrow": "የአስተዳዳሪ የስራ ቦታ",
+      "title": "ገምግም፣ ኦዲት አድርግ፣ አትም",
+      "lede": "በመጠባበቅ ላይ ያለውን ወረፋ ይስሩ፣ ማስጠንቀቂያዎችን ያጽዱ፣ እና ከደንበኛ ጥበቃ ዝርዝር በኋላ ብቻ ያትሙ።",
+      "openQueue": "የግምገማ ወረፋ ክፈት",
+      "importSources": "የማስመጫ ምንጮች",
+      "dashboard": "የዳሽቦርድ መለኪያዎች",
+      "accountProfile": "የመለያ መገለጫ",
+      "snapshotTitle": "የስራ ማጠቃለያ",
+      "snapshotPending": "{count} ዝርዝር(ዎች) ለኦዲት በመጠባበቅ ላይ",
+      "snapshotAlerts": "{count} ያልተነበቡ ማስጠንቀቂያ(ዎች)",
+      "snapshotReady": "{count} ኦዲት አልፈው ለማተም ዝግጁ",
+      "checklistTitle": "የደንበኛ ጥበቃ ዝርዝር",
+      "checklistLede": "እያንዳንዱ ማጽደቅ ማንነት፣ ባለቤትነት፣ ዋጋ፣ ቦታ፣ ሚዲያ፣ ፈቃድ፣ ኤስክሮ፣ ግንኙነት እና ማጭበርበር ማጣራት ማለፍ አለበት።",
+      "checkSellerIdentity": "የሻጭ ማንነት",
+      "checkOwnership": "ባለቤትነት ወይም የዝርዝር ስልጣን",
+      "checkPrice": "ዋጋ እና የክፍያ ውሎች",
+      "checkLocation": "ቦታ እና የክፍል ዝርዝሮች",
+      "checkMedia": "የሚዲያ ትክክለኛነት",
+      "checkPermit": "ፈቃድ እና የግንባታ ደረጃ",
+      "checkEscrow": "የኤስክሮ ተገዢነት",
+      "checkContact": "ግንኙነት እና ፈቃድ",
+      "checkDuplicate": "ድጋሚ እና ማጭበርበር ማጣራት",
+      "pendingTitle": "ለኦዲት በመጠባበቅ ላይ",
+      "pendingEmpty": "ለኦዲት የሚጠብቅ ዝርዝር የለም።",
+      "readyTitle": "ለማተም ዝግጁ",
+      "readyEmpty": "እስካሁን የተኦዲተ ዝርዝር የለም።",
+      "alertsTitle": "ያልተነበቡ ማስጠንቀቂያዎች",
+      "alertsEmpty": "ያልተነበበ ማስጠንቀቂያ የለም።",
+      "backToRoles": "ወደ አስተዳዳሪ ማዕከል ተመለስ"
+    }
+  },
+  "adminAudit": {
+    "title": "የደንበኛ ጥበቃ ኦዲት",
+    "lede": "ከማጽደቅ በፊት እያንዳንዱን ማረጋገጫ ያጠናቅቁ እና ማስታወሻ ይጨምሩ። ማጽደቅ አያትምም — ከኦዲት በኋላ አትም ይጠቀሙ።",
+    "notesLabel": "የኦዲት ማስታወሻዎች",
+    "notesPlaceholder": "ያረጋገጡትን ይግለጹ (ቢያንስ 10 ቁምፊዎች)።",
+    "approve": "ኦዲት አጽድቅ",
+    "reject": "ወደ ረቂቅ ውድቅ አድርግ",
+    "publish": "ዝርዝር አትም",
+    "publishing": "በማተም ላይ…",
+    "saving": "በማስቀመጥ ላይ…",
+    "approvedReady": "ኦዲት አልፏል — ይህን ዝርዝር ማተም ይችላሉ።",
+    "statusLabel": "ሁኔታ",
+    "checks": {
+      "sellerIdentity": "የሻጭ ማንነት ተረጋግጧል",
+      "ownershipOrAuthority": "ባለቤትነት ወይም ስልጣን ተረጋግጧል",
+      "priceAndPaymentTerms": "ዋጋ እና የክፍያ ውሎች ግልጽ ናቸው",
+      "locationAndUnitDetails": "ቦታ እና ክፍል ዝርዝሮች ትክክል ናቸው",
+      "mediaAuthenticity": "ሚዲያ ትክክለኛ ይመስላል",
+      "permitAndConstructionStage": "ፈቃድ እና የግንባታ ደረጃ ተረጋግጧል",
+      "escrowCompliance": "የኤስክሮ ተገዢነት ተረጋግጧል",
+      "contactAndConsent": "ግንኙነት እና ፈቃድ ተረጋግጧል",
+      "duplicateAndFraudScreen": "ድጋሚ እና ማጭበርበር ማጣራት አልፏል"
     }
   },
   "listingDetail": {

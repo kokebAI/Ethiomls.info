@@ -163,10 +163,15 @@ export async function fetchPublishedListings() {
   }
 }
 
-export async function fetchListingById(id: string) {
+export async function fetchListingById(
+  id: string,
+  opts?: { allowUnpublished?: boolean },
+) {
   try {
     return await prisma.listing.findFirst({
-      where: { id, status: ListingStatus.PUBLISHED },
+      where: opts?.allowUnpublished
+        ? { id }
+        : { id, status: ListingStatus.PUBLISHED },
       include: {
         subCity: {
           select: { code: true, name: true },

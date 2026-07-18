@@ -1,10 +1,23 @@
 import { NextRequest, NextResponse } from "next/server";
-import { issueOtp, normalizeEthiopiaPhone } from "@/lib/auth/otp";
+import { UserRole } from "@prisma/client";
+import {
+  issueOtp,
+  normalizeEthiopiaPhone,
+  type DeveloperBusinessSignup,
+} from "@/lib/auth/otp";
 import { isSignupRole } from "@/lib/auth/signup-roles";
 import { isLocale } from "@/lib/i18n/config";
 import { smsNotificationEngine } from "@/src/services/sms.service";
 
 export const runtime = "nodejs";
+
+function readBodyString(
+  body: unknown,
+  key: string,
+): string {
+  if (!body || typeof body !== "object" || Array.isArray(body)) return "";
+  return String((body as Record<string, unknown>)[key] ?? "").trim();
+}
 
 export async function POST(request: NextRequest) {
   let body: unknown;
@@ -17,23 +30,11 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const phoneRaw =
-    body && typeof body === "object" && !Array.isArray(body)
-      ? String((body as { phone?: unknown }).phone ?? "")
-      : "";
-  const fullName =
-    body && typeof body === "object" && !Array.isArray(body)
-      ? String((body as { fullName?: unknown }).fullName ?? "").trim()
-      : "";
-  const localeRaw =
-    body && typeof body === "object" && !Array.isArray(body)
-      ? String((body as { locale?: unknown }).locale ?? "am")
-      : "am";
+  const phoneRaw = readBodyString(body, "phone");
+  const fullName = readBodyString(body, "fullName");
+  const localeRaw = readBodyString(body, "locale") || "am";
   const locale = isLocale(localeRaw) ? localeRaw : "am";
-  const mode =
-    body && typeof body === "object" && !Array.isArray(body)
-      ? String((body as { mode?: unknown }).mode ?? "login")
-      : "login";
+  const mode = readBodyString(body, "mode") || "login";
   const roleRaw =
     body && typeof body === "object" && !Array.isArray(body)
       ? (body as { role?: unknown }).role
@@ -49,6 +50,8 @@ export async function POST(request: NextRequest) {
       { status: 400 },
     );
   }
+
+  let business: DeveloperBusinessSignup | undefined;
 
   if (mode === "register") {
     if (fullName.length < 2) {
@@ -69,6 +72,29 @@ export async function POST(request: NextRequest) {
         { status: 400 },
       );
     }
+
+    if (roleRaw === UserRole.CORPORATE_DEVELOPER) {
+      const tradeName = readBodyString(body, "tradeName");
+      const registrationNumber = readBodyString(body, "registrationNumber");
+      const tin = readBodyString(body, "tin");
+      const licenseNumber = readBodyString(body, "licenseNumber");
+      if (tradeName.length < 2 || registrationNumber.length < 2) {
+        return NextResponse.json(
+          {
+            error: "ValidationError",
+            message:
+              "Developer signup requires trade name and business registration number",
+          },
+          { status: 400 },
+        );
+      }
+      business = {
+        tradeName,
+        registrationNumber,
+        ...(tin.length >= 2 ? { tin } : {}),
+        ...(licenseNumber.length >= 2 ? { licenseNumber } : {}),
+      };
+    }
   }
 
   const { code, ttlSec } = await issueOtp({
@@ -76,6 +102,7 @@ export async function POST(request: NextRequest) {
     fullName: mode === "register" ? fullName : undefined,
     locale,
     role: mode === "register" && isSignupRole(roleRaw) ? roleRaw : undefined,
+    business,
   });
   const sms = await smsNotificationEngine.sendRaw({
     toE164: phone,

@@ -18,10 +18,12 @@ import {
   Sofa,
   Zap,
 } from "lucide-react";
+import { ListingAuditPanel } from "@/components/admin/ListingAuditPanel";
 import { ListingGallery } from "@/components/property/ListingGallery";
 import { ShareListingButton } from "@/components/property/ShareListingButton";
 import { VrViewer } from "@/components/property/vr-viewer";
 import { JsonLd } from "@/components/seo/JsonLd";
+import { getCurrentAdmin } from "@/lib/auth/admin";
 import { getSession } from "@/lib/auth/session";
 import { fetchListingById } from "@/lib/catalog/queries";
 import { formatMoney } from "@/lib/compliance/currency";
@@ -101,8 +103,12 @@ export default async function ListingDetailPage({
   const locale = (isLocale(raw) ? raw : "en") as Locale;
   const dictionary = getDictionary(locale);
   const t = (key: string) => translate(dictionary, key);
+  const auditCopy = dictionary.adminAudit;
 
-  const listing = await fetchListingById(id);
+  const admin = await getCurrentAdmin();
+  const listing = await fetchListingById(id, {
+    allowUnpublished: Boolean(admin),
+  });
   if (!listing) notFound();
 
   const base = `/${locale}`;
@@ -250,6 +256,28 @@ export default async function ListingDetailPage({
       </Link>
 
       <ListingGallery photos={photos} title={title} />
+
+      {admin && auditCopy && listing.status !== "PUBLISHED" ? (
+        <ListingAuditPanel
+          listingId={listing.id}
+          status={listing.status}
+          alreadyApproved={Boolean(listing.adminAuditApprovedAt)}
+          copy={{
+            title: auditCopy.title,
+            lede: auditCopy.lede,
+            notesLabel: auditCopy.notesLabel,
+            notesPlaceholder: auditCopy.notesPlaceholder,
+            approve: auditCopy.approve,
+            reject: auditCopy.reject,
+            publish: auditCopy.publish,
+            publishing: auditCopy.publishing,
+            saving: auditCopy.saving,
+            approvedReady: auditCopy.approvedReady,
+            statusLabel: auditCopy.statusLabel,
+            checks: auditCopy.checks,
+          }}
+        />
+      ) : null}
 
       {/* Header: badges, title, address, price */}
       <section className="flex flex-col gap-4 rounded-2xl border border-slate-200/90 bg-white p-5 shadow-[var(--shadow-card)] sm:p-6 lg:flex-row lg:items-start lg:justify-between">

@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
+import { redirect } from "next/navigation";
 import { HomeClient } from "./home-client";
 import { fetchHomeStats } from "@/lib/catalog/home-stats";
 import { isLocale, type Locale } from "@/lib/i18n/config";
 import { getDictionary } from "@/lib/i18n/getDictionary";
+import { nonClientCatalogRedirect } from "@/lib/roles/catalog-access";
 import { buildPageMetadata } from "@/lib/seo/build-metadata";
 
 /** Live market counters — render at request time. */
@@ -40,7 +42,16 @@ export async function generateMetadata({
   });
 }
 
-export default async function LocaleHomePage() {
+export default async function LocaleHomePage({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale: raw } = await params;
+  const locale = isLocale(raw) ? raw : "en";
+  const toHub = await nonClientCatalogRedirect(locale);
+  if (toHub) redirect(toHub);
+
   const stats = await fetchHomeStats();
 
   return <HomeClient stats={stats} />;

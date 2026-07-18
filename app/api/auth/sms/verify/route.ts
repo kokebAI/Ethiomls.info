@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { UserRole } from "@prisma/client";
+import { Prisma, UserRole } from "@prisma/client";
 import { verifyOtp, normalizeEthiopiaPhone } from "@/lib/auth/otp";
 import { oauthPlaceholderPasswordHash } from "@/lib/auth/oauth";
 import { isSignupRole } from "@/lib/auth/signup-roles";
@@ -76,22 +76,67 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    if (role === UserRole.CORPORATE_DEVELOPER && !check.record.business) {
+      return NextResponse.json(
+        {
+          error: "ValidationError",
+          message:
+            "Developer signup requires business registration. Restart registration and enter trade name and registration number.",
+        },
+        { status: 400 },
+      );
+    }
+
     const fullName =
       check.record.fullName?.trim() ||
       `EthioMLS User ${phone.slice(-4)}`;
-    // Email is optional and collected later on the profile — never invent one.
-    // Role is fixed at signup — one listing role per account.
-    user = await prisma.user.create({
-      data: {
-        phone,
-        fullName,
-        passwordHash: oauthPlaceholderPasswordHash(phone),
-        role,
-        localePrefs: check.record.locale
-          ? [check.record.locale, "en"]
-          : ["am", "en"],
-      },
-    });
+
+    try {
+      user = await prisma.$transaction(async (tx) => {
+        const created = await tx.user.create({
+          data: {
+            phone,
+            fullName,
+            passwordHash: oauthPlaceholderPasswordHash(phone),
+            role,
+            localePrefs: check.record.locale
+              ? [check.record.locale, "en"]
+              : ["am", "en"],
+          },
+        });
+
+        if (role === UserRole.CORPORATE_DEVELOPER && check.record.business) {
+          const biz = check.record.business;
+          await tx.developerProfile.create({
+            data: {
+              userId: created.id,
+              tradeName: biz.tradeName,
+              displayName: { en: biz.tradeName },
+              registrationNumber: biz.registrationNumber,
+              tin: biz.tin ?? null,
+              licenseNumber: biz.licenseNumber ?? null,
+            },
+          });
+        }
+
+        return created;
+      });
+    } catch (err) {
+      if (
+        err instanceof Prisma.PrismaClientKnownRequestError &&
+        err.code === "P2002"
+      ) {
+        return NextResponse.json(
+          {
+            error: "Conflict",
+            message:
+              "That business registration number is already registered. Sign in or use a different number.",
+          },
+          { status: 409 },
+        );
+      }
+      throw err;
+    }
   } else if (mode === "register" && check.record.role) {
     // Existing accounts keep their original role — one role per user.
     // Do not overwrite role on re-registration attempts.

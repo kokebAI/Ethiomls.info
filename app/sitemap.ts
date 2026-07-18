@@ -9,11 +9,6 @@ const STATIC_PATHS = [
   "/listings",
   "/projects",
   "/developers",
-  "/roles",
-  "/roles/client",
-  "/roles/broker",
-  "/roles/owner",
-  "/roles/developer",
 ] as const;
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {

@@ -42,7 +42,6 @@ export const ROLE_HUBS: Record<RoleHubSlug, RoleHubDef> = {
     demoPhone: "0911000003",
     ctas: [
       { id: "list", href: "/listings/new", primary: true },
-      { id: "browse", href: "/listings" },
       { id: "profile", href: "/profile" },
       { id: "dashboard", href: "/dashboard" },
     ],
@@ -53,9 +52,7 @@ export const ROLE_HUBS: Record<RoleHubSlug, RoleHubDef> = {
     demoPhone: "0911000004",
     ctas: [
       { id: "list", href: "/listings/new", primary: true },
-      { id: "browse", href: "/listings" },
       { id: "profile", href: "/profile" },
-      { id: "guide", href: "/" },
     ],
   },
   developer: {
@@ -63,8 +60,8 @@ export const ROLE_HUBS: Record<RoleHubSlug, RoleHubDef> = {
     role: UserRole.CORPORATE_DEVELOPER,
     demoPhone: "0911000005",
     ctas: [
-      { id: "list", href: "/listings/new?type=OFF_PLAN", primary: true },
-      { id: "projects", href: "/projects" },
+      { id: "workspace", href: "/workspace/developer", primary: true },
+      { id: "list", href: "/listings/new?type=OFF_PLAN" },
       { id: "myPage", href: "/developers" },
       { id: "profile", href: "/profile" },
     ],
@@ -74,9 +71,9 @@ export const ROLE_HUBS: Record<RoleHubSlug, RoleHubDef> = {
     role: UserRole.ADMIN,
     demoPhone: "0911000001",
     ctas: [
-      { id: "imports", href: "/admin/imports", primary: true },
+      { id: "workspace", href: "/workspace/admin", primary: true },
+      { id: "imports", href: "/admin/imports" },
       { id: "dashboard", href: "/dashboard" },
-      { id: "listings", href: "/listings" },
       { id: "profile", href: "/profile" },
     ],
   },
@@ -93,7 +90,7 @@ export function hubPathForRole(role: string | UserRole | null | undefined): stri
   switch (role) {
     case UserRole.ADMIN:
     case "ADMIN":
-      return "/roles/admin";
+      return "/workspace/admin";
     case UserRole.INDEPENDENT_DELALA:
     case "INDEPENDENT_DELALA":
       return "/roles/broker";
@@ -102,7 +99,7 @@ export function hubPathForRole(role: string | UserRole | null | undefined): stri
       return "/roles/owner";
     case UserRole.CORPORATE_DEVELOPER:
     case "CORPORATE_DEVELOPER":
-      return "/roles/developer";
+      return "/workspace/developer";
     case UserRole.BUYER_RENTER:
     case "BUYER_RENTER":
     default:
@@ -113,7 +110,22 @@ export function hubPathForRole(role: string | UserRole | null | undefined): stri
 export function hubDefForRole(
   role: string | UserRole | null | undefined,
 ): RoleHubDef {
-  const path = hubPathForRole(role);
-  const slug = path.replace("/roles/", "") as RoleHubSlug;
-  return ROLE_HUBS[slug] ?? ROLE_HUBS.client;
+  switch (role) {
+    case UserRole.ADMIN:
+    case "ADMIN":
+      return ROLE_HUBS.admin;
+    case UserRole.INDEPENDENT_DELALA:
+    case "INDEPENDENT_DELALA":
+      return ROLE_HUBS.broker;
+    case UserRole.PROPERTY_OWNER:
+    case "PROPERTY_OWNER":
+      return ROLE_HUBS.owner;
+    case UserRole.CORPORATE_DEVELOPER:
+    case "CORPORATE_DEVELOPER":
+      return ROLE_HUBS.developer;
+    case UserRole.BUYER_RENTER:
+    case "BUYER_RENTER":
+    default:
+      return ROLE_HUBS.client;
+  }
 }

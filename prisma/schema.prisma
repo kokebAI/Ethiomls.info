@@ -48,6 +48,12 @@ enum ImportSourceType {
   WEBSITE
 }
 
+/// Landholding / tenure for off-plan sites (gates title vs lease evidence).
+enum LandHoldType {
+  FREEHOLD
+  LEASEHOLD
+}
+
 /// Developer / off-plan submission evidence kinds (Proc. 1357 pack + org docs).
 enum ListingEvidenceKind {
   ORG_REGISTRATION
@@ -56,6 +62,8 @@ enum ListingEvidenceKind {
   PROJECT_BROCHURE
   FLOOR_PLAN
   TITLE_OR_LEASE
+  /// Required when landHoldType is LEASEHOLD
+  LEASE_AGREEMENT
   CONSTRUCTION_PERMIT
   ESCROW_PROOF
   UNIT_GALLERY
@@ -352,6 +360,8 @@ model Listing {
   plotAreaSqm        Decimal?          @db.Decimal(12, 2)
   constructionStage  ConstructionStage?
   completionPercent  Decimal?          @db.Decimal(5, 2)
+  /// Freehold title vs leasehold — drives lease-agreement evidence requirement
+  landHoldType       LandHoldType?
   /// PostGIS Point, SRID 4326 — property geolocation for map / proximity queries
   geoPoint           Unsupported("geometry(Point,4326)")?
   addressLine        String?
@@ -491,6 +501,11 @@ model OtpCode {
   locale    String?
   /// Signup role chosen before OTP (one of UserRole except ADMIN)
   role      String?
+  /// Corporate developer business registration (collected at signup)
+  tradeName          String?
+  registrationNumber String?
+  tin                String?
+  licenseNumber      String?
   expiresAt DateTime
   attempts  Int      @default(0)
   createdAt DateTime @default(now())

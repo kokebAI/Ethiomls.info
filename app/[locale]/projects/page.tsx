@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { redirect } from "next/navigation";
 import { PageDirectory, type DirectoryBadge } from "@/components/PageDirectory";
 import { PageIntro } from "@/components/PageIntro";
 import { fetchPublishedProjects } from "@/lib/catalog/queries";
@@ -6,6 +7,7 @@ import { formatConstructionStage } from "@/lib/domain/construction-stage";
 import { isLocale, type Locale } from "@/lib/i18n/config";
 import { getDictionary, translate } from "@/lib/i18n/getDictionary";
 import { pickLocalized } from "@/lib/i18n/pickLocalized";
+import { nonClientCatalogRedirect } from "@/lib/roles/catalog-access";
 import { buildPageMetadata } from "@/lib/seo/build-metadata";
 
 /** DB-backed page — skip SSG so Vercel builds succeed without live Postgres. */
@@ -47,6 +49,9 @@ export default async function ProjectsPage({
 }) {
   const { locale: raw } = await params;
   const locale = (isLocale(raw) ? raw : "en") as Locale;
+  const toHub = await nonClientCatalogRedirect(locale);
+  if (toHub) redirect(toHub);
+
   const dictionary = getDictionary(locale);
   const projects = await fetchPublishedProjects();
 

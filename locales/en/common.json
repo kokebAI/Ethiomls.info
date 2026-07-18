@@ -82,6 +82,7 @@
     "allAreas": "All sub-cities",
     "minPrice": "Min price",
     "maxPrice": "Max price",
+    "minCompletion": "Min completion %",
     "showingCount": "Showing {filtered} of {total}"
   },
   "amenities": {
@@ -122,7 +123,8 @@
     "prompts": {
       "intent": "What is your intent type?",
       "cluster": "Which Addis Ababa sub-city cluster do you prefer?",
-      "budget": "What is your target budget?"
+      "budget": "What is your target budget?",
+      "completion": "Minimum construction completion?"
     },
     "intent": {
       "buy": "Buy",
@@ -155,6 +157,14 @@
     "back": "Back",
     "submit": "Show matching listings",
     "simpleLede": "Choose intent, area, and budget — then browse matching homes.",
+    "completion": {
+      "any": "Any completion stage",
+      "from25": "At least 25% complete",
+      "from50": "At least 50% complete",
+      "from80": "At least 80% complete",
+      "complete": "Fully completed (100%)",
+      "hint": "Filters off-plan units and projects by verified construction progress."
+    },
     "ai": {
       "eyebrow": "Gemini assist",
       "lede": "Describe what you want in plain language — we will map it to intent, area cluster, and budget.",
@@ -258,6 +268,7 @@
       "title": "Showcase projects and off-plan units",
       "lede": "Publish escrow-backed off-plan inventory with the full document pack: org credentials, floor plan, title or lease, permit, escrow letter, unit photos, and Fayda verify for your company rep.",
       "ctas": {
+        "workspace": "Open workspace",
         "list": "Add inventory",
         "projects": "View projects",
         "myPage": "My developer page",
@@ -270,11 +281,93 @@
       "title": "Audit and import the market",
       "lede": "Scrape Telegram and websites, review pending listings, and publish only after the client-protection checklist passes.",
       "ctas": {
+        "workspace": "Open workspace",
         "imports": "Import sources",
         "dashboard": "Dashboard metrics",
-        "listings": "All listings",
         "profile": "Your profile"
       }
+    }
+  },
+  "workspace": {
+    "developer": {
+      "eyebrow": "Developer workspace",
+      "title": "Publish escrow-backed inventory",
+      "lede": "Track readiness, submit the full document pack, and follow units through admin review from one place.",
+      "addInventory": "Add off-plan inventory",
+      "viewProjects": "Browse projects",
+      "myPage": "My public page",
+      "accountProfile": "Account profile",
+      "readinessTitle": "Readiness",
+      "readinessProfileOk": "Developer profile linked — {name}",
+      "readinessProfileNeeded": "No developer profile yet — trade name and registration are collected on first inventory submit.",
+      "readinessFaydaOk": "Fayda eSignet verified for your account",
+      "readinessFaydaNeeded": "Fayda verify still needed (demo verify on the inventory form until RP credentials are live)",
+      "readinessPending": "{count} listing(s) waiting for admin review",
+      "packTitle": "Required off-plan pack",
+      "packLede": "Every unfinished unit needs org docs, floor plan, title or lease, MUD permit, escrow letter, photos, and Fayda — AI can prefill fields from uploads.",
+      "packPhotos": "At least {min} unit / project photos",
+      "packFayda": "Fayda eSignet for the company representative",
+      "packCta": "Start full-pack submission",
+      "pendingTitle": "Pending review",
+      "pendingEmpty": "No listings waiting for audit. Submit off-plan inventory to get started.",
+      "publishedTitle": "Your published listings",
+      "publishedEmpty": "Nothing published yet — approved inventory will appear here.",
+      "backToRoles": "Back to developer hub"
+    },
+    "admin": {
+      "eyebrow": "Admin workspace",
+      "title": "Review, audit, and publish",
+      "lede": "Work the pending queue, clear collision alerts, and publish only after the client-protection checklist passes.",
+      "openQueue": "Open review queue",
+      "importSources": "Import sources",
+      "dashboard": "Dashboard metrics",
+      "accountProfile": "Account profile",
+      "snapshotTitle": "Ops snapshot",
+      "snapshotPending": "{count} listing(s) waiting for audit",
+      "snapshotAlerts": "{count} unread alert(s)",
+      "snapshotReady": "{count} audited and ready to publish",
+      "checklistTitle": "Client-protection checklist",
+      "checklistLede": "Every approval must pass identity, ownership, price, location, media, permit, escrow, contact, and fraud screens.",
+      "checkSellerIdentity": "Seller identity",
+      "checkOwnership": "Ownership or listing authority",
+      "checkPrice": "Price and payment terms",
+      "checkLocation": "Location and unit details",
+      "checkMedia": "Media authenticity",
+      "checkPermit": "Permit and construction stage",
+      "checkEscrow": "Escrow compliance",
+      "checkContact": "Contact and consent",
+      "checkDuplicate": "Duplicate and fraud screen",
+      "pendingTitle": "Pending audit",
+      "pendingEmpty": "No listings waiting for audit.",
+      "readyTitle": "Ready to publish",
+      "readyEmpty": "Nothing audited yet — approve a pending listing to see it here.",
+      "alertsTitle": "Unread alerts",
+      "alertsEmpty": "No unread alerts.",
+      "backToRoles": "Back to admin hub"
+    }
+  },
+  "adminAudit": {
+    "title": "Client-protection audit",
+    "lede": "Complete every check and add notes before approving. Approval does not publish — use Publish after audit passes.",
+    "notesLabel": "Audit notes",
+    "notesPlaceholder": "Summarize what you verified (min. 10 characters).",
+    "approve": "Approve audit",
+    "reject": "Reject to draft",
+    "publish": "Publish listing",
+    "publishing": "Publishing…",
+    "saving": "Saving…",
+    "approvedReady": "Audit passed — you can publish this listing.",
+    "statusLabel": "Status",
+    "checks": {
+      "sellerIdentity": "Seller identity verified",
+      "ownershipOrAuthority": "Ownership or listing authority verified",
+      "priceAndPaymentTerms": "Price and payment terms clear",
+      "locationAndUnitDetails": "Location and unit details accurate",
+      "mediaAuthenticity": "Media looks authentic",
+      "permitAndConstructionStage": "Permit and construction stage checked",
+      "escrowCompliance": "Escrow compliance checked",
+      "contactAndConsent": "Contact and consent checked",
+      "duplicateAndFraudScreen": "Duplicate and fraud screen passed"
     }
   },
   "profile": {
