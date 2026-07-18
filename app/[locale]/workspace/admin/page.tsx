@@ -1,11 +1,17 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
-import { ListingStatus } from "@prisma/client";
+import { ListingStatus, UserRole } from "@prisma/client";
 import {
   AdminWorkspaceView,
   type AdminAlertItem,
 } from "@/components/admin/AdminWorkspaceView";
+import type { AdminPendingDirectoryItem } from "@/components/admin/AdminPendingQueue";
 import type { DirectoryItem } from "@/components/PageDirectory";
+import {
+  classifyListingParty,
+  partyLabelFromListing,
+  type AuditPartyCategory,
+} from "@/lib/admin/listing-party";
 import { getCurrentAdmin } from "@/lib/auth/admin";
 import { prisma } from "@/lib/db/prisma";
 import { isLocale, type Locale } from "@/lib/i18n/config";
@@ -30,6 +36,115 @@ function listingTitle(listing: {
   return "Listing";
 }
 
+function delalaDisplayName(displayName: unknown): string | null {
+  if (
+    displayName &&
+    typeof displayName === "object" &&
+    displayName !== null &&
+    "en" in displayName
+  ) {
+    const en = (displayName as { en?: string }).en;
+    return en?.trim() || null;
+  }
+  return null;
+}
+
+function partyBadgeTone(
+  party: AuditPartyCategory,
+): NonNullable<DirectoryItem["badges"]>[number]["tone"] {
+  switch (party) {
+    case "developers":
+      return "violet";
+    case "brokers":
+      return "sky";
+    case "owners":
+      return "emerald";
+    case "imported":
+      return "amber";
+    default:
+      return "slate";
+  }
+}
+
+function partyBadgeLabel(
+  party: AuditPartyCategory,
+  labels: Record<AuditPartyCategory, string>,
+): string {
+  return labels[party];
+}
+
+function toPendingItem(
+  locale: string,
+  listing: {
+    id: string;
+    titleEn: string | null;
+    title: unknown;
+    status: ListingStatus;
+    listingType: string;
+    coverImageUrl: string | null;
+    galleryImageUrls: string[];
+    metadataTags: string[];
+    developerId: string | null;
+    delalaId: string | null;
+    subCity: { name: unknown } | null;
+    owner: { fullName: string; role: UserRole };
+    developer: { tradeName: string } | null;
+    delala: { displayName: unknown } | null;
+  },
+  partyLabels: Record<AuditPartyCategory, string>,
+): AdminPendingDirectoryItem {
+  const subCityName =
+    listing.subCity?.name &&
+    typeof listing.subCity.name === "object" &&
+    listing.subCity.name !== null &&
+    "en" in listing.subCity.name
+      ? String((listing.subCity.name as { en?: string }).en ?? "")
+      : "";
+
+  const party = classifyListingParty({
+    developerId: listing.developerId,
+    delalaId: listing.delalaId,
+    metadataTags: listing.metadataTags,
+    ownerRole: listing.owner.role,
+  });
+
+  const partyName = partyLabelFromListing({
+    developerTradeName: listing.developer?.tradeName,
+    delalaDisplayName: delalaDisplayName(listing.delala?.displayName),
+    ownerFullName: listing.owner.fullName,
+    ownerRole: listing.owner.role,
+  });
+
+  const badges: DirectoryItem["badges"] = [
+    {
+      label: listing.status.replaceAll("_", " "),
+      tone: "amber",
+    },
+    {
+      label: partyBadgeLabel(party, partyLabels),
+      tone: partyBadgeTone(party),
+    },
+  ];
+
+  return {
+    id: listing.id,
+    title: listingTitle(listing),
+    meta: [
+      partyName,
+      listing.id,
+      listing.listingType.replaceAll("_", " "),
+      subCityName,
+    ]
+      .filter(Boolean)
+      .join(" · "),
+    href: `/${locale}/listings/${listing.id}`,
+    imageUrl: listing.coverImageUrl || listing.galleryImageUrls[0] || null,
+    photoCount: listing.galleryImageUrls.length,
+    badges,
+    party,
+  };
+}
+
 function toDirectoryItem(
   locale: string,
   listing: {
@@ -41,7 +156,6 @@ function toDirectoryItem(
     coverImageUrl: string | null;
     galleryImageUrls: string[];
     subCity: { name: unknown } | null;
-    adminAuditApprovedAt?: Date | null;
   },
   badgeExtra?: string,
 ): DirectoryItem {
@@ -81,7 +195,25 @@ function toDirectoryItem(
   };
 }
 
-const listingSelect = {
+const pendingSelect = {
+  id: true,
+  titleEn: true,
+  title: true,
+  status: true,
+  listingType: true,
+  coverImageUrl: true,
+  galleryImageUrls: true,
+  metadataTags: true,
+  developerId: true,
+  delalaId: true,
+  adminAuditApprovedAt: true,
+  subCity: { select: { name: true } },
+  owner: { select: { fullName: true, role: true } },
+  developer: { select: { tradeName: true } },
+  delala: { select: { displayName: true } },
+} as const;
+
+const readySelect = {
   id: true,
   titleEn: true,
   title: true,
@@ -118,7 +250,9 @@ export default async function AdminWorkspacePage({
   const admin = await getCurrentAdmin();
 
   if (!admin) {
-    redirect(`/${locale}/login?next=${encodeURIComponent(`/${locale}/workspace/admin`)}`);
+    redirect(
+      `/${locale}/login?next=${encodeURIComponent(`/${locale}/workspace/admin`)}`,
+    );
   }
 
   const dictionary = getDictionary(locale);
@@ -126,6 +260,13 @@ export default async function AdminWorkspacePage({
   if (!ws) {
     redirect(`/${locale}/roles/admin`);
   }
+
+  const partyLabels: Record<AuditPartyCategory, string> = {
+    developers: ws.partyDevelopers ?? "Developers",
+    brokers: ws.partyBrokers ?? "Brokers",
+    owners: ws.partyOwners ?? "Owners",
+    imported: ws.partyImported ?? "Imported",
+  };
 
   const [
     pendingCount,
@@ -154,8 +295,8 @@ export default async function AdminWorkspacePage({
         adminAuditApprovedAt: null,
       },
       orderBy: { createdAt: "desc" },
-      take: 24,
-      select: listingSelect,
+      take: 80,
+      select: pendingSelect,
     }),
     prisma.listing.findMany({
       where: {
@@ -164,7 +305,7 @@ export default async function AdminWorkspacePage({
       },
       orderBy: { adminAuditApprovedAt: "desc" },
       take: 12,
-      select: listingSelect,
+      select: readySelect,
     }),
     prisma.adminAlert.findMany({
       where: { isRead: false },
@@ -201,7 +342,7 @@ export default async function AdminWorkspacePage({
         unreadAlertCount={unreadAlertCount}
         readyCount={readyCount}
         pendingItems={pending.map((listing) =>
-          toDirectoryItem(locale, listing),
+          toPendingItem(locale, listing, partyLabels),
         )}
         readyItems={ready.map((listing) =>
           toDirectoryItem(locale, listing, "Audit passed"),
@@ -239,6 +380,12 @@ export default async function AdminWorkspacePage({
           readyEmpty: ws.readyEmpty,
           alertsTitle: ws.alertsTitle,
           alertsEmpty: ws.alertsEmpty,
+          partyAll: ws.partyAll ?? "All",
+          partyDevelopers: partyLabels.developers,
+          partyBrokers: partyLabels.brokers,
+          partyOwners: partyLabels.owners,
+          partyImported: partyLabels.imported,
+          partyEmpty: ws.partyEmpty ?? "No listings in this category.",
         }}
       />
     </main>

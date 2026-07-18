@@ -144,6 +144,9 @@ export async function POST(request: NextRequest) {
         developerProfile: {
           select: { id: true, tin: true, registrationNumber: true },
         },
+        delalaProfile: {
+          select: { id: true },
+        },
         faydaIdentity: { select: { id: true } },
       },
     });
@@ -198,6 +201,11 @@ export async function POST(request: NextRequest) {
     }
 
     let developerId = input.developerId ?? user.developerProfile?.id ?? null;
+    let delalaId =
+      input.delalaId ??
+      (user.role === UserRole.INDEPENDENT_DELALA
+        ? (user.delalaProfile?.id ?? null)
+        : null);
     let profileTin = user.developerProfile?.tin ?? null;
     if (
       user.role === UserRole.CORPORATE_DEVELOPER &&
@@ -422,7 +430,7 @@ export async function POST(request: NextRequest) {
               id: listingId,
               ownerId: user.id,
               developerId: developerId ?? null,
-              delalaId: input.delalaId,
+              delalaId: delalaId ?? null,
               projectId: input.projectId,
               subCityId: subCity.id,
               title: bilingual.title,

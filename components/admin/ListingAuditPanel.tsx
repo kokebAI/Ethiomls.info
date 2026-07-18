@@ -1,8 +1,12 @@
 "use client";
 
+import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
 import { CheckCircle2, Circle, LoaderCircle } from "lucide-react";
+import {
+  ListingAuditEnrichPanel,
+  type AuditEnrichCopy,
+} from "@/components/admin/ListingAuditEnrichPanel";
 
 const CHECKLIST_KEYS = [
   "sellerIdentity",
@@ -18,6 +22,21 @@ const CHECKLIST_KEYS = [
 
 type ChecklistKey = (typeof CHECKLIST_KEYS)[number];
 
+export type ListingAuditAttachCopy = {
+  title: string;
+  lede: string;
+  current: string;
+  unassigned: string;
+  selectLabel: string;
+  attachCta: string;
+  attaching: string;
+  attached: string;
+  loadFailed: string;
+  roleDeveloper: string;
+  roleBroker: string;
+  roleOwner: string;
+};
+
 export type ListingAuditPanelCopy = {
   title: string;
   lede: string;
@@ -31,19 +50,67 @@ export type ListingAuditPanelCopy = {
   approvedReady: string;
   statusLabel: string;
   checks: Record<ChecklistKey, string>;
+  enrich: AuditEnrichCopy;
+  attach: ListingAuditAttachCopy;
+};
+
+export type ListingAttachmentSummary = {
+  ownerId: string;
+  ownerName: string;
+  ownerRole: string;
+  ownerPhone: string | null;
+  developerTradeName: string | null;
+  delalaDisplayName: string | null;
+};
+
+type RoleAccountOption = {
+  userId: string;
+  label: string;
+  role: string;
+  phone: string | null;
+  listingCount: number;
 };
 
 type ListingAuditPanelProps = {
   listingId: string;
   status: string;
   alreadyApproved: boolean;
+  attachment: ListingAttachmentSummary;
   copy: ListingAuditPanelCopy;
 };
+
+function roleLabel(
+  role: string,
+  copy: ListingAuditAttachCopy,
+): string {
+  if (role === "CORPORATE_DEVELOPER") return copy.roleDeveloper;
+  if (role === "INDEPENDENT_DELALA") return copy.roleBroker;
+  if (role === "PROPERTY_OWNER") return copy.roleOwner;
+  return role.replaceAll("_", " ");
+}
+
+function attachmentLine(
+  attachment: ListingAttachmentSummary,
+  copy: ListingAuditAttachCopy,
+): string {
+  const party =
+    attachment.developerTradeName ||
+    attachment.delalaDisplayName ||
+    attachment.ownerName;
+  if (!party) return copy.unassigned;
+  const bits = [
+    party,
+    roleLabel(attachment.ownerRole, copy),
+    attachment.ownerPhone,
+  ].filter(Boolean);
+  return bits.join(" · ");
+}
 
 export function ListingAuditPanel({
   listingId,
   status,
   alreadyApproved,
+  attachment: initialAttachment,
   copy,
 }: ListingAuditPanelProps) {
   const router = useRouter();
@@ -54,17 +121,108 @@ export function ListingAuditPanel({
     >,
   );
   const [notes, setNotes] = useState("");
-  const [busy, setBusy] = useState<"approve" | "reject" | "publish" | null>(
-    null,
-  );
+  const [busy, setBusy] = useState<
+    "approve" | "reject" | "publish" | "attach" | null
+  >(null);
   const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(
     alreadyApproved ? copy.approvedReady : null,
   );
   const [approved, setApproved] = useState(alreadyApproved);
+  const [attachment, setAttachment] =
+    useState<ListingAttachmentSummary>(initialAttachment);
+  const [accounts, setAccounts] = useState<RoleAccountOption[]>([]);
+  const [selectedUserId, setSelectedUserId] = useState("");
+  const [accountsError, setAccountsError] = useState<string | null>(null);
+
+  useEffect(() => {
+    setAttachment(initialAttachment);
+  }, [initialAttachment]);
+
+  useEffect(() => {
+    let cancelled = false;
+    void (async () => {
+      try {
+        const res = await fetch("/api/admin/role-accounts");
+        const data = (await res.json().catch(() => ({}))) as {
+          data?: RoleAccountOption[];
+          message?: string;
+        };
+        if (!res.ok) {
+          throw new Error(data.message ?? copy.attach.loadFailed);
+        }
+        if (!cancelled) {
+          setAccounts(data.data ?? []);
+          setAccountsError(null);
+        }
+      } catch (err) {
+        if (!cancelled) {
+          setAccountsError(
+            err instanceof Error ? err.message : copy.attach.loadFailed,
+          );
+        }
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [copy.attach.loadFailed]);
+
+  const accountOptions = useMemo(
+    () =>
+      accounts.map((account) => ({
+        ...account,
+        optionLabel: `${account.label} · ${roleLabel(account.role, copy.attach)}${
+          account.phone ? ` · ${account.phone}` : ""
+        } (${account.listingCount})`,
+      })),
+    [accounts, copy.attach],
+  );
 
   const allChecked = CHECKLIST_KEYS.every((key) => checks[key]);
   const isPublished = status === "PUBLISHED";
+
+  async function attachAccount() {
+    if (!selectedUserId) return;
+    setBusy("attach");
+    setError(null);
+    setMessage(null);
+    try {
+      const res = await fetch(`/api/listings/${listingId}/assign`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId: selectedUserId }),
+      });
+      const data = (await res.json().catch(() => ({}))) as {
+        message?: string;
+        data?: {
+          ownerId: string;
+          ownerName: string;
+          ownerRole: string;
+          ownerPhone: string | null;
+          developerTradeName: string | null;
+          delalaDisplayName: string | null;
+        };
+      };
+      if (!res.ok || !data.data) {
+        throw new Error(data.message ?? "Could not attach account");
+      }
+      setAttachment({
+        ownerId: data.data.ownerId,
+        ownerName: data.data.ownerName,
+        ownerRole: data.data.ownerRole,
+        ownerPhone: data.data.ownerPhone,
+        developerTradeName: data.data.developerTradeName,
+        delalaDisplayName: data.data.delalaDisplayName,
+      });
+      setMessage(copy.attach.attached);
+      router.refresh();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Could not attach account");
+    } finally {
+      setBusy(null);
+    }
+  }
 
   async function submitAudit(decision: "APPROVE" | "REJECT") {
     setBusy(decision === "APPROVE" ? "approve" : "reject");
@@ -135,6 +293,53 @@ export function ListingAuditPanel({
         </span>
       </div>
       <p className="mt-2 text-sm leading-relaxed text-slate-600">{copy.lede}</p>
+
+      <div className="mt-5 rounded-xl border border-slate-200 bg-white p-4">
+        <h3 className="text-sm font-semibold text-slate-900">
+          {copy.attach.title}
+        </h3>
+        <p className="mt-1 text-sm text-slate-600">{copy.attach.lede}</p>
+        <p className="mt-3 text-sm text-slate-800">
+          <span className="font-medium text-slate-500">
+            {copy.attach.current}:{" "}
+          </span>
+          {attachmentLine(attachment, copy.attach)}
+        </p>
+        {accountsError ? (
+          <p className="mt-2 text-sm text-rose-700">{accountsError}</p>
+        ) : (
+          <div className="mt-3 flex flex-col gap-2 sm:flex-row sm:items-end">
+            <label className="grid min-w-0 flex-1 gap-1.5">
+              <span className="text-sm font-medium text-slate-700">
+                {copy.attach.selectLabel}
+              </span>
+              <select
+                value={selectedUserId}
+                onChange={(event) => setSelectedUserId(event.target.value)}
+                className="rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-900 outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20"
+              >
+                <option value="">—</option>
+                {accountOptions.map((account) => (
+                  <option key={account.userId} value={account.userId}>
+                    {account.optionLabel}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <button
+              type="button"
+              disabled={Boolean(busy) || !selectedUserId}
+              onClick={() => void attachAccount()}
+              className="inline-flex items-center justify-center gap-2 rounded-full bg-slate-900 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-slate-800 disabled:opacity-50"
+            >
+              {busy === "attach" ? (
+                <LoaderCircle className="h-4 w-4 animate-spin" />
+              ) : null}
+              {busy === "attach" ? copy.attach.attaching : copy.attach.attachCta}
+            </button>
+          </div>
+        )}
+      </div>
 
       <ul className="mt-5 space-y-2">
         {CHECKLIST_KEYS.map((key) => {
@@ -221,6 +426,8 @@ export function ListingAuditPanel({
           </button>
         ) : null}
       </div>
+
+      <ListingAuditEnrichPanel listingId={listingId} copy={copy.enrich} />
     </section>
   );
 }

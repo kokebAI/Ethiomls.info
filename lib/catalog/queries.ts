@@ -184,11 +184,17 @@ export async function fetchListingById(
             website: true,
           },
         },
+        delala: {
+          select: {
+            id: true,
+            displayName: true,
+          },
+        },
         project: {
           select: { id: true, title: true },
         },
         owner: {
-          select: { fullName: true },
+          select: { id: true, fullName: true, role: true, phone: true },
         },
       },
     });

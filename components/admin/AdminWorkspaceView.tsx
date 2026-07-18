@@ -1,6 +1,11 @@
 import Link from "next/link";
 import { PageIntro } from "@/components/PageIntro";
 import { PageDirectory, type DirectoryItem } from "@/components/PageDirectory";
+import {
+  AdminPendingQueue,
+  type AdminPendingDirectoryItem,
+  type AdminPendingQueueCopy,
+} from "@/components/admin/AdminPendingQueue";
 
 export type AdminWorkspaceCopy = {
   eyebrow: string;
@@ -24,6 +29,12 @@ export type AdminWorkspaceCopy = {
   readyEmpty: string;
   alertsTitle: string;
   alertsEmpty: string;
+  partyAll: string;
+  partyDevelopers: string;
+  partyBrokers: string;
+  partyOwners: string;
+  partyImported: string;
+  partyEmpty: string;
 };
 
 export type AdminAlertItem = {
@@ -41,7 +52,7 @@ export type AdminWorkspaceProps = {
   pendingCount: number;
   unreadAlertCount: number;
   readyCount: number;
-  pendingItems: DirectoryItem[];
+  pendingItems: AdminPendingDirectoryItem[];
   readyItems: DirectoryItem[];
   alerts: AdminAlertItem[];
 };
@@ -68,6 +79,17 @@ export function AdminWorkspaceView({
   alerts,
 }: AdminWorkspaceProps) {
   const base = `/${locale}`;
+
+  const pendingQueueCopy: AdminPendingQueueCopy = {
+    pendingTitle: copy.pendingTitle,
+    pendingEmpty: copy.pendingEmpty,
+    partyAll: copy.partyAll,
+    partyDevelopers: copy.partyDevelopers,
+    partyBrokers: copy.partyBrokers,
+    partyOwners: copy.partyOwners,
+    partyImported: copy.partyImported,
+    partyEmpty: copy.partyEmpty,
+  };
 
   return (
     <div className="relative z-10 mx-auto max-w-6xl px-4 py-10 sm:px-6 lg:py-14">
@@ -169,23 +191,7 @@ export function AdminWorkspaceView({
             </ul>
           </section>
 
-          <section
-            id="admin-pending"
-            className="space-y-4 scroll-mt-28"
-            aria-labelledby="admin-pending-heading"
-          >
-            <h2
-              id="admin-pending-heading"
-              className="text-lg font-semibold tracking-tight text-slate-deep"
-            >
-              {copy.pendingTitle}
-            </h2>
-            <PageDirectory
-              items={pendingItems}
-              emptyMessage={copy.pendingEmpty}
-              layout="list"
-            />
-          </section>
+          <AdminPendingQueue items={pendingItems} copy={pendingQueueCopy} />
 
           <section className="space-y-4" aria-labelledby="admin-ready-heading">
             <h2
@@ -201,7 +207,11 @@ export function AdminWorkspaceView({
             />
           </section>
 
-          <section className="space-y-4" aria-labelledby="admin-alerts-heading">
+          <section
+            id="admin-alerts"
+            className="space-y-4 scroll-mt-28"
+            aria-labelledby="admin-alerts-heading"
+          >
             <h2
               id="admin-alerts-heading"
               className="text-lg font-semibold tracking-tight text-slate-deep"

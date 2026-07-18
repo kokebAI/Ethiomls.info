@@ -255,13 +255,33 @@ export default async function ListingDetailPage({
         {t("listingDetail.back")}
       </Link>
 
-      <ListingGallery photos={photos} title={title} />
+      <ListingGallery
+        photos={photos}
+        title={title}
+        emptyLabel={t("listing.photoComingSoon")}
+      />
 
       {admin && auditCopy && listing.status !== "PUBLISHED" ? (
         <ListingAuditPanel
           listingId={listing.id}
           status={listing.status}
           alreadyApproved={Boolean(listing.adminAuditApprovedAt)}
+          attachment={{
+            ownerId: listing.ownerId,
+            ownerName: listing.owner?.fullName ?? "",
+            ownerRole: listing.owner?.role ?? "",
+            ownerPhone: listing.owner?.phone ?? null,
+            developerTradeName: listing.developer?.tradeName ?? null,
+            delalaDisplayName:
+              listing.delala?.displayName &&
+              typeof listing.delala.displayName === "object" &&
+              listing.delala.displayName !== null &&
+              "en" in listing.delala.displayName
+                ? String(
+                    (listing.delala.displayName as { en?: string }).en ?? "",
+                  ).trim() || null
+                : null,
+          }}
           copy={{
             title: auditCopy.title,
             lede: auditCopy.lede,
@@ -275,6 +295,24 @@ export default async function ListingDetailPage({
             approvedReady: auditCopy.approvedReady,
             statusLabel: auditCopy.statusLabel,
             checks: auditCopy.checks,
+            enrich: auditCopy.enrich,
+            attach: {
+              title: auditCopy.attach?.title ?? "Attach to role",
+              lede:
+                auditCopy.attach?.lede ??
+                "Link this listing to a developer, broker, or owner account before you approve.",
+              current: auditCopy.attach?.current ?? "Currently",
+              unassigned: auditCopy.attach?.unassigned ?? "Not attached",
+              selectLabel: auditCopy.attach?.selectLabel ?? "Account",
+              attachCta: auditCopy.attach?.attachCta ?? "Attach",
+              attaching: auditCopy.attach?.attaching ?? "Attaching…",
+              attached: auditCopy.attach?.attached ?? "Listing attached.",
+              loadFailed:
+                auditCopy.attach?.loadFailed ?? "Could not load accounts.",
+              roleDeveloper: auditCopy.attach?.roleDeveloper ?? "Developer",
+              roleBroker: auditCopy.attach?.roleBroker ?? "Broker",
+              roleOwner: auditCopy.attach?.roleOwner ?? "Owner",
+            },
           }}
         />
       ) : null}
@@ -465,13 +503,13 @@ export default async function ListingDetailPage({
             </section>
           ) : null}
 
-          {/* 360° virtual tour — signed-in clients only */}
-          {panoramas.length > 0 ? (
-            <section className="rounded-2xl border border-slate-200/90 bg-white p-5 shadow-[var(--shadow-card)] sm:p-6">
-              <h2 className="text-sm font-bold uppercase tracking-wide text-slate-500">
-                {t("listing.virtualTour")}
-              </h2>
-              {isSignedIn ? (
+          {/* 360° virtual tour */}
+          <section className="rounded-2xl border border-slate-200/90 bg-white p-5 shadow-[var(--shadow-card)] sm:p-6">
+            <h2 className="text-sm font-bold uppercase tracking-wide text-slate-500">
+              {t("listing.virtualTour")}
+            </h2>
+            {panoramas.length > 0 ? (
+              isSignedIn ? (
                 <div className="mt-4">
                   <VrViewer panoramicImageUrls={panoramas} />
                 </div>
@@ -487,9 +525,18 @@ export default async function ListingDetailPage({
                     {t("listingDetail.signUpCta")}
                   </Link>
                 </div>
-              )}
-            </section>
-          ) : null}
+              )
+            ) : (
+              <div className="mt-4 flex flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-slate-300 bg-gradient-to-br from-slate-50 via-white to-emerald-50/40 px-4 py-10 text-center">
+                <p className="text-sm font-medium text-slate-600">
+                  {t("listingDetail.tourComingSoon")}
+                </p>
+                <p className="max-w-md text-xs leading-relaxed text-slate-500">
+                  {t("listingDetail.tourComingSoonLede")}
+                </p>
+              </div>
+            )}
+          </section>
         </div>
 
         {/* Contact sidebar */}
