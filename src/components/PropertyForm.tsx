@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, type DragEvent, type FormEvent } from "react";
-import { LoaderCircle, ScanLine, Sparkles, UploadCloud } from "lucide-react";
+import { LoaderCircle, ScanLine, Sparkles, UploadCloud, X } from "lucide-react";
 import { generatePropertyId } from "@/src/utils/generateId";
 
 const SUB_CITIES = [
@@ -18,6 +18,16 @@ const SUB_CITIES = [
   ["lemi-kura", "Lemi Kura"],
 ] as const;
 
+/** Keep under Netlify's ~4.5 MB effective binary payload limit. */
+const MAX_FILE_BYTES = 4 * 1024 * 1024;
+const MAX_FILES = 10;
+const ACCEPTED_TYPES = new Set([
+  "application/pdf",
+  "image/jpeg",
+  "image/png",
+  "image/webp",
+]);
+
 type FormValues = {
   title: string;
   price: string;
@@ -30,6 +40,20 @@ type FormValues = {
   addressLine: string;
   listingType: "SALE" | "RENT" | "OFF_PLAN";
   propertyType: "RESIDENTIAL" | "COMMERCIAL" | "MIXED_USE" | "LAND";
+};
+
+type ParsedPayload = {
+  title: string;
+  price: number;
+  currency?: "ETB" | "USD";
+  subCity: string;
+  bedrooms: number;
+  bathrooms: number;
+  sizeM2?: number;
+  description: string;
+  addressLine?: string;
+  listingType?: FormValues["listingType"];
+  propertyType?: FormValues["propertyType"];
 };
 
 const EMPTY_FORM: FormValues = {
@@ -51,6 +75,104 @@ type PropertyFormProps = {
   onCreated?: (propertyId: string) => void;
 };
 
+function formatMb(bytes: number): string {
+  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+}
+
+function preferText(current: string, next: string): string {
+  const a = current.trim();
+  const b = next.trim();
+  if (!b) return a;
+  if (!a) return b;
+  return b.length > a.length ? b : a;
+}
+
+function mergeParsed(parts: ParsedPayload[]): ParsedPayload {
+  const base: ParsedPayload = {
+    title: "",
+    price: 0,
+    currency: "ETB",
+    subCity: "",
+    bedrooms: 0,
+    bathrooms: 0,
+    sizeM2: 0,
+    description: "",
+    addressLine: "",
+    listingType: "SALE",
+    propertyType: "RESIDENTIAL",
+  };
+
+  const descriptions: string[] = [];
+
+  for (const part of parts) {
+    base.title = preferText(base.title, part.title);
+    if (part.price > base.price) base.price = part.price;
+    if (part.currency) base.currency = part.currency;
+    base.subCity = preferText(base.subCity, part.subCity);
+    if (part.bedrooms > base.bedrooms) base.bedrooms = part.bedrooms;
+    if (part.bathrooms > base.bathrooms) base.bathrooms = part.bathrooms;
+    if ((part.sizeM2 ?? 0) > (base.sizeM2 ?? 0)) base.sizeM2 = part.sizeM2 ?? 0;
+    base.addressLine = preferText(base.addressLine ?? "", part.addressLine ?? "");
+    if (part.listingType) base.listingType = part.listingType;
+    if (part.propertyType) base.propertyType = part.propertyType;
+    if (part.description.trim()) descriptions.push(part.description.trim());
+  }
+
+  base.description = [...new Set(descriptions)].join("\n\n");
+  return base;
+}
+
+/** Pack files into batches that each stay under the upload size limit. */
+function batchFiles(files: File[]): File[][] {
+  const batches: File[][] = [];
+  let current: File[] = [];
+  let currentBytes = 0;
+
+  for (const file of files) {
+    if (
+      current.length > 0 &&
+      currentBytes + file.size > MAX_FILE_BYTES
+    ) {
+      batches.push(current);
+      current = [];
+      currentBytes = 0;
+    }
+    current.push(file);
+    currentBytes += file.size;
+  }
+
+  if (current.length > 0) batches.push(current);
+  return batches;
+}
+
+async function readJsonSafe(response: Response): Promise<{
+  data?: ParsedPayload;
+  error?: string;
+  message?: string;
+}> {
+  const text = await response.text();
+  if (!text) return {};
+  try {
+    return JSON.parse(text) as {
+      data?: ParsedPayload;
+      error?: string;
+      message?: string;
+    };
+  } catch {
+    if (/request entity too large/i.test(text) || response.status === 413) {
+      return {
+        error:
+          "Upload is too large for the server. Use files under 4 MB each, or upload them in smaller batches.",
+      };
+    }
+    return {
+      error:
+        text.slice(0, 160).trim() ||
+        "Unexpected server response while parsing documents.",
+    };
+  }
+}
+
 export function PropertyForm({ ownerId, onCreated }: PropertyFormProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [propertyId, setPropertyId] = useState("");
@@ -58,7 +180,8 @@ export function PropertyForm({ ownerId, onCreated }: PropertyFormProps) {
   const [isDragging, setIsDragging] = useState(false);
   const [isParsing, setIsParsing] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [documentName, setDocumentName] = useState("");
+  const [documentNames, setDocumentNames] = useState<string[]>([]);
+  const [parseProgress, setParseProgress] = useState("");
   const [message, setMessage] = useState<{
     tone: "success" | "error";
     text: string;
@@ -72,46 +195,102 @@ export function PropertyForm({ ownerId, onCreated }: PropertyFormProps) {
     setValues((current) => ({ ...current, [key]: value }));
   }
 
-  async function parseDocument(file: File) {
+  function applyParsed(data: ParsedPayload) {
+    setValues((current) => ({
+      ...current,
+      title: data.title || current.title,
+      price: data.price > 0 ? String(data.price) : current.price,
+      currency: data.currency ?? current.currency,
+      subCity: data.subCity || current.subCity,
+      bedrooms: String(data.bedrooms),
+      bathrooms: String(data.bathrooms),
+      sizeM2:
+        data.sizeM2 && data.sizeM2 > 0 ? String(data.sizeM2) : current.sizeM2,
+      description: data.description || current.description,
+      addressLine: data.addressLine || current.addressLine,
+      listingType: data.listingType ?? current.listingType,
+      propertyType: data.propertyType ?? current.propertyType,
+    }));
+  }
+
+  async function parseDocuments(fileList: File[]) {
     setMessage(null);
-    setDocumentName(file.name);
+
+    const files = Array.from(fileList).slice(0, MAX_FILES);
+    if (files.length === 0) return;
+
+    const invalidType = files.find((file) => !ACCEPTED_TYPES.has(file.type));
+    if (invalidType) {
+      setMessage({
+        tone: "error",
+        text: `${invalidType.name}: only PDF, JPEG, PNG, and WebP are supported.`,
+      });
+      return;
+    }
+
+    const oversized = files.find((file) => file.size > MAX_FILE_BYTES);
+    if (oversized) {
+      setMessage({
+        tone: "error",
+        text: `${oversized.name} is ${formatMb(oversized.size)}. Each file must be under 4 MB.`,
+      });
+      return;
+    }
+
+    const empty = files.find((file) => file.size === 0);
+    if (empty) {
+      setMessage({
+        tone: "error",
+        text: `${empty.name} is empty.`,
+      });
+      return;
+    }
+
+    setDocumentNames(files.map((file) => file.name));
     setIsParsing(true);
 
     try {
-      const formData = new FormData();
-      formData.set("document", file);
-      const response = await fetch("/api/properties/parse", {
-        method: "POST",
-        body: formData,
-      });
-      const payload = (await response.json()) as {
-        data?: {
-          title: string;
-          price: number;
-          subCity: string;
-          bedrooms: number;
-          bathrooms: number;
-          description: string;
-        };
-        error?: string;
-      };
+      const batches = batchFiles(files);
+      const parsedParts: ParsedPayload[] = [];
 
-      if (!response.ok || !payload.data) {
-        throw new Error(payload.error || "Document parsing failed.");
+      for (let i = 0; i < batches.length; i += 1) {
+        const batch = batches[i]!;
+        setParseProgress(
+          batches.length === 1
+            ? `Parsing ${files.length} document${files.length === 1 ? "" : "s"}...`
+            : `Parsing batch ${i + 1} of ${batches.length} (${batch.map((f) => f.name).join(", ")})...`,
+        );
+
+        const formData = new FormData();
+        for (const file of batch) {
+          formData.append("documents", file);
+        }
+
+        const response = await fetch("/api/properties/parse", {
+          method: "POST",
+          body: formData,
+        });
+        const payload = await readJsonSafe(response);
+
+        if (!response.ok || !payload.data) {
+          throw new Error(
+            payload.error ||
+              payload.message ||
+              "Document parsing failed.",
+          );
+        }
+
+        parsedParts.push(payload.data);
       }
 
-      setValues((current) => ({
-        ...current,
-        title: payload.data!.title,
-        price: payload.data!.price > 0 ? String(payload.data!.price) : current.price,
-        subCity: payload.data!.subCity,
-        bedrooms: String(payload.data!.bedrooms),
-        bathrooms: String(payload.data!.bathrooms),
-        description: payload.data!.description,
-      }));
+      const merged = mergeParsed(parsedParts);
+      applyParsed(merged);
       setMessage({
         tone: "success",
-        text: "Document parsed. Review the highlighted details before submitting.",
+        text:
+          files.length === 1
+            ? "Document parsed. Review the details before submitting."
+            : `${files.length} documents parsed and merged. Review the details before submitting.`,
       });
     } catch (error) {
       setMessage({
@@ -123,6 +302,7 @@ export function PropertyForm({ ownerId, onCreated }: PropertyFormProps) {
       });
     } finally {
       setIsParsing(false);
+      setParseProgress("");
       if (inputRef.current) inputRef.current.value = "";
     }
   }
@@ -130,8 +310,8 @@ export function PropertyForm({ ownerId, onCreated }: PropertyFormProps) {
   function handleDrop(event: DragEvent<HTMLDivElement>) {
     event.preventDefault();
     setIsDragging(false);
-    const file = event.dataTransfer.files[0];
-    if (file) void parseDocument(file);
+    const files = Array.from(event.dataTransfer.files);
+    if (files.length > 0) void parseDocuments(files);
   }
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
@@ -159,17 +339,32 @@ export function PropertyForm({ ownerId, onCreated }: PropertyFormProps) {
           bedrooms: Number(values.bedrooms),
           bathrooms: Number(values.bathrooms),
           sizeM2: Number(values.sizeM2),
-          metadata: ["document-assisted-submission"],
+          metadata: [
+            "document-assisted-submission",
+            ...(documentNames.length > 0
+              ? [`docs:${documentNames.length}`]
+              : []),
+          ],
           ...(values.addressLine ? { addressLine: values.addressLine } : {}),
         }),
       });
-      const payload = (await response.json()) as {
-        data?: { id: string };
-        message?: string;
-      };
+      const text = await response.text();
+      let payload: { data?: { id: string }; error?: string; message?: string } =
+        {};
+      try {
+        payload = text ? (JSON.parse(text) as typeof payload) : {};
+      } catch {
+        throw new Error(
+          text.slice(0, 160).trim() || "Property could not be submitted.",
+        );
+      }
 
       if (!response.ok || !payload.data) {
-        throw new Error(payload.message || "Property could not be submitted.");
+        throw new Error(
+          payload.error ||
+            payload.message ||
+            "Property could not be submitted.",
+        );
       }
 
       setMessage({
@@ -206,17 +401,17 @@ export function PropertyForm({ ownerId, onCreated }: PropertyFormProps) {
           Submit a property
         </h1>
         <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-300">
-          Scan a deed or listing sheet to prefill the form, then review every
-          value before submission.
+          Upload one or more deeds, brochures, or listing sheets to prefill the
+          form, then review every value before submission.
         </p>
       </header>
 
       <div className="space-y-8 p-6 sm:p-10">
-        <section>
+        <section className="space-y-3">
           <div
             role="button"
             tabIndex={0}
-            aria-label="Upload Property Document or Scan Deed"
+            aria-label="Upload property documents or scan deeds"
             onClick={() => !isParsing && inputRef.current?.click()}
             onKeyDown={(event) => {
               if (event.key === "Enter" || event.key === " ") {
@@ -239,20 +434,23 @@ export function PropertyForm({ ownerId, onCreated }: PropertyFormProps) {
             <input
               ref={inputRef}
               type="file"
+              multiple
               accept="application/pdf,image/jpeg,image/png,image/webp"
               className="sr-only"
               onChange={(event) => {
-                const file = event.target.files?.[0];
-                if (file) void parseDocument(file);
+                const files = Array.from(event.target.files ?? []);
+                if (files.length > 0) void parseDocuments(files);
               }}
             />
             {isParsing ? (
               <>
                 <LoaderCircle className="mb-4 h-10 w-10 animate-spin text-amber-600" />
                 <p className="font-semibold text-slate-950">
-                  Gemini is parsing your document...
+                  Gemini is parsing your documents...
                 </p>
-                <p className="mt-1 text-sm text-slate-500">{documentName}</p>
+                <p className="mt-1 text-sm text-slate-500">
+                  {parseProgress || documentNames.join(", ")}
+                </p>
               </>
             ) : (
               <>
@@ -264,14 +462,40 @@ export function PropertyForm({ ownerId, onCreated }: PropertyFormProps) {
                   )}
                 </span>
                 <p className="font-semibold text-slate-950">
-                  Upload Property Document / Scan Deed
+                  Upload property documents / scan deeds
                 </p>
                 <p className="mt-1 text-sm text-slate-500">
-                  Drop a PDF, JPEG, PNG, or WebP here · maximum 10 MB
+                  Drop multiple PDF, JPEG, PNG, or WebP files · up to {MAX_FILES}{" "}
+                  files · {formatMb(MAX_FILE_BYTES)} each
                 </p>
               </>
             )}
           </div>
+
+          {documentNames.length > 0 && !isParsing ? (
+            <ul className="flex flex-wrap gap-2">
+              {documentNames.map((name) => (
+                <li
+                  key={name}
+                  className="inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-medium text-slate-700"
+                >
+                  {name}
+                  <button
+                    type="button"
+                    aria-label={`Remove ${name}`}
+                    className="rounded-full p-0.5 text-slate-400 hover:bg-slate-200 hover:text-slate-700"
+                    onClick={() =>
+                      setDocumentNames((current) =>
+                        current.filter((item) => item !== name),
+                      )
+                    }
+                  >
+                    <X className="h-3 w-3" />
+                  </button>
+                </li>
+              ))}
+            </ul>
+          ) : null}
         </section>
 
         <div className="flex items-center gap-3">
