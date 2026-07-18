@@ -84,7 +84,7 @@ export function AdminWorkspaceView({
   };
 
   return (
-    <div className="relative z-10 mx-auto flex max-w-6xl flex-col gap-10 px-4 py-10 sm:px-6 lg:py-14">
+    <div className="relative z-10 mx-auto flex max-w-7xl flex-col gap-10 px-4 py-10 sm:px-6 lg:py-14">
       <section
         className="rounded-2xl border border-slate-200/90 bg-white/90 p-5 shadow-[var(--shadow-card)] sm:p-6"
         aria-labelledby="admin-snapshot-heading"
@@ -136,7 +136,7 @@ export function AdminWorkspaceView({
         <PageDirectory
           items={draftItems}
           emptyMessage={copy.draftsEmpty}
-          layout="list"
+          layout="grid"
         />
       </section>
 
@@ -150,7 +150,7 @@ export function AdminWorkspaceView({
         <PageDirectory
           items={readyItems}
           emptyMessage={copy.readyEmpty}
-          layout="list"
+          layout="grid"
         />
       </section>
 

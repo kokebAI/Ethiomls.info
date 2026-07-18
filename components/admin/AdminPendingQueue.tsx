@@ -104,7 +104,7 @@ export function AdminPendingQueue({ items, copy }: AdminPendingQueueProps) {
       <PageDirectory
         items={filtered}
         emptyMessage={tab === "all" ? copy.pendingEmpty : copy.partyEmpty}
-        layout="list"
+        layout="grid"
       />
     </section>
   );
