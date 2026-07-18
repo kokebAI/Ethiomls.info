@@ -19,7 +19,7 @@ export function DirectoryCover({
   const showImage = Boolean(imageUrl) && !failed;
 
   return (
-    <div className="relative aspect-[16/10] w-full overflow-hidden bg-gradient-to-br from-slate-100 via-slate-50 to-emerald-50/40">
+    <div className="relative aspect-[4/3] w-full overflow-hidden bg-gradient-to-br from-slate-100 via-slate-50 to-emerald-50/40">
       {showImage ? (
         // eslint-disable-next-line @next/next/no-img-element -- remote listing photos from arbitrary hosts
         <img
@@ -31,12 +31,12 @@ export function DirectoryCover({
         />
       ) : (
         <div
-          className="flex h-full w-full flex-col items-center justify-center gap-2 px-4 text-slate-400"
+          className="flex h-full w-full flex-col items-center justify-center gap-1.5 px-3 text-slate-400"
           role="img"
           aria-label={placeholderLabel}
         >
-          <ImageIcon className="h-9 w-9 opacity-70" aria-hidden="true" />
-          <span className="text-center text-xs font-medium tracking-wide text-slate-500">
+          <ImageIcon className="h-7 w-7 opacity-70" aria-hidden="true" />
+          <span className="text-center text-[0.7rem] font-medium tracking-wide text-slate-500">
             {placeholderLabel}
           </span>
         </div>
