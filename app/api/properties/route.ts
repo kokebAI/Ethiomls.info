@@ -465,7 +465,9 @@ export async function POST(request: NextRequest) {
                   byteSize: u.byteSize,
                   storagePath: u.storagePath,
                   publicUrl: u.publicUrl,
-                  contentBytes: u.contentBytes,
+                  contentBytes: u.contentBytes
+                    ? new Uint8Array(u.contentBytes)
+                    : null,
                 },
               });
               if (u.contentBytes && !u.storagePath) {

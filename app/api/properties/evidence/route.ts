@@ -119,7 +119,9 @@ export async function POST(request: NextRequest) {
         byteSize: bytes.length,
         storagePath: stored.storagePath,
         publicUrl: stored.publicUrl || "pending",
-        contentBytes: stored.contentBytes,
+        contentBytes: stored.contentBytes
+          ? new Uint8Array(stored.contentBytes)
+          : null,
       },
     });
 
