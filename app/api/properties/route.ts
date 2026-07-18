@@ -7,6 +7,7 @@ import {
 } from "@/lib/compliance/escrow";
 import { evaluateForeignerEligibility } from "@/lib/compliance/foreignInvestor";
 import { getLiveNbeUsdEtbRate } from "@/lib/compliance/nbeRate";
+import { allocateUniquePropertyId } from "@/lib/db/allocatePropertyId";
 import { prisma } from "@/lib/db/prisma";
 import {
   DataCompletenessError,
@@ -42,11 +43,18 @@ function errorResponse(error: unknown) {
 
   if (error instanceof Prisma.PrismaClientKnownRequestError) {
     if (error.code === "P2002") {
+      const target = Array.isArray(error.meta?.target)
+        ? (error.meta?.target as string[]).join(", ")
+        : String(error.meta?.target ?? "id");
       return NextResponse.json(
         {
           error: "PropertyIdCollision",
-          message: "That property ID is already in use. Generate a new ID and retry.",
+          message:
+            target === "id" || target.includes("id")
+              ? "That property ID was just taken. Tap Submit again — a new ID will be used."
+              : `A unique field already exists (${target}). Adjust the listing and retry.`,
           statusCode: 409,
+          target,
         },
         { status: 409 },
       );
@@ -73,6 +81,24 @@ function errorResponse(error: unknown) {
     },
     { status: 500 },
   );
+}
+
+function isListingIdCollision(error: unknown): boolean {
+  if (!(error instanceof Prisma.PrismaClientKnownRequestError)) return false;
+  if (error.code !== "P2002") return false;
+  const target = error.meta?.target;
+  if (target == null) return true;
+  if (Array.isArray(target)) return target.includes("id");
+  return String(target).includes("id");
+}
+
+async function resolveListingId(preferredId: string): Promise<string> {
+  const existing = await prisma.listing.findUnique({
+    where: { id: preferredId },
+    select: { id: true },
+  });
+  if (!existing) return preferredId;
+  return allocateUniquePropertyId(prisma);
 }
 
 /**
@@ -160,69 +186,102 @@ export async function POST(request: NextRequest) {
       description: input.description,
     });
 
-    const listing = await prisma.$transaction(async (tx) => {
-      const created = await tx.listing.create({
-        data: {
-          id: input.id,
-          ownerId: input.ownerId,
-          developerId: input.developerId,
-          delalaId: input.delalaId,
-          projectId: input.projectId,
-          subCityId: subCity.id,
-          title: bilingual.title,
-          description: bilingual.description,
-          titleEn: bilingual.titleEn || null,
-          titleAm: bilingual.titleAm || null,
-          descriptionEn: bilingual.descriptionEn || null,
-          descriptionAm: bilingual.descriptionAm || null,
-          listingType: input.listingType,
-          category: input.propertyType,
-          status,
-          priceAmount: input.price,
-          priceCurrency: input.currency,
-          bedrooms: input.bedrooms,
-          bathrooms: input.bathrooms,
-          floorAreaSqm: input.sizeM2,
-          constructionStage: input.constructionStage,
-          metadataTags: [...input.metadata, `pid:${input.id}`],
-          panoramicImageUrls: input.panoramicImageUrls ?? [],
-          galleryImageUrls: input.galleryImageUrls ?? [],
-          addressLine: input.addressLine,
-          isUnfinished,
-          constructionPermitId: input.constructionPermitId,
-          constructionPermitVerified: Boolean(input.constructionPermitVerified),
-          foreignerEligible: foreignEval.foreignerEligible,
-          priceUsdEquivalent: foreignEval.priceUsdEquivalent,
-          nbeUsdEtbRateUsed: foreignEval.nbeRate.usdEtb,
-          openToForeignBuyers:
-            input.openToForeignBuyers ?? foreignEval.foreignerEligible,
-        },
-        include: {
-          subCity: {
-            select: { id: true, code: true, name: true },
-          },
-        },
-      });
+    let listingId = await resolveListingId(input.id);
+    let listing: {
+      id: string;
+      status: ListingStatus;
+      priceAmount: Prisma.Decimal;
+      priceCurrency: string;
+      bedrooms: number | null;
+      category: string;
+      listingType: string;
+      floorAreaSqm: Prisma.Decimal | null;
+      metadataTags: string[];
+      isUnfinished: boolean;
+      constructionPermitId: string | null;
+      foreignerEligible: boolean;
+      priceUsdEquivalent: Prisma.Decimal | null;
+      subCity: { id: string; code: string; name: unknown } | null;
+    } | null = null;
+    let lastError: unknown;
 
-      if (isUnfinished) {
-        await tx.escrowAccount.create({
-          data: {
-            listingId: created.id,
-            status: EscrowStatus.ACTIVE,
-            escrowBankName: input.bankEscrowProvider!,
-            escrowAccountNumber: input.escrowAccountNumber!,
-            authorityApprovalRef: input.constructionPermitId!,
-            authorityApprovedAt: new Date(),
-            currency: input.currency,
-            releaseSchedule: DEFAULT_RELEASE_SCHEDULE,
-            notes:
-              "Auto-provisioned under Proclamation 1357/2024 unfinished-stock rules",
-          },
+    for (let attempt = 0; attempt < 5; attempt += 1) {
+      try {
+        listing = await prisma.$transaction(async (tx) => {
+          const created = await tx.listing.create({
+            data: {
+              id: listingId,
+              ownerId: input.ownerId,
+              developerId: input.developerId,
+              delalaId: input.delalaId,
+              projectId: input.projectId,
+              subCityId: subCity.id,
+              title: bilingual.title,
+              description: bilingual.description,
+              titleEn: bilingual.titleEn || null,
+              titleAm: bilingual.titleAm || null,
+              descriptionEn: bilingual.descriptionEn || null,
+              descriptionAm: bilingual.descriptionAm || null,
+              listingType: input.listingType,
+              category: input.propertyType,
+              status,
+              priceAmount: input.price,
+              priceCurrency: input.currency,
+              bedrooms: input.bedrooms,
+              bathrooms: input.bathrooms,
+              floorAreaSqm: input.sizeM2,
+              constructionStage: input.constructionStage,
+              metadataTags: [...input.metadata, `pid:${listingId}`],
+              panoramicImageUrls: input.panoramicImageUrls ?? [],
+              galleryImageUrls: input.galleryImageUrls ?? [],
+              addressLine: input.addressLine,
+              isUnfinished,
+              constructionPermitId: input.constructionPermitId,
+              constructionPermitVerified: Boolean(
+                input.constructionPermitVerified,
+              ),
+              foreignerEligible: foreignEval.foreignerEligible,
+              priceUsdEquivalent: foreignEval.priceUsdEquivalent,
+              nbeUsdEtbRateUsed: foreignEval.nbeRate.usdEtb,
+              openToForeignBuyers:
+                input.openToForeignBuyers ?? foreignEval.foreignerEligible,
+            },
+            include: {
+              subCity: {
+                select: { id: true, code: true, name: true },
+              },
+            },
+          });
+
+          if (isUnfinished) {
+            await tx.escrowAccount.create({
+              data: {
+                listingId: created.id,
+                status: EscrowStatus.ACTIVE,
+                escrowBankName: input.bankEscrowProvider!,
+                escrowAccountNumber: input.escrowAccountNumber!,
+                authorityApprovalRef: input.constructionPermitId!,
+                authorityApprovedAt: new Date(),
+                currency: input.currency,
+                releaseSchedule: DEFAULT_RELEASE_SCHEDULE,
+                notes:
+                  "Auto-provisioned under Proclamation 1357/2024 unfinished-stock rules",
+              },
+            });
+          }
+
+          return created;
         });
+        lastError = undefined;
+        break;
+      } catch (error) {
+        lastError = error;
+        if (!isListingIdCollision(error) || attempt === 4) throw error;
+        listingId = await allocateUniquePropertyId(prisma);
       }
+    }
 
-      return created;
-    });
+    if (!listing) throw lastError ?? new Error("Failed to create property");
 
     if (collision.collided && collision.alertId) {
       await prisma.adminAlert.update({

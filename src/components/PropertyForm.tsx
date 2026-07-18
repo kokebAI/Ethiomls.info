@@ -345,36 +345,38 @@ export function PropertyForm({ ownerId, onCreated }: PropertyFormProps) {
     setMessage(null);
     setIsSubmitting(true);
 
-    const id = propertyId || generatePropertyId();
-    if (!propertyId) setPropertyId(id);
-
     try {
-      const response = await fetch("/api/properties", {
+      let id = propertyId || generatePropertyId();
+      if (!propertyId) setPropertyId(id);
+
+      const body = {
+        id,
+        ownerId,
+        title: { en: values.title },
+        description: { en: values.description },
+        listingType: values.listingType,
+        propertyType: values.propertyType,
+        subCity: values.subCity,
+        price: Number(values.price),
+        currency: values.currency,
+        bedrooms: Number(values.bedrooms),
+        bathrooms: Number(values.bathrooms),
+        sizeM2: Number(values.sizeM2),
+        metadata: [
+          "document-assisted-submission",
+          ...(documentNames.length > 0
+            ? [`docs:${documentNames.length}`]
+            : []),
+        ],
+        ...(values.addressLine ? { addressLine: values.addressLine } : {}),
+      };
+
+      let response = await fetch("/api/properties", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          id,
-          ownerId,
-          title: { en: values.title },
-          description: { en: values.description },
-          listingType: values.listingType,
-          propertyType: values.propertyType,
-          subCity: values.subCity,
-          price: Number(values.price),
-          currency: values.currency,
-          bedrooms: Number(values.bedrooms),
-          bathrooms: Number(values.bathrooms),
-          sizeM2: Number(values.sizeM2),
-          metadata: [
-            "document-assisted-submission",
-            ...(documentNames.length > 0
-              ? [`docs:${documentNames.length}`]
-              : []),
-          ],
-          ...(values.addressLine ? { addressLine: values.addressLine } : {}),
-        }),
+        body: JSON.stringify(body),
       });
-      const text = await response.text();
+      let text = await response.text();
       let payload: { data?: { id: string }; error?: string; message?: string } =
         {};
       try {
@@ -385,14 +387,37 @@ export function PropertyForm({ ownerId, onCreated }: PropertyFormProps) {
         );
       }
 
+      // If the client-chosen ID raced with another listing, mint a new one and retry once.
+      if (
+        !response.ok &&
+        payload.error === "PropertyIdCollision"
+      ) {
+        id = generatePropertyId();
+        setPropertyId(id);
+        response = await fetch("/api/properties", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ ...body, id }),
+        });
+        text = await response.text();
+        try {
+          payload = text ? (JSON.parse(text) as typeof payload) : {};
+        } catch {
+          throw new Error(
+            text.slice(0, 160).trim() || "Property could not be submitted.",
+          );
+        }
+      }
+
       if (!response.ok || !payload.data) {
         throw new Error(
-          payload.error ||
-            payload.message ||
+          payload.message ||
+            payload.error ||
             "Property could not be submitted.",
         );
       }
 
+      setPropertyId(payload.data.id);
       setMessage({
         tone: "success",
         text: `Property ${payload.data.id} was submitted successfully.`,
