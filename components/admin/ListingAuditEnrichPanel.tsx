@@ -200,11 +200,11 @@ export function ListingAuditEnrichPanel({
   }
 
   return (
-    <section className="mt-6 rounded-2xl border border-slate-200 bg-white p-4 sm:p-5">
+    <section className="rounded-xl border border-slate-200 bg-white p-3 sm:p-4">
       <h3 className="text-sm font-semibold text-slate-900">{copy.title}</h3>
-      <p className="mt-1 text-sm leading-relaxed text-slate-600">{copy.lede}</p>
+      <p className="mt-1 text-xs leading-relaxed text-slate-600">{copy.lede}</p>
 
-      <div className="mt-4 grid gap-4 lg:grid-cols-2">
+      <div className="mt-3 space-y-4">
         <div className="space-y-3">
           <label className="grid gap-1.5">
             <span className="text-sm font-medium text-slate-700">

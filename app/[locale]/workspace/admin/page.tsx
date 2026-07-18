@@ -357,14 +357,6 @@ export default async function AdminWorkspacePage({
         )}
         alerts={alerts}
         copy={{
-          eyebrow: ws.eyebrow,
-          title: ws.title,
-          lede: ws.lede,
-          motto: dictionary.brand.motto,
-          openQueue: ws.openQueue,
-          importSources: ws.importSources,
-          dashboard: ws.dashboard,
-          accountProfile: ws.accountProfile,
           snapshotTitle: ws.snapshotTitle,
           snapshotPending: ws.snapshotPending,
           snapshotAlerts: ws.snapshotAlerts,

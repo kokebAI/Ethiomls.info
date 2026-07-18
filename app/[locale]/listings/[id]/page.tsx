@@ -218,7 +218,11 @@ export default async function ListingDetailPage({
   const listingUrl = absoluteUrl(`${base}/listings/${listing.id}`);
 
   return (
-    <div className="mx-auto flex max-w-5xl flex-col gap-6">
+    <div
+      className={`mx-auto flex flex-col gap-6 ${
+        admin ? "max-w-7xl" : "max-w-5xl"
+      }`}
+    >
       <JsonLd
         data={[
           realEstateListingJsonLd({
@@ -266,6 +270,12 @@ export default async function ListingDetailPage({
           listingId={listing.id}
           status={listing.status}
           alreadyApproved={Boolean(listing.adminAuditApprovedAt)}
+          factsTitle={t("listingDetail.facts")}
+          facts={facts}
+          priceValue={price}
+          priceLabel={
+            listing.listingType === "RENT" ? t("listingDetail.perMonth") : undefined
+          }
           attachment={{
             ownerId: listing.ownerId,
             ownerName: listing.owner?.fullName ?? "",
@@ -394,7 +404,7 @@ export default async function ListingDetailPage({
         </div>
       </section>
 
-      <div className="grid gap-6 lg:grid-cols-[1fr_20rem]">
+      <div className="grid gap-6 lg:grid-cols-[3fr_1fr] lg:items-start">
         <div className="min-w-0 space-y-6">
           {/* Key facts */}
           <section className="rounded-2xl border border-slate-200/90 bg-white p-5 shadow-[var(--shadow-card)] sm:p-6">
