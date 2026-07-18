@@ -1,4 +1,8 @@
-import { createGeminiClient } from "@/lib/ai/gemini";
+import {
+  createGeminiClient,
+  GEMINI_MODEL_CANDIDATES,
+} from "@/lib/ai/gemini";
+import { mapGeminiError } from "@/lib/ai/gemini-errors";
 
 export type TranslateTargetLanguage = "am" | "en";
 
@@ -19,15 +23,12 @@ export async function translateListingText(
   const sourceLanguage = targetLanguage === "am" ? "English" : "Amharic";
   const targetLabel = targetLanguage === "am" ? "Amharic" : "English";
   const ai = createGeminiClient();
-
-  const response = await ai.models.generateContent({
-    model: process.env.GEMINI_MODEL?.trim() || "gemini-2.5-flash",
-    contents: [
-      {
-        role: "user",
-        parts: [
-          {
-            text: `${SYSTEM_PROMPT}
+  const contents = [
+    {
+      role: "user" as const,
+      parts: [
+        {
+          text: `${SYSTEM_PROMPT}
 
 Source language: ${sourceLanguage}
 Target language: ${targetLabel}
@@ -36,26 +37,49 @@ Text to translate:
 """
 ${trimmed.slice(0, 8000)}
 """`,
-          },
-        ],
-      },
-    ],
-    config: {
-      temperature: 0.2,
+        },
+      ],
     },
-  });
+  ];
 
-  const out = (response.text ?? "").trim();
-  if (!out) {
-    throw new Error("Gemini returned an empty translation.");
+  let lastError: unknown;
+  for (const model of GEMINI_MODEL_CANDIDATES) {
+    try {
+      const response = await ai.models.generateContent({
+        model,
+        contents,
+        config: {
+          temperature: 0.2,
+        },
+      });
+
+      const out = (response.text ?? "").trim();
+      if (!out) {
+        throw new Error(`Empty translation from ${model}`);
+      }
+
+      // Strip accidental wrapping quotes / fences from the model.
+      return out
+        .replace(/^```(?:\w+)?\s*/i, "")
+        .replace(/\s*```$/i, "")
+        .replace(/^["“]|["”]$/g, "")
+        .trim();
+    } catch (error) {
+      lastError = error;
+      const mapped = mapGeminiError(error);
+      if (
+        mapped.code === "AiInvalidKey" ||
+        mapped.code === "AiPermissionDenied" ||
+        mapped.code === "AiQuotaExceeded"
+      ) {
+        throw new Error(mapped.message);
+      }
+      console.warn(`[translate] model ${model} failed:`, mapped.message);
+    }
   }
 
-  // Strip accidental wrapping quotes / fences from the model.
-  return out
-    .replace(/^```(?:\w+)?\s*/i, "")
-    .replace(/\s*```$/i, "")
-    .replace(/^["“]|["”]$/g, "")
-    .trim();
+  const mapped = mapGeminiError(lastError);
+  throw new Error(mapped.message);
 }
 
 export type BilingualListingCopy = {

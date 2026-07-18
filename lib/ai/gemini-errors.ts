@@ -40,6 +40,19 @@ export function mapGeminiError(error: unknown): {
   }
 
   if (
+    blob.includes("no longer available") ||
+    blob.includes("not_found") ||
+    (blob.includes('"code":404') && blob.includes("model"))
+  ) {
+    return {
+      code: "AiModelUnavailable",
+      message:
+        "This Gemini model is not available for your project. Update GEMINI_MODEL (try gemini-3-flash-preview or gemini-flash-latest).",
+      statusCode: 404,
+    };
+  }
+
+  if (
     blob.includes("quota") ||
     blob.includes("resource_exhausted") ||
     blob.includes('"code":429')

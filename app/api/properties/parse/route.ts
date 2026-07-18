@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { Type } from "@google/genai";
 import {
   createGeminiClient,
+  GEMINI_MODEL_CANDIDATES,
   isGeminiConfigured,
 } from "@/lib/ai/gemini";
 import { mapGeminiError } from "@/lib/ai/gemini-errors";
@@ -126,31 +127,56 @@ export async function POST(request: Request) {
 
     const ai = createGeminiClient();
     const data = Buffer.from(await file.arrayBuffer()).toString("base64");
-
-    const response = await ai.models.generateContent({
-      model: process.env.GEMINI_MODEL?.trim() || "gemini-2.5-flash",
-      contents: [
-        {
-          inlineData: {
-            data,
-            mimeType,
-          },
+    const contents = [
+      {
+        inlineData: {
+          data,
+          mimeType,
         },
-        `Analyze this Ethiopian real-estate document or receipt.
+      },
+      `Analyze this Ethiopian real-estate document or receipt.
 Extract the property title, listing price, description, Addis Ababa sub-city,
 number of bedrooms, bathrooms, and size in m² when present.
 Return the sub-city as one of: ${ADDIS_SUB_CITY_CODES.join(", ")}.
 Use 0 for missing numbers. Do not invent details.
 Return a clean JSON object matching the requested structure.`,
-      ],
-      config: {
-        temperature: 0,
-        responseMimeType: "application/json",
-        responseSchema,
-      },
-    });
+    ];
 
-    const parsedJson = JSON.parse(response.text || "{}") as {
+    let lastError: unknown;
+    let responseText = "";
+    for (const model of GEMINI_MODEL_CANDIDATES) {
+      try {
+        const response = await ai.models.generateContent({
+          model,
+          contents,
+          config: {
+            temperature: 0,
+            responseMimeType: "application/json",
+            responseSchema,
+          },
+        });
+        responseText = response.text || "";
+        if (!responseText.trim()) {
+          throw new Error(`Empty model response from ${model}`);
+        }
+        lastError = undefined;
+        break;
+      } catch (error) {
+        lastError = error;
+        const mapped = mapGeminiError(error);
+        if (
+          mapped.code === "AiInvalidKey" ||
+          mapped.code === "AiPermissionDenied" ||
+          mapped.code === "AiQuotaExceeded"
+        ) {
+          throw error;
+        }
+        console.warn(`[parse] model ${model} failed:`, mapped.message);
+      }
+    }
+    if (lastError) throw lastError;
+
+    const parsedJson = JSON.parse(responseText || "{}") as {
       title?: string;
       price?: number;
       subCity?: string;
