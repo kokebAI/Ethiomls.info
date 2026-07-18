@@ -421,8 +421,6 @@ export function ListingAuditPanel({
           </button>
         ) : null}
       </div>
-
-      <ListingAuditEnrichPanel listingId={listingId} copy={copy.enrich} />
     </section>
   );
 }
