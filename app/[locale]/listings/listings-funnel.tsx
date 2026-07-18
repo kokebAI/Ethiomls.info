@@ -5,11 +5,16 @@ import { useSearchParams } from "next/navigation";
 import { SlidersHorizontal } from "lucide-react";
 import { PageDirectory, type DirectoryItem } from "@/components/PageDirectory";
 import { useTranslation } from "@/hooks/useTranslation";
+import {
+  convertBudget,
+  resolveNbeUsdEtbRate,
+} from "@/lib/compliance/currency";
 
 export type ListingFilterItem = DirectoryItem & {
   subCityCode: string;
   listingType: string;
   priceAmount: number;
+  priceCurrency: "ETB" | "USD";
 };
 
 type SubCityOption = {
@@ -72,9 +77,14 @@ export function ListingsFunnel({
     "newest",
   );
 
+  // Guided search and filter inputs are ETB; normalize listing prices before compare/sort.
+  const rate = useMemo(() => resolveNbeUsdEtbRate(), []);
+
   const filtered = useMemo(() => {
     const min = minPrice ? Number(minPrice) : null;
     const max = maxPrice ? Number(maxPrice) : null;
+    const toEtb = (item: ListingFilterItem) =>
+      convertBudget(item.priceAmount, item.priceCurrency, "ETB", rate);
 
     let result = listings.filter((item) => {
       if (subCityCode && item.subCityCode !== subCityCode) return false;
@@ -86,10 +96,11 @@ export function ListingsFunnel({
         return false;
       }
       if (listingType && item.listingType !== listingType) return false;
-      if (min != null && Number.isFinite(min) && item.priceAmount < min) {
+      const etb = toEtb(item);
+      if (min != null && Number.isFinite(min) && etb < min) {
         return false;
       }
-      if (max != null && Number.isFinite(max) && item.priceAmount > max) {
+      if (max != null && Number.isFinite(max) && etb > max) {
         return false;
       }
       return true;
@@ -97,9 +108,9 @@ export function ListingsFunnel({
 
     result = [...result];
     if (sortBy === "price-asc") {
-      result.sort((a, b) => a.priceAmount - b.priceAmount);
+      result.sort((a, b) => toEtb(a) - toEtb(b));
     } else if (sortBy === "price-desc") {
-      result.sort((a, b) => b.priceAmount - a.priceAmount);
+      result.sort((a, b) => toEtb(b) - toEtb(a));
     }
 
     return result;
@@ -111,6 +122,7 @@ export function ListingsFunnel({
     minPrice,
     maxPrice,
     sortBy,
+    rate,
   ]);
 
   function resetFilters() {

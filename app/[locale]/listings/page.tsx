@@ -5,6 +5,7 @@ import { isLocale, type Locale } from "@/lib/i18n/config";
 import { getDictionary, translate } from "@/lib/i18n/getDictionary";
 import { pickLocalized } from "@/lib/i18n/pickLocalized";
 import { formatMoney } from "@/lib/compliance/currency";
+import { countNoun } from "@/lib/i18n/plural";
 import type { DirectoryBadge } from "@/components/PageDirectory";
 
 function listingBadge(type: string, t: (key: string) => string): DirectoryBadge {
@@ -65,10 +66,18 @@ export default async function ListingsPage({
         subCity,
         priceFormatted,
         listing.bedrooms != null
-          ? `${listing.bedrooms} ${t("listing.bedrooms").toLowerCase()}`
+          ? countNoun(
+              listing.bedrooms,
+              t("listing.bedroomUnit"),
+              t("listing.bedroomsUnit"),
+            )
           : null,
         listing.bathrooms != null
-          ? `${listing.bathrooms} ${t("listing.bathrooms").toLowerCase()}`
+          ? countNoun(
+              listing.bathrooms,
+              t("listing.bathroomUnit"),
+              t("listing.bathroomsUnit"),
+            )
           : null,
       ]
         .filter(Boolean)
@@ -77,6 +86,7 @@ export default async function ListingsPage({
       subCityCode,
       listingType: listing.listingType,
       priceAmount: Number(listing.priceAmount),
+      priceCurrency: listing.priceCurrency,
     };
   });
 

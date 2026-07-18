@@ -7,6 +7,7 @@ import {
   projectWalkthroughMeta,
 } from "@/lib/catalog/project-building";
 import { fetchProjectById } from "@/lib/catalog/queries";
+import { formatConstructionStage } from "@/lib/domain/construction-stage";
 import { isLocale, type Locale } from "@/lib/i18n/config";
 import { getDictionary, translate } from "@/lib/i18n/getDictionary";
 import { pickLocalized } from "@/lib/i18n/pickLocalized";
@@ -35,7 +36,7 @@ export default async function ProjectDetailPage({
   const developerName =
     pickLocalized(project.developer.displayName, locale) ||
     project.developer.tradeName;
-  const stageLabel = project.constructionStage.replaceAll("_", " ");
+  const stageLabel = formatConstructionStage(project.constructionStage);
   const website =
     (typeof walkthrough.website === "string" && walkthrough.website) ||
     project.developer.website;

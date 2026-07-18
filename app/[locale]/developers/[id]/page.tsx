@@ -10,8 +10,10 @@ import {
   fetchPublishedListingsByDeveloper,
   fetchPublishedProjectsByDeveloper,
 } from "@/lib/catalog/queries";
+import { formatConstructionStage } from "@/lib/domain/construction-stage";
 import { isLocale, type Locale } from "@/lib/i18n/config";
 import { getDictionary, translate } from "@/lib/i18n/getDictionary";
+import { countNoun } from "@/lib/i18n/plural";
 import { pickLocalized } from "@/lib/i18n/pickLocalized";
 
 export const dynamic = "force-dynamic";
@@ -95,7 +97,11 @@ export default async function DeveloperDetailPage({
         subCity,
         formatMoney(Number(listing.priceAmount), listing.priceCurrency),
         listing.bedrooms != null
-          ? `${listing.bedrooms} ${t("listing.bedrooms").toLowerCase()}`
+          ? countNoun(
+              listing.bedrooms,
+              t("listing.bedroomUnit"),
+              t("listing.bedroomsUnit"),
+            )
           : null,
       ]
         .filter(Boolean)
@@ -108,7 +114,7 @@ export default async function DeveloperDetailPage({
     const subCity = project.subCity
       ? pickLocalized(project.subCity.name, locale) || project.subCity.code
       : "—";
-    const stageLabel = project.constructionStage.replaceAll("_", " ");
+    const stageLabel = formatConstructionStage(project.constructionStage);
     const completion = `${Number(project.completionPercent)}%`;
 
     return {

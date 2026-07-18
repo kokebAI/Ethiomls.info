@@ -358,9 +358,15 @@ model Listing {
   nbeUsdEtbRateUsed  Decimal?          @db.Decimal(12, 4)
   /// True when the listing targets or involves a foreign buyer under Proc. 1388/2025
   openToForeignBuyers Boolean          @default(false)
-  /// Amenity reliability flags used in SMS / Telegram broadcasts
+  /// Amenity reliability flags used in SMS / Telegram broadcasts and listing detail
   waterAvailable     Boolean           @default(false)
   powerBackup        Boolean           @default(false)
+  gatedCompound      Boolean           @default(false)
+  parking            Boolean           @default(false)
+  elevator           Boolean           @default(false)
+  furnished          Boolean           @default(false)
+  /// True when Proc. 1357 escrow account is verified for this listing / project unit
+  escrowVerified     Boolean           @default(false)
   /// Last seller refresh — drives 30-day stale archival + day-25 SMS reminder
   lastRefreshDate    DateTime          @default(now())
   expiryReminderSentAt DateTime?

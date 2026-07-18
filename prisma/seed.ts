@@ -8,6 +8,7 @@ import {
   UserRole,
 } from "@prisma/client";
 import { allocateUniquePropertyId } from "../lib/db/allocatePropertyId";
+import { amenityFlagsFromTags } from "../lib/properties/amenities";
 
 const prisma = new PrismaClient();
 
@@ -684,8 +685,13 @@ async function seedSubCityListings() {
       listingType: index % 4 === 0 ? ListingType.RENT : ListingType.SALE,
       category: PropertyCategory.RESIDENTIAL,
       metadataTags: [seedKey, "parking", "security", "water", `pid:${listingId}`],
-      waterAvailable: true,
-      powerBackup: index % 2 === 0,
+      ...amenityFlagsFromTags([
+        "parking",
+        "security",
+        "water",
+        index % 2 === 0 ? "power-backup" : "",
+        index % 3 === 0 ? "elevator" : "",
+      ]),
     };
 
     if (existingListing) {
