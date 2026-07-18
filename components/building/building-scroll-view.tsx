@@ -17,6 +17,7 @@ import {
   type BuildingFloor,
   type BuildingUnit,
 } from "@/lib/building/types";
+import { BuildingShowreel } from "@/components/building/building-showreel";
 import styles from "./building-scroll-view.module.css";
 
 type BuildingScrollViewProps = {
@@ -27,84 +28,6 @@ type BuildingScrollViewProps = {
 
 function floorKey(level: number) {
   return `floor-${level}`;
-}
-
-function FloorSkeleton({
-  floors,
-  activeLevel,
-  onSelect,
-}: {
-  floors: BuildingFloor[];
-  activeLevel: number | null;
-  onSelect: (level: number) => void;
-}) {
-  const { t } = useTranslation();
-  const height = Math.max(220, floors.length * 28 + 48);
-  const floorHeight = Math.min(26, (height - 40) / Math.max(floors.length, 1));
-
-  return (
-    <svg
-      className={styles.skeleton}
-      viewBox={`0 0 120 ${height}`}
-      role="group"
-      aria-label={t("building.skeletonLabel")}
-    >
-      <rect
-        x="18"
-        y="8"
-        width="84"
-        height={height - 24}
-        rx="8"
-        className={styles.skeletonShell}
-      />
-      <rect
-        x="8"
-        y={height - 16}
-        width="104"
-        height="10"
-        rx="3"
-        className={styles.skeletonBase}
-      />
-      {floors.map((floor, index) => {
-        const y = 18 + index * floorHeight;
-        const available = countAvailableUnits(floor);
-        const active = floor.level === activeLevel;
-        // Prefer aria-label over SVG <title> — browsers rewrite <title> text
-        // during hydration and trigger Recoverable Errors in React 19.
-        const floorName =
-          floor.label ?? t("building.floorLabel", { level: floor.level });
-        const ariaLabel = `${floorName} — ${available} ${t("building.availableShort")}`;
-        return (
-          <g
-            key={floor.level}
-            className={active ? styles.skeletonFloorActive : styles.skeletonFloor}
-            onClick={() => onSelect(floor.level)}
-            style={{ cursor: "pointer" }}
-            role="button"
-            tabIndex={0}
-            aria-label={ariaLabel}
-            onKeyDown={(event) => {
-              if (event.key === "Enter" || event.key === " ") {
-                event.preventDefault();
-                onSelect(floor.level);
-              }
-            }}
-          >
-            <rect
-              x="26"
-              y={y}
-              width="68"
-              height={Math.max(14, floorHeight - 4)}
-              rx="3"
-            />
-            {available > 0 ? (
-              <circle cx="88" cy={y + floorHeight / 2 - 2} r="4" className={styles.skeletonDot} />
-            ) : null}
-          </g>
-        );
-      })}
-    </svg>
-  );
 }
 
 function UnitSubCard({
@@ -243,7 +166,7 @@ export function BuildingScrollView({
     >
       <header className={styles.header}>
         <div>
-          <p className={styles.eyebrow}>{t("building.eyebrow")}</p>
+          <p className={styles.eyebrow}>{t("building.showreelEyebrow")}</p>
           <h2 id={titleId} className={styles.title}>
             {building.name}
           </h2>
@@ -264,16 +187,16 @@ export function BuildingScrollView({
         ) : null}
       </header>
 
-      <div className={styles.layout}>
-        <aside className={styles.rail} aria-hidden={false}>
-          <FloorSkeleton
-            floors={floors}
-            activeLevel={activeLevel}
-            onSelect={openFloor}
-          />
-          <p className={styles.railHint}>{t("building.scrollHint")}</p>
-        </aside>
+      <div className={styles.showreelHero}>
+        <BuildingShowreel
+          building={building}
+          activeLevel={activeLevel}
+          onFloorSelect={openFloor}
+          variant="hero"
+        />
+      </div>
 
+      <div className={styles.layout}>
         <div className={styles.scrollColumn}>
           {floors.map((floor) => {
             const available = countAvailableUnits(floor);

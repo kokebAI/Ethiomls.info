@@ -12,11 +12,79 @@ export async function fetchVerifiedDevelopers() {
         headquartersSubCity: {
           select: { code: true, name: true },
         },
+        _count: {
+          select: {
+            listings: { where: { status: ListingStatus.PUBLISHED } },
+            projects: { where: { status: ListingStatus.PUBLISHED } },
+          },
+        },
       },
       orderBy: { tradeName: "asc" },
     });
   } catch (error) {
     console.error("[catalog] fetchVerifiedDevelopers failed:", error);
+    return [];
+  }
+}
+
+export async function fetchDeveloperById(id: string) {
+  try {
+    return await prisma.developerProfile.findUnique({
+      where: { id },
+      include: {
+        headquartersSubCity: {
+          select: { code: true, name: true },
+        },
+      },
+    });
+  } catch (error) {
+    console.error("[catalog] fetchDeveloperById failed:", error);
+    return null;
+  }
+}
+
+export async function fetchPublishedListingsByDeveloper(developerId: string) {
+  try {
+    return await prisma.listing.findMany({
+      where: {
+        status: ListingStatus.PUBLISHED,
+        developerId,
+      },
+      include: {
+        subCity: {
+          select: { code: true, name: true },
+        },
+        developer: {
+          select: { tradeName: true, displayName: true },
+        },
+        project: {
+          select: { id: true, title: true },
+        },
+      },
+      orderBy: [{ publishedAt: "desc" }, { createdAt: "desc" }],
+    });
+  } catch (error) {
+    console.error("[catalog] fetchPublishedListingsByDeveloper failed:", error);
+    return [];
+  }
+}
+
+export async function fetchPublishedProjectsByDeveloper(developerId: string) {
+  try {
+    return await prisma.project.findMany({
+      where: {
+        status: ListingStatus.PUBLISHED,
+        developerId,
+      },
+      include: {
+        subCity: {
+          select: { code: true, name: true },
+        },
+      },
+      orderBy: [{ completionPercent: "desc" }, { updatedAt: "desc" }],
+    });
+  } catch (error) {
+    console.error("[catalog] fetchPublishedProjectsByDeveloper failed:", error);
     return [];
   }
 }

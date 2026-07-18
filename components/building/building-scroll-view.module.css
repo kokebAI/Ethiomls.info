@@ -55,65 +55,30 @@
   animation: pulse-live 1.6s ease-out infinite;
 }
 
+.showreelHero {
+  position: relative;
+  margin: 0;
+  border-radius: 1.15rem;
+  overflow: hidden;
+  isolation: isolate;
+  box-shadow:
+    0 28px 64px rgba(8, 18, 36, 0.28),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
 .layout {
   display: grid;
-  grid-template-columns: minmax(120px, 160px) minmax(0, 1fr);
-  gap: 1.25rem;
-  align-items: start;
-}
-
-.rail {
-  position: sticky;
-  top: calc(var(--header-h, 4.5rem) + 0.75rem);
-  display: grid;
-  gap: 0.65rem;
-  justify-items: center;
-}
-
-.skeleton {
-  width: 100%;
-  max-width: 140px;
-  height: auto;
-  filter: drop-shadow(0 10px 18px rgba(21, 37, 31, 0.08));
-}
-
-.skeletonShell {
-  fill: #dfe9e3;
-  stroke: rgba(21, 37, 31, 0.12);
-  stroke-width: 1.5;
-}
-
-.skeletonBase {
-  fill: #c5d4cb;
-}
-
-.skeletonFloor rect {
-  fill: #f7fbf9;
-  stroke: rgba(21, 37, 31, 0.14);
-  stroke-width: 1;
-  transition: fill 180ms ease, stroke 180ms ease;
-}
-
-.skeletonFloorActive rect {
-  fill: var(--color-accent, #0f6b4c);
-  stroke: #0c573e;
-}
-
-.skeletonDot {
-  fill: #f4fff9;
-}
-
-.railHint {
-  margin: 0;
-  text-align: center;
-  font-size: 0.74rem;
-  color: var(--color-ink-muted, #4a5c54);
-  line-height: 1.35;
+  gap: 1rem;
 }
 
 .scrollColumn {
   display: grid;
   gap: 0.85rem;
+  max-height: min(52vh, 560px);
+  overflow-y: auto;
+  padding-right: 0.2rem;
+  scroll-behavior: smooth;
+  scrollbar-width: thin;
 }
 
 .floorSection {
@@ -342,16 +307,7 @@
 }
 
 @media (max-width: 820px) {
-  .layout {
-    grid-template-columns: 1fr;
-  }
-
-  .rail {
-    position: relative;
-    top: 0;
-  }
-
-  .skeleton {
-    max-width: 180px;
+  .scrollColumn {
+    max-height: none;
   }
 }
