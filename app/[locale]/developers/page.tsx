@@ -1,12 +1,42 @@
+import type { Metadata } from "next";
 import { PageDirectory, type DirectoryBadge } from "@/components/PageDirectory";
 import { PageIntro } from "@/components/PageIntro";
 import { fetchVerifiedDevelopers } from "@/lib/catalog/queries";
 import { isLocale, type Locale } from "@/lib/i18n/config";
 import { getDictionary, translate } from "@/lib/i18n/getDictionary";
 import { pickLocalized } from "@/lib/i18n/pickLocalized";
+import { buildPageMetadata } from "@/lib/seo/build-metadata";
 
 /** DB-backed page — skip SSG so Vercel builds succeed without live Postgres. */
 export const dynamic = "force-dynamic";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale: raw } = await params;
+  const locale = (isLocale(raw) ? raw : "en") as Locale;
+  const dictionary = getDictionary(locale);
+
+  return buildPageMetadata({
+    locale,
+    path: "/developers",
+    title:
+      locale === "en"
+        ? "Verified Developers in Addis Ababa | EthioMLS"
+        : translate(dictionary, "pages.developers.title"),
+    description:
+      locale === "en"
+        ? "Meet verified corporate developers and licensed brokers listing escrow-backed inventory across Addis Ababa — trusted by diaspora and global investors."
+        : translate(dictionary, "pages.developers.lede"),
+    keywords: [
+      "Addis Ababa property developers",
+      "Ethiopia real estate developers",
+      "diaspora trusted developers Ethiopia",
+    ],
+  });
+}
 
 export default async function DevelopersPage({
   params,

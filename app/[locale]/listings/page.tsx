@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { PageIntro } from "@/components/PageIntro";
 import { ListingsFunnel } from "./listings-funnel";
 import { fetchPublishedListings } from "@/lib/catalog/queries";
@@ -7,6 +8,7 @@ import { pickLocalized } from "@/lib/i18n/pickLocalized";
 import { formatMoney } from "@/lib/compliance/currency";
 import { countNoun } from "@/lib/i18n/plural";
 import type { DirectoryBadge } from "@/components/PageDirectory";
+import { buildPageMetadata } from "@/lib/seo/build-metadata";
 
 function listingBadge(type: string, t: (key: string) => string): DirectoryBadge {
   switch (type) {
@@ -23,6 +25,35 @@ function listingBadge(type: string, t: (key: string) => string): DirectoryBadge 
 
 /** DB-backed page — skip SSG so Vercel builds succeed without live Postgres. */
 export const dynamic = "force-dynamic";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale: raw } = await params;
+  const locale = (isLocale(raw) ? raw : "en") as Locale;
+  const dictionary = getDictionary(locale);
+
+  return buildPageMetadata({
+    locale,
+    path: "/listings",
+    title:
+      locale === "en"
+        ? "Addis Ababa Property for Sale & Rent | Verified Listings"
+        : translate(dictionary, "pages.listings.title"),
+    description:
+      locale === "en"
+        ? "Browse verified homes and commercial spaces for sale or rent across Addis Ababa sub-cities. Built for diaspora buyers and international investors."
+        : translate(dictionary, "pages.listings.lede"),
+    keywords: [
+      "Addis Ababa property for sale",
+      "Addis Ababa apartments for rent",
+      "Bole Kirkos Yeka listings",
+      "diaspora buy home Ethiopia",
+    ],
+  });
+}
 
 export default async function ListingsPage({
   params,

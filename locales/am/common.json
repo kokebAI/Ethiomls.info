@@ -226,7 +226,22 @@
       "projectsHeading": "ፕሮጀክቶች",
       "listingCount": "{count} ዝርዝሮች",
       "projectCount": "{count} ፕሮጀክቶች",
-      "emptyListings": "ለዚህ ገንቢ እስካሁን የታተመ ንብረት የለም።"
+      "emptyListings": "ለዚህ ገንቢ እስካሁን የታተመ ንብረት የለም።",
+      "inventory": {
+        "heading": "የክፍል ክምችት",
+        "lede": "ፕሮጀክቶች እና ህንጻዎች በክፍል አይነት፣ ከተገኝነት ቆጠራ ጋር።",
+        "unitTypes": "የክፍል አይነቶች",
+        "units": "ክፍሎች",
+        "unitCount": "{count} ክፍሎች",
+        "available": "ይገኛል",
+        "reserved": "ተይዟል",
+        "sold": "ተሽጧል",
+        "viewUnit": "ክፍል ይመልከቱ",
+        "kindProject": "ፕሮጀክት",
+        "kindBuilding": "ህንጻ",
+        "kindStandalone": "ሌሎች ዝርዝሮች",
+        "standalone": "ነጠላ ዝርዝሮች"
+      }
     },
     "comingOnline": "ማውጫው በመስመር ላይ እየመጣ ነው — ከታች ናሙና እቃዎች።",
     "emptyHint": "ሙሉ ካታሎግ የ PostgreSQL ዳታቤዝ ሲገናኝ ይገኛል።",
@@ -270,6 +285,20 @@
     "verifyFailed": "ማረጋገጥ አልተሳካም።",
     "logout": "ውጣ",
     "backHome": "ወደ መነሻ",
+    "role": {
+      "label": "የእርስዎ ሚና",
+      "hint": "ለዚህ መለያ አንድ ሚና ይምረጡ። በኋላ መቀየር አይችሉም።",
+      "required": "መለያ ለመፍጠር አንድ ሚና ይምረጡ።",
+      "locked": "ሚናዎ በምዝገባ ጊዜ ተቀምጧል እና መቀየር አይቻልም።",
+      "client": "ደንበኛ / ተከራይ",
+      "clientHint": "ቤቶችን ይፈልጉ እና ይጠይቁ።",
+      "owner": "የንብረት ባለቤት",
+      "ownerHint": "የራስዎን ቤት ለሽያጭ ወይም ኪራይ ያስመዝግቡ።",
+      "broker": "ደላላ",
+      "brokerHint": "የደንበኛ ንብረት ያስተዳድሩ።",
+      "developer": "ገንቢ",
+      "developerHint": "ፕሮጀክቶችን እና ክፍሎችን ያትሙ።"
+    },
     "demo": {
       "title": "የማሳያ መለያዎች",
       "lede": "ሚና ይንኩ — ስልኩ ይሞላል። ከዚያ የSMS ኮድ ይላኩ። በአካባቢ ሙከራ ኮዱ በማያ ገጹ ላይ ይታያል።",
@@ -417,6 +446,9 @@
     "milestones": "የደረጃ ክፍፍል",
     "signUpForContact": "የእውቂያ ስልክ ለማየት እና ጉብኝት ለመጠየቅ በኢትዮጵያ ስልክ ይመዝገቡ።",
     "signUpForTour": "360° ጉብኝት ለመክፈት ነጻ መለያ ይፍጠሩ።",
-    "signUpCta": "ለመክፈት ይመዝገቡ"
+    "signUpCta": "ለመክፈት ይመዝገቡ",
+    "share": "ዝርዝር አጋራ",
+    "shareCopied": "ሊንኩ ተቀድቷል",
+    "shareDone": "ተጋርቷል"
   }
 }

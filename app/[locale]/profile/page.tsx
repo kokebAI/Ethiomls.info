@@ -3,9 +3,10 @@ import { redirect } from "next/navigation";
 import { LogoutButton } from "@/components/auth/LogoutButton";
 import { ProfileForm } from "@/components/auth/ProfileForm";
 import { getSession } from "@/lib/auth/session";
+import { roleLabelKey } from "@/lib/auth/signup-roles";
 import { prisma } from "@/lib/db/prisma";
 import { isLocale, type Locale } from "@/lib/i18n/config";
-import { getDictionary } from "@/lib/i18n/getDictionary";
+import { getDictionary, translate } from "@/lib/i18n/getDictionary";
 
 export const dynamic = "force-dynamic";
 
@@ -36,12 +37,14 @@ export default async function ProfilePage({
 
   const user = await prisma.user.findUnique({
     where: { id: session.userId },
-    select: { fullName: true, email: true, phone: true },
+    select: { fullName: true, email: true, phone: true, role: true },
   });
 
   if (!user) {
     redirect(`/${locale}/login`);
   }
+
+  const roleLabel = translate(dictionary, roleLabelKey(user.role));
 
   return (
     <div className="mx-auto flex max-w-2xl flex-col gap-6">
@@ -67,6 +70,7 @@ export default async function ProfilePage({
           initialFullName={user.fullName}
           initialEmail={user.email}
           phone={user.phone}
+          roleLabel={roleLabel}
         />
       </section>
     </div>

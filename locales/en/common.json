@@ -1,7 +1,7 @@
 {
   "brand": {
     "name": "EthioMLS",
-    "tagline": "Find homes and commercial spaces across Ethiopia",
+    "tagline": "Buy and rent verified property in Addis Ababa — for Ethiopian diaspora and global investors",
     "motto": "A trustworthy foundation, for a better tomorrow."
   },
   "nav": {
@@ -189,6 +189,20 @@
     "verifyFailed": "Verification failed.",
     "logout": "Sign out",
     "backHome": "Back to home",
+    "role": {
+      "label": "Your role",
+      "hint": "Pick one role for this account. You cannot change it later.",
+      "required": "Choose one role to create your account.",
+      "locked": "Your role was set at signup and cannot be changed.",
+      "client": "Client / renter",
+      "clientHint": "Browse and enquire about homes.",
+      "owner": "Property owner",
+      "ownerHint": "List your own home for sale or rent.",
+      "broker": "Broker",
+      "brokerHint": "List and manage client inventory.",
+      "developer": "Developer",
+      "developerHint": "Publish projects and off-plan units."
+    },
     "demo": {
       "title": "Demo accounts",
       "lede": "Tap a role to fill the phone field, then send the SMS code. In local mock mode the code appears on screen.",
@@ -294,7 +308,10 @@
     "milestones": "Milestone split",
     "signUpForContact": "Sign up with your Ethiopian mobile number to see the contact phone and request a visit.",
     "signUpForTour": "Create a free account to open the 360° virtual tour.",
-    "signUpCta": "Sign up to unlock"
+    "signUpCta": "Sign up to unlock",
+    "share": "Share listing",
+    "shareCopied": "Link copied",
+    "shareDone": "Shared"
   },
   "imports": {
     "eyebrow": "Admin",
@@ -382,16 +399,16 @@
   "pages": {
     "listings": {
       "title": "Listings",
-      "lede": "Browse active homes and commercial spaces across Addis Ababa sub-cities."
+      "lede": "Browse verified homes and commercial spaces for sale or rent across Addis Ababa — built for diaspora buyers and investors worldwide."
     },
     "projects": {
       "title": "Projects",
-      "lede": "Track off-plan and under-construction projects with escrow-stage visibility.",
+      "lede": "Track escrow-backed off-plan and under-construction projects in Addis Ababa with clear unit inventory.",
       "selectUnit": "Inspect a floor, then select a unit to see MLS ID and property details."
     },
     "developers": {
       "title": "Developers",
-      "lede": "Explore verified corporate developers and licensed delala partners on EthioMLS.",
+      "lede": "Explore verified corporate developers and licensed delala partners listing inventory for diaspora and investors on EthioMLS.",
       "back": "All developers",
       "detailLede": "Published properties from this developer · {area}",
       "detailLedeFallback": "Published properties from this developer.",
@@ -399,7 +416,22 @@
       "projectsHeading": "Projects",
       "listingCount": "{count} listings",
       "projectCount": "{count} projects",
-      "emptyListings": "No published properties for this developer yet."
+      "emptyListings": "No published properties for this developer yet.",
+      "inventory": {
+        "heading": "Unit inventory",
+        "lede": "Projects and buildings grouped by unit type, with availability counts.",
+        "unitTypes": "Unit types",
+        "units": "units",
+        "unitCount": "{count} units",
+        "available": "Available",
+        "reserved": "Reserved",
+        "sold": "Sold",
+        "viewUnit": "View unit",
+        "kindProject": "Project",
+        "kindBuilding": "Building",
+        "kindStandalone": "Other listings",
+        "standalone": "Standalone listings"
+      }
     },
     "comingOnline": "Directory coming online — sample inventory below.",
     "emptyHint": "Full catalogue connects when your PostgreSQL database is linked.",

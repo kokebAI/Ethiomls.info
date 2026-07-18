@@ -226,7 +226,22 @@
       "projectsHeading": "ፕሮጀክታት",
       "listingCount": "{count} ዝርዝራት",
       "projectCount": "{count} ፕሮጀክታት",
-      "emptyListings": "ንዚ ኣራጋጺ ዝተሓትመ ንብረት የለን።"
+      "emptyListings": "ንዚ ኣራጋጺ ዝተሓትመ ንብረት የለን።",
+      "inventory": {
+        "heading": "ናይ ኣሃዱ ክምችት",
+        "lede": "ፕሮጀክታትን ህንጻታትን ብዓይነት ኣሃዱ ተኸፋፊሎም፣ ምስ ቁጽሪ ርክበት።",
+        "unitTypes": "ዓይነታት ኣሃዱ",
+        "units": "ኣሃዱታት",
+        "unitCount": "{count} ኣሃዱታት",
+        "available": "ይርከብ",
+        "reserved": "ተሓልዩ",
+        "sold": "ተሸይጡ",
+        "viewUnit": "ኣሃዱ ርአ",
+        "kindProject": "ፕሮጀክት",
+        "kindBuilding": "ህንጻ",
+        "kindStandalone": "ካልኦት ዝርዝራት",
+        "standalone": "ንጽል ዝርዝራት"
+      }
     },
     "comingOnline": "ዝርዝር ኣብ መስመር ይመጽእ ኣሎ — ናሙና ኣብ ታሕቲ።",
     "emptyHint": "ምሉእ ካታሎግ PostgreSQL ዳታቤዝ ምስ ተተሓሓዘ ይርከብ።",
@@ -270,6 +285,20 @@
     "verifyFailed": "ምርግጋጽ ኣይሰለጠን።",
     "logout": "ውጻእ",
     "backHome": "ናብ መእተዊ",
+    "role": {
+      "label": "ተራኻ",
+      "hint": "ንዚ ሕሳብ ሓደ ተራ ምረጽ። ድሒርካ ክትቕይሮ ኣይትኽእልን።",
+      "required": "ናይ ሕሳብ ንምፍጣር ሓደ ተራ ምረጽ።",
+      "locked": "ተራኻ ኣብ ምዝገባ ተቐሚጡ እዩ — ክቕየር ኣይክእልን።",
+      "client": "ዓሚል / ተኻራይ",
+      "clientHint": "ኣባይቲ ድለን ሕተት።",
+      "owner": "ዋና ንብረት",
+      "ownerHint": "ናትካ ገዛ ንመሸጣ ወይ ኪራይ መዝግብ።",
+      "broker": "ደላላ",
+      "brokerHint": "ንብረት ዓማዊል ኣመሓድር።",
+      "developer": "ኣራጋጺ",
+      "developerHint": "ፕሮጀክታትን ኣሃዱታትን ኣሕትም።"
+    },
     "demo": {
       "title": "Demo accounts",
       "lede": "Tap a role to fill the phone field, then send the SMS code. In local mock mode the code appears on screen.",
@@ -417,6 +446,9 @@
     "milestones": "Milestone split",
     "signUpForContact": "Sign up with your Ethiopian mobile number to see the contact phone and request a visit.",
     "signUpForTour": "Create a free account to open the 360° virtual tour.",
-    "signUpCta": "Sign up to unlock"
+    "signUpCta": "Sign up to unlock",
+    "share": "ዝርዝር ኣካፍል",
+    "shareCopied": "ሊንክ ተቐዲሑ",
+    "shareDone": "ተኻፊሉ"
   }
 }

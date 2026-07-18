@@ -4,6 +4,10 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { useTranslation } from "@/hooks/useTranslation";
+import {
+  SIGNUP_ROLE_OPTIONS,
+  type SignupRole,
+} from "@/lib/auth/signup-roles";
 import { hubPathForRole } from "@/lib/roles/hubs";
 
 type AuthMode = "login" | "register";
@@ -33,6 +37,7 @@ export function AuthPanel({ initialError, initialMode }: AuthPanelProps) {
   const [mode, setMode] = useState<AuthMode>(initialMode ?? "login");
   const [phone, setPhone] = useState("");
   const [fullName, setFullName] = useState("");
+  const [role, setRole] = useState<SignupRole | "">("");
   const [code, setCode] = useState("");
   const [step, setStep] = useState<"phone" | "code">("phone");
   const [busy, setBusy] = useState(false);
@@ -45,6 +50,7 @@ export function AuthPanel({ initialError, initialMode }: AuthPanelProps) {
     setStep("phone");
     setPhone(account.phone);
     setFullName("");
+    setRole("");
     setCode("");
     setError(null);
     setHint(t("auth.demo.filled"));
@@ -57,12 +63,17 @@ export function AuthPanel({ initialError, initialMode }: AuthPanelProps) {
     setHint(null);
     setDebugCode(null);
     try {
+      if (mode === "register" && !role) {
+        throw new Error(t("auth.role.required"));
+      }
       const res = await fetch("/api/auth/sms/request", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           phone,
           fullName: mode === "register" ? fullName : undefined,
+          role: mode === "register" ? role : undefined,
+          mode,
           locale,
         }),
       });
@@ -144,18 +155,56 @@ export function AuthPanel({ initialError, initialMode }: AuthPanelProps) {
       {step === "phone" ? (
         <div className="grid gap-3">
           {mode === "register" ? (
-            <label className="grid gap-1.5">
-              <span className="text-sm font-medium text-slate-200">
-                {t("auth.fullName")}
-              </span>
-              <input
-                className="rounded-xl border border-white/15 bg-white/10 px-4 py-3 text-white outline-none backdrop-blur placeholder:text-slate-400 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30"
-                value={fullName}
-                onChange={(e) => setFullName(e.target.value)}
-                autoComplete="name"
-                placeholder={t("auth.fullNamePlaceholder")}
-              />
-            </label>
+            <>
+              <label className="grid gap-1.5">
+                <span className="text-sm font-medium text-slate-200">
+                  {t("auth.fullName")}
+                </span>
+                <input
+                  className="rounded-xl border border-white/15 bg-white/10 px-4 py-3 text-white outline-none backdrop-blur placeholder:text-slate-400 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30"
+                  value={fullName}
+                  onChange={(e) => setFullName(e.target.value)}
+                  autoComplete="name"
+                  placeholder={t("auth.fullNamePlaceholder")}
+                />
+              </label>
+
+              <fieldset className="grid gap-2">
+                <legend className="text-sm font-medium text-slate-200">
+                  {t("auth.role.label")}
+                </legend>
+                <p className="text-xs text-slate-400">{t("auth.role.hint")}</p>
+                <div className="grid gap-2 sm:grid-cols-2">
+                  {SIGNUP_ROLE_OPTIONS.map((option) => {
+                    const selected = role === option.role;
+                    return (
+                      <label
+                        key={option.role}
+                        className={`cursor-pointer rounded-xl border px-3 py-3 transition ${
+                          selected
+                            ? "border-brand-400 bg-brand-500/20 ring-2 ring-brand-400/40"
+                            : "border-white/15 bg-white/5 hover:border-white/30"
+                        }`}
+                      >
+                        <input
+                          type="radio"
+                          name="signup-role"
+                          className="sr-only"
+                          checked={selected}
+                          onChange={() => setRole(option.role)}
+                        />
+                        <span className="block text-sm font-semibold text-white">
+                          {t(option.labelKey)}
+                        </span>
+                        <span className="mt-0.5 block text-xs leading-snug text-slate-300">
+                          {t(option.hintKey)}
+                        </span>
+                      </label>
+                    );
+                  })}
+                </div>
+              </fieldset>
+            </>
           ) : null}
           <label className="grid gap-1.5">
             <span className="text-sm font-medium text-slate-200">
@@ -176,7 +225,8 @@ export function AuthPanel({ initialError, initialMode }: AuthPanelProps) {
             disabled={
               busy ||
               phone.trim().length < 9 ||
-              (mode === "register" && fullName.trim().length < 2)
+              (mode === "register" &&
+                (fullName.trim().length < 2 || !role))
             }
             className="rounded-full bg-brand-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-brand-700 disabled:opacity-45"
             onClick={() => void requestOtp()}

@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { PageDirectory, type DirectoryBadge } from "@/components/PageDirectory";
 import { PageIntro } from "@/components/PageIntro";
 import { fetchPublishedProjects } from "@/lib/catalog/queries";
@@ -5,9 +6,39 @@ import { formatConstructionStage } from "@/lib/domain/construction-stage";
 import { isLocale, type Locale } from "@/lib/i18n/config";
 import { getDictionary, translate } from "@/lib/i18n/getDictionary";
 import { pickLocalized } from "@/lib/i18n/pickLocalized";
+import { buildPageMetadata } from "@/lib/seo/build-metadata";
 
 /** DB-backed page — skip SSG so Vercel builds succeed without live Postgres. */
 export const dynamic = "force-dynamic";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale: raw } = await params;
+  const locale = (isLocale(raw) ? raw : "en") as Locale;
+  const dictionary = getDictionary(locale);
+
+  return buildPageMetadata({
+    locale,
+    path: "/projects",
+    title:
+      locale === "en"
+        ? "Off-Plan Projects in Addis Ababa | Invest with EthioMLS"
+        : translate(dictionary, "pages.projects.title"),
+    description:
+      locale === "en"
+        ? "Explore escrow-backed off-plan and under-construction projects in Addis Ababa. Ideal for Ethiopian diaspora and investors seeking transparent unit inventory."
+        : translate(dictionary, "pages.projects.lede"),
+    keywords: [
+      "off plan Addis Ababa",
+      "Addis Ababa real estate projects",
+      "diaspora invest Ethiopia housing",
+      "escrow off-plan Ethiopia",
+    ],
+  });
+}
 
 export default async function ProjectsPage({
   params,

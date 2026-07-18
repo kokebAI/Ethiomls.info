@@ -61,6 +61,10 @@ export async function fetchPublishedListingsByDeveloper(developerId: string) {
         project: {
           select: { id: true, title: true },
         },
+        units: {
+          where: { status: ListingStatus.PUBLISHED },
+          orderBy: [{ createdAt: "asc" }],
+        },
       },
       orderBy: [{ publishedAt: "desc" }, { createdAt: "desc" }],
     });

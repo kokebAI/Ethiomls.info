@@ -8,12 +8,14 @@ type ProfileFormProps = {
   initialFullName: string;
   initialEmail: string | null;
   phone: string | null;
+  roleLabel: string;
 };
 
 export function ProfileForm({
   initialFullName,
   initialEmail,
   phone,
+  roleLabel,
 }: ProfileFormProps) {
   const { t } = useTranslation();
   const router = useRouter();
@@ -67,6 +69,20 @@ export function ProfileForm({
         />
         <span className="mt-1 block text-xs text-slate-500">
           {t("profile.phoneLocked")}
+        </span>
+      </label>
+
+      <label>
+        <span className="text-sm font-semibold text-slate-700">
+          {t("auth.role.label")}
+        </span>
+        <input
+          value={roleLabel}
+          readOnly
+          className={`${fieldClass} bg-slate-50 text-slate-600`}
+        />
+        <span className="mt-1 block text-xs text-slate-500">
+          {t("auth.role.locked")}
         </span>
       </label>
 

@@ -19,7 +19,9 @@ import {
   Zap,
 } from "lucide-react";
 import { ListingGallery } from "@/components/property/ListingGallery";
+import { ShareListingButton } from "@/components/property/ShareListingButton";
 import { VrViewer } from "@/components/property/vr-viewer";
+import { JsonLd } from "@/components/seo/JsonLd";
 import { getSession } from "@/lib/auth/session";
 import { fetchListingById } from "@/lib/catalog/queries";
 import { formatMoney } from "@/lib/compliance/currency";
@@ -27,6 +29,12 @@ import { formatConstructionStage } from "@/lib/domain/construction-stage";
 import { isLocale, type Locale } from "@/lib/i18n/config";
 import { getDictionary, translate } from "@/lib/i18n/getDictionary";
 import { pickLocalized } from "@/lib/i18n/pickLocalized";
+import { absoluteUrl } from "@/lib/seo/config";
+import { buildPageMetadata } from "@/lib/seo/build-metadata";
+import {
+  breadcrumbJsonLd,
+  realEstateListingJsonLd,
+} from "@/lib/seo/json-ld";
 
 export const dynamic = "force-dynamic";
 
@@ -46,9 +54,42 @@ export async function generateMetadata({
   const locale = (isLocale(raw) ? raw : "en") as Locale;
   const listing = await fetchListingById(id);
   if (!listing) return { title: "Listing" };
-  return {
-    title: pickLocalized(listing.title, locale) || listing.id,
-  };
+
+  const title = pickLocalized(listing.title, locale) || listing.id;
+  const description =
+    pickLocalized(listing.description, locale) ||
+    `${title} in Addis Ababa — verified on EthioMLS for diaspora and investors.`;
+  const subCity = listing.subCity
+    ? pickLocalized(listing.subCity.name, locale) || listing.subCity.code
+    : "Addis Ababa";
+  const intent =
+    listing.listingType === "RENT"
+      ? "for rent"
+      : listing.listingType === "OFF_PLAN"
+        ? "off-plan"
+        : "for sale";
+  const cover =
+    listing.coverImageUrl ||
+    listing.images[0] ||
+    listing.galleryImageUrls[0] ||
+    null;
+
+  return buildPageMetadata({
+    locale,
+    path: `/listings/${listing.id}`,
+    title: `${title} | ${subCity} ${intent}`,
+    description: description.slice(0, 320),
+    image: cover,
+    keywords: [
+      `${subCity} property ${intent}`,
+      `Addis Ababa ${intent}`,
+      "diaspora Ethiopia real estate",
+      listing.listingType === "RENT"
+        ? "rent apartment Addis Ababa"
+        : "buy apartment Addis Ababa",
+    ],
+    type: "article",
+  });
 }
 
 export default async function ListingDetailPage({
@@ -165,9 +206,38 @@ export default async function ListingDetailPage({
     listing.contactName || developerName || listing.owner?.fullName || null;
 
   const isOffPlan = listing.listingType === "OFF_PLAN";
+  const listingUrl = absoluteUrl(`${base}/listings/${listing.id}`);
 
   return (
     <div className="mx-auto flex max-w-5xl flex-col gap-6">
+      <JsonLd
+        data={[
+          realEstateListingJsonLd({
+            locale,
+            id: listing.id,
+            title,
+            description,
+            url: listingUrl,
+            imageUrls: photos,
+            price: Number(listing.priceAmount),
+            currency: listing.priceCurrency,
+            listingType: listing.listingType,
+            bedrooms: listing.bedrooms,
+            bathrooms: listing.bathrooms,
+            floorAreaSqm: floorArea,
+            addressLine: listing.addressLine,
+            subCity: subCityName,
+          }),
+          breadcrumbJsonLd([
+            { name: "EthioMLS", url: absoluteUrl(`/${locale}`) },
+            {
+              name: t("listingDetail.back").replace(/^←\s*/, "") || "Listings",
+              url: absoluteUrl(`${base}/listings`),
+            },
+            { name: title, url: listingUrl },
+          ]),
+        ]}
+      />
       <Link
         href={`${base}/listings`}
         className="inline-flex w-fit items-center gap-1.5 text-sm font-semibold text-emerald-700 transition hover:text-emerald-800"
@@ -215,21 +285,33 @@ export default async function ListingDetailPage({
           </p>
         </div>
 
-        <div className="shrink-0 space-y-1 lg:text-right">
-          <p className="text-3xl font-bold tracking-tight text-slate-900">
-            {price}
-            {listing.listingType === "RENT" ? (
-              <span className="text-base font-semibold text-slate-500">
-                {" "}
-                {t("listingDetail.perMonth")}
-              </span>
-            ) : null}
-          </p>
-          {pricePerSqm ? (
-            <p className="text-sm text-slate-500">
-              {pricePerSqm} / m²
+        <div className="shrink-0 space-y-3 lg:text-right">
+          <div className="space-y-1">
+            <p className="text-3xl font-bold tracking-tight text-slate-900">
+              {price}
+              {listing.listingType === "RENT" ? (
+                <span className="text-base font-semibold text-slate-500">
+                  {" "}
+                  {t("listingDetail.perMonth")}
+                </span>
+              ) : null}
             </p>
-          ) : null}
+            {pricePerSqm ? (
+              <p className="text-sm text-slate-500">
+                {pricePerSqm} / m²
+              </p>
+            ) : null}
+          </div>
+          <ShareListingButton
+            url={listingUrl}
+            title={title}
+            text={
+              subCityName
+                ? `${title} · ${subCityName}, Addis Ababa · ${price}`
+                : `${title} · Addis Ababa · ${price}`
+            }
+            className="w-full lg:ml-auto lg:w-auto"
+          />
         </div>
       </section>
 

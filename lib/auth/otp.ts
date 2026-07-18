@@ -1,10 +1,12 @@
 import { createHash, randomInt } from "node:crypto";
 import { prisma } from "@/lib/db/prisma";
+import { isSignupRole, type SignupRole } from "@/lib/auth/signup-roles";
 
 type OtpRecord = {
   phone: string;
   fullName?: string;
   locale?: string;
+  role?: SignupRole;
 };
 
 function hashCode(code: string): string {
@@ -32,6 +34,7 @@ export async function issueOtp(input: {
   phone: string;
   fullName?: string;
   locale?: string;
+  role?: SignupRole;
 }): Promise<{ code: string; ttlSec: number }> {
   const code = String(randomInt(100000, 999999));
   const ttlSec = 10 * 60;
@@ -43,6 +46,7 @@ export async function issueOtp(input: {
       codeHash: hashCode(code),
       fullName: input.fullName ?? null,
       locale: input.locale ?? null,
+      role: input.role ?? null,
       expiresAt,
       attempts: 0,
     },
@@ -51,6 +55,7 @@ export async function issueOtp(input: {
       codeHash: hashCode(code),
       fullName: input.fullName ?? null,
       locale: input.locale ?? null,
+      role: input.role ?? null,
       expiresAt,
     },
   });
@@ -90,6 +95,7 @@ export async function verifyOtp(
       phone: record.phone,
       fullName: record.fullName ?? undefined,
       locale: record.locale ?? undefined,
+      role: isSignupRole(record.role) ? record.role : undefined,
     },
   };
 }

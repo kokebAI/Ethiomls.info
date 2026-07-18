@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { EscrowStatus, ListingStatus, Prisma } from "@prisma/client";
+import { ensureBilingualListingCopy } from "@/lib/ai/translate-listing";
 import {
   assertEscrowCompliance,
   evaluateIsUnfinished,
@@ -153,6 +154,12 @@ export async function POST(request: NextRequest) {
     // collision-free payload can self-publish or bypass client-protection review.
     const status = ListingStatus.PENDING_REVIEW;
 
+    // Auto-translate English ↔ Amharic listing copy before persist.
+    const bilingual = await ensureBilingualListingCopy({
+      title: input.title,
+      description: input.description,
+    });
+
     const listing = await prisma.$transaction(async (tx) => {
       const created = await tx.listing.create({
         data: {
@@ -162,8 +169,12 @@ export async function POST(request: NextRequest) {
           delalaId: input.delalaId,
           projectId: input.projectId,
           subCityId: subCity.id,
-          title: input.title,
-          description: input.description,
+          title: bilingual.title,
+          description: bilingual.description,
+          titleEn: bilingual.titleEn || null,
+          titleAm: bilingual.titleAm || null,
+          descriptionEn: bilingual.descriptionEn || null,
+          descriptionAm: bilingual.descriptionAm || null,
           listingType: input.listingType,
           category: input.propertyType,
           status,

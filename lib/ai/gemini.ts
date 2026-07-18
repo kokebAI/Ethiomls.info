@@ -6,11 +6,10 @@ import { GoogleGenAI } from "@google/genai";
  */
 export const GEMINI_MODEL_CANDIDATES = uniqueModels([
   process.env.GEMINI_MODEL?.trim(),
-  // 2.0 lite is often the only model still admitted on restricted AQ.* projects
-  "gemini-2.0-flash-lite",
-  "gemini-2.0-flash",
-  "gemini-2.5-flash-lite",
   "gemini-2.5-flash",
+  "gemini-2.5-flash-lite",
+  "gemini-2.0-flash",
+  "gemini-2.0-flash-lite",
 ]);
 
 /** @deprecated Prefer GEMINI_MODEL_CANDIDATES[0] */
@@ -35,26 +34,58 @@ function useVertexAi(): boolean {
   return ["1", "true", "yes", "on"].includes((flag ?? "").trim().toLowerCase());
 }
 
+function forceGoogleApi(): boolean {
+  return ["1", "true", "yes", "on"].includes(
+    (process.env.GEMINI_FORCE_GOOGLE_API ?? "").trim().toLowerCase(),
+  );
+}
+
+function geminiBaseUrl(): string | undefined {
+  return (
+    process.env.GOOGLE_GEMINI_BASE_URL?.trim() ||
+    process.env.NETLIFY_AI_GATEWAY_BASE_URL?.trim() ||
+    undefined
+  );
+}
+
+function geminiApiKey(): string | undefined {
+  return (
+    process.env.GEMINI_API_KEY?.trim() ||
+    process.env.NETLIFY_AI_GATEWAY_KEY?.trim() ||
+    undefined
+  );
+}
+
 /**
  * Google GenAI client.
  *
- * - Default: Gemini Developer API with `GEMINI_API_KEY`
- * - Set `GEMINI_VERTEXAI=true` (or leave AQ. keys on auto) to try Vertex AI
- * - Set `GEMINI_FORCE_GOOGLE_API=1` to force the Developer API even for AQ. keys
+ * - Prefer Netlify/Vercel gateway injection via `new GoogleGenAI({})` when a
+ *   gateway base URL is present (or when only placeholder keys exist).
+ * - Local: set `GEMINI_API_KEY` (AI Studio `AIza…` keys work on the Developer API).
+ * - Set `GEMINI_VERTEXAI=true` to force Vertex AI for AQ. / GCP keys.
+ * - Set `GEMINI_FORCE_GOOGLE_API=1` to force the Developer API even for AQ. keys.
  */
 export function createGeminiClient(): GoogleGenAI {
-  const apiKey = process.env.GEMINI_API_KEY?.trim();
-  const baseUrl = process.env.GOOGLE_GEMINI_BASE_URL?.trim();
+  const apiKey = geminiApiKey();
+  const baseUrl = geminiBaseUrl();
 
-  if (!apiKey && !process.env.NETLIFY_AI_GATEWAY_KEY) {
+  if (!apiKey && !baseUrl) {
     throw new Error(
-      "GEMINI_API_KEY is not set. Add it to .env.local (local) or Netlify env vars (deploy).",
+      "GEMINI_API_KEY is not set. Add it in Vercel/Netlify env (or .env.local), or enable the AI Gateway.",
     );
   }
 
+  // Gateway path: SDK reads injected GEMINI_API_KEY + GOOGLE_GEMINI_BASE_URL.
+  // Pass explicit options when we resolved a non-standard gateway base URL.
   if (baseUrl) {
+    if (
+      baseUrl === process.env.GOOGLE_GEMINI_BASE_URL?.trim() &&
+      process.env.GEMINI_API_KEY?.trim()
+    ) {
+      return new GoogleGenAI({});
+    }
     return new GoogleGenAI({
-      apiKey: apiKey || process.env.NETLIFY_AI_GATEWAY_KEY,
+      apiKey: apiKey || "ai-gateway",
       httpOptions: { baseUrl },
     });
   }
@@ -66,12 +97,17 @@ export function createGeminiClient(): GoogleGenAI {
     process.env.VERTEX_LOCATION?.trim() ||
     "us-central1";
 
-  if (vertexai) {
+  if (vertexai && !forceGoogleApi()) {
     return new GoogleGenAI({
       vertexai: true,
       apiKey: apiKey!,
       ...(project ? { project, location } : {}),
     });
+  }
+
+  // Developer API — empty constructor still reads GEMINI_API_KEY from env.
+  if (process.env.GEMINI_API_KEY?.trim()) {
+    return new GoogleGenAI({});
   }
 
   return new GoogleGenAI({
@@ -80,21 +116,20 @@ export function createGeminiClient(): GoogleGenAI {
 }
 
 export function isGeminiConfigured(): boolean {
-  return Boolean(
-    process.env.GEMINI_API_KEY?.trim() ||
-      process.env.NETLIFY_AI_GATEWAY_KEY?.trim(),
-  );
+  return Boolean(geminiApiKey() || geminiBaseUrl());
 }
 
 export function describeGeminiRuntime(): {
   vertexai: boolean;
   models: string[];
   keyPrefix: string;
+  hasBaseUrl: boolean;
 } {
-  const key = process.env.GEMINI_API_KEY?.trim() ?? "";
+  const key = geminiApiKey() ?? "";
   return {
-    vertexai: useVertexAi(),
+    vertexai: useVertexAi() && !forceGoogleApi(),
     models: GEMINI_MODEL_CANDIDATES,
     keyPrefix: key.slice(0, 3),
+    hasBaseUrl: Boolean(geminiBaseUrl()),
   };
 }

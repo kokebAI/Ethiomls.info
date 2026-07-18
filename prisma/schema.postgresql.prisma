@@ -314,10 +314,18 @@ model Listing {
   isForeignCurrencyEligible Boolean    @default(true)
   /// Ordered milestone payout tranches in percent, e.g. [20, 20, 20, 40]
   milestoneTranchePercents Int[]       @default([])
-  /// Multi-language listing title
+  /// Multi-language listing title (`{ en, am, om, ti }`) — kept in sync with bilingual slots
   title              Json
-  /// Multi-language listing description
+  /// Multi-language listing description (`{ en, am, om, ti }`) — kept in sync with bilingual slots
   description        Json
+  /// English title slot (source or Gemini-translated)
+  titleEn            String?
+  /// Amharic title slot (source or Gemini-translated)
+  titleAm            String?
+  /// English description slot (source or Gemini-translated)
+  descriptionEn      String?
+  /// Amharic description slot (source or Gemini-translated)
+  descriptionAm      String?
   listingType        ListingType
   category           PropertyCategory  @default(RESIDENTIAL)
   status             ListingStatus     @default(DRAFT)
@@ -428,6 +436,8 @@ model OtpCode {
   codeHash  String
   fullName  String?
   locale    String?
+  /// Signup role chosen before OTP (one of UserRole except ADMIN)
+  role      String?
   expiresAt DateTime
   attempts  Int      @default(0)
   createdAt DateTime @default(now())

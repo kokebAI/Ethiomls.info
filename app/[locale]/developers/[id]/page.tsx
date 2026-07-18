@@ -2,9 +2,10 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { ArrowLeft } from "lucide-react";
-import { PageDirectory, type DirectoryBadge } from "@/components/PageDirectory";
+import { DeveloperInventoryTree } from "@/components/developers/DeveloperInventoryTree";
+import { PageDirectory } from "@/components/PageDirectory";
 import { PageIntro } from "@/components/PageIntro";
-import { formatMoney } from "@/lib/compliance/currency";
+import { buildDeveloperInventoryTree } from "@/lib/catalog/developer-inventory";
 import {
   fetchDeveloperById,
   fetchPublishedListingsByDeveloper,
@@ -13,23 +14,9 @@ import {
 import { formatConstructionStage } from "@/lib/domain/construction-stage";
 import { isLocale, type Locale } from "@/lib/i18n/config";
 import { getDictionary, translate } from "@/lib/i18n/getDictionary";
-import { countNoun } from "@/lib/i18n/plural";
 import { pickLocalized } from "@/lib/i18n/pickLocalized";
 
 export const dynamic = "force-dynamic";
-
-function listingBadge(type: string, t: (key: string) => string): DirectoryBadge {
-  switch (type) {
-    case "SALE":
-      return { label: t("listing.forSale"), tone: "emerald" };
-    case "RENT":
-      return { label: t("listing.forRent"), tone: "sky" };
-    case "OFF_PLAN":
-      return { label: t("listing.offPlan"), tone: "violet" };
-    default:
-      return { label: type.replaceAll("_", " "), tone: "slate" };
-  }
-}
 
 export async function generateMetadata({
   params,
@@ -73,41 +60,11 @@ export default async function DeveloperDetailPage({
     : null;
   const base = `/${locale}`;
 
-  const listingItems = listings.map((listing) => {
-    const subCity = listing.subCity
-      ? pickLocalized(listing.subCity.name, locale) || listing.subCity.code
-      : "—";
-    const photos = [
-      ...new Set(
-        [
-          listing.coverImageUrl,
-          ...listing.images,
-          ...listing.galleryImageUrls,
-        ].filter((url): url is string => Boolean(url)),
-      ),
-    ];
-
-    return {
-      id: listing.id,
-      title: pickLocalized(listing.title, locale) || listing.id,
-      href: `${base}/listings/${listing.id}`,
-      imageUrl: photos[0] ?? null,
-      photoCount: photos.length,
-      meta: [
-        subCity,
-        formatMoney(Number(listing.priceAmount), listing.priceCurrency),
-        listing.bedrooms != null
-          ? countNoun(
-              listing.bedrooms,
-              t("listing.bedroomUnit"),
-              t("listing.bedroomsUnit"),
-            )
-          : null,
-      ]
-        .filter(Boolean)
-        .join(" · "),
-      badges: [listingBadge(listing.listingType, t)],
-    };
+  const inventoryParents = buildDeveloperInventoryTree({
+    listings,
+    locale,
+    basePath: base,
+    t,
   });
 
   const projectItems = projects.map((project) => {
@@ -175,13 +132,28 @@ export default async function DeveloperDetailPage({
       </div>
 
       <section className="space-y-3">
-        <h2 className="text-lg font-semibold text-slate-900">
-          {t("pages.developers.listingsHeading")}
-        </h2>
-        <PageDirectory
-          items={listingItems}
+        <div className="space-y-1">
+          <h2 className="text-lg font-semibold text-slate-900">
+            {t("pages.developers.inventory.heading")}
+          </h2>
+          <p className="text-sm text-slate-600">
+            {t("pages.developers.inventory.lede")}
+          </p>
+        </div>
+        <DeveloperInventoryTree
+          parents={inventoryParents}
           emptyMessage={t("pages.developers.emptyListings")}
-          layout="grid"
+          labels={{
+            unitTypes: t("pages.developers.inventory.unitTypes"),
+            available: t("pages.developers.inventory.available"),
+            reserved: t("pages.developers.inventory.reserved"),
+            sold: t("pages.developers.inventory.sold"),
+            units: t("pages.developers.inventory.units"),
+            viewUnit: t("pages.developers.inventory.viewUnit"),
+            kindProject: t("pages.developers.inventory.kindProject"),
+            kindBuilding: t("pages.developers.inventory.kindBuilding"),
+            kindStandalone: t("pages.developers.inventory.kindStandalone"),
+          }}
         />
       </section>
 

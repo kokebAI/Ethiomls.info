@@ -239,7 +239,22 @@
       "projectsHeading": "Pirojektoota",
       "listingCount": "Tarree {count}",
       "projectCount": "Pirojektoota {count}",
-      "emptyListings": "Qabeenya maxxanfamee ijaartuu kanaaf hin jiru."
+      "emptyListings": "Qabeenya maxxanfamee ijaartuu kanaaf hin jiru.",
+      "inventory": {
+        "heading": "Kuusaa yunitii",
+        "lede": "Pirojektootaafi ijaarsi gosa yunitiin qoodaman, lakkoofsa argamuu waliin.",
+        "unitTypes": "Gosa yunitii",
+        "units": "yunitoota",
+        "unitCount": "Yunitoota {count}",
+        "available": "Ni argama",
+        "reserved": "Qabameera",
+        "sold": "Gurgurameera",
+        "viewUnit": "Yunitii ilaali",
+        "kindProject": "Pirojektii",
+        "kindBuilding": "Ijaarsa",
+        "kindStandalone": "Tarree biroo",
+        "standalone": "Tarree dhuunfaa"
+      }
     },
     "comingOnline": "Tarreewwan online ta'aa jiru — fakkeenya armaan gadii.",
     "emptyHint": "Kataloogiin guutuu yeroo PostgreSQL database qunnamu ni argama.",
@@ -270,6 +285,20 @@
     "verifyFailed": "Mirkaneessuun hin milkoofne.",
     "logout": "Ba'i",
     "backHome": "Gara fuula duraatti",
+    "role": {
+      "label": "Gahee kee",
+      "hint": "Herrega kanaaf gahee tokko filadhu. Booddee jijjiiruu hin dandeessu.",
+      "required": "Herrega uumuuf gahee tokko filadhu.",
+      "locked": "Gaheen kee yeroo galmaa'uu murtaa'eera; jijjiiruun hin danda'amu.",
+      "client": "Maamilaa / kireeffataa",
+      "clientHint": "Manneen barbaadii gaafadhu.",
+      "owner": "Abbaa qabeenyaa",
+      "ownerHint": "Mana kee gurguruu ykn kireessuu galmeessi.",
+      "broker": "Dalaalaa",
+      "brokerHint": "Qabeenya maamilaa bulchi.",
+      "developer": "Ijaartuu",
+      "developerHint": "Pirojektootaafi yunitoota maxxansi."
+    },
     "demo": {
       "title": "Demo accounts",
       "lede": "Tap a role to fill the phone field, then send the SMS code. In local mock mode the code appears on screen.",
@@ -417,6 +446,9 @@
     "milestones": "Milestone split",
     "signUpForContact": "Sign up with your Ethiopian mobile number to see the contact phone and request a visit.",
     "signUpForTour": "Create a free account to open the 360° virtual tour.",
-    "signUpCta": "Sign up to unlock"
+    "signUpCta": "Sign up to unlock",
+    "share": "Tarree qoodi",
+    "shareCopied": "Linkii copy ta'eera",
+    "shareDone": "Qoodameera"
   }
 }

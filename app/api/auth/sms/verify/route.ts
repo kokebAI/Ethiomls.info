@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { UserRole } from "@prisma/client";
 import { verifyOtp, normalizeEthiopiaPhone } from "@/lib/auth/otp";
 import { oauthPlaceholderPasswordHash } from "@/lib/auth/oauth";
+import { isSignupRole } from "@/lib/auth/signup-roles";
 import { setSessionCookie } from "@/lib/auth/session";
 import { prisma } from "@/lib/db/prisma";
 
@@ -63,21 +64,37 @@ export async function POST(request: NextRequest) {
   }
 
   if (!user) {
+    const role = check.record.role;
+    if (!isSignupRole(role)) {
+      return NextResponse.json(
+        {
+          error: "ValidationError",
+          message:
+            "Choose one account role before verifying. Restart registration.",
+        },
+        { status: 400 },
+      );
+    }
+
     const fullName =
       check.record.fullName?.trim() ||
       `EthioMLS User ${phone.slice(-4)}`;
     // Email is optional and collected later on the profile — never invent one.
+    // Role is fixed at signup — one listing role per account.
     user = await prisma.user.create({
       data: {
         phone,
         fullName,
         passwordHash: oauthPlaceholderPasswordHash(phone),
-        role: UserRole.BUYER_RENTER,
+        role,
         localePrefs: check.record.locale
           ? [check.record.locale, "en"]
           : ["am", "en"],
       },
     });
+  } else if (mode === "register" && check.record.role) {
+    // Existing accounts keep their original role — one role per user.
+    // Do not overwrite role on re-registration attempts.
   }
 
   await setSessionCookie({
@@ -94,7 +111,7 @@ export async function POST(request: NextRequest) {
       fullName: user.fullName,
       phone: user.phone,
       email: user.email,
-      role: user.role,
+      role: user.role as UserRole,
     },
   });
 }

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { issueOtp, normalizeEthiopiaPhone } from "@/lib/auth/otp";
+import { isSignupRole } from "@/lib/auth/signup-roles";
 import { isLocale } from "@/lib/i18n/config";
 import { smsNotificationEngine } from "@/src/services/sms.service";
 
@@ -29,6 +30,14 @@ export async function POST(request: NextRequest) {
       ? String((body as { locale?: unknown }).locale ?? "am")
       : "am";
   const locale = isLocale(localeRaw) ? localeRaw : "am";
+  const mode =
+    body && typeof body === "object" && !Array.isArray(body)
+      ? String((body as { mode?: unknown }).mode ?? "login")
+      : "login";
+  const roleRaw =
+    body && typeof body === "object" && !Array.isArray(body)
+      ? (body as { role?: unknown }).role
+      : undefined;
 
   const phone = normalizeEthiopiaPhone(phoneRaw);
   if (!phone) {
@@ -41,7 +50,33 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const { code, ttlSec } = await issueOtp({ phone, fullName, locale });
+  if (mode === "register") {
+    if (fullName.length < 2) {
+      return NextResponse.json(
+        {
+          error: "ValidationError",
+          message: "Full name is required to register",
+        },
+        { status: 400 },
+      );
+    }
+    if (!isSignupRole(roleRaw)) {
+      return NextResponse.json(
+        {
+          error: "ValidationError",
+          message: "Choose one account role to continue registration",
+        },
+        { status: 400 },
+      );
+    }
+  }
+
+  const { code, ttlSec } = await issueOtp({
+    phone,
+    fullName: mode === "register" ? fullName : undefined,
+    locale,
+    role: mode === "register" && isSignupRole(roleRaw) ? roleRaw : undefined,
+  });
   const sms = await smsNotificationEngine.sendRaw({
     toE164: phone,
     locale,
