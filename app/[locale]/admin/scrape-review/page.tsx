@@ -42,7 +42,7 @@ export default async function AdminScrapeReviewPage({
   const pending = await prisma.listing.findMany({
     where: { notificationStatus: NotificationStatus.PENDING_REVIEW },
     orderBy: { createdAt: "desc" },
-    take: 100,
+    take: 500,
     include: {
       importSource: { select: { label: true } },
     },

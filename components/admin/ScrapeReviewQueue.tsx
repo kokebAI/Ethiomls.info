@@ -2,7 +2,13 @@
 
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
-import { ClipboardCheck, LoaderCircle, Pencil, Trash2 } from "lucide-react";
+import {
+  ClipboardCheck,
+  LoaderCircle,
+  MessageSquare,
+  Pencil,
+  Trash2,
+} from "lucide-react";
 import { useTranslation } from "@/hooks/useTranslation";
 
 export type ScrapeReviewItem = {
@@ -28,15 +34,17 @@ type ScrapeReviewQueueProps = {
   initialItems: ScrapeReviewItem[];
 };
 
+type BusyAction = "invite" | "audit" | "discard";
+
 export function ScrapeReviewQueue({ initialItems }: ScrapeReviewQueueProps) {
   const { t, locale } = useTranslation();
   const [items, setItems] = useState(initialItems);
   const [busyId, setBusyId] = useState<string | null>(null);
+  const [busyAction, setBusyAction] = useState<BusyAction | null>(null);
   const [message, setMessage] = useState<{
     tone: "success" | "error";
     text: string;
   } | null>(null);
-
 
   useEffect(() => {
     setItems(initialItems);
@@ -46,8 +54,67 @@ export function ScrapeReviewQueue({ initialItems }: ScrapeReviewQueueProps) {
     setItems((prev) => prev.filter((item) => item.id !== id));
   }, []);
 
+  async function sendInviteSms(id: string, contactPhone: string | null) {
+    if (!contactPhone?.trim()) {
+      setMessage({
+        tone: "error",
+        text: t("scrapeReview.phoneMissing"),
+      });
+      return;
+    }
+    setBusyId(id);
+    setBusyAction("invite");
+    setMessage(null);
+    try {
+      const response = await fetch("/api/scrape/send-invite", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ listingId: id }),
+      });
+      const payload = (await response.json()) as {
+        message?: string;
+        data?: {
+          accountCreated?: boolean;
+          account?: { role?: string; label?: string } | null;
+        };
+      };
+      if (!response.ok) {
+        throw new Error(payload.message ?? t("scrapeReview.sendFailed"));
+      }
+      removeItem(id);
+      const accountNote =
+        payload.data?.account?.label && payload.data.account.role
+          ? payload.data.accountCreated
+            ? ` ${t("scrapeReview.accountCreated", {
+                role: payload.data.account.role,
+                label: payload.data.account.label,
+              })}`
+            : ` ${t("scrapeReview.accountLinked", {
+                role: payload.data.account.role,
+                label: payload.data.account.label,
+              })}`
+          : "";
+      setMessage({
+        tone: "success",
+        text: `${t("scrapeReview.sendDone", { id })}${accountNote}`,
+      });
+    } catch (error) {
+      setMessage({
+        tone: "error",
+        text:
+          error instanceof Error
+            ? error.message
+            : t("scrapeReview.sendFailed"),
+      });
+    } finally {
+      setBusyId(null);
+      setBusyAction(null);
+    }
+  }
+
   async function sendToPendingAudit(id: string) {
     setBusyId(id);
+    setBusyAction("audit");
     setMessage(null);
     try {
       const response = await fetch("/api/scrape/send-to-audit", {
@@ -74,11 +141,13 @@ export function ScrapeReviewQueue({ initialItems }: ScrapeReviewQueueProps) {
       });
     } finally {
       setBusyId(null);
+      setBusyAction(null);
     }
   }
 
   async function discard(id: string) {
     setBusyId(id);
+    setBusyAction("discard");
     setMessage(null);
     try {
       const response = await fetch("/api/scrape/discard", {
@@ -105,6 +174,7 @@ export function ScrapeReviewQueue({ initialItems }: ScrapeReviewQueueProps) {
       });
     } finally {
       setBusyId(null);
+      setBusyAction(null);
     }
   }
 
@@ -185,10 +255,25 @@ export function ScrapeReviewQueue({ initialItems }: ScrapeReviewQueueProps) {
                 <button
                   type="button"
                   disabled={busy}
+                  onClick={() => void sendInviteSms(item.id, item.contactPhone)}
+                  className="inline-flex items-center gap-1.5 rounded-full bg-brand-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-700 disabled:opacity-45"
+                >
+                  {busy && busyAction === "invite" ? (
+                    <LoaderCircle className="h-4 w-4 animate-spin" />
+                  ) : (
+                    <MessageSquare className="h-4 w-4" />
+                  )}
+                  {busy && busyAction === "invite"
+                    ? t("scrapeReview.sending")
+                    : t("scrapeReview.sendInvite")}
+                </button>
+                <button
+                  type="button"
+                  disabled={busy}
                   onClick={() => void sendToPendingAudit(item.id)}
                   className="inline-flex items-center gap-1.5 rounded-full bg-slate-950 px-4 py-2 text-sm font-semibold text-white transition hover:bg-slate-800 disabled:opacity-45"
                 >
-                  {busy ? (
+                  {busy && busyAction === "audit" ? (
                     <LoaderCircle className="h-4 w-4 animate-spin" />
                   ) : (
                     <ClipboardCheck className="h-4 w-4" />
