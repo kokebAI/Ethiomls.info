@@ -29,6 +29,8 @@ export type AdminWorkspaceCopy = {
   partyBrokers: string;
   partyOwners: string;
   partyImported: string;
+  partyDrafts: string;
+  partyVerified: string;
   partyEmpty: string;
 };
 
@@ -89,7 +91,11 @@ export function AdminWorkspaceView({
     partyBrokers: copy.partyBrokers,
     partyOwners: copy.partyOwners,
     partyImported: copy.partyImported,
+    partyDrafts: copy.partyDrafts,
+    partyVerified: copy.partyVerified,
     partyEmpty: copy.partyEmpty,
+    draftsEmpty: copy.draftsEmpty,
+    verifiedEmpty: copy.readyEmpty,
   };
 
   return (
@@ -151,7 +157,12 @@ export function AdminWorkspaceView({
         </ul>
       </section>
 
-      <AdminPendingQueue items={pendingItems} copy={pendingQueueCopy} />
+      <AdminPendingQueue
+        items={pendingItems}
+        draftItems={draftItems}
+        verifiedItems={readyItems}
+        copy={pendingQueueCopy}
+      />
 
       <section
         id="admin-pending-projects"
@@ -169,38 +180,6 @@ export function AdminWorkspaceView({
           emptyMessage={
             copy.pendingProjectsEmpty ?? "No projects waiting for audit."
           }
-          layout="grid"
-        />
-      </section>
-
-      <section
-        id="admin-drafts"
-        className="space-y-4 scroll-mt-28"
-        aria-labelledby="admin-drafts-heading"
-      >
-        <h2
-          id="admin-drafts-heading"
-          className="text-lg font-semibold tracking-tight text-slate-deep"
-        >
-          {copy.draftsTitle}
-        </h2>
-        <PageDirectory
-          items={draftItems}
-          emptyMessage={copy.draftsEmpty}
-          layout="grid"
-        />
-      </section>
-
-      <section className="space-y-4" aria-labelledby="admin-ready-heading">
-        <h2
-          id="admin-ready-heading"
-          className="text-lg font-semibold tracking-tight text-slate-deep"
-        >
-          {copy.readyTitle}
-        </h2>
-        <PageDirectory
-          items={readyItems}
-          emptyMessage={copy.readyEmpty}
           layout="grid"
         />
       </section>
@@ -243,7 +222,7 @@ export function AdminWorkspaceView({
                 </p>
                 {alert.listingId ? (
                   <Link
-                    href={`${base}/listings/${alert.listingId}`}
+                    href={`${base}/listings/${encodeURIComponent(alert.listingId)}`}
                     className="mt-3 inline-block text-sm font-semibold text-brand-700 hover:text-brand-800"
                   >
                     {alert.listingId}

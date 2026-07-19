@@ -629,6 +629,8 @@
       "partyBrokers": "ደላሎች",
       "partyOwners": "ባለቤቶች",
       "partyImported": "ከውጭ የገቡ",
+      "partyDrafts": "ረቂቆች",
+      "partyVerified": "የተረጋገጡ",
       "partyEmpty": "በዚህ ምድብ ዝርዝር የለም።",
       "readyTitle": "ለማተም ዝግጁ",
       "readyEmpty": "እስካሁን የተኦዲተ ዝርዝር የለም።",

@@ -18,47 +18,65 @@ export type AdminPendingQueueCopy = {
   partyBrokers: string;
   partyOwners: string;
   partyImported: string;
+  partyDrafts: string;
+  partyVerified: string;
   partyEmpty: string;
+  draftsEmpty: string;
+  verifiedEmpty: string;
 };
 
-const TABS: Array<{ id: "all" | AuditPartyCategory; labelKey: keyof AdminPendingQueueCopy }> = [
+type QueueTab = "all" | AuditPartyCategory | "drafts" | "verified";
+
+const TABS: Array<{ id: QueueTab; labelKey: keyof AdminPendingQueueCopy }> = [
   { id: "all", labelKey: "partyAll" },
   { id: "developers", labelKey: "partyDevelopers" },
   { id: "brokers", labelKey: "partyBrokers" },
   { id: "owners", labelKey: "partyOwners" },
   { id: "imported", labelKey: "partyImported" },
+  { id: "drafts", labelKey: "partyDrafts" },
+  { id: "verified", labelKey: "partyVerified" },
 ];
 
 type AdminPendingQueueProps = {
   items: AdminPendingDirectoryItem[];
+  draftItems: DirectoryItem[];
+  verifiedItems: DirectoryItem[];
   copy: AdminPendingQueueCopy;
 };
 
-export function AdminPendingQueue({ items, copy }: AdminPendingQueueProps) {
-  const [tab, setTab] = useState<"all" | AuditPartyCategory>("all");
+export function AdminPendingQueue({
+  items,
+  draftItems,
+  verifiedItems,
+  copy,
+}: AdminPendingQueueProps) {
+  const [tab, setTab] = useState<QueueTab>("all");
 
   const counts = useMemo(() => {
-    const next: Record<"all" | AuditPartyCategory, number> = {
+    const next: Record<QueueTab, number> = {
       all: items.length,
       developers: 0,
       brokers: 0,
       owners: 0,
       imported: 0,
+      drafts: draftItems.length,
+      verified: verifiedItems.length,
     };
     for (const item of items) {
       next[item.party] += 1;
     }
     return next;
-  }, [items]);
+  }, [items, draftItems.length, verifiedItems.length]);
 
-  const filtered = useMemo(
+  const filteredPending = useMemo(
     () => (tab === "all" ? items : items.filter((item) => item.party === tab)),
     [items, tab],
   );
 
   const groups = useMemo(() => {
+    if (tab === "drafts" || tab === "verified") return [];
     const map = new Map<string, AdminPendingDirectoryItem[]>();
-    for (const item of filtered) {
+    for (const item of filteredPending) {
       const key = item.groupLabel.trim() || "Other";
       const bucket = map.get(key);
       if (bucket) bucket.push(item);
@@ -69,7 +87,19 @@ export function AdminPendingQueue({ items, copy }: AdminPendingQueueProps) {
       if (b === "Other") return -1;
       return a.localeCompare(b, undefined, { sensitivity: "base" });
     });
-  }, [filtered]);
+  }, [filteredPending, tab]);
+
+  const specialItems =
+    tab === "drafts" ? draftItems : tab === "verified" ? verifiedItems : null;
+
+  const emptyMessage =
+    tab === "drafts"
+      ? copy.draftsEmpty
+      : tab === "verified"
+        ? copy.verifiedEmpty
+        : tab === "all"
+          ? copy.pendingEmpty
+          : copy.partyEmpty;
 
   return (
     <section
@@ -118,10 +148,16 @@ export function AdminPendingQueue({ items, copy }: AdminPendingQueueProps) {
         })}
       </div>
 
-      {groups.length === 0 ? (
+      {specialItems ? (
+        <PageDirectory
+          items={specialItems}
+          emptyMessage={emptyMessage}
+          layout="grid"
+        />
+      ) : groups.length === 0 ? (
         <PageDirectory
           items={[]}
-          emptyMessage={tab === "all" ? copy.pendingEmpty : copy.partyEmpty}
+          emptyMessage={emptyMessage}
           layout="grid"
         />
       ) : (

@@ -137,7 +137,7 @@ function toPendingItem(
     ]
       .filter(Boolean)
       .join(" · "),
-    href: `/${locale}/listings/${listing.id}`,
+    href: `/${locale}/listings/${encodeURIComponent(listing.id)}`,
     imageUrl: listing.coverImageUrl || listing.galleryImageUrls[0] || null,
     photoCount: listing.galleryImageUrls.length,
     badges,
@@ -192,7 +192,7 @@ function toDirectoryItem(
     ]
       .filter(Boolean)
       .join(" · "),
-    href: `/${locale}/listings/${listing.id}`,
+    href: `/${locale}/listings/${encodeURIComponent(listing.id)}`,
     imageUrl: listing.coverImageUrl || listing.galleryImageUrls[0] || null,
     photoCount: listing.galleryImageUrls.length,
     badges,
@@ -348,7 +348,7 @@ export default async function AdminWorkspacePage({
         adminAuditApprovedAt: { not: null },
       },
       orderBy: { adminAuditApprovedAt: "desc" },
-      take: 12,
+      take: 80,
       select: readySelect,
     }),
     prisma.adminAlert.findMany({
@@ -452,6 +452,8 @@ export default async function AdminWorkspacePage({
           partyBrokers: partyLabels.brokers,
           partyOwners: partyLabels.owners,
           partyImported: partyLabels.imported,
+          partyDrafts: ws.partyDrafts ?? ws.draftsTitle ?? "Drafts",
+          partyVerified: ws.partyVerified ?? ws.readyTitle ?? "Verified",
           partyEmpty: ws.partyEmpty ?? "No listings in this category.",
         }}
       />

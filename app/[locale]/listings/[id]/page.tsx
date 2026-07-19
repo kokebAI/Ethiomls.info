@@ -99,22 +99,43 @@ export default async function ListingDetailPage({
 }: {
   params: Promise<{ locale: string; id: string }>;
 }) {
-  const { locale: raw, id } = await params;
+  const { locale: raw, id: rawId } = await params;
   const locale = (isLocale(raw) ? raw : "en") as Locale;
+  const id = decodeURIComponent(rawId);
   const dictionary = getDictionary(locale);
   const t = (key: string) => translate(dictionary, key);
   const auditCopy = dictionary.adminAudit;
 
-  const admin = await getCurrentAdmin();
-  const listing = await fetchListingById(id, {
-    allowUnpublished: Boolean(admin),
-  });
+  const [admin, session] = await Promise.all([
+    getCurrentAdmin(),
+    getSession(),
+  ]);
+
+  // Match project detail: try published first, then unpublished for signed-in staff/owner.
+  let listing = await fetchListingById(id);
+  if (!listing && (admin || session)) {
+    listing = await fetchListingById(id, { allowUnpublished: true });
+  }
   if (!listing) notFound();
 
+  const isOwner = Boolean(session && session.userId === listing.ownerId);
+  const isDeveloperOwner = Boolean(
+    session &&
+      listing.developer?.userId &&
+      session.userId === listing.developer.userId,
+  );
+  if (
+    listing.status !== "PUBLISHED" &&
+    !admin &&
+    !isOwner &&
+    !isDeveloperOwner
+  ) {
+    notFound();
+  }
+
   const base = `/${locale}`;
-  const session = await getSession();
   const isSignedIn = Boolean(session);
-  const loginHref = `${base}/login?mode=register&next=${encodeURIComponent(`${base}/listings/${listing.id}`)}`;
+  const loginHref = `${base}/login?mode=register&next=${encodeURIComponent(`${base}/listings/${encodeURIComponent(listing.id)}`)}`;
 
   const title = pickLocalized(listing.title, locale) || listing.id;
   const description = pickLocalized(listing.description, locale);

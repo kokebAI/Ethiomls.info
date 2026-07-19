@@ -389,6 +389,8 @@
       "partyBrokers": "Brokers",
       "partyOwners": "Owners",
       "partyImported": "Imported",
+      "partyDrafts": "Drafts",
+      "partyVerified": "Verified",
       "partyEmpty": "No listings in this category.",
       "readyTitle": "Ready to publish",
       "readyEmpty": "Nothing audited yet — approve a pending listing to see it here.",

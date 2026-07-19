@@ -182,10 +182,11 @@ export async function fetchListingById(
   opts?: { allowUnpublished?: boolean },
 ) {
   try {
+    const listingId = decodeURIComponent(id);
     return await prisma.listing.findFirst({
       where: opts?.allowUnpublished
-        ? { id }
-        : { id, status: ListingStatus.PUBLISHED },
+        ? { id: listingId }
+        : { id: listingId, status: ListingStatus.PUBLISHED },
       include: {
         subCity: {
           select: { code: true, name: true },
