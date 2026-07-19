@@ -97,6 +97,8 @@ export function buildScrapeInviteMessage(
   const claimLoginUrl = smsNotificationEngine.buildAbsoluteUrl(
     `/am/login?mode=reset`,
   );
+  const phone =
+    resolveInvitePhone(listing.contactPhone) ?? listing.contactPhone?.trim();
 
   return [
     "ሰላም — EthioMLS የንብረት ማስታወቂያዎን አግኝቷል።",
@@ -105,9 +107,9 @@ export function buildScrapeInviteMessage(
     `ዋጋ: ${formatPrice(listing)}`,
     details.length > 0 ? details.join(" · ") : null,
     `ዝርዝር: ${claimUrl}`,
-    opts?.accountCreated
-      ? `መለያ ተፈጥሯል። ይግቡ (የይለፍ ቃል ዳግም ማስጀመር): ${claimLoginUrl}`
-      : `ለመግባት (Reset password): ${claimLoginUrl}`,
+    phone ? `ስልክዎ: ${phone}` : null,
+    "ለመግባት፡ ይህንኑ ስልክ ቁጥር ይጠቀሙ፣ ከዚያ Reset password ይምረጡ።",
+    `Use this same phone number, then choose Reset password: ${claimLoginUrl}`,
   ]
     .filter(Boolean)
     .join("\n");
