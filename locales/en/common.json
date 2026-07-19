@@ -885,5 +885,14 @@
     "callNow": "Call broker",
     "contactLabel": "Listing contact",
     "routeFailed": "Could not complete secure lead routing."
+  },
+  "pwa": {
+    "installTitle": "Install EthioMLS",
+    "installBody": "Add EthioMLS to your home screen for faster access.",
+    "installAction": "Install",
+    "installing": "Installing…",
+    "dismiss": "Not now",
+    "iosHint": "On iPhone: tap Share, then Add to Home Screen.",
+    "chromeMenuHint": "Open the browser menu (⋮) and choose Install app / Add to Home screen."
   }
 }

@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { AddisSkylineBackdrop } from "@/components/AddisSkylineBackdrop";
 import { DocumentLocale } from "@/components/DocumentLocale";
 import { Header } from "@/components/Header";
+import { ServiceWorkerRegister } from "@/components/pwa/ServiceWorkerRegister";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { TranslationProvider } from "@/hooks/useTranslation";
 import { isLocale, locales, type Locale } from "@/lib/i18n/config";
@@ -65,6 +66,7 @@ export default async function LocaleLayout({
           {children}
         </main>
       </div>
+      <ServiceWorkerRegister />
     </TranslationProvider>
   );
 }

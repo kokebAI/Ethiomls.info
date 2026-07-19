@@ -229,7 +229,7 @@
     "projects": {
       "title": "ፕሮጀክቶች",
       "lede": "እስክሮ እና የግንባታ ደረጃ ታይነት ያላቸው ኦፍ-ፕላን እና በግንባታ ላይ ያሉ ፕሮጀክቶች።",
-      "selectUnit": "Inspect a floor, then select a unit to see MLS ID and property details."
+      "selectUnit": "ፎቅ ይምረጡ፣ ከዚያ የMLS መታወቂያ እና የንብረት ዝርዝር ለማየት ክፍል ይምረጡ።"
     },
     "developers": {
       "title": "ገንቢዎች",
@@ -885,5 +885,14 @@
     "shareCopied": "ሊንኩ ተቀድቷል",
     "shareDone": "ተጋርቷል",
     "shareMore": "ተጨማሪ…"
+  },
+  "pwa": {
+    "installTitle": "EthioMLS ጫን",
+    "installBody": "ፈጣን መዳረሻ ለማግኘት EthioMLSን ወደ መነሻ ስክሪንዎ ያክሉ።",
+    "installAction": "ጫን",
+    "installing": "በመጫን ላይ…",
+    "dismiss": "አሁን አይደለም",
+    "iosHint": "በiPhone፡ Share ን ይጫኑ፣ ከዚያ Add to Home Screen ይምረጡ።",
+    "chromeMenuHint": "የአሳሹን ምናሌ (⋮) ይክፈቱ እና Install app / Add to Home screen ይምረጡ።"
   }
 }
