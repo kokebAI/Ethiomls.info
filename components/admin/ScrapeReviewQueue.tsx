@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
-import { Check, LoaderCircle, Trash2 } from "lucide-react";
+import { ClipboardCheck, LoaderCircle, Pencil, Trash2 } from "lucide-react";
 import { useTranslation } from "@/hooks/useTranslation";
 
 export type ScrapeReviewItem = {
@@ -46,44 +46,23 @@ export function ScrapeReviewQueue({ initialItems }: ScrapeReviewQueueProps) {
     setItems((prev) => prev.filter((item) => item.id !== id));
   }, []);
 
-  async function sendInvite(id: string) {
+  async function sendToPendingAudit(id: string) {
     setBusyId(id);
     setMessage(null);
     try {
-      const response = await fetch("/api/scrape/send-invite", {
+      const response = await fetch("/api/scrape/send-to-audit", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ listingId: id }),
       });
-      const payload = (await response.json()) as {
-        message?: string;
-        data?: {
-          notificationStatus?: string;
-          accountCreated?: boolean;
-          account?: { label?: string; role?: string; phone?: string | null };
-        };
-      };
+      const payload = (await response.json()) as { message?: string };
       if (!response.ok) {
-        throw new Error(payload.message ?? t("scrapeReview.sendFailed"));
+        throw new Error(payload.message ?? t("scrapeReview.sendToAuditFailed"));
       }
       removeItem(id);
-      const account = payload.data?.account;
-      const createdHint = payload.data?.accountCreated
-        ? t("scrapeReview.accountCreated", {
-            label: account?.label ?? "",
-            role: account?.role ?? "",
-          })
-        : account
-          ? t("scrapeReview.accountLinked", {
-              label: account.label ?? "",
-              role: account.role ?? "",
-            })
-          : "";
       setMessage({
         tone: "success",
-        text: [t("scrapeReview.sendDone", { id }), createdHint]
-          .filter(Boolean)
-          .join(" "),
+        text: t("scrapeReview.sendToAuditDone", { id }),
       });
     } catch (error) {
       setMessage({
@@ -91,7 +70,7 @@ export function ScrapeReviewQueue({ initialItems }: ScrapeReviewQueueProps) {
         text:
           error instanceof Error
             ? error.message
-            : t("scrapeReview.sendFailed"),
+            : t("scrapeReview.sendToAuditFailed"),
       });
     } finally {
       setBusyId(null);
@@ -196,18 +175,25 @@ export function ScrapeReviewQueue({ initialItems }: ScrapeReviewQueueProps) {
                 </p>
               </div>
               <div className="flex flex-wrap gap-2">
+                <Link
+                  href={`/${locale}/listings/${item.id}`}
+                  className="inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-ink transition hover:bg-slate-50"
+                >
+                  <Pencil className="h-4 w-4" />
+                  {t("scrapeReview.edit")}
+                </Link>
                 <button
                   type="button"
                   disabled={busy}
-                  onClick={() => void sendInvite(item.id)}
+                  onClick={() => void sendToPendingAudit(item.id)}
                   className="inline-flex items-center gap-1.5 rounded-full bg-slate-950 px-4 py-2 text-sm font-semibold text-white transition hover:bg-slate-800 disabled:opacity-45"
                 >
                   {busy ? (
                     <LoaderCircle className="h-4 w-4 animate-spin" />
                   ) : (
-                    <Check className="h-4 w-4" />
+                    <ClipboardCheck className="h-4 w-4" />
                   )}
-                  {t("scrapeReview.editSend")}
+                  {t("scrapeReview.sendToAudit")}
                 </button>
                 <button
                   type="button"

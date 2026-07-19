@@ -29,6 +29,19 @@ function isClientRole(role: string | null | undefined): boolean {
   return role === "BUYER_RENTER";
 }
 
+function dedupeNavByHref(
+  items: { href: string; key: string }[],
+): { href: string; key: string }[] {
+  const seen = new Set<string>();
+  const out: { href: string; key: string }[] = [];
+  for (const item of items) {
+    if (seen.has(item.href)) continue;
+    seen.add(item.href);
+    out.push(item);
+  }
+  return out;
+}
+
 export function Header() {
   const { locale, t } = useTranslation();
   const router = useRouter();
@@ -66,31 +79,36 @@ export function Header() {
   }
 
   const showCatalog = !user || isClientRole(user.role);
+  const hubHref = user ? hubPathForRole(user.role) : null;
   const homeHref =
-    user && !isClientRole(user.role)
-      ? `${base}${hubPathForRole(user.role)}`
-      : base;
+    user && !isClientRole(user.role) ? `${base}${hubHref}` : base;
 
-  const navItems: { href: string; key: string }[] = [];
+  const rawNavItems: { href: string; key: string }[] = [];
   if (showCatalog) {
     for (const item of CLIENT_CATALOG_NAV) {
-      navItems.push({ href: item.href, key: item.key });
+      rawNavItems.push({ href: item.href, key: item.key });
     }
   }
-  if (user) {
-    navItems.push({
-      href: hubPathForRole(user.role),
+  if (user && hubHref) {
+    rawNavItems.push({
+      href: hubHref,
       key: isClientRole(user.role) ? "nav.forYou" : "nav.home",
     });
-    navItems.push({ href: "/profile", key: "nav.profile" });
   }
+  // Profile is covered by the avatar chip — do not add it to nav tabs.
   if (user?.role === "ADMIN") {
-    navItems.push({ href: "/admin/imports", key: "nav.imports" });
-    navItems.push({ href: "/admin/scrape-review", key: "nav.scrapeReview" });
+    rawNavItems.push({ href: "/admin/imports", key: "nav.imports" });
+    rawNavItems.push({ href: "/admin/scrape-review", key: "nav.scrapeReview" });
   }
   if (user?.role === "ADMIN" || user?.role === "INDEPENDENT_DELALA") {
-    navItems.push({ href: "/dashboard", key: "nav.dashboard" });
+    rawNavItems.push({ href: "/dashboard", key: "nav.dashboard" });
   }
+
+  const navItems = dedupeNavByHref(rawNavItems);
+  const hubAlreadyInNav =
+    hubHref != null && navItems.some((item) => item.href === hubHref);
+  /** Role users only — skip when hub is already a nav tab; catalog users skip Browse (listings is in tabs). */
+  const showHomeCta = Boolean(user && !showCatalog && !hubAlreadyInNav);
 
   return (
     <header className="sticky top-0 z-40 border-b border-slate-200/80 bg-white/85 backdrop-blur-xl">
@@ -117,7 +135,7 @@ export function Header() {
         >
           {navItems.map((item) => (
             <Link
-              key={item.key}
+              key={`${item.key}:${item.href || "home"}`}
               href={`${base}${item.href}`}
               className="rounded-lg px-3 py-2 text-sm font-medium text-ink transition-colors hover:bg-slate-100 hover:text-slate-deep"
             >
@@ -156,16 +174,9 @@ export function Header() {
               {t("nav.signIn")}
             </Link>
           )}
-          {showCatalog ? (
+          {showHomeCta && hubHref ? (
             <Link
-              href={`${base}/listings`}
-              className="hidden rounded-full bg-brand-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:-translate-y-px hover:bg-brand-700 md:inline-flex"
-            >
-              {t("header.browseListings")}
-            </Link>
-          ) : user ? (
-            <Link
-              href={`${base}${hubPathForRole(user.role)}`}
+              href={`${base}${hubHref}`}
               className="hidden rounded-full bg-brand-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:-translate-y-px hover:bg-brand-700 md:inline-flex"
             >
               {t("nav.home")}
@@ -202,7 +213,7 @@ export function Header() {
               </li>
             ) : null}
             {navItems.map((item) => (
-              <li key={item.key}>
+              <li key={`${item.key}:${item.href || "home"}`}>
                 <Link
                   href={`${base}${item.href}`}
                   className="block rounded-xl px-3 py-2.5 text-sm font-medium text-ink transition hover:bg-brand-50 hover:text-brand-800"
@@ -232,20 +243,10 @@ export function Header() {
                 </Link>
               )}
             </li>
-            {showCatalog ? (
+            {showHomeCta && hubHref ? (
               <li className="pt-1">
                 <Link
-                  href={`${base}/listings`}
-                  className="flex w-full items-center justify-center rounded-full bg-brand-600 px-4 py-2.5 text-sm font-semibold text-white"
-                  onClick={() => setMobileOpen(false)}
-                >
-                  {t("header.browseListings")}
-                </Link>
-              </li>
-            ) : user ? (
-              <li className="pt-1">
-                <Link
-                  href={`${base}${hubPathForRole(user.role)}`}
+                  href={`${base}${hubHref}`}
                   className="flex w-full items-center justify-center rounded-full bg-brand-600 px-4 py-2.5 text-sm font-semibold text-white"
                   onClick={() => setMobileOpen(false)}
                 >
