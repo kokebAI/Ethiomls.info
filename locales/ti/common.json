@@ -678,7 +678,10 @@
       "backToRoles": "Back to admin hub",
       "pendingProjectsTitle": "Projects awaiting audit",
       "pendingProjectsEmpty": "No projects waiting for audit.",
-      "snapshotPendingProjects": "{count} project(s) awaiting audit"
+      "snapshotPendingProjects": "{count} project(s) awaiting audit",
+      "auditPassed": "Audit passed",
+      "groupOther": "Other",
+      "listingFallback": "Listing"
     }
   },
   "adminAudit": {
@@ -695,6 +698,7 @@
     "statusLabel": "Status",
     "rejectedToDraft": "Listing rejected and returned to draft.",
     "published": "Listing published.",
+    "attachFailed": "Could not attach account",
     "auditFailed": "Audit failed",
     "publishFailed": "Publish failed",
     "checkAll": "Check all",

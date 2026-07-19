@@ -404,7 +404,7 @@ export default async function AdminWorkspacePage({
             id: project.id,
             href: `/${locale}/projects/${encodeURIComponent(project.id)}`,
             title,
-            description: [project.developer.tradeName, subCity]
+            meta: [project.developer.tradeName, subCity]
               .filter(Boolean)
               .join(" · "),
             imageUrl: cover,

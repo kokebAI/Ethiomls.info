@@ -3,6 +3,7 @@ import {
   ConstructionStage,
   ListingStatus,
   ListingType,
+  Prisma,
   PrismaClient,
   PropertyCategory,
   UserRole,

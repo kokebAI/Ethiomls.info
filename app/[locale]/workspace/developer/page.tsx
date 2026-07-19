@@ -161,7 +161,7 @@ export default async function DeveloperWorkspacePage({
       },
     }),
     prisma.user.findFirst({
-      where: { id: user.id, faydaVerifiedAt: { not: null } },
+      where: { id: user.id, faydaIdentity: { isNot: null } },
       select: { id: true },
     }),
   ]);
@@ -170,9 +170,9 @@ export default async function DeveloperWorkspacePage({
     <main>
       <DeveloperWorkspaceView
         locale={locale}
-        profileName={profile?.tradeName ?? null}
-        profileId={profile?.id ?? null}
-        faydaVerified={Boolean(faydaOk)}
+        tradeName={profile?.tradeName ?? null}
+        developerId={profile?.id ?? null}
+        hasFayda={Boolean(faydaOk)}
         pendingItems={pending.map((listing) =>
           toDirectoryItem(locale, listing, enums),
         )}
@@ -193,6 +193,12 @@ export default async function DeveloperWorkspacePage({
           readinessProfileNeeded: ws.readinessProfileNeeded,
           readinessFaydaOk: ws.readinessFaydaOk,
           readinessFaydaNeeded: ws.readinessFaydaNeeded,
+          readinessPending: ws.readinessPending,
+          packTitle: ws.packTitle,
+          packLede: ws.packLede,
+          packPhotos: ws.packPhotos,
+          packFayda: ws.packFayda,
+          packCta: ws.packCta,
           pendingTitle: ws.pendingTitle,
           pendingEmpty: ws.pendingEmpty,
           publishedTitle: ws.publishedTitle,

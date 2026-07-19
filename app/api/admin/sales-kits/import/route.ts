@@ -20,6 +20,7 @@ const listingSchema = z.object({
   floor: z.number().int().nullable().optional(),
   unitLabel: z.string().trim().max(40).nullable().optional(),
   listingType: z.enum(["SALE", "RENT", "OFF_PLAN"]).default("OFF_PLAN"),
+  listingScope: z.enum(["SINGLE", "PROPERTY"]).default("SINGLE"),
   category: z
     .enum(["RESIDENTIAL", "COMMERCIAL", "MIXED_USE", "LAND"])
     .default("COMMERCIAL"),
