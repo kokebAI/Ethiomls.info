@@ -2,7 +2,7 @@
   "brand": {
     "name": "EthioMLS",
     "tagline": "Buy and rent verified property in Addis Ababa — for Ethiopian diaspora and global investors",
-    "motto": "A trustworthy foundation, for a better tomorrow."
+    "motto": "Live it, lease it, or watch it rise — in Addis Ababa."
   },
   "nav": {
     "home": "Home",
@@ -333,7 +333,7 @@
     "developer": {
       "eyebrow": "Developer workspace",
       "title": "Publish escrow-backed inventory",
-      "lede": "Track readiness, submit the full document pack, and follow units through admin review from one place.",
+      "lede": "Track readiness, submit the full document pack, follow units through admin review, and mark apartments Available, Reserved, or Sold from your public developer page — inventory status is separate from publish/audit.",
       "addInventory": "Add off-plan inventory",
       "viewProjects": "Browse projects",
       "myPage": "My public page",
@@ -792,7 +792,7 @@
       },
       "inventory": {
         "heading": "Unit inventory",
-        "lede": "Projects and buildings grouped by unit type, with availability counts.",
+        "lede": "Projects and buildings grouped by unit type, with Available / Reserved / Sold counts. Owning developers can update status here.",
         "unitTypes": "Unit types",
         "units": "units",
         "unitCount": "{count} units",
@@ -803,7 +803,11 @@
         "kindProject": "Project",
         "kindBuilding": "Building",
         "kindStandalone": "Other listings",
-        "standalone": "Standalone listings"
+        "standalone": "Standalone listings",
+        "updateFailed": "Could not update unit status",
+        "editHeading": "Update unit inventory",
+        "editLede": "Mark each apartment Available, Reserved, or Sold. This does not change whether the listing is published.",
+        "floorLabel": "Floor"
       }
     },
     "comingOnline": "Directory coming online — sample inventory below.",

@@ -24,6 +24,7 @@ import {
   PrismaClient,
   PropertyCategory,
 } from "@prisma/client";
+import { fromBuildingUnitStatus } from "../lib/catalog/inventory-status";
 import { allocateUniquePropertyId } from "../lib/db/allocatePropertyId";
 import { amenityFlagsFromTags } from "../lib/properties/amenities";
 import {
@@ -416,6 +417,7 @@ async function upsertProject(
       listingType,
       category,
       status: ListingStatus.PENDING_REVIEW,
+      inventoryStatus: fromBuildingUnitStatus(unit.status),
       priceAmount: unit.price,
       priceCurrency: currency,
       bedrooms: unit.bedrooms,

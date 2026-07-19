@@ -2,7 +2,7 @@
   "brand": {
     "name": "EthioMLS",
     "tagline": "Manneenii fi bakka daldalaa Itoophiyaa keessatti barbaadi",
-    "motto": "Bu'ura amanamaa, boru fooyya'aa tiifi."
+    "motto": "Itti jiraadhu, kireeffadhu, yookiin akka ol-ka'utti ilaali — Finfinnee keessatti."
   },
   "nav": {
     "home": "Fuula duraa",
@@ -264,7 +264,7 @@
       },
       "inventory": {
         "heading": "Kuusaa yunitii",
-        "lede": "Pirojektootaafi ijaarsi gosa yunitiin qoodaman, lakkoofsa argamuu waliin.",
+        "lede": "Projects and buildings grouped by unit type, with Available / Reserved / Sold counts. Owning developers can update status here.",
         "unitTypes": "Gosa yunitii",
         "units": "yunitoota",
         "unitCount": "Yunitoota {count}",
@@ -275,7 +275,11 @@
         "kindProject": "Pirojektii",
         "kindBuilding": "Ijaarsa",
         "kindStandalone": "Tarree biroo",
-        "standalone": "Tarree dhuunfaa"
+        "standalone": "Tarree dhuunfaa",
+        "updateFailed": "Could not update unit status",
+        "editHeading": "Update unit inventory",
+        "editLede": "Mark each apartment Available, Reserved, or Sold. This does not change whether the listing is published.",
+        "floorLabel": "Floor"
       }
     },
     "comingOnline": "Tarreewwan online ta'aa jiru — fakkeenya armaan gadii.",
@@ -610,7 +614,7 @@
     "developer": {
       "eyebrow": "Developer workspace",
       "title": "Publish escrow-backed inventory",
-      "lede": "Track readiness, submit the full document pack, and follow units through admin review from one place.",
+      "lede": "Track readiness, submit the full document pack, follow units through admin review, and mark apartments Available, Reserved, or Sold from your public developer page — inventory status is separate from publish/audit.",
       "addInventory": "Add off-plan inventory",
       "viewProjects": "Browse projects",
       "myPage": "My public page",

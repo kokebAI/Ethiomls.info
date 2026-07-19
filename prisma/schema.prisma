@@ -88,6 +88,14 @@ enum ListingStatus {
   ARCHIVED
 }
 
+/// Per-unit stock state for developer inventory (Available / Reserved / Sold).
+/// Kept separate from `ListingStatus`, which tracks publication / audit.
+enum InventoryStatus {
+  AVAILABLE
+  RESERVED
+  SOLD
+}
+
 /// HaHu / SMS invite dispatch state for scraped imports.
 /// Kept separate from `ListingStatus` (publication / admin audit gate).
 enum NotificationStatus {
@@ -389,6 +397,8 @@ model Listing {
   listingScope       ListingScope      @default(SINGLE)
   category           PropertyCategory  @default(RESIDENTIAL)
   status             ListingStatus     @default(DRAFT)
+  /// Unit stock for developer inventory views — independent of publish status.
+  inventoryStatus    InventoryStatus   @default(AVAILABLE)
   priceAmount        Decimal           @db.Decimal(18, 2)
   priceCurrency      CurrencyCode      @default(ETB)
   bedrooms           Int?
@@ -496,6 +506,7 @@ model Listing {
   @@index([importSourceId])
   @@index([sourceUrl])
   @@index([notificationStatus])
+  @@index([projectId, inventoryStatus])
   @@map("listings")
 }
 

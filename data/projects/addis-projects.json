@@ -4935,6 +4935,1063 @@
           }
         ]
       }
+    },
+    {
+      "slug": "METROPOLITAN-RESIDENCE",
+      "registrationNumber": "ET-DIR-MADDIS-029",
+      "subCityCode": "bole",
+      "category": "RESIDENTIAL",
+      "title": {
+        "en": "Metropolitan Residence",
+        "am": "ሜትሮፖሊታን ሬሲደንስ"
+      },
+      "description": {
+        "en": "Luxury Metropolitan Residence apartments in Bole (around Friendship Hotel / Istanbul Restaurant). Contact +251 973 40 40 40 · https://metropolitanaddis.com/metropolitan-residence/",
+        "am": "በቦሌ የሜትሮፖሊታን ሬሲደንስ ላግዥ አፓርታማ። +251 973 40 40 40"
+      },
+      "addressLine": "Bole · around Friendship Hotel · in front of Istanbul Restaurant",
+      "constructionStage": "SUPERSTRUCTURE",
+      "completionPercent": 50,
+      "requiresEscrow": true,
+      "website": "https://metropolitanaddis.com/metropolitan-residence/",
+      "contactPhone": "+251973404040",
+      "sourceUpdatedAt": "2026-07-19",
+      "coverImageUrl": "https://metropolitanaddis.com/wp-content/uploads/2025/01/Blog-scaled.jpeg",
+      "galleryImageUrls": [
+        "https://metropolitanaddis.com/wp-content/uploads/2025/01/Blog-scaled.jpeg"
+      ],
+      "amenities": [
+        "parking",
+        "elevator",
+        "security",
+        "power-backup"
+      ],
+      "building": {
+        "floors": [
+          {
+            "level": 0,
+            "label": {
+              "en": "Luxury residences",
+              "am": "ላግዥ"
+            },
+            "units": [
+              {
+                "unitLabel": "MR-2BR",
+                "floor": 0,
+                "bedrooms": 2,
+                "bathrooms": 2,
+                "floorAreaSqm": 110,
+                "price": 1,
+                "currency": "ETB",
+                "listingType": "OFF_PLAN",
+                "status": "available",
+                "category": "RESIDENTIAL",
+                "title": {
+                  "en": "Residence · 2BR (price on request)",
+                  "am": "ሬሲደንስ · 2 መኝታ"
+                },
+                "description": {
+                  "en": "Metropolitan Residence Bole luxury 2BR. Price on request. +251 973 40 40 40 · https://metropolitanaddis.com/metropolitan-residence/",
+                  "am": "Metropolitan Residence Bole luxury 2BR. Price on request. +251 973 40 40 40 · https://metropolitanaddis.com/metropolitan-residence/"
+                },
+                "amenities": [
+                  "parking",
+                  "elevator",
+                  "security",
+                  "power-backup"
+                ]
+              },
+              {
+                "unitLabel": "MR-3BR",
+                "floor": 0,
+                "bedrooms": 3,
+                "bathrooms": 2,
+                "floorAreaSqm": 140,
+                "price": 1,
+                "currency": "ETB",
+                "listingType": "OFF_PLAN",
+                "status": "available",
+                "category": "RESIDENTIAL",
+                "title": {
+                  "en": "Residence · 3BR (price on request)",
+                  "am": "ሬሲደንስ · 3 መኝታ"
+                },
+                "description": {
+                  "en": "Metropolitan Residence Bole luxury 3BR. Price on request. +251 973 40 40 40",
+                  "am": "Metropolitan Residence Bole luxury 3BR. Price on request. +251 973 40 40 40"
+                },
+                "amenities": [
+                  "parking",
+                  "elevator",
+                  "security",
+                  "power-backup"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "slug": "METROPOLITAN-TOWER",
+      "registrationNumber": "ET-DIR-MADDIS-029",
+      "subCityCode": "bole",
+      "category": "MIXED_USE",
+      "title": {
+        "en": "Metropolitan Tower (Bole Tower)",
+        "am": "ሜትሮፖሊታን ታወር (ቦሌ ታወር)"
+      },
+      "description": {
+        "en": "Metropolitan Tower in the heart of Bole — carefully designed apartments, club lounge, gym, and commercial with shopping malls. Contact +251 973 40 40 40 · https://metropolitanaddis.com/metropolitan-tower/",
+        "am": "በቦሌ መሃል የሜትሮፖሊታን ታወር · አፓርታማ + ክለብ + ጂም። +251 973 40 40 40"
+      },
+      "addressLine": "Heart of Bole · Metropolitan Tower",
+      "constructionStage": "SUPERSTRUCTURE",
+      "completionPercent": 55,
+      "requiresEscrow": true,
+      "website": "https://metropolitanaddis.com/metropolitan-tower/",
+      "contactPhone": "+251973404040",
+      "sourceUpdatedAt": "2026-07-19",
+      "coverImageUrl": "https://metropolitanaddis.com/wp-content/uploads/2019/03/Bole-tower-slid.docx.png",
+      "galleryImageUrls": [
+        "https://metropolitanaddis.com/wp-content/uploads/2019/03/Bole-tower-slid.docx.png"
+      ],
+      "amenities": [
+        "parking",
+        "elevator",
+        "security",
+        "power-backup",
+        "gym"
+      ],
+      "building": {
+        "floors": [
+          {
+            "level": 0,
+            "label": {
+              "en": "Tower units",
+              "am": "ታወር"
+            },
+            "units": [
+              {
+                "unitLabel": "MT-2BR",
+                "floor": 0,
+                "bedrooms": 2,
+                "bathrooms": 2,
+                "floorAreaSqm": 100,
+                "price": 1,
+                "currency": "ETB",
+                "listingType": "OFF_PLAN",
+                "status": "available",
+                "category": "RESIDENTIAL",
+                "title": {
+                  "en": "Metropolitan Tower · 2BR (price on request)",
+                  "am": "ታወር · 2 መኝታ"
+                },
+                "description": {
+                  "en": "Metropolitan Tower Bole luxury 2BR with club/gym access. Price on request. +251 973 40 40 40",
+                  "am": "Metropolitan Tower Bole luxury 2BR with club/gym access. Price on request. +251 973 40 40 40"
+                },
+                "amenities": [
+                  "parking",
+                  "elevator",
+                  "security",
+                  "power-backup"
+                ]
+              },
+              {
+                "unitLabel": "MT-3BR",
+                "floor": 0,
+                "bedrooms": 3,
+                "bathrooms": 2,
+                "floorAreaSqm": 130,
+                "price": 1,
+                "currency": "ETB",
+                "listingType": "OFF_PLAN",
+                "status": "available",
+                "category": "RESIDENTIAL",
+                "title": {
+                  "en": "Metropolitan Tower · 3BR (price on request)",
+                  "am": "ታወር · 3 መኝታ"
+                },
+                "description": {
+                  "en": "Metropolitan Tower Bole luxury 3BR. Price on request. +251 973 40 40 40",
+                  "am": "Metropolitan Tower Bole luxury 3BR. Price on request. +251 973 40 40 40"
+                },
+                "amenities": [
+                  "parking",
+                  "elevator",
+                  "security",
+                  "power-backup"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "slug": "METROPOLITAN-BOLE-MIDTOWN",
+      "registrationNumber": "ET-DIR-MADDIS-029",
+      "subCityCode": "bole",
+      "category": "RESIDENTIAL",
+      "title": {
+        "en": "Bole Midtown Luxury Apartments",
+        "am": "ቦሌ ሚድታውን ላግዥ አፓርታማዎች"
+      },
+      "description": {
+        "en": "Bole Midtown luxury apartments in the best part of Bole — top quality construction and floor plans. https://metropolitanaddis.com/bole-midtown/",
+        "am": "በቦሌ ሚድታውን ላግዥ አፓርታማ። +251 973 40 40 40"
+      },
+      "addressLine": "Best part of Bole · Midtown",
+      "constructionStage": "SUPERSTRUCTURE",
+      "completionPercent": 50,
+      "requiresEscrow": true,
+      "website": "https://metropolitanaddis.com/bole-midtown/",
+      "contactPhone": "+251973404040",
+      "sourceUpdatedAt": "2026-07-19",
+      "coverImageUrl": "https://metropolitanaddis.com/wp-content/uploads/2019/07/lexury-with-white-and-golden-2000x1064.png",
+      "galleryImageUrls": [
+        "https://metropolitanaddis.com/wp-content/uploads/2019/07/lexury-with-white-and-golden-2000x1064.png"
+      ],
+      "amenities": [
+        "parking",
+        "elevator",
+        "security",
+        "power-backup"
+      ],
+      "building": {
+        "floors": [
+          {
+            "level": 0,
+            "label": {
+              "en": "Midtown units",
+              "am": "ሚድታውን"
+            },
+            "units": [
+              {
+                "unitLabel": "BM-2BR",
+                "floor": 0,
+                "bedrooms": 2,
+                "bathrooms": 2,
+                "floorAreaSqm": 105,
+                "price": 1,
+                "currency": "ETB",
+                "listingType": "OFF_PLAN",
+                "status": "available",
+                "category": "RESIDENTIAL",
+                "title": {
+                  "en": "Bole Midtown · 2BR (price on request)",
+                  "am": "ሚድታውን · 2 መኝታ"
+                },
+                "description": {
+                  "en": "Bole Midtown luxury 2BR. Price on request. +251 973 40 40 40 · https://metropolitanaddis.com/bole-midtown/",
+                  "am": "Bole Midtown luxury 2BR. Price on request. +251 973 40 40 40 · https://metropolitanaddis.com/bole-midtown/"
+                },
+                "amenities": [
+                  "parking",
+                  "elevator",
+                  "security",
+                  "power-backup"
+                ]
+              },
+              {
+                "unitLabel": "BM-3BR",
+                "floor": 0,
+                "bedrooms": 3,
+                "bathrooms": 2,
+                "floorAreaSqm": 135,
+                "price": 1,
+                "currency": "ETB",
+                "listingType": "OFF_PLAN",
+                "status": "available",
+                "category": "RESIDENTIAL",
+                "title": {
+                  "en": "Bole Midtown · 3BR (price on request)",
+                  "am": "ሚድታውን · 3 መኝታ"
+                },
+                "description": {
+                  "en": "Bole Midtown luxury 3BR. Price on request. +251 973 40 40 40",
+                  "am": "Bole Midtown luxury 3BR. Price on request. +251 973 40 40 40"
+                },
+                "amenities": [
+                  "parking",
+                  "elevator",
+                  "security",
+                  "power-backup"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "slug": "METROPOLITAN-SARBET-GABRIEL",
+      "registrationNumber": "ET-DIR-MADDIS-029",
+      "subCityCode": "nifas-silk-lafto",
+      "category": "RESIDENTIAL",
+      "title": {
+        "en": "Sarbet Gabriel Luxury Apartments",
+        "am": "ሳርቤት ገብርኤል ላግዥ አፓርታማዎች"
+      },
+      "description": {
+        "en": "Metropolitan’s first luxury project — Sarbet Gabriel — built and delivered in 12 months. City views; European builders. https://metropolitanaddis.com/sarbet-gabriel/",
+        "am": "የሜትሮፖሊታን የመጀመሪያ ላግዥ · ሳርቤት ገብርኤል · በ12 ወር ተረከበ።"
+      },
+      "addressLine": "Sarbet Gabriel · Addis Ababa",
+      "constructionStage": "FULLY_COMPLETED",
+      "completionPercent": 100,
+      "requiresEscrow": false,
+      "website": "https://metropolitanaddis.com/sarbet-gabriel/",
+      "contactPhone": "+251973404040",
+      "sourceUpdatedAt": "2026-07-19",
+      "coverImageUrl": "https://metropolitanaddis.com/wp-content/uploads/2019/07/lexury-with-white-and-golden-2000x1064.png",
+      "galleryImageUrls": [
+        "https://metropolitanaddis.com/wp-content/uploads/2019/07/lexury-with-white-and-golden-2000x1064.png"
+      ],
+      "amenities": [
+        "parking",
+        "elevator",
+        "security",
+        "power-backup"
+      ],
+      "building": {
+        "floors": [
+          {
+            "level": 0,
+            "label": {
+              "en": "Delivered stock",
+              "am": "ተረክቧል"
+            },
+            "units": [
+              {
+                "unitLabel": "SG-APT",
+                "floor": 0,
+                "bedrooms": 2,
+                "bathrooms": 2,
+                "floorAreaSqm": 100,
+                "price": 1,
+                "currency": "ETB",
+                "listingType": "SALE",
+                "status": "available",
+                "category": "RESIDENTIAL",
+                "title": {
+                  "en": "Sarbet Gabriel · apartment (price on request)",
+                  "am": "ሳርቤት ገብርኤል · አፓርታማ"
+                },
+                "description": {
+                  "en": "Sarbet Gabriel luxury apartment (delivered). Price on request. +251 973 40 40 40",
+                  "am": "Sarbet Gabriel luxury apartment (delivered). Price on request. +251 973 40 40 40"
+                },
+                "amenities": [
+                  "parking",
+                  "elevator",
+                  "security",
+                  "power-backup"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "slug": "METROPOLITAN-CENTRAL-TOWER",
+      "registrationNumber": "ET-DIR-MADDIS-029",
+      "subCityCode": "kirkos",
+      "category": "RESIDENTIAL",
+      "title": {
+        "en": "Central Tower",
+        "am": "ሴንትራል ታወር"
+      },
+      "description": {
+        "en": "Central Tower near AU HQ — high-capacity water tank, UPS, high-end elevators, automatic security, underground parking, city views. https://metropolitanaddis.com/central-tower/",
+        "am": "ከAU አጠገብ ሴንትራል ታወር። +251 973 40 40 40"
+      },
+      "addressLine": "Central Addis · near AU headquarters",
+      "constructionStage": "SUPERSTRUCTURE",
+      "completionPercent": 45,
+      "requiresEscrow": true,
+      "website": "https://metropolitanaddis.com/central-tower/",
+      "contactPhone": "+251973404040",
+      "sourceUpdatedAt": "2026-07-19",
+      "coverImageUrl": "https://metropolitanaddis.com/wp-content/uploads/2025/01/Blog-scaled.jpeg",
+      "galleryImageUrls": [
+        "https://metropolitanaddis.com/wp-content/uploads/2025/01/Blog-scaled.jpeg"
+      ],
+      "amenities": [
+        "parking",
+        "elevator",
+        "security",
+        "power-backup",
+        "water"
+      ],
+      "building": {
+        "floors": [
+          {
+            "level": 0,
+            "label": {
+              "en": "Central Tower units",
+              "am": "ሴንትራል ታወር"
+            },
+            "units": [
+              {
+                "unitLabel": "CT-2BR",
+                "floor": 0,
+                "bedrooms": 2,
+                "bathrooms": 2,
+                "floorAreaSqm": 100,
+                "price": 1,
+                "currency": "ETB",
+                "listingType": "OFF_PLAN",
+                "status": "available",
+                "category": "RESIDENTIAL",
+                "title": {
+                  "en": "Central Tower · 2BR (price on request)",
+                  "am": "ሴንትራል · 2 መኝታ"
+                },
+                "description": {
+                  "en": "Central Tower near AU · 2BR. Price on request. +251 973 40 40 40",
+                  "am": "Central Tower near AU · 2BR. Price on request. +251 973 40 40 40"
+                },
+                "amenities": [
+                  "parking",
+                  "elevator",
+                  "security",
+                  "power-backup"
+                ]
+              },
+              {
+                "unitLabel": "CT-3BR",
+                "floor": 0,
+                "bedrooms": 3,
+                "bathrooms": 2,
+                "floorAreaSqm": 130,
+                "price": 1,
+                "currency": "ETB",
+                "listingType": "OFF_PLAN",
+                "status": "available",
+                "category": "RESIDENTIAL",
+                "title": {
+                  "en": "Central Tower · 3BR (price on request)",
+                  "am": "ሴንትራል · 3 መኝታ"
+                },
+                "description": {
+                  "en": "Central Tower near AU · 3BR. Price on request. +251 973 40 40 40",
+                  "am": "Central Tower near AU · 3BR. Price on request. +251 973 40 40 40"
+                },
+                "amenities": [
+                  "parking",
+                  "elevator",
+                  "security",
+                  "power-backup"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "slug": "METROPOLITAN-WESTVIEW",
+      "registrationNumber": "ET-DIR-MADDIS-029",
+      "subCityCode": "kirkos",
+      "category": "RESIDENTIAL",
+      "title": {
+        "en": "WestView Standard Apartments",
+        "am": "ዌስትቪው ስታንዳርድ አፓርታማዎች"
+      },
+      "description": {
+        "en": "WestView standard line — international quality at more affordable pricing; ~2 min from ring road, ~5 min from Total roundabout; on-site supermarket/cafeteria. https://metropolitanaddis.com/westview/",
+        "am": "ዌስትቪው ስታንዳርድ አፓርታማ · ተመጣጣኝ ዓለም አቀፍ ጥራት።"
+      },
+      "addressLine": "Near ring road / Total Soset area · WestView",
+      "constructionStage": "SUPERSTRUCTURE",
+      "completionPercent": 60,
+      "requiresEscrow": true,
+      "website": "https://metropolitanaddis.com/westview/",
+      "contactPhone": "+251973404040",
+      "sourceUpdatedAt": "2026-07-19",
+      "coverImageUrl": "https://metropolitanaddis.com/wp-content/uploads/2020/04/Cam__4.jpg",
+      "galleryImageUrls": [
+        "https://metropolitanaddis.com/wp-content/uploads/2020/04/Cam__4.jpg"
+      ],
+      "amenities": [
+        "parking",
+        "elevator",
+        "security",
+        "power-backup"
+      ],
+      "building": {
+        "floors": [
+          {
+            "level": 0,
+            "label": {
+              "en": "Standard units",
+              "am": "ስታንዳርድ"
+            },
+            "units": [
+              {
+                "unitLabel": "WV-2BR",
+                "floor": 0,
+                "bedrooms": 2,
+                "bathrooms": 1,
+                "floorAreaSqm": 85,
+                "price": 1,
+                "currency": "ETB",
+                "listingType": "OFF_PLAN",
+                "status": "available",
+                "category": "RESIDENTIAL",
+                "title": {
+                  "en": "WestView · 2BR (price on request)",
+                  "am": "ዌስትቪው · 2 መኝታ"
+                },
+                "description": {
+                  "en": "WestView standard 2BR. Price on request. +251 973 40 40 40 · https://metropolitanaddis.com/westview/",
+                  "am": "WestView standard 2BR. Price on request. +251 973 40 40 40 · https://metropolitanaddis.com/westview/"
+                },
+                "amenities": [
+                  "parking",
+                  "elevator",
+                  "security",
+                  "power-backup"
+                ]
+              },
+              {
+                "unitLabel": "WV-3BR",
+                "floor": 0,
+                "bedrooms": 3,
+                "bathrooms": 2,
+                "floorAreaSqm": 110,
+                "price": 1,
+                "currency": "ETB",
+                "listingType": "OFF_PLAN",
+                "status": "available",
+                "category": "RESIDENTIAL",
+                "title": {
+                  "en": "WestView · 3BR (price on request)",
+                  "am": "ዌስትቪው · 3 መኝታ"
+                },
+                "description": {
+                  "en": "WestView standard 3BR. Price on request. +251 973 40 40 40",
+                  "am": "WestView standard 3BR. Price on request. +251 973 40 40 40"
+                },
+                "amenities": [
+                  "parking",
+                  "elevator",
+                  "security",
+                  "power-backup"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "slug": "HOSEA-BOLE-MEDHANIALEM",
+      "registrationNumber": "ET-DIR-HOSEA-030",
+      "subCityCode": "bole",
+      "category": "RESIDENTIAL",
+      "title": {
+        "en": "Hosea Bole Medhanialem Luxury Apartments",
+        "am": "ሆሴአ ቦሌ መድሃኔዓለም ላግዥ አፓርታማዎች"
+      },
+      "description": {
+        "en": "Hosea luxury apartments at Bole Medhanialem (toward Atlas Road, in front of Ethio telecom). Studio to 3BR plus duplex; amenities include gym, pool, daycare, lobby, parking. +251 902 222 225 · https://hosearealestate.com/luxuryapartments",
+        "am": "በቦሌ መድሃኔዓለም የሆሴአ ላግዥ አፓርታማ። +251 902 222 225"
+      },
+      "addressLine": "Bole Medhanialem to Atlas Road · in front of Ethio telecom",
+      "constructionStage": "SUPERSTRUCTURE",
+      "completionPercent": 55,
+      "requiresEscrow": true,
+      "website": "https://hosearealestate.com/luxuryapartments",
+      "contactPhone": "+251902222225",
+      "sourceUpdatedAt": "2026-07-19",
+      "coverImageUrl": "https://hosearealestate.com/wp-content/uploads/2023/03/edited-1bd-1.jpg",
+      "galleryImageUrls": [
+        "https://hosearealestate.com/wp-content/uploads/2023/03/edited-1bd-1.jpg",
+        "https://hosearealestate.com/wp-content/uploads/2023/04/edited2-bd-2.jpg",
+        "https://hosearealestate.com/wp-content/uploads/2023/04/edited-3-bd.jpg",
+        "https://hosearealestate.com/wp-content/uploads/2023/04/Duplex.jpg"
+      ],
+      "amenities": [
+        "parking",
+        "elevator",
+        "security",
+        "power-backup",
+        "gym"
+      ],
+      "building": {
+        "floors": [
+          {
+            "level": 0,
+            "label": {
+              "en": "Luxury unit types",
+              "am": "ላግዥ ዓይነቶች"
+            },
+            "units": [
+              {
+                "unitLabel": "BM-STUDIO",
+                "floor": 0,
+                "bedrooms": 0,
+                "bathrooms": 1,
+                "floorAreaSqm": 45,
+                "price": 1,
+                "currency": "ETB",
+                "listingType": "OFF_PLAN",
+                "status": "available",
+                "category": "RESIDENTIAL",
+                "title": {
+                  "en": "Bole Medhanialem · studio (price on request)",
+                  "am": "ቦሌ መድሃኔዓለም · ስቱዲዮ"
+                },
+                "description": {
+                  "en": "Hosea Bole Medhanialem studio. Price on request. +251 902 222 225 · https://hosearealestate.com/properties/studio/",
+                  "am": "Hosea Bole Medhanialem studio. Price on request. +251 902 222 225 · https://hosearealestate.com/properties/studio/"
+                },
+                "amenities": [
+                  "parking",
+                  "elevator",
+                  "security",
+                  "power-backup"
+                ]
+              },
+              {
+                "unitLabel": "BM-1BR",
+                "floor": 0,
+                "bedrooms": 1,
+                "bathrooms": 1,
+                "floorAreaSqm": 65,
+                "price": 1,
+                "currency": "ETB",
+                "listingType": "OFF_PLAN",
+                "status": "available",
+                "category": "RESIDENTIAL",
+                "title": {
+                  "en": "Bole Medhanialem · 1BR (price on request)",
+                  "am": "ቦሌ መድሃኔዓለም · 1 መኝታ"
+                },
+                "description": {
+                  "en": "Hosea luxury 1BR · Bole Medhanialem. +251 902 222 225 · https://hosearealestate.com/properties/luxury-apartment-one-bedroom-type-1/",
+                  "am": "Hosea luxury 1BR · Bole Medhanialem. +251 902 222 225 · https://hosearealestate.com/properties/luxury-apartment-one-bedroom-type-1/"
+                },
+                "amenities": [
+                  "parking",
+                  "elevator",
+                  "security",
+                  "power-backup"
+                ]
+              },
+              {
+                "unitLabel": "BM-2BR",
+                "floor": 0,
+                "bedrooms": 2,
+                "bathrooms": 2,
+                "floorAreaSqm": 95,
+                "price": 1,
+                "currency": "ETB",
+                "listingType": "OFF_PLAN",
+                "status": "available",
+                "category": "RESIDENTIAL",
+                "title": {
+                  "en": "Bole Medhanialem · 2BR (price on request)",
+                  "am": "ቦሌ መድሃኔዓለም · 2 መኝታ"
+                },
+                "description": {
+                  "en": "Hosea luxury 2BR · Bole Medhanialem. +251 902 222 225 · https://hosearealestate.com/properties/luxury-apartments-two-bedroom/",
+                  "am": "Hosea luxury 2BR · Bole Medhanialem. +251 902 222 225 · https://hosearealestate.com/properties/luxury-apartments-two-bedroom/"
+                },
+                "amenities": [
+                  "parking",
+                  "elevator",
+                  "security",
+                  "power-backup"
+                ]
+              },
+              {
+                "unitLabel": "BM-3BR",
+                "floor": 0,
+                "bedrooms": 3,
+                "bathrooms": 2,
+                "floorAreaSqm": 125,
+                "price": 1,
+                "currency": "ETB",
+                "listingType": "OFF_PLAN",
+                "status": "available",
+                "category": "RESIDENTIAL",
+                "title": {
+                  "en": "Bole Medhanialem · 3BR (price on request)",
+                  "am": "ቦሌ መድሃኔዓለም · 3 መኝታ"
+                },
+                "description": {
+                  "en": "Hosea luxury 3BR · Bole Medhanialem. +251 902 222 225 · https://hosearealestate.com/properties/luxury-apartment-three-bedroom-type-1/",
+                  "am": "Hosea luxury 3BR · Bole Medhanialem. +251 902 222 225 · https://hosearealestate.com/properties/luxury-apartment-three-bedroom-type-1/"
+                },
+                "amenities": [
+                  "parking",
+                  "elevator",
+                  "security",
+                  "power-backup"
+                ]
+              },
+              {
+                "unitLabel": "BM-DUPLEX",
+                "floor": 0,
+                "bedrooms": 3,
+                "bathrooms": 3,
+                "floorAreaSqm": 160,
+                "price": 1,
+                "currency": "ETB",
+                "listingType": "OFF_PLAN",
+                "status": "available",
+                "category": "RESIDENTIAL",
+                "title": {
+                  "en": "Bole Medhanialem · duplex (price on request)",
+                  "am": "ቦሌ መድሃኔዓለም · ዱፕሌክስ"
+                },
+                "description": {
+                  "en": "Hosea duplex apartment · Bole Medhanialem. +251 902 222 225 · https://hosearealestate.com/properties/duplex-apartment-level-2/",
+                  "am": "Hosea duplex apartment · Bole Medhanialem. +251 902 222 225 · https://hosearealestate.com/properties/duplex-apartment-level-2/"
+                },
+                "amenities": [
+                  "parking",
+                  "elevator",
+                  "security",
+                  "power-backup"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "slug": "HOSEA-YERER-HOMES",
+      "registrationNumber": "ET-DIR-HOSEA-030",
+      "subCityCode": "yeka",
+      "category": "MIXED_USE",
+      "title": {
+        "en": "Hosea Yerer Homes",
+        "am": "ሆሴአ የረር ሆምስ"
+      },
+      "description": {
+        "en": "Yerer Homes — upscale apartments (1–3BR), 20 luxury villas with gardens, and commercial shops. https://hosearealestate.com/yererhomes/ · +251 902 222 225",
+        "am": "የረር · አፓርታማ · 20 ቪላ · ሱቆች። +251 902 222 225"
+      },
+      "addressLine": "Yerer · Addis Ababa · Hosea Yerer Homes",
+      "constructionStage": "SUPERSTRUCTURE",
+      "completionPercent": 50,
+      "requiresEscrow": true,
+      "website": "https://hosearealestate.com/yererhomes/",
+      "contactPhone": "+251902222225",
+      "sourceUpdatedAt": "2026-07-19",
+      "coverImageUrl": "https://hosearealestate.com/wp-content/uploads/2023/03/HOSAE-RENDERS-6.jpg",
+      "galleryImageUrls": [
+        "https://hosearealestate.com/wp-content/uploads/2023/03/HOSAE-RENDERS-6.jpg",
+        "https://hosearealestate.com/wp-content/uploads/2023/03/type1-living.jpg",
+        "https://hosearealestate.com/wp-content/uploads/2023/03/1C0A3105.jpg"
+      ],
+      "amenities": [
+        "parking",
+        "elevator",
+        "security",
+        "garden"
+      ],
+      "building": {
+        "floors": [
+          {
+            "level": 0,
+            "label": {
+              "en": "Yerer inventory",
+              "am": "የረር"
+            },
+            "units": [
+              {
+                "unitLabel": "YH-1BR",
+                "floor": 0,
+                "bedrooms": 1,
+                "bathrooms": 1,
+                "floorAreaSqm": 70,
+                "price": 1,
+                "currency": "ETB",
+                "listingType": "OFF_PLAN",
+                "status": "available",
+                "category": "RESIDENTIAL",
+                "title": {
+                  "en": "Yerer · 1BR apartment (price on request)",
+                  "am": "የረር · 1 መኝታ"
+                },
+                "description": {
+                  "en": "Hosea Yerer 1BR apartment. +251 902 222 225 · https://hosearealestate.com/properties/yerer-apartment-1-bedroom/",
+                  "am": "Hosea Yerer 1BR apartment. +251 902 222 225 · https://hosearealestate.com/properties/yerer-apartment-1-bedroom/"
+                },
+                "amenities": [
+                  "parking",
+                  "elevator",
+                  "security",
+                  "power-backup"
+                ]
+              },
+              {
+                "unitLabel": "YH-2BR",
+                "floor": 0,
+                "bedrooms": 2,
+                "bathrooms": 2,
+                "floorAreaSqm": 95,
+                "price": 1,
+                "currency": "ETB",
+                "listingType": "OFF_PLAN",
+                "status": "available",
+                "category": "RESIDENTIAL",
+                "title": {
+                  "en": "Yerer · 2BR apartment (price on request)",
+                  "am": "የረር · 2 መኝታ"
+                },
+                "description": {
+                  "en": "Hosea Yerer 2BR apartment. +251 902 222 225 · https://hosearealestate.com/properties/yerer-apartment-2-bedroom/",
+                  "am": "Hosea Yerer 2BR apartment. +251 902 222 225 · https://hosearealestate.com/properties/yerer-apartment-2-bedroom/"
+                },
+                "amenities": [
+                  "parking",
+                  "elevator",
+                  "security",
+                  "power-backup"
+                ]
+              },
+              {
+                "unitLabel": "YH-3BR",
+                "floor": 0,
+                "bedrooms": 3,
+                "bathrooms": 2,
+                "floorAreaSqm": 125,
+                "price": 1,
+                "currency": "ETB",
+                "listingType": "OFF_PLAN",
+                "status": "available",
+                "category": "RESIDENTIAL",
+                "title": {
+                  "en": "Yerer · 3BR apartment (price on request)",
+                  "am": "የረር · 3 መኝታ"
+                },
+                "description": {
+                  "en": "Hosea Yerer 3BR apartment. +251 902 222 225 · https://hosearealestate.com/properties/yerer-apartment-3-bedroom/",
+                  "am": "Hosea Yerer 3BR apartment. +251 902 222 225 · https://hosearealestate.com/properties/yerer-apartment-3-bedroom/"
+                },
+                "amenities": [
+                  "parking",
+                  "elevator",
+                  "security",
+                  "power-backup"
+                ]
+              },
+              {
+                "unitLabel": "YH-VILLA",
+                "floor": 0,
+                "bedrooms": 4,
+                "bathrooms": 3,
+                "floorAreaSqm": 250,
+                "price": 1,
+                "currency": "ETB",
+                "listingType": "OFF_PLAN",
+                "status": "available",
+                "category": "RESIDENTIAL",
+                "title": {
+                  "en": "Yerer · luxury villa (price on request)",
+                  "am": "የረር · ቪላ"
+                },
+                "description": {
+                  "en": "Hosea Yerer — one of 20 luxury villas with gardens. +251 902 222 225 · https://hosearealestate.com/properties/yerer-villas/",
+                  "am": "Hosea Yerer — one of 20 luxury villas with gardens. +251 902 222 225 · https://hosearealestate.com/properties/yerer-villas/"
+                },
+                "amenities": [
+                  "parking",
+                  "elevator",
+                  "security",
+                  "power-backup"
+                ]
+              },
+              {
+                "unitLabel": "YH-SHOP",
+                "floor": 0,
+                "bedrooms": 0,
+                "bathrooms": 1,
+                "floorAreaSqm": 40,
+                "price": 1,
+                "currency": "ETB",
+                "listingType": "OFF_PLAN",
+                "status": "available",
+                "category": "COMMERCIAL",
+                "title": {
+                  "en": "Yerer · commercial shop (price on request)",
+                  "am": "የረር · ሱቅ"
+                },
+                "description": {
+                  "en": "Hosea Yerer commercial shop. +251 902 222 225 · https://hosearealestate.com/properties/yerer-shops/",
+                  "am": "Hosea Yerer commercial shop. +251 902 222 225 · https://hosearealestate.com/properties/yerer-shops/"
+                },
+                "amenities": [
+                  "parking",
+                  "elevator",
+                  "security",
+                  "power-backup"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "slug": "HOSEA-ROHA",
+      "registrationNumber": "ET-DIR-HOSEA-030",
+      "subCityCode": "bole",
+      "category": "RESIDENTIAL",
+      "title": {
+        "en": "Hosea Roha Apartments",
+        "am": "ሆሴአ ሮሃ አፓርታማዎች"
+      },
+      "description": {
+        "en": "Roha luxury apartments — 2BR to 4+BR types (A–D). https://hosearealestate.com/roha/ · +251 902 222 225",
+        "am": "ሮሃ ላግዥ አፓርታማ · 2–4+ መኝታ። +251 902 222 225"
+      },
+      "addressLine": "Roha · Hosea Real Estate",
+      "constructionStage": "SUPERSTRUCTURE",
+      "completionPercent": 45,
+      "requiresEscrow": true,
+      "website": "https://hosearealestate.com/roha/",
+      "contactPhone": "+251902222225",
+      "sourceUpdatedAt": "2026-07-19",
+      "coverImageUrl": "https://hosearealestate.com/wp-content/uploads/2023/03/Roha-Type-A.jpg",
+      "galleryImageUrls": [
+        "https://hosearealestate.com/wp-content/uploads/2023/03/Roha-Type-A.jpg",
+        "https://hosearealestate.com/wp-content/uploads/2023/03/Roha-Type-B.jpg",
+        "https://hosearealestate.com/wp-content/uploads/2023/03/Roha-Type-C.jpg",
+        "https://hosearealestate.com/wp-content/uploads/2023/03/Roha-Type-D.jpg"
+      ],
+      "amenities": [
+        "parking",
+        "elevator",
+        "security",
+        "power-backup"
+      ],
+      "building": {
+        "floors": [
+          {
+            "level": 0,
+            "label": {
+              "en": "Roha types",
+              "am": "ሮሃ ዓይነቶች"
+            },
+            "units": [
+              {
+                "unitLabel": "RH-2BR",
+                "floor": 0,
+                "bedrooms": 2,
+                "bathrooms": 2,
+                "floorAreaSqm": 95,
+                "price": 1,
+                "currency": "ETB",
+                "listingType": "OFF_PLAN",
+                "status": "available",
+                "category": "RESIDENTIAL",
+                "title": {
+                  "en": "Roha · 2BR Type A (price on request)",
+                  "am": "ሮሃ · 2 መኝታ"
+                },
+                "description": {
+                  "en": "Hosea Roha 2BR. +251 902 222 225 · https://hosearealestate.com/properties/roha-2-bedroom/",
+                  "am": "Hosea Roha 2BR. +251 902 222 225 · https://hosearealestate.com/properties/roha-2-bedroom/"
+                },
+                "amenities": [
+                  "parking",
+                  "elevator",
+                  "security",
+                  "power-backup"
+                ]
+              },
+              {
+                "unitLabel": "RH-3BR",
+                "floor": 0,
+                "bedrooms": 3,
+                "bathrooms": 2,
+                "floorAreaSqm": 120,
+                "price": 1,
+                "currency": "ETB",
+                "listingType": "OFF_PLAN",
+                "status": "available",
+                "category": "RESIDENTIAL",
+                "title": {
+                  "en": "Roha · 3BR Type B (price on request)",
+                  "am": "ሮሃ · 3 መኝታ"
+                },
+                "description": {
+                  "en": "Hosea Roha 3BR. +251 902 222 225 · https://hosearealestate.com/properties/roha-3-bedroom/",
+                  "am": "Hosea Roha 3BR. +251 902 222 225 · https://hosearealestate.com/properties/roha-3-bedroom/"
+                },
+                "amenities": [
+                  "parking",
+                  "elevator",
+                  "security",
+                  "power-backup"
+                ]
+              },
+              {
+                "unitLabel": "RH-4BR",
+                "floor": 0,
+                "bedrooms": 4,
+                "bathrooms": 3,
+                "floorAreaSqm": 150,
+                "price": 1,
+                "currency": "ETB",
+                "listingType": "OFF_PLAN",
+                "status": "available",
+                "category": "RESIDENTIAL",
+                "title": {
+                  "en": "Roha · 4BR Type C (price on request)",
+                  "am": "ሮሃ · 4 መኝታ"
+                },
+                "description": {
+                  "en": "Hosea Roha 4BR. +251 902 222 225 · https://hosearealestate.com/properties/roha-4-bedroom/",
+                  "am": "Hosea Roha 4BR. +251 902 222 225 · https://hosearealestate.com/properties/roha-4-bedroom/"
+                },
+                "amenities": [
+                  "parking",
+                  "elevator",
+                  "security",
+                  "power-backup"
+                ]
+              },
+              {
+                "unitLabel": "RH-4P",
+                "floor": 0,
+                "bedrooms": 5,
+                "bathrooms": 3,
+                "floorAreaSqm": 180,
+                "price": 1,
+                "currency": "ETB",
+                "listingType": "OFF_PLAN",
+                "status": "available",
+                "category": "RESIDENTIAL",
+                "title": {
+                  "en": "Roha · 4+BR Type D (price on request)",
+                  "am": "ሮሃ · 4+ መኝታ"
+                },
+                "description": {
+                  "en": "Hosea Roha 4+BR. +251 902 222 225 · https://hosearealestate.com/properties/roha-4-bedroom-2/",
+                  "am": "Hosea Roha 4+BR. +251 902 222 225 · https://hosearealestate.com/properties/roha-4-bedroom-2/"
+                },
+                "amenities": [
+                  "parking",
+                  "elevator",
+                  "security",
+                  "power-backup"
+                ]
+              }
+            ]
+          }
+        ]
+      }
     }
   ]
 }

@@ -6,6 +6,8 @@ import { DeveloperInventoryTree } from "@/components/developers/DeveloperInvento
 import { DeveloperProfileHeader } from "@/components/developers/DeveloperProfileHeader";
 import { PageDirectory } from "@/components/PageDirectory";
 import { PageIntro } from "@/components/PageIntro";
+import { getCurrentAdmin } from "@/lib/auth/admin";
+import { getSession } from "@/lib/auth/session";
 import { buildDeveloperInventoryTree } from "@/lib/catalog/developer-inventory";
 import {
   fetchDeveloperById,
@@ -92,10 +94,16 @@ export default async function DeveloperDetailPage({
   const developer = await fetchDeveloperById(id);
   if (!developer) notFound();
 
-  const [listings, projects] = await Promise.all([
+  const [listings, projects, session, admin] = await Promise.all([
     fetchPublishedListingsByDeveloper(developer.id),
     fetchPublishedProjectsByDeveloper(developer.id),
+    getSession(),
+    getCurrentAdmin(),
   ]);
+
+  const canEditInventory = Boolean(
+    admin || (session && session.userId === developer.userId),
+  );
 
   const name =
     pickLocalized(developer.displayName, locale) || developer.tradeName;
@@ -231,6 +239,7 @@ export default async function DeveloperDetailPage({
         <DeveloperInventoryTree
           parents={inventoryParents}
           emptyMessage={t("pages.developers.emptyListings")}
+          canEditInventory={canEditInventory}
           labels={{
             unitTypes: t("pages.developers.inventory.unitTypes"),
             available: t("pages.developers.inventory.available"),
@@ -241,6 +250,7 @@ export default async function DeveloperDetailPage({
             kindProject: t("pages.developers.inventory.kindProject"),
             kindBuilding: t("pages.developers.inventory.kindBuilding"),
             kindStandalone: t("pages.developers.inventory.kindStandalone"),
+            updateFailed: t("pages.developers.inventory.updateFailed"),
           }}
         />
       </section>

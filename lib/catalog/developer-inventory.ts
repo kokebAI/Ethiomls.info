@@ -1,9 +1,11 @@
-import type { Listing, ListingStatus, ListingType, PropertyCategory } from "@prisma/client";
+import type { Listing, ListingType, PropertyCategory } from "@prisma/client";
+import type { BuildingUnitStatus } from "@/lib/building/types";
+import { resolveInventoryStatus } from "@/lib/catalog/inventory-status";
 import { formatMoney } from "@/lib/compliance/currency";
 import type { Locale } from "@/lib/i18n/config";
 import { pickLocalized } from "@/lib/i18n/pickLocalized";
 
-export type InventoryUnitStatus = "available" | "reserved" | "sold";
+export type InventoryUnitStatus = BuildingUnitStatus;
 
 export type DeveloperInventoryUnit = {
   id: string;
@@ -54,21 +56,7 @@ type ListingRow = Listing & {
 };
 
 function inventoryStatus(listing: Listing): InventoryUnitStatus {
-  const tags = listing.metadataTags ?? [];
-  for (const tag of tags) {
-    const match = /^status:(available|reserved|sold)$/i.exec(tag.trim());
-    if (match) return match[1].toLowerCase() as InventoryUnitStatus;
-  }
-
-  switch (listing.status as ListingStatus) {
-    case "SOLD":
-      return "sold";
-    case "UNDER_OFFER":
-    case "RENTED":
-      return "reserved";
-    default:
-      return "available";
-  }
+  return resolveInventoryStatus(listing);
 }
 
 function sizeM2(listing: Listing): number | null {

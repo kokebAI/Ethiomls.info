@@ -4,6 +4,7 @@ import type {
   BuildingUnit,
   BuildingUnitStatus,
 } from "@/lib/building/types";
+import { resolveInventoryStatus } from "@/lib/catalog/inventory-status";
 import type { Locale } from "@/lib/i18n/config";
 import { pickLocalized } from "@/lib/i18n/pickLocalized";
 import { amenitySlugsFromFlags } from "@/lib/properties/amenities";
@@ -14,6 +15,8 @@ import {
 
 export type ProjectWithBuildingRelations = Project & {
   developer: {
+    id?: string;
+    userId?: string;
     tradeName: string;
     displayName: unknown;
     website: string | null;
@@ -40,29 +43,7 @@ function asRecord(value: unknown): WalkthroughBag {
 function inventoryStatus(
   listing: Listing,
 ): BuildingUnitStatus {
-  const fromConfig = asRecord(listing.virtualWalkthroughConfig).inventoryStatus;
-  if (
-    fromConfig === "available" ||
-    fromConfig === "reserved" ||
-    fromConfig === "sold"
-  ) {
-    return fromConfig;
-  }
-
-  for (const tag of listing.metadataTags) {
-    const match = /^status:(available|reserved|sold)$/i.exec(tag.trim());
-    if (match) return match[1].toLowerCase() as BuildingUnitStatus;
-  }
-
-  switch (listing.status) {
-    case "SOLD":
-      return "sold";
-    case "UNDER_OFFER":
-    case "RENTED":
-      return "reserved";
-    default:
-      return "available";
-  }
+  return resolveInventoryStatus(listing);
 }
 
 function amenitiesFromListing(listing: Listing): string[] {

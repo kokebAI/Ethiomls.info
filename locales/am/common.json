@@ -2,7 +2,7 @@
   "brand": {
     "name": "EthioMLS",
     "tagline": "በኢትዮጵያ ቤቶችንና የንግድ ቦታዎችን ያግኙ",
-    "motto": "አስተማማኝ መሠረት፣ የተሻለ ነገ።"
+    "motto": "ይኑሩበት፣ ይከራዩት፣ ወይም እየተገነባ ሲወጣ ይመልከቱት — በአዲስ አበባ።"
   },
   "nav": {
     "home": "መነሻ",
@@ -251,7 +251,7 @@
       },
       "inventory": {
         "heading": "የክፍል ክምችት",
-        "lede": "ፕሮጀክቶች እና ህንጻዎች በክፍል አይነት፣ ከተገኝነት ቆጠራ ጋር።",
+        "lede": "በክፍል አይነት የተከፋፈሉ ፕሮጀክቶች — Available / Reserved / Sold። ባለቤት ገንቢዎች እዚህ ሁኔታ ማዘመን ይችላሉ።",
         "unitTypes": "የክፍል አይነቶች",
         "units": "ክፍሎች",
         "unitCount": "{count} ክፍሎች",
@@ -262,7 +262,11 @@
         "kindProject": "ፕሮጀክት",
         "kindBuilding": "ህንጻ",
         "kindStandalone": "ሌሎች ዝርዝሮች",
-        "standalone": "ነጠላ ዝርዝሮች"
+        "standalone": "ነጠላ ዝርዝሮች",
+        "updateFailed": "የክፍል ሁኔታ ማዘመን አልተሳካም",
+        "editHeading": "የክፍል ክምችት አዘምን",
+        "editLede": "እያንዳንዱን አፓርታማ Available፣ Reserved ወይም Sold ምልክት ያድርጉ። ይህ ማተምን አይለውጥም።",
+        "floorLabel": "ፎቅ"
       }
     },
     "comingOnline": "ማውጫው በመስመር ላይ እየመጣ ነው — ከታች ናሙና እቃዎች።",
@@ -569,7 +573,7 @@
     "developer": {
       "eyebrow": "የገንቢ የስራ ቦታ",
       "title": "የኤስክሮ የተደገፈ ክምችት ያትሙ",
-      "lede": "ዝግጁነትን ይከታተሉ፣ ሙሉ ሰነድ ጥቅል ያስገቡ፣ እና ክፍሎችን ከአንድ ቦታ ይከታተሉ።",
+      "lede": "ዝግጁነትን ይከታተሉ፣ ሰነዶችን ያስገቡ፣ እና ከገንቢ ገጽዎ Available / Reserved / Sold ያዘምኑ — ከማተም/ኦዲት የተለየ ነው።",
       "addInventory": "ኦፍ-ፕላን ክምችት ጨምር",
       "viewProjects": "ፕሮጀክቶችን ይመልከቱ",
       "myPage": "የእርስዎ ህዝባዊ ገጽ",

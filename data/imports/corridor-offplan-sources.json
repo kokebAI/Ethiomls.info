@@ -227,6 +227,20 @@
       "track": "developer",
       "corridor": "south",
       "notes": "corridor-offplan · south · Tracon Jemo Field Side / Hill Side · +251911205011"
+    },
+    {
+      "label": "Metropolitan Real Estate (website)",
+      "url": "https://metropolitanaddis.com",
+      "track": "developer",
+      "corridor": "east",
+      "notes": "corridor-offplan · east · Metropolitan Addis luxury/standard · +251973404040"
+    },
+    {
+      "label": "Hosea Real Estate (website)",
+      "url": "https://hosearealestate.com",
+      "track": "developer",
+      "corridor": "east",
+      "notes": "corridor-offplan · east · Hosea Bole Medhanialem / Yerer / Roha · +251902222225"
     }
   ]
 }

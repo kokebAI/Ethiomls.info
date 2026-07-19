@@ -363,6 +363,38 @@
       "phone": "+251911205011",
       "email": "seid@tracontrading.com",
       "notes": "Also +251911209497 · +251930077604 · iman@tracontrading.com · Jemo 1 estate ~5 ha / 50,000 sqm"
+    },
+    {
+      "tradeName": "Metropolitan Real Estate PLC",
+      "displayName": {
+        "en": "Metropolitan Real Estate",
+        "am": "ሜትሮፖሊታን ሪል እስቴት"
+      },
+      "registrationNumber": "ET-DIR-MADDIS-029",
+      "website": "https://metropolitanaddis.com",
+      "hqCode": "bole",
+      "licenseNumber": null,
+      "tin": null,
+      "phone": "+251973404040",
+      "email": "info@metropolitanaddis.com",
+      "facebook": "https://facebook.com/metropolitanaddis",
+      "notes": "Also +251973303030 · hotline 9896 · marketing@metropolitanaddis.com · HQ Bole Rwanda / Friendship Hotel"
+    },
+    {
+      "tradeName": "Hosea Real Estate",
+      "displayName": {
+        "en": "Hosea Real Estate",
+        "am": "ሆሴአ ሪል እስቴት"
+      },
+      "registrationNumber": "ET-DIR-HOSEA-030",
+      "website": "https://hosearealestate.com",
+      "hqCode": "bole",
+      "licenseNumber": null,
+      "tin": null,
+      "phone": "+251902222225",
+      "email": "info@hosearealestate.com",
+      "facebook": "https://facebook.com/hosearealestat",
+      "notes": "Office: Bole Medhanialem to Atlas Road, in front of Ethio telecom · Projects: Bole Medhanialem, Yerer Homes, Roha"
     }
   ]
 }

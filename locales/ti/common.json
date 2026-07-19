@@ -2,7 +2,7 @@
   "brand": {
     "name": "EthioMLS",
     "tagline": "ኣብ ኢትዮጵያ ገዛውንቲን ንግዳዊ ቦታታትን ርከቡ",
-    "motto": "ኣተኣማኒ መሰረት፣ ንዝበለጸ ጽባሕ።"
+    "motto": "ኣብኡ ንበር፣ ኪራይ ግበር፣ ወይ ክትድልብ ምስ ትርኢ — ኣብ ኣዲስ ኣበባ።"
   },
   "nav": {
     "home": "መእተዊ",
@@ -251,7 +251,7 @@
       },
       "inventory": {
         "heading": "ናይ ኣሃዱ ክምችት",
-        "lede": "ፕሮጀክታትን ህንጻታትን ብዓይነት ኣሃዱ ተኸፋፊሎም፣ ምስ ቁጽሪ ርክበት።",
+        "lede": "Projects and buildings grouped by unit type, with Available / Reserved / Sold counts. Owning developers can update status here.",
         "unitTypes": "ዓይነታት ኣሃዱ",
         "units": "ኣሃዱታት",
         "unitCount": "{count} ኣሃዱታት",
@@ -262,7 +262,11 @@
         "kindProject": "ፕሮጀክት",
         "kindBuilding": "ህንጻ",
         "kindStandalone": "ካልኦት ዝርዝራት",
-        "standalone": "ንጽል ዝርዝራት"
+        "standalone": "ንጽል ዝርዝራት",
+        "updateFailed": "Could not update unit status",
+        "editHeading": "Update unit inventory",
+        "editLede": "Mark each apartment Available, Reserved, or Sold. This does not change whether the listing is published.",
+        "floorLabel": "Floor"
       }
     },
     "comingOnline": "ዝርዝር ኣብ መስመር ይመጽእ ኣሎ — ናሙና ኣብ ታሕቲ።",
@@ -610,7 +614,7 @@
     "developer": {
       "eyebrow": "Developer workspace",
       "title": "Publish escrow-backed inventory",
-      "lede": "Track readiness, submit the full document pack, and follow units through admin review from one place.",
+      "lede": "Track readiness, submit the full document pack, follow units through admin review, and mark apartments Available, Reserved, or Sold from your public developer page — inventory status is separate from publish/audit.",
       "addInventory": "Add off-plan inventory",
       "viewProjects": "Browse projects",
       "myPage": "My public page",

@@ -127,6 +127,7 @@ export async function fetchProjectById(
         developer: {
           select: {
             id: true,
+            userId: true,
             tradeName: true,
             displayName: true,
             website: true,

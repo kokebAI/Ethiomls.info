@@ -1,18 +1,25 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { ProjectAuditPanel } from "@/components/admin/ProjectAuditPanel";
+import { ProjectInventoryEditor } from "@/components/inventory/ProjectInventoryEditor";
 import { PageIntro } from "@/components/PageIntro";
 import { ProjectBuildingDetail } from "./project-building-detail";
 import { getCurrentAdmin } from "@/lib/auth/admin";
+import { getSession } from "@/lib/auth/session";
 import {
   projectToBuilding,
   projectWalkthroughMeta,
 } from "@/lib/catalog/project-building";
+import { resolveInventoryStatus } from "@/lib/catalog/inventory-status";
 import { fetchProjectById } from "@/lib/catalog/queries";
 import { formatConstructionStage } from "@/lib/domain/construction-stage";
 import { isLocale, type Locale } from "@/lib/i18n/config";
 import { getDictionary, translate } from "@/lib/i18n/getDictionary";
 import { pickLocalized } from "@/lib/i18n/pickLocalized";
+import {
+  parseFloorFromTags,
+  parseUnitLabelFromTags,
+} from "@/lib/properties/propertyId";
 
 /** DB-backed page — skip SSG so Vercel builds succeed without live Postgres. */
 export const dynamic = "force-dynamic";
@@ -25,12 +32,29 @@ export default async function ProjectDetailPage({
   const { locale: raw, id } = await params;
   const locale = (isLocale(raw) ? raw : "en") as Locale;
   const dictionary = getDictionary(locale);
-  const admin = await getCurrentAdmin();
-  const project = await fetchProjectById(decodeURIComponent(id), {
-    allowUnpublished: Boolean(admin),
-  });
+  const [admin, session] = await Promise.all([
+    getCurrentAdmin(),
+    getSession(),
+  ]);
+
+  // First fetch published; if missing and signed-in, allow unpublished for admin/owner.
+  let project = await fetchProjectById(decodeURIComponent(id));
+  if (!project && (admin || session)) {
+    project = await fetchProjectById(decodeURIComponent(id), {
+      allowUnpublished: true,
+    });
+  }
 
   if (!project) {
+    notFound();
+  }
+
+  const isDeveloperOwner = Boolean(
+    session && session.userId === project.developer.userId,
+  );
+  const canEditInventory = Boolean(admin || isDeveloperOwner);
+
+  if (!admin && !isDeveloperOwner && project.status !== "PUBLISHED") {
     notFound();
   }
 
@@ -54,6 +78,31 @@ export default async function ProjectDetailPage({
     ? walkthrough.amenities.filter((a): a is string => typeof a === "string")
     : [];
   const auditCopy = dictionary.adminAudit;
+  const inv = dictionary.pages.developers.inventory;
+
+  const editableUnits = project.listings.map((listing) => {
+    const config =
+      listing.virtualWalkthroughConfig &&
+      typeof listing.virtualWalkthroughConfig === "object" &&
+      !Array.isArray(listing.virtualWalkthroughConfig)
+        ? (listing.virtualWalkthroughConfig as Record<string, unknown>)
+        : {};
+    const floor =
+      typeof config.floor === "number"
+        ? config.floor
+        : (parseFloorFromTags(listing.metadataTags) ?? 0);
+    const unitLabel =
+      typeof config.unitLabel === "string"
+        ? config.unitLabel
+        : (parseUnitLabelFromTags(listing.metadataTags) ?? listing.id);
+    return {
+      id: listing.id,
+      label: pickLocalized(listing.title, locale) || unitLabel,
+      floor,
+      status: resolveInventoryStatus(listing),
+      href: `/${locale}/listings/${listing.id}`,
+    };
+  });
 
   return (
     <PageIntro
@@ -85,8 +134,7 @@ export default async function ProjectDetailPage({
             notesPlaceholder: auditCopy.notesPlaceholder,
             approve: auditCopy.approve,
             reject: auditCopy.reject,
-            publish:
-              dictionary.projectAudit?.publish ?? "Publish project",
+            publish: dictionary.projectAudit?.publish ?? "Publish project",
             publishing: auditCopy.publishing,
             saving: auditCopy.saving,
             approvedReady:
@@ -120,6 +168,21 @@ export default async function ProjectDetailPage({
         website={website}
         projectAmenities={projectAmenities}
       />
+
+      {canEditInventory ? (
+        <ProjectInventoryEditor
+          units={editableUnits}
+          title={inv.editHeading}
+          lede={inv.editLede}
+          labels={{
+            available: inv.available,
+            reserved: inv.reserved,
+            sold: inv.sold,
+            failed: inv.updateFailed,
+            floor: inv.floorLabel,
+          }}
+        />
+      ) : null}
 
       {project.listings.length === 0 ? (
         <p className="text-sm text-slate-600" role="status">

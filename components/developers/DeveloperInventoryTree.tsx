@@ -5,10 +5,13 @@ import Link from "next/link";
 import { ChevronDown, ChevronRight } from "lucide-react";
 import type {
   DeveloperInventoryParent,
+  DeveloperInventoryUnit,
   DeveloperUnitType,
+  InventoryUnitStatus,
 } from "@/lib/catalog/developer-inventory";
 import { formatUnitTypePrice } from "@/lib/catalog/developer-inventory";
 import { formatMoney } from "@/lib/compliance/currency";
+import { InventoryStatusControl } from "@/components/inventory/InventoryStatusControl";
 
 type Labels = {
   unitTypes: string;
@@ -20,13 +23,28 @@ type Labels = {
   kindProject: string;
   kindBuilding: string;
   kindStandalone: string;
+  updateFailed?: string;
 };
 
 type DeveloperInventoryTreeProps = {
   parents: DeveloperInventoryParent[];
   emptyMessage: string;
   labels: Labels;
+  /** When true, show Available/Reserved/Sold editors per unit. */
+  canEditInventory?: boolean;
 };
+
+function recount(type: DeveloperUnitType): DeveloperUnitType {
+  let available = 0;
+  let reserved = 0;
+  let sold = 0;
+  for (const unit of type.units) {
+    if (unit.status === "reserved") reserved += 1;
+    else if (unit.status === "sold") sold += 1;
+    else available += 1;
+  }
+  return { ...type, available, reserved, sold, total: type.units.length };
+}
 
 function StatusPills({
   type,
@@ -54,14 +72,73 @@ function StatusPills({
   );
 }
 
-function UnitTypeRow({
-  type,
+function UnitRow({
+  unit,
   labels,
+  canEdit,
+  onStatusChange,
+}: {
+  unit: DeveloperInventoryUnit;
+  labels: Labels;
+  canEdit: boolean;
+  onStatusChange: (id: string, status: InventoryUnitStatus) => void;
+}) {
+  return (
+    <li className="flex flex-wrap items-center justify-between gap-2 rounded-lg px-2 py-2 text-sm transition hover:bg-emerald-50">
+      <Link
+        href={unit.href}
+        className="min-w-0 flex-1 font-medium text-slate-800 hover:text-emerald-800 hover:underline"
+      >
+        {unit.label}
+      </Link>
+      <div className="flex flex-wrap items-center gap-3">
+        <span className="text-slate-600">
+          {formatMoney(unit.price, unit.currency)}
+        </span>
+        {canEdit ? (
+          <InventoryStatusControl
+            listingId={unit.id}
+            status={unit.status}
+            labels={{
+              available: labels.available,
+              reserved: labels.reserved,
+              sold: labels.sold,
+              failed: labels.updateFailed ?? "Could not update status",
+            }}
+            onUpdated={(status) => onStatusChange(unit.id, status)}
+          />
+        ) : (
+          <span className="text-xs uppercase tracking-wide text-slate-400">
+            {unit.status}
+          </span>
+        )}
+      </div>
+    </li>
+  );
+}
+
+function UnitTypeRow({
+  type: initialType,
+  labels,
+  canEdit,
 }: {
   type: DeveloperUnitType;
   labels: Labels;
+  canEdit: boolean;
 }) {
   const [open, setOpen] = useState(false);
+  const [type, setType] = useState(initialType);
+
+  function onStatusChange(id: string, status: InventoryUnitStatus) {
+    setType((prev) =>
+      recount({
+        ...prev,
+        units: prev.units.map((unit) =>
+          unit.id === id ? { ...unit, status } : unit,
+        ),
+      }),
+    );
+  }
 
   return (
     <li className="rounded-xl border border-slate-200 bg-white">
@@ -78,37 +155,30 @@ function UnitTypeRow({
             <ChevronRight className="h-4 w-4" />
           )}
         </span>
-        <span className="min-w-0 flex-1 space-y-1.5">
-          <span className="flex flex-wrap items-baseline justify-between gap-2">
-            <span className="font-semibold text-slate-900">{type.label}</span>
-            <span className="text-sm font-medium text-slate-600">
-              {type.total} {labels.units}
-            </span>
-          </span>
-          <span className="block text-sm text-slate-600">
-            {formatUnitTypePrice(type)}
-          </span>
+        <div className="min-w-0 flex-1 space-y-2">
+          <div className="flex flex-wrap items-baseline justify-between gap-2">
+            <p className="font-semibold text-slate-900">{type.label}</p>
+            <p className="text-sm text-slate-600">
+              {formatUnitTypePrice(type)}
+            </p>
+          </div>
           <StatusPills type={type} labels={labels} />
-        </span>
+          <p className="text-xs text-slate-500">
+            {type.total} {labels.units}
+          </p>
+        </div>
       </button>
 
       {open ? (
-        <ul className="space-y-1 border-t border-slate-100 px-4 py-3">
+        <ul className="m-0 list-none border-t border-slate-100 px-3 py-2">
           {type.units.map((unit) => (
-            <li key={unit.id}>
-              <Link
-                href={unit.href}
-                className="flex flex-wrap items-center justify-between gap-2 rounded-lg px-2 py-2 text-sm transition hover:bg-emerald-50"
-              >
-                <span className="font-medium text-slate-800">{unit.label}</span>
-                <span className="text-slate-600">
-                  {formatMoney(unit.price, unit.currency)}
-                  <span className="ml-2 text-xs uppercase tracking-wide text-slate-400">
-                    {unit.status}
-                  </span>
-                </span>
-              </Link>
-            </li>
+            <UnitRow
+              key={unit.id}
+              unit={unit}
+              labels={labels}
+              canEdit={canEdit}
+              onStatusChange={onStatusChange}
+            />
           ))}
         </ul>
       ) : null}
@@ -131,6 +201,7 @@ export function DeveloperInventoryTree({
   parents,
   emptyMessage,
   labels,
+  canEditInventory = false,
 }: DeveloperInventoryTreeProps) {
   if (parents.length === 0) {
     return (
@@ -176,7 +247,12 @@ export function DeveloperInventoryTree({
 
           <ul className="m-0 flex list-none flex-col gap-2 p-4">
             {parent.unitTypes.map((type) => (
-              <UnitTypeRow key={type.key} type={type} labels={labels} />
+              <UnitTypeRow
+                key={type.key}
+                type={type}
+                labels={labels}
+                canEdit={canEditInventory}
+              />
             ))}
           </ul>
         </li>
