@@ -173,15 +173,24 @@ export class SmsNotificationEngine {
     if (!device) throw new Error("HAHU_DEVICE_ID is not configured");
 
     const url = new URL(endpoint);
-    url.searchParams.set("secret", secret);
-    url.searchParams.set("mode", "devices");
-    url.searchParams.set("device", device);
-    url.searchParams.set("sim", sim);
-    url.searchParams.set("priority", priority);
-    url.searchParams.set("phone", to);
-    url.searchParams.set("message", body);
+    // Prefer POST form body so long/short messages are not truncated by URL length.
+    const form = new URLSearchParams({
+      secret,
+      mode: "devices",
+      device,
+      sim,
+      priority,
+      phone: to,
+      message: body.slice(0, 160),
+    });
 
-    const response = await fetch(url.toString(), { method: "POST" });
+    const response = await fetch(url.toString(), {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      body: form.toString(),
+    });
     const data = (await response.json().catch(() => ({}))) as {
       status?: number | string;
       message?: string;

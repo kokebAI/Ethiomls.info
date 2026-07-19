@@ -1,13 +1,18 @@
 {
+  "id": "/am?source=pwa",
   "name": "EthioMLS Real Estate",
   "short_name": "EthioMLS",
   "description": "Buy, rent, and invest in verified property across Addis Ababa.",
-  "start_url": "/",
+  "start_url": "/am?source=pwa",
   "scope": "/",
   "display": "standalone",
-  "orientation": "portrait-primary",
+  "display_override": ["standalone", "browser"],
+  "orientation": "any",
   "background_color": "#ffffff",
   "theme_color": "#000000",
+  "lang": "am",
+  "dir": "ltr",
+  "prefer_related_applications": false,
   "icons": [
     {
       "src": "/icons/icon-192.png",

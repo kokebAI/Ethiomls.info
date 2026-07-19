@@ -42,13 +42,6 @@ function localizedJsonField(value: unknown, locale: "en" | "am"): string {
   return typeof picked === "string" ? picked.trim() : "";
 }
 
-function formatPrice(listing: ScrapeInviteListing): string {
-  const amount = Number(listing.priceAmount);
-  if (!Number.isFinite(amount) || amount <= 1) return "በጥያቄ";
-  const formatted = Math.round(amount).toLocaleString("en-US");
-  return `${formatted} ${listing.priceCurrency}`;
-}
-
 function inviteRoleForListing(
   listingType: ListingType,
 ): "CORPORATE_DEVELOPER" | "INDEPENDENT_DELALA" {
@@ -67,52 +60,30 @@ export function resolveInvitePhone(
 }
 
 /**
- * Build the Amharic HaHu invite / claim SMS body shown in admin review
- * and sent on Edit & Send / autoSend.
+ * Build a short HaHu invite SMS (≤160 chars, GSM-safe Latin script).
+ * Longer Unicode Amharic bodies get truncated by the gateway.
  */
 export function buildScrapeInviteMessage(
   listing: ScrapeInviteListing,
-  opts?: { accountCreated?: boolean },
+  _opts?: { accountCreated?: boolean },
 ): string {
-  const titleAm =
-    (listing.titleAm ?? "").trim() ||
-    localizedJsonField(listing.title, "am") ||
-    localizedJsonField(listing.title, "en") ||
-    listing.id;
-  const titleEn =
-    (listing.titleEn ?? "").trim() ||
-    localizedJsonField(listing.title, "en") ||
-    titleAm;
-  const details: string[] = [];
-  if (listing.bedrooms != null) details.push(`${listing.bedrooms} መኝታ`);
-  if (listing.floorAreaSqm != null) {
-    const sqm = Number(listing.floorAreaSqm);
-    if (Number.isFinite(sqm) && sqm > 0) details.push(`${Math.round(sqm)} m²`);
-  }
-  if (listing.addressLine?.trim()) details.push(listing.addressLine.trim());
-
-  const claimUrl = smsNotificationEngine.buildAbsoluteUrl(
-    `/am/listings/${listing.id}`,
-  );
   const claimLoginUrl = smsNotificationEngine.buildAbsoluteUrl(
     `/am/login?mode=reset`,
   );
   const phone =
-    resolveInvitePhone(listing.contactPhone) ?? listing.contactPhone?.trim();
+    resolveInvitePhone(listing.contactPhone) ??
+    listing.contactPhone?.trim() ??
+    "";
 
-  return [
-    "ሰላም — EthioMLS የንብረት ማስታወቂያዎን አግኝቷል።",
-    `ርዕስ: ${titleAm}`,
-    titleEn && titleEn !== titleAm ? `Title: ${titleEn}` : null,
-    `ዋጋ: ${formatPrice(listing)}`,
-    details.length > 0 ? details.join(" · ") : null,
-    `ዝርዝር: ${claimUrl}`,
-    phone ? `ስልክዎ: ${phone}` : null,
-    "ለመግባት፡ ይህንኑ ስልክ ቁጥር ይጠቀሙ፣ ከዚያ Reset password ይምረጡ።",
-    `Use this same phone number, then choose Reset password: ${claimLoginUrl}`,
-  ]
-    .filter(Boolean)
-    .join("\n");
+  // Keep under 160 characters so HaHu does not cut off mid-sentence.
+  const withPhone = phone
+    ? `EthioMLS: Use phone ${phone}. Reset password: ${claimLoginUrl} Then sign in & edit your listing.`
+    : `EthioMLS: Use your phone. Reset password: ${claimLoginUrl} Then sign in & edit your listing.`;
+
+  if (withPhone.length <= 160) return withPhone;
+
+  const short = `EthioMLS: Reset password: ${claimLoginUrl} Then sign in & edit listing.`;
+  return short.length <= 160 ? short : short.slice(0, 160);
 }
 
 /**
