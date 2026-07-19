@@ -22,7 +22,15 @@ export async function fetchHomeStats(): Promise<HomeStats> {
       await Promise.all([
         prisma.listing.count({ where: { status: ListingStatus.PUBLISHED } }),
         prisma.project.count({ where: { status: ListingStatus.PUBLISHED } }),
-        prisma.developerProfile.count({ where: { isVerified: true } }),
+        prisma.developerProfile.count({
+          where: {
+            isVerified: true,
+            OR: [
+              { listings: { some: { status: ListingStatus.PUBLISHED } } },
+              { projects: { some: { status: ListingStatus.PUBLISHED } } },
+            ],
+          },
+        }),
         prisma.subCity.count({ where: { isActive: true } }),
       ]);
 

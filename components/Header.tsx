@@ -126,27 +126,28 @@ export function Header() {
           ))}
         </nav>
 
-        <div className="flex shrink-0 items-center gap-2 sm:gap-3">
+        <div className="flex min-w-0 shrink items-center gap-1.5 sm:gap-3">
+          {authReady && user ? (
+            <Link
+              href={`${base}/profile`}
+              className="inline-flex max-w-[7.5rem] items-center gap-1 rounded-full border border-slate-200 bg-white px-2 py-1.5 text-sm font-semibold text-ink transition hover:bg-slate-50 sm:max-w-[11rem] sm:gap-1.5 sm:px-3 sm:py-2"
+              title={user.fullName}
+            >
+              <UserRound className="h-4 w-4 shrink-0 text-brand-600" />
+              <span className="truncate">{user.fullName}</span>
+            </Link>
+          ) : null}
           <LocaleSwitcher />
           {authReady && user?.role === "ADMIN" ? <AdminAlertsBell /> : null}
           {authReady && user ? (
-            <>
-              <Link
-                href={`${base}/profile`}
-                className="hidden max-w-[11rem] items-center gap-1.5 rounded-full border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-ink transition hover:bg-slate-50 md:inline-flex"
-              >
-                <UserRound className="h-4 w-4 shrink-0 text-brand-600" />
-                <span className="truncate">{user.fullName}</span>
-              </Link>
-              <button
-                type="button"
-                className="hidden items-center gap-1.5 rounded-full border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-ink transition hover:bg-slate-50 md:inline-flex"
-                onClick={() => void signOut()}
-              >
-                <LogOut className="h-4 w-4 shrink-0" />
-                {t("auth.logout")}
-              </button>
-            </>
+            <button
+              type="button"
+              className="hidden items-center gap-1.5 rounded-full border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-ink transition hover:bg-slate-50 md:inline-flex"
+              onClick={() => void signOut()}
+            >
+              <LogOut className="h-4 w-4 shrink-0" />
+              {t("auth.logout")}
+            </button>
           ) : (
             <Link
               href={`${base}/login`}
@@ -188,6 +189,18 @@ export function Header() {
           aria-label="Mobile"
         >
           <ul className="flex flex-col gap-1">
+            {authReady && user ? (
+              <li className="mb-1 border-b border-slate-100 pb-2">
+                <Link
+                  href={`${base}/profile`}
+                  className="flex items-center gap-2 rounded-xl px-3 py-2.5 text-sm font-semibold text-ink transition hover:bg-brand-50 hover:text-brand-800"
+                  onClick={() => setMobileOpen(false)}
+                >
+                  <UserRound className="h-4 w-4 shrink-0 text-brand-600" />
+                  <span className="truncate">{user.fullName}</span>
+                </Link>
+              </li>
+            ) : null}
             {navItems.map((item) => (
               <li key={item.key}>
                 <Link

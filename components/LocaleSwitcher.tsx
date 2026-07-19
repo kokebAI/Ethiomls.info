@@ -63,22 +63,22 @@ export function LocaleSwitcher() {
     <div className="relative" ref={rootRef}>
       <button
         type="button"
-        className="inline-flex max-w-[11rem] items-center gap-1.5 rounded-full border border-slate-200 bg-white px-2.5 py-1.5 text-left shadow-sm transition hover:border-brand-200 hover:ring-2 hover:ring-brand-100 sm:max-w-none sm:gap-2 sm:px-3"
+        className="inline-flex items-center gap-1 rounded-full border border-slate-200 bg-white px-2 py-1.5 text-left shadow-sm transition hover:border-brand-200 hover:ring-2 hover:ring-brand-100 sm:max-w-none sm:gap-2 sm:px-3"
         aria-haspopup="listbox"
         aria-expanded={open}
         aria-controls={listId}
-        aria-label={t("locale.switchTo")}
+        aria-label={`${t("locale.switchTo")}: ${current.native}`}
         disabled={pending}
         onClick={() => setOpen((value) => !value)}
       >
         <span className="inline-flex min-w-[1.75rem] shrink-0 items-center justify-center rounded-full bg-brand-100 px-1.5 py-0.5 text-[0.65rem] font-bold tracking-wide text-brand-800">
           {current.short}
         </span>
-        <span className="truncate text-sm font-semibold text-slate-800">
+        <span className="hidden truncate text-sm font-semibold text-slate-800 sm:inline">
           {current.native}
         </span>
         <ChevronDown
-          className={`h-4 w-4 shrink-0 text-slate-400 transition ${open ? "rotate-180" : ""}`}
+          className={`h-3.5 w-3.5 shrink-0 text-slate-400 transition sm:h-4 sm:w-4 ${open ? "rotate-180" : ""}`}
           aria-hidden="true"
         />
       </button>

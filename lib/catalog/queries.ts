@@ -8,7 +8,13 @@ import { prisma } from "@/lib/db/prisma";
 export async function fetchVerifiedDevelopers() {
   try {
     return await prisma.developerProfile.findMany({
-      where: { isVerified: true },
+      where: {
+        isVerified: true,
+        OR: [
+          { listings: { some: { status: ListingStatus.PUBLISHED } } },
+          { projects: { some: { status: ListingStatus.PUBLISHED } } },
+        ],
+      },
       include: {
         headquartersSubCity: {
           select: { code: true, name: true },
