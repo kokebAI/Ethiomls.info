@@ -22,6 +22,14 @@ const CHECKLIST_KEYS = [
 
 type ChecklistKey = (typeof CHECKLIST_KEYS)[number];
 
+const QUICK_REJECT_REASONS = [
+  "Incomplete or missing ownership / title documents",
+  "Price, location, or unit details do not check out",
+  "Media looks unreliable or duplicated from another listing",
+  "Contact details missing or consent not confirmed",
+  "Suspected duplicate or fraudulent listing",
+] as const;
+
 export type ListingAuditAttachCopy = {
   title: string;
   lede: string;
@@ -49,6 +57,16 @@ export type ListingAuditPanelCopy = {
   saving: string;
   approvedReady: string;
   statusLabel: string;
+  rejectedToDraft?: string;
+  published?: string;
+  auditFailed?: string;
+  publishFailed?: string;
+  checkAll?: string;
+  uncheckAll?: string;
+  rejectNeedsNotes?: string;
+  approveNeedsChecks?: string;
+  publishNeedsApprove?: string;
+  quickRejectLabel?: string;
   checks: Record<ChecklistKey, string>;
   enrich: AuditEnrichCopy;
   attach: ListingAuditAttachCopy;
@@ -83,10 +101,7 @@ type ListingAuditPanelProps = {
   priceValue?: string;
 };
 
-function roleLabel(
-  role: string,
-  copy: ListingAuditAttachCopy,
-): string {
+function roleLabel(role: string, copy: ListingAuditAttachCopy): string {
   if (role === "CORPORATE_DEVELOPER") return copy.roleDeveloper;
   if (role === "INDEPENDENT_DELALA") return copy.roleBroker;
   if (role === "PROPERTY_OWNER") return copy.roleOwner;
@@ -112,7 +127,7 @@ function attachmentLine(
 
 export function ListingAuditPanel({
   listingId,
-  status,
+  status: initialStatus,
   alreadyApproved,
   attachment: initialAttachment,
   copy,
@@ -137,6 +152,7 @@ export function ListingAuditPanel({
     alreadyApproved ? copy.approvedReady : null,
   );
   const [approved, setApproved] = useState(alreadyApproved);
+  const [status, setStatus] = useState(initialStatus);
   const [attachment, setAttachment] =
     useState<ListingAttachmentSummary>(initialAttachment);
   const [accounts, setAccounts] = useState<RoleAccountOption[]>([]);
@@ -146,6 +162,14 @@ export function ListingAuditPanel({
   useEffect(() => {
     setAttachment(initialAttachment);
   }, [initialAttachment]);
+
+  useEffect(() => {
+    setStatus(initialStatus);
+    setApproved(alreadyApproved);
+    if (alreadyApproved) {
+      setMessage(copy.approvedReady);
+    }
+  }, [initialStatus, alreadyApproved, copy.approvedReady]);
 
   useEffect(() => {
     let cancelled = false;
@@ -188,7 +212,19 @@ export function ListingAuditPanel({
   );
 
   const allChecked = CHECKLIST_KEYS.every((key) => checks[key]);
+  const notesReadyForReject = notes.trim().length >= 5;
+  const notesReadyForApprove = notes.trim().length >= 10;
   const isPublished = status === "PUBLISHED";
+  const canPublish = approved && status === "PENDING_REVIEW";
+
+  function setAllChecks(value: boolean) {
+    setChecks(
+      Object.fromEntries(CHECKLIST_KEYS.map((key) => [key, value])) as Record<
+        ChecklistKey,
+        boolean
+      >,
+    );
+  }
 
   async function attachAccount() {
     if (!selectedUserId) return;
@@ -232,41 +268,82 @@ export function ListingAuditPanel({
     }
   }
 
-  async function submitAudit(decision: "APPROVE" | "REJECT") {
+  async function submitAudit(
+    decision: "APPROVE" | "REJECT",
+    notesOverride?: string,
+  ) {
+    const decisionNotes = (notesOverride ?? notes).trim();
+    const minLen = decision === "REJECT" ? 5 : 10;
+    if (decisionNotes.length < minLen) {
+      setError(
+        decision === "REJECT"
+          ? (copy.rejectNeedsNotes ??
+              "Add a reject reason (min. 5 characters), or tap a quick reason.")
+          : (copy.approveNeedsChecks ??
+              "Add an approval reason (min. 10 characters) and complete every check."),
+      );
+      return;
+    }
+    if (decision === "APPROVE" && !allChecked) {
+      setError(
+        copy.approveNeedsChecks ??
+          "Tick every client-protection check before approving.",
+      );
+      return;
+    }
+
     setBusy(decision === "APPROVE" ? "approve" : "reject");
     setError(null);
     setMessage(null);
+    if (notesOverride) setNotes(notesOverride);
     try {
       const res = await fetch(`/api/listings/${listingId}/audit`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           decision,
-          notes: notes.trim(),
+          notes: decisionNotes,
           checklist: checks,
         }),
       });
       const data = (await res.json().catch(() => ({}))) as {
         message?: string;
+        data?: { status?: string };
       };
       if (!res.ok) {
-        throw new Error(data.message ?? "Audit failed");
+        throw new Error(data.message ?? copy.auditFailed ?? "Audit failed");
       }
-      setApproved(decision === "APPROVE");
-      setMessage(
-        decision === "APPROVE"
-          ? copy.approvedReady
-          : "Listing rejected and returned to draft.",
-      );
+      if (decision === "APPROVE") {
+        setApproved(true);
+        setStatus(data.data?.status ?? "PENDING_REVIEW");
+        setMessage(copy.approvedReady);
+      } else {
+        setApproved(false);
+        setStatus(data.data?.status ?? "DRAFT");
+        setMessage(
+          copy.rejectedToDraft ?? "Listing rejected and returned to draft.",
+        );
+      }
       router.refresh();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Audit failed");
+      setError(
+        err instanceof Error
+          ? err.message
+          : (copy.auditFailed ?? "Audit failed"),
+      );
     } finally {
       setBusy(null);
     }
   }
 
   async function publishListing() {
+    if (!canPublish) {
+      setError(
+        copy.publishNeedsApprove ??
+          "Approve the audit first — Publish appears once every check passes.",
+      );
+      return;
+    }
     setBusy("publish");
     setError(null);
     try {
@@ -277,19 +354,30 @@ export function ListingAuditPanel({
         message?: string;
       };
       if (!res.ok) {
-        throw new Error(data.message ?? "Publish failed");
+        throw new Error(data.message ?? copy.publishFailed ?? "Publish failed");
       }
-      setMessage("Listing published.");
+      setStatus("PUBLISHED");
+      setMessage(copy.published ?? "Listing published.");
       router.refresh();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Publish failed");
+      setError(
+        err instanceof Error
+          ? err.message
+          : (copy.publishFailed ?? "Publish failed"),
+      );
     } finally {
       setBusy(null);
     }
   }
 
   if (isPublished) {
-    return null;
+    return (
+      <section className="rounded-2xl border border-emerald-200/80 bg-emerald-50/60 p-4 shadow-[var(--shadow-card)] sm:p-5">
+        <p className="text-sm font-medium text-emerald-800">
+          {copy.published ?? "Listing published."}
+        </p>
+      </section>
+    );
   }
 
   return (
@@ -351,9 +439,18 @@ export function ListingAuditPanel({
 
       <div className="mt-5 grid gap-4 lg:grid-cols-3 lg:items-start">
         <div className="min-w-0 space-y-3">
-          <h3 className="text-sm font-semibold text-slate-900">
-            {copy.title}
-          </h3>
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <h3 className="text-sm font-semibold text-slate-900">{copy.title}</h3>
+            <button
+              type="button"
+              onClick={() => setAllChecks(!allChecked)}
+              className="text-xs font-semibold text-brand-700 underline-offset-2 hover:underline"
+            >
+              {allChecked
+                ? (copy.uncheckAll ?? "Uncheck all")
+                : (copy.checkAll ?? "Check all")}
+            </button>
+          </div>
           <ul className="space-y-2">
             {CHECKLIST_KEYS.map((key) => {
               const done = checks[key];
@@ -415,6 +512,25 @@ export function ListingAuditPanel({
         </div>
       </div>
 
+      <div className="mt-4 space-y-2">
+        <p className="text-sm font-medium text-slate-700">
+          {copy.quickRejectLabel ?? "Quick reject reasons"}
+        </p>
+        <div className="flex flex-wrap gap-2">
+          {QUICK_REJECT_REASONS.map((reason) => (
+            <button
+              key={reason}
+              type="button"
+              disabled={Boolean(busy)}
+              onClick={() => void submitAudit("REJECT", reason)}
+              className="rounded-full border border-rose-200 bg-white px-3 py-1.5 text-left text-xs font-semibold text-rose-800 transition hover:bg-rose-50 disabled:opacity-50"
+            >
+              {reason}
+            </button>
+          ))}
+        </div>
+      </div>
+
       <label className="mt-4 grid gap-1.5">
         <span className="text-sm font-medium text-slate-700">
           {copy.notesLabel}
@@ -426,9 +542,10 @@ export function ListingAuditPanel({
           placeholder={copy.notesPlaceholder}
           className="rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-900 outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20"
         />
-        {notes.trim().length > 0 && notes.trim().length < 10 ? (
+        {!notesReadyForReject ? (
           <span className="text-xs text-amber-700">
-            {10 - notes.trim().length} more characters needed for reject / approve
+            {copy.rejectNeedsNotes ??
+              "Reject needs 5+ characters (or tap a quick reason). Approve needs 10+ and every check."}
           </span>
         ) : null}
       </label>
@@ -445,7 +562,7 @@ export function ListingAuditPanel({
       <div className="mt-4 flex flex-col gap-2 sm:flex-row sm:flex-wrap">
         <button
           type="button"
-          disabled={Boolean(busy) || notes.trim().length < 10 || !allChecked}
+          disabled={Boolean(busy) || !notesReadyForApprove || !allChecked}
           onClick={() => void submitAudit("APPROVE")}
           className="inline-flex items-center justify-center gap-2 rounded-full bg-brand-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-brand-700 disabled:opacity-50"
         >
@@ -456,29 +573,39 @@ export function ListingAuditPanel({
         </button>
         <button
           type="button"
-          disabled={Boolean(busy) || notes.trim().length < 10}
+          disabled={Boolean(busy) || !notesReadyForReject}
           onClick={() => void submitAudit("REJECT")}
-          className="inline-flex items-center justify-center gap-2 rounded-full border border-slate-300 bg-white px-4 py-2.5 text-sm font-semibold text-slate-800 transition hover:bg-slate-50 disabled:opacity-50"
+          className="inline-flex items-center justify-center gap-2 rounded-full border border-rose-300 bg-white px-4 py-2.5 text-sm font-semibold text-rose-800 transition hover:bg-rose-50 disabled:opacity-50"
         >
           {busy === "reject" ? (
             <LoaderCircle className="h-4 w-4 animate-spin" />
           ) : null}
           {busy === "reject" ? copy.saving : copy.reject}
         </button>
-        {approved ? (
-          <button
-            type="button"
-            disabled={Boolean(busy)}
-            onClick={() => void publishListing()}
-            className="inline-flex items-center justify-center gap-2 rounded-full bg-emerald-700 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-800 disabled:opacity-50"
-          >
-            {busy === "publish" ? (
-              <LoaderCircle className="h-4 w-4 animate-spin" />
-            ) : null}
-            {busy === "publish" ? copy.publishing : copy.publish}
-          </button>
-        ) : null}
+        <button
+          type="button"
+          disabled={Boolean(busy) || !canPublish}
+          onClick={() => void publishListing()}
+          title={
+            canPublish
+              ? undefined
+              : (copy.publishNeedsApprove ??
+                "Approve the audit first, then publish")
+          }
+          className="inline-flex items-center justify-center gap-2 rounded-full bg-emerald-700 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-800 disabled:opacity-50"
+        >
+          {busy === "publish" ? (
+            <LoaderCircle className="h-4 w-4 animate-spin" />
+          ) : null}
+          {busy === "publish" ? copy.publishing : copy.publish}
+        </button>
       </div>
+      {!canPublish ? (
+        <p className="mt-2 text-xs text-slate-500">
+          {copy.publishNeedsApprove ??
+            "Publish unlocks after you approve every checklist item with a written reason."}
+        </p>
+      ) : null}
     </section>
   );
 }

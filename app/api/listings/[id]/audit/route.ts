@@ -25,14 +25,14 @@ const auditSchema = z
     checklist: checklistSchema,
   })
   .superRefine((value, ctx) => {
-    // Both decisions need a written reason on the audit trail.
-    if (value.notes.length < 10) {
+    const minNotes = value.decision === "REJECT" ? 5 : 10;
+    if (value.notes.length < minNotes) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         path: ["notes"],
         message:
           value.decision === "REJECT"
-            ? "Provide a reject reason (min. 10 characters)"
+            ? "Provide a reject reason (min. 5 characters)"
             : "Provide an approval reason (min. 10 characters)",
       });
     }
