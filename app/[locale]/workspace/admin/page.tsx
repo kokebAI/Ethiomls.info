@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
-import { ListingStatus, UserRole } from "@prisma/client";
+import { ListingStatus, NotificationStatus, UserRole } from "@prisma/client";
 import {
   AdminWorkspaceView,
   type AdminAlertItem,
@@ -283,6 +283,7 @@ export default async function AdminWorkspacePage({
   const [
     pendingCount,
     pendingProjectCount,
+    scrapeInviteCount,
     unreadAlertCount,
     readyCount,
     pending,
@@ -302,6 +303,9 @@ export default async function AdminWorkspacePage({
         status: ListingStatus.PENDING_REVIEW,
         adminAuditApprovedAt: null,
       },
+    }),
+    prisma.listing.count({
+      where: { notificationStatus: NotificationStatus.PENDING_REVIEW },
     }),
     prisma.adminAlert.count({ where: { isRead: false } }),
     prisma.listing.count({
@@ -384,6 +388,7 @@ export default async function AdminWorkspacePage({
         locale={locale}
         pendingCount={pendingCount}
         pendingProjectCount={pendingProjectCount}
+        scrapeInviteCount={scrapeInviteCount}
         unreadAlertCount={unreadAlertCount}
         readyCount={readyCount}
         pendingItems={pending.map((listing) =>
@@ -431,12 +436,29 @@ export default async function AdminWorkspacePage({
           snapshotTitle: ws.snapshotTitle,
           snapshotPending: ws.snapshotPending,
           snapshotPendingProjects: ws.snapshotPendingProjects,
+          snapshotScrapeInvites: ws.snapshotScrapeInvites,
           snapshotAlerts: ws.snapshotAlerts,
           snapshotReady: ws.snapshotReady,
           addListing: ws.addListing ?? "Add listing",
           addListingHint:
             ws.addListingHint ??
             "Goes to pending review — audit and verify after.",
+          toolsTitle: ws.toolsTitle,
+          toolsScrapeReview:
+            ws.toolsScrapeReview ?? dictionary.scrapeReview?.title,
+          toolsScrapeReviewHint: ws.toolsScrapeReviewHint,
+          toolsImports: ws.toolsImports ?? ws.importSources,
+          toolsImportsHint: ws.toolsImportsHint,
+          toolsAlerts: ws.toolsAlerts ?? ws.alertsTitle,
+          toolsAlertsHint: ws.toolsAlertsHint,
+          toolsProjects: ws.toolsProjects ?? ws.pendingProjectsTitle,
+          toolsProjectsHint: ws.toolsProjectsHint,
+          toolsQueue: ws.toolsQueue ?? ws.pendingTitle,
+          toolsQueueHint: ws.toolsQueueHint,
+          toolsDashboard: ws.toolsDashboard ?? ws.dashboard,
+          toolsDashboardHint: ws.toolsDashboardHint,
+          toolsProfile: ws.toolsProfile ?? ws.accountProfile,
+          toolsProfileHint: ws.toolsProfileHint,
           pendingTitle: ws.pendingTitle,
           pendingEmpty: ws.pendingEmpty,
           pendingProjectsTitle: ws.pendingProjectsTitle,

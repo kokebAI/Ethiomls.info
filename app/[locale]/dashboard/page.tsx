@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { LogoutButton } from "@/components/auth/LogoutButton";
 import { DashboardMetrics } from "@/components/dashboard/DashboardMetrics";
+import { getCurrentAdmin } from "@/lib/auth/admin";
 import { getSession } from "@/lib/auth/session";
 import { fetchDashboardMetrics } from "@/lib/catalog/dashboard-metrics";
 import { isLocale, type Locale } from "@/lib/i18n/config";
@@ -28,10 +29,9 @@ export default async function DashboardPage({
   const { locale: raw } = await params;
   const locale = (isLocale(raw) ? raw : "en") as Locale;
   const dictionary = getDictionary(locale);
-  const [metrics, session] = await Promise.all([
-    fetchDashboardMetrics(),
-    getSession(),
-  ]);
+  const [session, admin] = await Promise.all([getSession(), getCurrentAdmin()]);
+  const isAdmin = Boolean(admin);
+  const metrics = await fetchDashboardMetrics({ includeAdmin: isAdmin });
 
   return (
     <div className="flex flex-col gap-4">
@@ -44,6 +44,7 @@ export default async function DashboardPage({
         dictionary={dictionary}
         metrics={metrics}
         welcomeName={session?.fullName ?? null}
+        isAdmin={isAdmin}
       />
     </div>
   );

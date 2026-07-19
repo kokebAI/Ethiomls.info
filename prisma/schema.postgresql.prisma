@@ -644,6 +644,16 @@ model AdminAlert {
   @@map("admin_alerts")
 }
 
+/// Daily rolled-up site engagement (page views from client beacon).
+model SiteDailyMetric {
+  /// Calendar day in UTC (date-only)
+  day       DateTime @id @db.Date
+  pageViews Int      @default(0)
+  updatedAt DateTime @updatedAt
+
+  @@map("site_daily_metrics")
+}
+
 // ---------------------------------------------------------------------------
 // Proclamation 1357/2024 — escrow & staged fund release
 // ---------------------------------------------------------------------------

@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import type { ReactNode } from "react";
 import { Manrope, Noto_Sans_Ethiopic } from "next/font/google";
+import { PageViewTracker } from "@/components/analytics/PageViewTracker";
 import { ServiceWorkerRegister } from "@/components/pwa/ServiceWorkerRegister";
 import "./globals.css";
 
@@ -46,6 +47,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         className={`${manrope.variable} ${notoEthiopic.variable} font-sans antialiased text-slate-900`}
       >
         {children}
+        <PageViewTracker />
         <ServiceWorkerRegister />
       </body>
     </html>

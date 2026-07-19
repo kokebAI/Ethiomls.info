@@ -10,10 +10,26 @@ export type AdminWorkspaceCopy = {
   snapshotTitle: string;
   snapshotPending: string;
   snapshotPendingProjects?: string;
+  snapshotScrapeInvites?: string;
   snapshotAlerts: string;
   snapshotReady: string;
   addListing: string;
   addListingHint: string;
+  toolsTitle?: string;
+  toolsScrapeReview?: string;
+  toolsScrapeReviewHint?: string;
+  toolsImports?: string;
+  toolsImportsHint?: string;
+  toolsAlerts?: string;
+  toolsAlertsHint?: string;
+  toolsProjects?: string;
+  toolsProjectsHint?: string;
+  toolsQueue?: string;
+  toolsQueueHint?: string;
+  toolsDashboard?: string;
+  toolsDashboardHint?: string;
+  toolsProfile?: string;
+  toolsProfileHint?: string;
   pendingTitle: string;
   pendingEmpty: string;
   pendingProjectsTitle?: string;
@@ -48,6 +64,7 @@ export type AdminWorkspaceProps = {
   copy: AdminWorkspaceCopy;
   pendingCount: number;
   pendingProjectCount?: number;
+  scrapeInviteCount?: number;
   unreadAlertCount: number;
   readyCount: number;
   pendingItems: AdminPendingDirectoryItem[];
@@ -55,6 +72,14 @@ export type AdminWorkspaceProps = {
   draftItems: DirectoryItem[];
   readyItems: DirectoryItem[];
   alerts: AdminAlertItem[];
+};
+
+type AdminToolLink = {
+  href: string;
+  label: string;
+  hint: string;
+  count?: number;
+  primary?: boolean;
 };
 
 function StatusDot({ ok }: { ok: boolean }) {
@@ -73,6 +98,7 @@ export function AdminWorkspaceView({
   copy,
   pendingCount,
   pendingProjectCount = 0,
+  scrapeInviteCount = 0,
   unreadAlertCount,
   readyCount,
   pendingItems,
@@ -97,6 +123,63 @@ export function AdminWorkspaceView({
     draftsEmpty: copy.draftsEmpty,
     verifiedEmpty: copy.readyEmpty,
   };
+
+  const tools: AdminToolLink[] = [
+    {
+      href: `${base}/admin/scrape-review`,
+      label: copy.toolsScrapeReview ?? "Scrape invite review",
+      hint:
+        copy.toolsScrapeReviewHint ??
+        "Approve scraped listings and send HaHu invite SMS.",
+      count: scrapeInviteCount,
+      primary: scrapeInviteCount > 0,
+    },
+    {
+      href: `${base}/admin/imports`,
+      label: copy.toolsImports ?? "Import sources",
+      hint:
+        copy.toolsImportsHint ??
+        "Telegram, websites, Facebook pages, and sales-kit uploads.",
+    },
+    {
+      href: `${base}/workspace/admin#admin-alerts`,
+      label: copy.toolsAlerts ?? "Unread alerts",
+      hint: copy.toolsAlertsHint ?? "Collision and system alerts waiting for you.",
+      count: unreadAlertCount,
+      primary: unreadAlertCount > 0,
+    },
+    {
+      href: `${base}/workspace/admin#admin-pending-projects`,
+      label: copy.toolsProjects ?? "Projects awaiting audit",
+      hint:
+        copy.toolsProjectsHint ??
+        "Review developer projects before they go public.",
+      count: pendingProjectCount,
+    },
+    {
+      href: `${base}/workspace/admin#admin-pending-queue`,
+      label: copy.toolsQueue ?? "Listing audit queue",
+      hint:
+        copy.toolsQueueHint ??
+        "Pending, drafts, and verified listings ready to publish.",
+      count: pendingCount,
+    },
+    {
+      href: `${base}/listings/new`,
+      label: copy.addListing,
+      hint: copy.addListingHint,
+    },
+    {
+      href: `${base}/dashboard`,
+      label: copy.toolsDashboard ?? "Dashboard metrics",
+      hint: copy.toolsDashboardHint ?? "Market and ops metrics.",
+    },
+    {
+      href: `${base}/profile`,
+      label: copy.toolsProfile ?? "Account profile",
+      hint: copy.toolsProfileHint ?? "Your admin account settings.",
+    },
+  ];
 
   return (
     <div className="relative z-10 mx-auto flex max-w-7xl flex-col gap-10 px-4 py-10 sm:px-6 lg:py-14">
@@ -126,27 +209,48 @@ export function AdminWorkspaceView({
         <ul className="mt-4 space-y-3">
           <li className="flex items-start gap-3 text-sm text-ink">
             <StatusDot ok={pendingCount === 0} />
-            <span>
+            <Link
+              href={`${base}/workspace/admin#admin-pending-queue`}
+              className="hover:text-brand-800 hover:underline"
+            >
               {copy.snapshotPending.replace("{count}", String(pendingCount))}
-            </span>
+            </Link>
           </li>
           <li className="flex items-start gap-3 text-sm text-ink">
             <StatusDot ok={pendingProjectCount === 0} />
-            <span>
+            <Link
+              href={`${base}/workspace/admin#admin-pending-projects`}
+              className="hover:text-brand-800 hover:underline"
+            >
               {(
                 copy.snapshotPendingProjects ??
                 "{count} project(s) awaiting audit"
               ).replace("{count}", String(pendingProjectCount))}
-            </span>
+            </Link>
+          </li>
+          <li className="flex items-start gap-3 text-sm text-ink">
+            <StatusDot ok={scrapeInviteCount === 0} />
+            <Link
+              href={`${base}/admin/scrape-review`}
+              className="hover:text-brand-800 hover:underline"
+            >
+              {(
+                copy.snapshotScrapeInvites ??
+                "{count} scrape invite(s) awaiting SMS"
+              ).replace("{count}", String(scrapeInviteCount))}
+            </Link>
           </li>
           <li className="flex items-start gap-3 text-sm text-ink">
             <StatusDot ok={unreadAlertCount === 0} />
-            <span>
+            <Link
+              href={`${base}/workspace/admin#admin-alerts`}
+              className="hover:text-brand-800 hover:underline"
+            >
               {copy.snapshotAlerts.replace(
                 "{count}",
                 String(unreadAlertCount),
               )}
-            </span>
+            </Link>
           </li>
           <li className="flex items-start gap-3 text-sm text-ink">
             <StatusDot ok={readyCount > 0 || pendingCount === 0} />
@@ -157,12 +261,61 @@ export function AdminWorkspaceView({
         </ul>
       </section>
 
-      <AdminPendingQueue
-        items={pendingItems}
-        draftItems={draftItems}
-        verifiedItems={readyItems}
-        copy={pendingQueueCopy}
-      />
+      <section
+        id="admin-tools"
+        className="space-y-4 scroll-mt-28"
+        aria-labelledby="admin-tools-heading"
+      >
+        <h2
+          id="admin-tools-heading"
+          className="text-lg font-semibold tracking-tight text-slate-deep"
+        >
+          {copy.toolsTitle ?? "Admin tools"}
+        </h2>
+        <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          {tools.map((tool) => (
+            <li key={tool.href + tool.label}>
+              <Link
+                href={tool.href}
+                className={`block h-full rounded-2xl border px-4 py-4 transition hover:border-brand-300 hover:bg-brand-50/40 ${
+                  tool.primary
+                    ? "border-brand-200 bg-brand-50/50"
+                    : "border-slate-200/90 bg-white/90"
+                }`}
+              >
+                <div className="flex items-start justify-between gap-3">
+                  <span className="text-sm font-semibold text-slate-900">
+                    {tool.label}
+                  </span>
+                  {typeof tool.count === "number" ? (
+                    <span
+                      className={`shrink-0 rounded-full px-2 py-0.5 text-xs font-semibold tabular-nums ${
+                        tool.count > 0
+                          ? "bg-amber-100 text-amber-900"
+                          : "bg-slate-100 text-slate-500"
+                      }`}
+                    >
+                      {tool.count}
+                    </span>
+                  ) : null}
+                </div>
+                <p className="mt-1.5 text-xs leading-relaxed text-ink-muted">
+                  {tool.hint}
+                </p>
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      <div id="admin-pending-queue" className="scroll-mt-28">
+        <AdminPendingQueue
+          items={pendingItems}
+          draftItems={draftItems}
+          verifiedItems={readyItems}
+          copy={pendingQueueCopy}
+        />
+      </div>
 
       <section
         id="admin-pending-projects"
