@@ -517,7 +517,14 @@
     "noRaw": "(ድፍን ጽሑፍ የለም)",
     "priceOnRequest": "በጥያቄ",
     "accountCreated": "የ{role} መለያ “{label}” ተፈጥሯል — በReset password ይግባሉ።",
-    "accountLinked": "ያለው {role} “{label}” ተገናኝቷል።"
+    "accountLinked": "ያለው {role} “{label}” ተገናኝቷል።",
+    "postedLabel": "የገባበት ቀን",
+    "waitingFor": "ከ{age} ጀምሮ",
+    "ageMinutes": "{count} ደቂቃ",
+    "ageHours": "{count} ሰዓት",
+    "ageDays": "{count} ቀን",
+    "ageWeeks": "{count} ሳምንት",
+    "sortedOldestFirst": "በድሮው መጀመሪያ — ረጅም ጊዜ የጠበቁ ማስመጫዎችን ይገምግሙ"
   },
   "salesKit": {
     "title": "የሽያጭ ፋይል → ሚና መለያ",

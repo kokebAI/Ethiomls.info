@@ -9,6 +9,11 @@ import {
   Pencil,
   Trash2,
 } from "lucide-react";
+import {
+  formatPostedDate,
+  isStalePosted,
+  postedAgeParts,
+} from "@/lib/datetime/posted-age";
 import { useTranslation } from "@/hooks/useTranslation";
 
 export type ScrapeReviewItem = {
@@ -35,6 +40,17 @@ type ScrapeReviewQueueProps = {
 };
 
 type BusyAction = "invite" | "audit" | "discard";
+
+function ageLabel(
+  createdAt: string,
+  t: (key: string, params?: Record<string, string | number>) => string,
+) {
+  const { value, unit } = postedAgeParts(createdAt);
+  if (unit === "minutes") return t("scrapeReview.ageMinutes", { count: value });
+  if (unit === "hours") return t("scrapeReview.ageHours", { count: value });
+  if (unit === "days") return t("scrapeReview.ageDays", { count: value });
+  return t("scrapeReview.ageWeeks", { count: value });
+}
 
 export function ScrapeReviewQueue({ initialItems }: ScrapeReviewQueueProps) {
   const { t, locale } = useTranslation();
@@ -208,10 +224,13 @@ export function ScrapeReviewQueue({ initialItems }: ScrapeReviewQueueProps) {
 
       <p className="text-sm text-ink-muted">
         {t("scrapeReview.queueCount", { count: items.length })}
+        {" · "}
+        {t("scrapeReview.sortedOldestFirst")}
       </p>
 
       {items.map((item) => {
         const busy = busyId === item.id;
+        const stale = isStalePosted(item.createdAt);
         const price =
           Number(item.priceAmount) > 1
             ? `${Math.round(Number(item.priceAmount)).toLocaleString("en-US")} ${item.priceCurrency}`
@@ -242,6 +261,30 @@ export function ScrapeReviewQueue({ initialItems }: ScrapeReviewQueueProps) {
                       </a>
                     </>
                   ) : null}
+                </p>
+                <p
+                  className={`mt-1.5 text-sm font-medium ${
+                    stale ? "text-amber-800" : "text-slate-700"
+                  }`}
+                >
+                  <span className="text-slate-500">
+                    {t("scrapeReview.postedLabel")}:{" "}
+                  </span>
+                  {formatPostedDate(item.createdAt, locale)}
+                  <span className="mx-1.5 text-slate-300" aria-hidden>
+                    ·
+                  </span>
+                  <span
+                    className={
+                      stale
+                        ? "rounded-full bg-amber-100 px-2 py-0.5 text-amber-900"
+                        : "text-slate-600"
+                    }
+                  >
+                    {t("scrapeReview.waitingFor", {
+                      age: ageLabel(item.createdAt, t),
+                    })}
+                  </span>
                 </p>
               </div>
               <div className="flex flex-wrap gap-2">

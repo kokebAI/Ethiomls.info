@@ -1,75 +1,50 @@
 /**
- * Inspect + restore scraped listings into Scrape invite review.
+ * Move all import/scrape listings into Scrape invite review
+ * (notificationStatus = PENDING_REVIEW) so they can be SMS-reviewed.
  *
- * Usage:
- *   npx tsx scripts/restore-scrape-invite-queue.ts
- *   npx tsx scripts/restore-scrape-invite-queue.ts --all-pending
+ * Usage: npx tsx scripts/restore-scrape-invite-queue.ts
  */
 import { ListingStatus, NotificationStatus } from "@prisma/client";
 import { prisma } from "../lib/db/prisma";
 
 async function main() {
-  const allPending = process.argv.includes("--all-pending");
-
-  const byNotif = await prisma.listing.groupBy({
-    by: ["notificationStatus"],
-    _count: { _all: true },
-  });
-  console.log(
-    "notificationStatus counts:",
-    Object.fromEntries(
-      byNotif.map((row) => [row.notificationStatus, row._count._all]),
-    ),
-  );
-
-  const alreadyQueued = await prisma.listing.count({
-    where: { notificationStatus: NotificationStatus.PENDING_REVIEW },
-  });
-  console.log(`already in scrape queue: ${alreadyQueued}`);
-
-  const naPending = await prisma.listing.findMany({
-    where: {
-      notificationStatus: NotificationStatus.NOT_APPLICABLE,
-      status: ListingStatus.PENDING_REVIEW,
+  const where = {
+    status: ListingStatus.PENDING_REVIEW,
+    notificationStatus: {
+      in: [NotificationStatus.NOT_APPLICABLE, NotificationStatus.FAILED],
     },
+    OR: [
+      { scrapedRawText: { not: null } },
+      { importSourceId: { not: null } },
+      { sourceExternalId: { not: null } },
+      { sourceUrl: { not: null } },
+      { metadataTags: { has: "import" } },
+      { metadataTags: { has: "sales-kit-import" } },
+    ],
+  } as const;
+
+  const preview = await prisma.listing.findMany({
+    where,
     select: {
       id: true,
       titleEn: true,
       contactPhone: true,
-      scrapedRawText: true,
-      importSourceId: true,
-      sourceUrl: true,
-      sourceExternalId: true,
-      updatedAt: true,
+      createdAt: true,
+      notificationStatus: true,
     },
-    orderBy: { updatedAt: "desc" },
-    take: 50,
+    orderBy: { createdAt: "asc" },
+    take: 200,
   });
 
-  console.log(
-    `NOT_APPLICABLE + PENDING_REVIEW sample (${naPending.length} shown):`,
-  );
-  for (const row of naPending) {
+  console.log(`Found ${preview.length} import/scrape listing(s) to queue:`);
+  for (const row of preview) {
+    const ageDays = Math.floor(
+      (Date.now() - row.createdAt.getTime()) / 86_400_000,
+    );
     console.log(
-      `  ${row.id} raw=${Boolean(row.scrapedRawText)} import=${Boolean(row.importSourceId)} src=${Boolean(row.sourceUrl)} phone=${row.contactPhone ?? "—"} ${row.titleEn?.slice(0, 50) ?? ""}`,
+      `  ${row.id}  ${ageDays}d  ${row.notificationStatus}  phone=${row.contactPhone ?? "—"}  ${row.titleEn ?? ""}`,
     );
   }
-
-  const where = allPending
-    ? {
-        notificationStatus: NotificationStatus.NOT_APPLICABLE,
-        status: ListingStatus.PENDING_REVIEW,
-      }
-    : {
-        notificationStatus: NotificationStatus.NOT_APPLICABLE,
-        status: ListingStatus.PENDING_REVIEW,
-        OR: [
-          { scrapedRawText: { not: null } },
-          { importSourceId: { not: null } },
-          { sourceExternalId: { not: null } },
-          { sourceUrl: { not: null } },
-        ],
-      };
 
   const result = await prisma.listing.updateMany({
     where,
@@ -79,11 +54,10 @@ async function main() {
     },
   });
 
-  console.log(
-    `Restored ${result.count} listing(s) to scrape invite queue${
-      allPending ? " (--all-pending)" : ""
-    }.`,
-  );
+  const queued = await prisma.listing.count({
+    where: { notificationStatus: NotificationStatus.PENDING_REVIEW },
+  });
+  console.log(`Restored ${result.count}. Scrape queue now: ${queued}`);
 }
 
 main()

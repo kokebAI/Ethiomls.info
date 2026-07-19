@@ -305,7 +305,28 @@ export default async function AdminWorkspacePage({
       },
     }),
     prisma.listing.count({
-      where: { notificationStatus: NotificationStatus.PENDING_REVIEW },
+      where: {
+        status: ListingStatus.PENDING_REVIEW,
+        OR: [
+          {
+            notificationStatus: {
+              in: [
+                NotificationStatus.PENDING_REVIEW,
+                NotificationStatus.FAILED,
+              ],
+            },
+          },
+          {
+            notificationStatus: NotificationStatus.NOT_APPLICABLE,
+            OR: [
+              { importSourceId: { not: null } },
+              { scrapedRawText: { not: null } },
+              { metadataTags: { has: "import" } },
+              { metadataTags: { has: "sales-kit-import" } },
+            ],
+          },
+        ],
+      },
     }),
     prisma.adminAlert.count({ where: { isRead: false } }),
     prisma.listing.count({

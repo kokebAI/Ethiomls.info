@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { NotificationStatus } from "@prisma/client";
+import { ListingStatus, NotificationStatus } from "@prisma/client";
 import { redirect } from "next/navigation";
 import {
   ScrapeReviewQueue,
@@ -39,33 +39,60 @@ export default async function AdminScrapeReviewPage({
     redirect(`/${locale}/login`);
   }
 
+  // Invite queue: scrapes + imports awaiting SMS review (incl. failed retries).
   const pending = await prisma.listing.findMany({
-    where: { notificationStatus: NotificationStatus.PENDING_REVIEW },
-    orderBy: { createdAt: "desc" },
+    where: {
+      status: ListingStatus.PENDING_REVIEW,
+      OR: [
+        {
+          notificationStatus: {
+            in: [NotificationStatus.PENDING_REVIEW, NotificationStatus.FAILED],
+          },
+        },
+        {
+          notificationStatus: NotificationStatus.NOT_APPLICABLE,
+          OR: [
+            { importSourceId: { not: null } },
+            { scrapedRawText: { not: null } },
+            { metadataTags: { has: "import" } },
+            { metadataTags: { has: "sales-kit-import" } },
+          ],
+        },
+      ],
+    },
+    orderBy: { createdAt: "asc" },
     take: 500,
     include: {
       importSource: { select: { label: true } },
     },
   });
 
-  const items: ScrapeReviewItem[] = pending.map((listing) => ({
-    id: listing.id,
-    scrapedRawText: listing.scrapedRawText,
-    titleEn: listing.titleEn,
-    titleAm: listing.titleAm,
-    descriptionEn: listing.descriptionEn,
-    descriptionAm: listing.descriptionAm,
-    contactPhone: listing.contactPhone,
-    priceAmount: listing.priceAmount.toString(),
-    priceCurrency: listing.priceCurrency,
-    listingType: listing.listingType,
-    bedrooms: listing.bedrooms,
-    addressLine: listing.addressLine,
-    sourceUrl: listing.sourceUrl,
-    messagePreview: buildScrapeInviteMessage(listing),
-    importSourceLabel: listing.importSource?.label ?? null,
-    createdAt: listing.createdAt.toISOString(),
-  }));
+  const items: ScrapeReviewItem[] = pending.map((listing) => {
+    const sourceFromTag =
+      listing.metadataTags
+        .find((tag) => tag.startsWith("source:"))
+        ?.replace(/^source:/, "")
+        .trim() || null;
+    return {
+      id: listing.id,
+      scrapedRawText: listing.scrapedRawText,
+      titleEn: listing.titleEn,
+      titleAm: listing.titleAm,
+      descriptionEn: listing.descriptionEn,
+      descriptionAm: listing.descriptionAm,
+      contactPhone: listing.contactPhone,
+      priceAmount: listing.priceAmount.toString(),
+      priceCurrency: listing.priceCurrency,
+      listingType: listing.listingType,
+      bedrooms: listing.bedrooms,
+      addressLine: listing.addressLine,
+      sourceUrl: listing.sourceUrl,
+      messagePreview: buildScrapeInviteMessage(listing),
+      importSourceLabel:
+        listing.importSource?.label ?? sourceFromTag ?? null,
+      createdAt: listing.createdAt.toISOString(),
+    };
+  });
 
   return (
     <div className="mx-auto flex max-w-6xl flex-col gap-6">

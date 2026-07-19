@@ -2,6 +2,7 @@ import {
   CurrencyCode,
   ListingStatus,
   ListingType,
+  NotificationStatus,
   PropertyCategory,
   UserRole,
 } from "@prisma/client";
@@ -72,6 +73,14 @@ export async function importSalesKitListings(input: {
     const unitKey = draft.unitLabel?.trim() || `row-${index + 1}`;
     const priceAmount = draft.price > 0 ? draft.price : 1;
 
+    const rawParts = [
+      draft.projectName ? `Project: ${draft.projectName}` : null,
+      draft.unitLabel ? `Unit: ${draft.unitLabel}` : null,
+      draft.title,
+      draft.description,
+      draft.addressLine || null,
+    ].filter(Boolean);
+
     await prisma.listing.create({
       data: {
         id,
@@ -84,6 +93,10 @@ export async function importSalesKitListings(input: {
           en: draft.description,
           am: draft.description,
         },
+        titleEn: draft.title || null,
+        titleAm: draft.title || null,
+        descriptionEn: draft.description || null,
+        descriptionAm: draft.description || null,
         listingType,
         category: parseCategory(draft.category),
         status: ListingStatus.PENDING_REVIEW,
@@ -96,8 +109,12 @@ export async function importSalesKitListings(input: {
         isUnfinished: listingType === ListingType.OFF_PLAN,
         contactPhone: input.account.phone,
         contactName: input.account.label,
+        scrapedRawText: rawParts.join("\n").slice(0, 12_000),
+        notificationStatus: NotificationStatus.PENDING_REVIEW,
+        notificationError: null,
         metadataTags: [
           "sales-kit-import",
+          "import",
           `source:${input.sourceLabel.slice(0, 80)}`,
           `unit:${unitKey}`,
           ...(draft.floor != null ? [`floor:${draft.floor}`] : []),

@@ -697,7 +697,14 @@
     "noRaw": "(No raw text stored)",
     "priceOnRequest": "On request",
     "accountCreated": "Created {role} account “{label}” — they claim login via Reset password.",
-    "accountLinked": "Linked existing {role} “{label}”."
+    "accountLinked": "Linked existing {role} “{label}”.",
+    "postedLabel": "Posted",
+    "waitingFor": "waiting {age}",
+    "ageMinutes": "{count} min",
+    "ageHours": "{count}h",
+    "ageDays": "{count}d",
+    "ageWeeks": "{count}w",
+    "sortedOldestFirst": "Oldest first — review long-waiting imports first"
   },
   "salesKit": {
     "title": "Sales kit → role account",
