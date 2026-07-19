@@ -441,7 +441,13 @@
       "listings": "ዝርዝሮች",
       "pageViews": "የገጽ እይታዎች",
       "push": "Push / SMS",
-      "version": "ስሪት / deploy"
+      "version": "Deploy"
+    },
+    "charts": {
+      "listingsByStatus": "ዝርዝሮች በሁኔታ",
+      "pageViewsTrend": "የገጽ እይታዎች (7 ቀን)",
+      "smsFunnel": "የግብዣ SMS ፈኖር",
+      "empty": "እስካሁን ውሂብ የለም"
     }
   },
   "imports": {

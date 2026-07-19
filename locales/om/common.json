@@ -478,11 +478,17 @@
     },
     "adminLede": "Full ops desk: listings, page views, HaHu SMS push status, and the live deploy version.",
     "sections": {
-      "overview": "Market overview",
-      "listings": "Listings",
-      "pageViews": "Page views",
+      "overview": "Ilaalcha gabaa",
+      "listings": "Tarreewwan",
+      "pageViews": "Daawwannaa fuulaa",
       "push": "Push / SMS",
-      "version": "Version / deploy"
+      "version": "Deploy"
+    },
+    "charts": {
+      "listingsByStatus": "Tarreewwan haala isaaniitiin",
+      "pageViewsTrend": "Daawwannaa fuulaa (guyyaa 7)",
+      "smsFunnel": "Funnel SMS afeerraa",
+      "empty": "Amma data hin jiru"
     }
   },
   "imports": {

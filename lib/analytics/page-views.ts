@@ -19,6 +19,7 @@ export async function recordPageView(): Promise<void> {
 export async function fetchPageViewTotals(): Promise<{
   today: number;
   last7Days: number;
+  series: Array<{ day: string; pageViews: number }>;
 }> {
   const today = utcDayKey();
   const weekAgo = utcDayKey(new Date(Date.now() - 6 * 24 * 60 * 60 * 1000));
@@ -30,12 +31,24 @@ export async function fetchPageViewTotals(): Promise<{
     }),
     prisma.siteDailyMetric.findMany({
       where: { day: { gte: weekAgo } },
-      select: { pageViews: true },
+      select: { day: true, pageViews: true },
+      orderBy: { day: "asc" },
     }),
   ]);
 
+  const byDay = new Map(
+    weekRows.map((row) => [row.day.toISOString().slice(0, 10), row.pageViews]),
+  );
+  const series: Array<{ day: string; pageViews: number }> = [];
+  for (let i = 6; i >= 0; i -= 1) {
+    const date = utcDayKey(new Date(Date.now() - i * 24 * 60 * 60 * 1000));
+    const key = date.toISOString().slice(0, 10);
+    series.push({ day: key, pageViews: byDay.get(key) ?? 0 });
+  }
+
   return {
     today: todayRow?.pageViews ?? 0,
-    last7Days: weekRows.reduce((sum, row) => sum + row.pageViews, 0),
+    last7Days: series.reduce((sum, row) => sum + row.pageViews, 0),
+    series,
   };
 }

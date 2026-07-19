@@ -776,7 +776,13 @@
       "listings": "Listings",
       "pageViews": "Page views",
       "push": "Push / SMS",
-      "version": "Version / deploy"
+      "version": "Deploy"
+    },
+    "charts": {
+      "listingsByStatus": "Listings by status",
+      "pageViewsTrend": "Page views (7 days)",
+      "smsFunnel": "Invite SMS funnel",
+      "empty": "No data yet"
     }
   },
   "building": {

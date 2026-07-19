@@ -1,3 +1,9 @@
+import {
+  FunnelChart,
+  PageViewsTrendChart,
+  StatusBarChart,
+  TranslationMeter,
+} from "@/components/dashboard/DashboardCharts";
 import type { DashboardMetricsData } from "@/lib/catalog/dashboard-metrics";
 import type { Dictionary } from "@/lib/i18n/getDictionary";
 import { translate } from "@/lib/i18n/getDictionary";
@@ -32,28 +38,23 @@ function toneClass(tone: MetricCard["tone"]): string {
   }
 }
 
-function MetricGrid({ cards }: { cards: MetricCard[] }) {
+function CompactStat({ card }: { card: MetricCard }) {
   return (
-    <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-      {cards.map((card) => (
-        <article
-          key={card.id}
-          className="flex flex-col gap-4 rounded-2xl border border-slate-200/90 bg-white/90 p-5 shadow-[var(--shadow-card)] backdrop-blur-sm"
+    <article className="flex min-w-0 flex-col gap-1.5 rounded-xl border border-slate-200/90 bg-white/95 px-3.5 py-3 shadow-[var(--shadow-card)]">
+      <div className="flex items-start justify-between gap-2">
+        <h3 className="text-xs font-semibold leading-snug text-ink-muted">
+          {card.label}
+        </h3>
+        <span
+          className={`inline-flex shrink-0 rounded-full px-2 py-0.5 text-[0.6rem] font-bold uppercase tracking-wide ring-1 ring-inset ${toneClass(card.tone)}`}
         >
-          <div className="flex items-start justify-between gap-3">
-            <h3 className="text-sm font-semibold text-ink-muted">{card.label}</h3>
-            <span
-              className={`inline-flex rounded-full px-2.5 py-0.5 text-[0.65rem] font-bold uppercase tracking-wide ring-1 ring-inset ${toneClass(card.tone)}`}
-            >
-              {card.tag}
-            </span>
-          </div>
-          <p className="text-4xl font-bold tracking-tight text-slate-deep">
-            {card.value}
-          </p>
-        </article>
-      ))}
-    </div>
+          {card.tag}
+        </span>
+      </div>
+      <p className="text-2xl font-bold tabular-nums tracking-tight text-slate-deep">
+        {card.value}
+      </p>
+    </article>
   );
 }
 
@@ -64,7 +65,11 @@ export function DashboardMetrics({
   isAdmin = false,
 }: DashboardMetricsProps) {
   const m = dictionary.dashboard.metrics;
-  const overview: MetricCard[] = [
+  const charts = dictionary.dashboard.charts;
+  const sections = dictionary.dashboard.sections;
+  const admin = metrics.admin;
+
+  const overviewPrimary: MetricCard[] = [
     {
       id: "active",
       label: m.active,
@@ -79,30 +84,21 @@ export function DashboardMetrics({
       tag: m.pendingTag,
       tone: "amber",
     },
-    {
-      id: "translate",
-      label: m.translation,
-      value: `${metrics.translationRate}%`,
-      tag: m.translationTag,
-      tone: "slate",
-    },
   ];
-
-  const admin = metrics.admin;
 
   return (
     <section
       id="dashboard"
-      className="flex flex-col gap-8"
+      className="flex flex-col gap-5"
       aria-labelledby="home-dashboard-title"
     >
-      <header className="space-y-2">
+      <header className="space-y-1.5">
         <p className="text-xs font-bold uppercase tracking-[0.14em] text-brand-600">
           {dictionary.dashboard.eyebrow}
         </p>
         <h2
           id="home-dashboard-title"
-          className="text-balance text-2xl font-bold tracking-tight text-slate-deep sm:text-3xl"
+          className="text-balance text-xl font-bold tracking-tight text-slate-deep sm:text-2xl"
         >
           {welcomeName
             ? translate(dictionary, "dashboard.welcome", { name: welcomeName })
@@ -115,152 +111,144 @@ export function DashboardMetrics({
         </p>
       </header>
 
-      <div className="space-y-3">
-        <h3 className="text-sm font-semibold text-slate-deep">
-          {dictionary.dashboard.sections?.overview ?? "Market overview"}
+      <div className="space-y-2.5">
+        <h3 className="text-xs font-bold uppercase tracking-[0.12em] text-slate-500">
+          {sections?.overview ?? "Market overview"}
         </h3>
-        <MetricGrid cards={overview} />
+        <div className="grid gap-3 sm:grid-cols-3">
+          {overviewPrimary.map((card) => (
+            <CompactStat key={card.id} card={card} />
+          ))}
+          <TranslationMeter
+            label={m.translation}
+            percent={metrics.translationRate}
+            tag={m.translationTag}
+          />
+        </div>
       </div>
 
       {isAdmin && admin ? (
         <>
-          <div className="space-y-3">
-            <h3 className="text-sm font-semibold text-slate-deep">
-              {dictionary.dashboard.sections?.listings ?? "Listings"}
-            </h3>
-            <MetricGrid
-              cards={[
+          <div className="grid gap-3 lg:grid-cols-2">
+            <StatusBarChart
+              title={charts?.listingsByStatus ?? "Listings by status"}
+              emptyLabel={charts?.empty ?? "No data yet"}
+              segments={[
                 {
                   id: "pub",
                   label: m.listingsPublished,
-                  value: String(admin.listingsPublished),
-                  tag: m.listingsPublishedTag,
-                  tone: "emerald",
+                  value: admin.listingsPublished,
+                  color: "#059669",
                 },
                 {
                   id: "audit",
                   label: m.listingsPendingAudit,
-                  value: String(admin.listingsPendingAudit),
-                  tag: m.listingsPendingAuditTag,
-                  tone: "amber",
-                },
-                {
-                  id: "draft",
-                  label: m.listingsDraft,
-                  value: String(admin.listingsDraft),
-                  tag: m.listingsDraftTag,
-                  tone: "slate",
+                  value: admin.listingsPendingAudit,
+                  color: "#d97706",
                 },
                 {
                   id: "ready",
                   label: m.listingsReady,
-                  value: String(admin.listingsReady),
-                  tag: m.listingsReadyTag,
-                  tone: "gold",
+                  value: admin.listingsReady,
+                  color: "#b45309",
                 },
                 {
-                  id: "projects",
-                  label: m.projectsPending,
-                  value: String(admin.projectsPending),
-                  tag: m.projectsPendingTag,
-                  tone: "amber",
-                },
-                {
-                  id: "alerts",
-                  label: m.unreadAlerts,
-                  value: String(admin.unreadAlerts),
-                  tag: m.unreadAlertsTag,
-                  tone: "sky",
+                  id: "draft",
+                  label: m.listingsDraft,
+                  value: admin.listingsDraft,
+                  color: "#64748b",
                 },
               ]}
             />
-          </div>
-
-          <div className="space-y-3">
-            <h3 className="text-sm font-semibold text-slate-deep">
-              {dictionary.dashboard.sections?.pageViews ?? "Page views"}
-            </h3>
-            <MetricGrid
-              cards={[
+            <FunnelChart
+              title={charts?.smsFunnel ?? "Invite SMS funnel"}
+              emptyLabel={charts?.empty ?? "No data yet"}
+              steps={[
                 {
-                  id: "pv-today",
-                  label: m.pageViewsToday,
-                  value: String(admin.pageViewsToday),
-                  tag: m.pageViewsTodayTag,
-                  tone: "sky",
-                },
-                {
-                  id: "pv-week",
-                  label: m.pageViewsWeek,
-                  value: String(admin.pageViewsLast7Days),
-                  tag: m.pageViewsWeekTag,
-                  tone: "slate",
-                },
-              ]}
-            />
-          </div>
-
-          <div className="space-y-3">
-            <h3 className="text-sm font-semibold text-slate-deep">
-              {dictionary.dashboard.sections?.push ?? "Push / SMS"}
-            </h3>
-            <MetricGrid
-              cards={[
-                {
-                  id: "sms-pending",
+                  id: "pending",
                   label: m.smsPending,
-                  value: String(admin.scrapeInvitesPending),
-                  tag: m.smsPendingTag,
-                  tone: "amber",
+                  value: admin.scrapeInvitesPending,
+                  color: "#d97706",
                 },
                 {
-                  id: "sms-sent",
+                  id: "sent",
                   label: m.smsSent,
-                  value: String(admin.smsSent),
-                  tag: m.smsSentTag,
-                  tone: "emerald",
+                  value: admin.smsSent,
+                  color: "#059669",
                 },
                 {
-                  id: "sms-failed",
+                  id: "failed",
                   label: m.smsFailed,
-                  value: String(admin.smsFailed),
-                  tag: m.smsFailedTag,
-                  tone: "amber",
+                  value: admin.smsFailed,
+                  color: "#dc2626",
                 },
               ]}
             />
           </div>
 
-          <div className="space-y-3">
-            <h3 className="text-sm font-semibold text-slate-deep">
-              {dictionary.dashboard.sections?.version ?? "Version / deploy"}
-            </h3>
-            <MetricGrid
-              cards={[
-                {
-                  id: "app-ver",
-                  label: m.appVersion,
-                  value: admin.version.appVersion,
-                  tag: m.appVersionTag,
-                  tone: "gold",
-                },
-                {
-                  id: "commit",
-                  label: m.commitSha,
-                  value: admin.version.commitShort,
-                  tag: m.commitShaTag,
-                  tone: "slate",
-                },
-                {
-                  id: "env",
-                  label: m.deployEnv,
-                  value: admin.version.environment,
-                  tag: m.deployEnvTag,
-                  tone: "sky",
-                },
-              ]}
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+            <CompactStat
+              card={{
+                id: "projects",
+                label: m.projectsPending,
+                value: String(admin.projectsPending),
+                tag: m.projectsPendingTag,
+                tone: "amber",
+              }}
+            />
+            <CompactStat
+              card={{
+                id: "alerts",
+                label: m.unreadAlerts,
+                value: String(admin.unreadAlerts),
+                tag: m.unreadAlertsTag,
+                tone: "sky",
+              }}
+            />
+            <CompactStat
+              card={{
+                id: "pub-count",
+                label: m.listingsPublished,
+                value: String(admin.listingsPublished),
+                tag: m.listingsPublishedTag,
+                tone: "emerald",
+              }}
+            />
+            <CompactStat
+              card={{
+                id: "audit-count",
+                label: m.listingsPendingAudit,
+                value: String(admin.listingsPendingAudit),
+                tag: m.listingsPendingAuditTag,
+                tone: "amber",
+              }}
             />
           </div>
+
+          <PageViewsTrendChart
+            title={charts?.pageViewsTrend ?? "Page views (7 days)"}
+            series={admin.pageViewsSeries ?? []}
+            todayLabel={m.pageViewsToday}
+            weekLabel={m.pageViewsWeek}
+            todayValue={admin.pageViewsToday}
+            weekValue={admin.pageViewsLast7Days}
+            emptyLabel={charts?.empty ?? "No traffic recorded yet"}
+          />
+
+          <footer className="flex flex-wrap items-center gap-2 rounded-xl border border-slate-200/80 bg-slate-50/80 px-3.5 py-2.5 text-xs text-slate-600">
+            <span className="font-bold uppercase tracking-[0.1em] text-slate-400">
+              {sections?.version ?? "Deploy"}
+            </span>
+            <span className="rounded-md bg-white px-2 py-0.5 font-mono font-semibold text-slate-800 ring-1 ring-slate-200">
+              v{admin.version.appVersion}
+            </span>
+            <span className="rounded-md bg-white px-2 py-0.5 font-mono font-semibold text-slate-800 ring-1 ring-slate-200">
+              {admin.version.commitShort}
+            </span>
+            <span className="rounded-md bg-white px-2 py-0.5 font-semibold capitalize text-slate-800 ring-1 ring-slate-200">
+              {admin.version.environment}
+            </span>
+          </footer>
         </>
       ) : null}
     </section>

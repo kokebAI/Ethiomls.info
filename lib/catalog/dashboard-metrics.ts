@@ -41,6 +41,7 @@ export type DashboardMetricsData = {
     smsFailed: number;
     pageViewsToday: number;
     pageViewsLast7Days: number;
+    pageViewsSeries: Array<{ day: string; pageViews: number }>;
     version: DeployVersionInfo;
   };
 };
@@ -163,6 +164,7 @@ export async function fetchDashboardMetrics(options?: {
         smsFailed,
         pageViewsToday: pageViews.today,
         pageViewsLast7Days: pageViews.last7Days,
+        pageViewsSeries: pageViews.series,
         version: getDeployVersion(),
       },
     };
