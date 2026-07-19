@@ -2,17 +2,28 @@ import {
   ImportSourceType,
   ListingStatus,
   ListingType,
+  NotificationStatus,
   Prisma,
   ScrapeRunStatus,
   type ImportSource,
 } from "@prisma/client";
+import { ensureBilingualListingCopy } from "@/lib/ai/translate-listing";
 import { prisma } from "@/lib/db/prisma";
-import { generatePropertyId } from "@/src/utils/generateId";
+import {
+  contentFingerprint,
+  extractEthiopiaPhones,
+} from "@/lib/imports/extract-contacts";
 import { filterCorridorOffPlanCandidates } from "@/lib/imports/corridor-offplan-filter";
 import { scrapeFacebookPage } from "@/lib/imports/facebook-scraper";
+import { parseListingText } from "@/lib/imports/parse-listing-text";
+import {
+  buildScrapeInviteMessage,
+  sendScrapeInvite,
+} from "@/lib/imports/scrape-invite";
 import { scrapeTelegramChannel } from "@/lib/imports/telegram-scraper";
-import { scrapeWebsite } from "@/lib/imports/website-scraper";
 import type { ScrapedCandidate } from "@/lib/imports/telegram-scraper";
+import { scrapeWebsite } from "@/lib/imports/website-scraper";
+import { generatePropertyId } from "@/src/utils/generateId";
 
 export type RunImportFilters = {
   /** Only upsert OFF_PLAN ads that match any Addis corridor (central/east/west/south). */
@@ -55,17 +66,17 @@ async function upsertCandidate(input: {
   runId: string;
   ownerId: string;
   candidate: ScrapedCandidate;
-}): Promise<"created" | "updated" | "skipped"> {
+}): Promise<{ result: "created" | "updated" | "skipped"; listingId?: string }> {
   const { source, runId, ownerId, candidate } = input;
   const contactPhone = defaultContactFallback(source, candidate);
-  if (!contactPhone) return "skipped";
+  if (!contactPhone) return { result: "skipped" };
 
   const existing = await prisma.listing.findFirst({
     where: {
       importSourceId: source.id,
       sourceExternalId: candidate.externalId,
     },
-    select: { id: true },
+    select: { id: true, notificationStatus: true },
   });
 
   const subCityId = await resolveSubCityId(candidate.parsed.subCityCode);
@@ -73,14 +84,20 @@ async function upsertCandidate(input: {
   const priceAmount =
     candidate.parsed.priceAmount > 0 ? candidate.parsed.priceAmount : 1;
 
+  const bilingual = await ensureBilingualListingCopy({
+    title: { en: candidate.parsed.title, am: "" },
+    description: { en: candidate.parsed.description, am: "" },
+  });
+
   const data = {
     ownerId,
     subCityId,
-    title: { en: candidate.parsed.title, am: candidate.parsed.title },
-    description: {
-      en: candidate.parsed.description,
-      am: candidate.parsed.description,
-    },
+    title: bilingual.title,
+    description: bilingual.description,
+    titleEn: bilingual.titleEn || null,
+    titleAm: bilingual.titleAm || null,
+    descriptionEn: bilingual.descriptionEn || null,
+    descriptionAm: bilingual.descriptionAm || null,
     listingType: candidate.parsed.listingType,
     category: candidate.parsed.category,
     status: ListingStatus.PENDING_REVIEW,
@@ -100,6 +117,12 @@ async function upsertCandidate(input: {
     sourceExternalId: candidate.externalId,
     importSourceId: source.id,
     scrapeRunId: runId,
+    scrapedRawText: candidate.text.slice(0, 12_000),
+    notificationStatus:
+      existing?.notificationStatus === NotificationStatus.SENT
+        ? NotificationStatus.SENT
+        : NotificationStatus.PENDING_REVIEW,
+    notificationError: null,
     metadataTags: [
       "import",
       `source:${source.sourceType.toLowerCase()}`,
@@ -121,22 +144,174 @@ async function upsertCandidate(input: {
       where: { id: existing.id },
       data,
     });
-    return "updated";
+    return { result: "updated", listingId: existing.id };
   }
 
+  const listingId = await allocateListingId();
   await prisma.listing.create({
     data: {
-      id: await allocateListingId(),
+      id: listingId,
       ...data,
     },
   });
-  return "created";
+  return { result: "created", listingId };
+}
+
+/**
+ * Ingest a single free-text scrape payload (Telegram / Facebook paste).
+ * Parses heuristically, runs Gemini bilingual fill, saves as PENDING_REVIEW
+ * (or SENT when autoSend succeeds).
+ */
+export async function ingestScrapedText(input: {
+  text: string;
+  ownerId: string;
+  sourceUrl?: string | null;
+  contactPhone?: string | null;
+  contactName?: string | null;
+  importSourceId?: string | null;
+  autoSend?: boolean;
+}): Promise<{
+  listingId: string;
+  created: boolean;
+  notificationStatus: NotificationStatus;
+  inviteError?: string;
+  messagePreview: string;
+}> {
+  const text = input.text.trim();
+  if (text.length < 20) {
+    throw new Error("Scraped text is too short to ingest");
+  }
+
+  const parsed = parseListingText(text);
+  const fingerprint = contentFingerprint(text);
+  const externalId = `manual:${fingerprint}`;
+  const sourceUrl =
+    input.sourceUrl?.trim() || `manual://scrape-ingest/${fingerprint}`;
+
+  const contactPhones = [
+    ...(input.contactPhone ? [input.contactPhone] : []),
+    ...extractEthiopiaPhones(text),
+  ];
+  const contactPhone = contactPhones[0] ?? null;
+  if (!contactPhone) {
+    throw new Error("A contact phone is required to ingest this scrape");
+  }
+
+  let importSource: ImportSource | null = null;
+  if (input.importSourceId) {
+    importSource = await prisma.importSource.findUnique({
+      where: { id: input.importSourceId },
+    });
+    if (!importSource) throw new Error("Import source not found");
+  }
+
+  const bilingual = await ensureBilingualListingCopy({
+    title: { en: parsed.title, am: "" },
+    description: { en: parsed.description, am: "" },
+  });
+  const subCityId = await resolveSubCityId(parsed.subCityCode);
+  const priceAmount = parsed.priceAmount > 0 ? parsed.priceAmount : 1;
+
+  const existing = importSource
+    ? await prisma.listing.findFirst({
+        where: {
+          importSourceId: importSource.id,
+          sourceExternalId: externalId,
+        },
+        select: { id: true },
+      })
+    : await prisma.listing.findFirst({
+        where: { sourceExternalId: externalId },
+        select: { id: true },
+      });
+
+  const sharedData = {
+    ownerId: input.ownerId,
+    subCityId,
+    title: bilingual.title,
+    description: bilingual.description,
+    titleEn: bilingual.titleEn || null,
+    titleAm: bilingual.titleAm || null,
+    descriptionEn: bilingual.descriptionEn || null,
+    descriptionAm: bilingual.descriptionAm || null,
+    listingType: parsed.listingType,
+    category: parsed.category,
+    status: ListingStatus.PENDING_REVIEW,
+    publishedAt: null,
+    priceAmount,
+    priceCurrency: parsed.priceCurrency,
+    bedrooms: parsed.bedrooms,
+    bathrooms: parsed.bathrooms,
+    floorAreaSqm: parsed.floorAreaSqm,
+    addressLine: parsed.addressLine,
+    contactPhone,
+    contactName:
+      input.contactName?.trim() || importSource?.label || null,
+    sourceUrl,
+    sourceExternalId: externalId,
+    importSourceId: importSource?.id ?? null,
+    scrapedRawText: text.slice(0, 12_000),
+    notificationStatus: NotificationStatus.PENDING_REVIEW,
+    notificationError: null,
+    metadataTags: [
+      "import",
+      importSource
+        ? `source:${importSource.sourceType.toLowerCase()}`
+        : "source:manual-ingest",
+      ...(parsed.areaTag ? [`area:${parsed.areaTag}`] : []),
+      ...contactPhones.map((phone) => `phone:${phone}`),
+    ],
+    adminAuditApprovedAt: null,
+    adminAuditedById: null,
+    adminAuditNotes: null,
+    adminAuditChecklist: Prisma.DbNull,
+  };
+
+  let listingId: string;
+  let created: boolean;
+  if (existing) {
+    await prisma.listing.update({
+      where: { id: existing.id },
+      data: sharedData,
+    });
+    listingId = existing.id;
+    created = false;
+  } else {
+    listingId = await allocateListingId();
+    await prisma.listing.create({
+      data: { id: listingId, ...sharedData },
+    });
+    created = true;
+  }
+
+  if (input.autoSend) {
+    const invite = await sendScrapeInvite(listingId);
+    return {
+      listingId,
+      created,
+      notificationStatus: invite.listing.notificationStatus,
+      inviteError: invite.error,
+      messagePreview: invite.messagePreview,
+    };
+  }
+
+  const listing = await prisma.listing.findUniqueOrThrow({
+    where: { id: listingId },
+  });
+  return {
+    listingId,
+    created,
+    notificationStatus: NotificationStatus.PENDING_REVIEW,
+    messagePreview: buildScrapeInviteMessage(listing),
+  };
 }
 
 export async function runImportSource(input: {
   sourceId: string;
   adminUserId: string;
   filters?: RunImportFilters;
+  /** When true, HaHu invite SMS fires immediately after each upsert. */
+  autoSend?: boolean;
 }) {
   const source = await prisma.importSource.findUnique({
     where: { id: input.sourceId },
@@ -144,6 +319,7 @@ export async function runImportSource(input: {
   if (!source) throw new Error("Import source not found");
   if (!source.isActive) throw new Error("Import source is inactive");
 
+  const autoSend = Boolean(input.autoSend);
   const run = await prisma.scrapeRun.create({
     data: {
       importSourceId: source.id,
@@ -187,14 +363,16 @@ export async function runImportSource(input: {
     let created = 0;
     let updated = 0;
     let skipped = 0;
+    let invitesSent = 0;
+    let invitesFailed = 0;
+    const upsertedIds: string[] = [];
 
-    // Candidates filtered out count as skipped.
     if (corridorFilter || input.filters?.saleOrRentOnly) {
       skipped += postsSeen - candidates.length;
     }
 
     for (const candidate of candidates) {
-      const result = await upsertCandidate({
+      const { result, listingId } = await upsertCandidate({
         source,
         runId: run.id,
         ownerId: input.adminUserId,
@@ -203,6 +381,15 @@ export async function runImportSource(input: {
       if (result === "created") created += 1;
       else if (result === "updated") updated += 1;
       else skipped += 1;
+      if (listingId) upsertedIds.push(listingId);
+    }
+
+    if (autoSend) {
+      for (const listingId of upsertedIds) {
+        const invite = await sendScrapeInvite(listingId);
+        if (invite.ok) invitesSent += 1;
+        else invitesFailed += 1;
+      }
     }
 
     const status =
@@ -227,6 +414,9 @@ export async function runImportSource(input: {
           saleOrRentOnly: Boolean(input.filters?.saleOrRentOnly),
           matchedAfterFilter: candidates.length,
           sampleTitles: candidates.slice(0, 5).map((c) => c.parsed.title),
+          autoSend,
+          invitesSent,
+          invitesFailed,
         },
       },
     });

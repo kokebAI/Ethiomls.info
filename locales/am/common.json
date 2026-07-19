@@ -328,7 +328,7 @@
       "mismatch": "የይለፍ ቃላት አይዛመዱም።"
     },
     "reset": {
-      "link": "የይለፍ ቃል ረሱ?",
+      "link": "የይለፍ ቃል ዳግም አስጀምር",
       "title": "የይለፍ ቃል ዳግም ያስጀምሩ",
       "lede": "የኢትዮጵያ ስልክዎን እና አዲስ የይለፍ ቃል ያስገቡ። በSMS ኮድ እናረጋግጣለን።",
       "newPassword": "አዲስ የይለፍ ቃል",
@@ -462,11 +462,13 @@
     "sourceLink": "ምንጭ",
     "unknownSource": "በእጅ / ያልታወቀ ምንጭ",
     "noRaw": "(ድፍን ጽሑፍ የለም)",
-    "priceOnRequest": "በጥያቄ"
+    "priceOnRequest": "በጥያቄ",
+    "accountCreated": "የ{role} መለያ “{label}” ተፈጥሯል — በReset password ይግባሉ።",
+    "accountLinked": "ያለው {role} “{label}” ተገናኝቷል።"
   },
   "salesKit": {
     "title": "የሽያጭ ፋይል → ሚና መለያ",
-    "lede": "የገንቢ/ብሮከር PDF ወይም DOCX ይጫኑ። ዝርዝሮችን ያውጡ እና ከነባር መለያ ጋር ያገናኙ ወይም በስልክ አዲስ መለያ ይፍጠሩ (Forgot password በመጠቀም ይግቡ)።",
+    "lede": "የገንቢ/ብሮከር PDF ወይም DOCX ይጫኑ። ዝርዝሮችን ያውጡ እና ከነባር መለያ ጋር ያገናኙ ወይም በስልክ አዲስ መለያ ይፍጠሩ (Reset password በመጠቀም ይግቡ)።",
     "createNew": "ለዚህ ፋይል አዲስ ገንቢ/ብሮከር መለያ ፍጠር",
     "selectAccount": "ከሚና መለያ ጋር አያይዝ",
     "selectPlaceholder": "ገንቢ ወይም ብሮከር ይምረጡ…",
@@ -631,7 +633,10 @@
       "backToRoles": "ወደ አስተዳዳሪ ማዕከል ተመለስ",
       "auditPassed": "ኦዲት አልፏል",
       "groupOther": "ሌላ",
-      "listingFallback": "ዝርዝር"
+      "listingFallback": "ዝርዝር",
+      "pendingProjectsTitle": "ኦዲት የሚጠብቁ ፕሮጀክቶች",
+      "pendingProjectsEmpty": "ኦዲት የሚጠብቅ ፕሮጀክት የለም።",
+      "snapshotPendingProjects": "{count} ፕሮጀክት(ዎች) ኦዲት ይጠብቃሉ"
     }
   },
   "enums": {
@@ -766,6 +771,14 @@
       "applyFailed": "ዝርዝሩን ማዘመን አልተሳካም።",
       "uploadFailed": "ፎቶዎችን መጫን አልተሳካም።"
     }
+  },
+  "projectAudit": {
+    "title": "የፕሮጀክት ኦዲት",
+    "lede": "ከመታተሙ በፊት የኦፍ-ፕላን ፕሮጀክቶች ሁሉንም ማረጋገጫዎች ማለፍ አለባቸው።",
+    "publish": "ፕሮጀክት አትም",
+    "approvedReady": "ኦዲት አልፏል — ፕሮጀክቱን ማተም ይችላሉ።",
+    "rejectedToDraft": "ፕሮጀክቱ ተቀባይነት አላገኘም እና ወደ ረቂቅ ተመልሷል።",
+    "published": "ፕሮጀክቱ ታትሟል።"
   },
   "adminAlerts": {
     "bellLabel": "የአስተዳዳሪ ማስጠንቀቂያዎች",

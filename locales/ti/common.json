@@ -328,7 +328,7 @@
       "mismatch": "መሕለፊ ቃላት ኣይሰማምዑን።"
     },
     "reset": {
-      "link": "መሕለፊ ቃል ረሲዕካ?",
+      "link": "መሕለፊ ቃል ዳግማይ ኣዳልዩ",
       "title": "መሕለፊ ቃል ዳግም ኣቐምጥ",
       "lede": "ናይ ኢትዮጵያ ስልኪኻን ሓድሽ መሕለፊ ቃልን ኣእቱ። ብSMS ኮድ ንረጋግጽ።",
       "newPassword": "ሓድሽ መሕለፊ ቃል",
@@ -503,11 +503,13 @@
     "sourceLink": "Source",
     "unknownSource": "Manual / unknown source",
     "noRaw": "(No raw text stored)",
-    "priceOnRequest": "On request"
+    "priceOnRequest": "On request",
+    "accountCreated": "Created {role} account “{label}” — they claim login via Reset password.",
+    "accountLinked": "Linked existing {role} “{label}”."
   },
   "salesKit": {
     "title": "Sales kit → role account",
-    "lede": "Upload a developer/broker sales PDF or DOCX. Extract listings, attach them to an existing developer or broker account, or create one with their phone so they can sign in via Forgot password.",
+    "lede": "Upload a developer/broker sales PDF or DOCX. Extract listings, attach them to an existing developer or broker account, or create one with their phone so they can sign in via Reset password.",
     "createNew": "Create a new developer/broker account for this kit",
     "selectAccount": "Attach to role account",
     "selectPlaceholder": "Select developer or broker…",
@@ -669,7 +671,10 @@
       "readyEmpty": "Nothing audited yet — approve a pending listing to see it here.",
       "alertsTitle": "Unread alerts",
       "alertsEmpty": "No unread alerts.",
-      "backToRoles": "Back to admin hub"
+      "backToRoles": "Back to admin hub",
+      "pendingProjectsTitle": "Projects awaiting audit",
+      "pendingProjectsEmpty": "No projects waiting for audit.",
+      "snapshotPendingProjects": "{count} project(s) awaiting audit"
     }
   },
   "adminAudit": {
@@ -762,6 +767,14 @@
       "applyFailed": "Could not update this listing.",
       "uploadFailed": "Could not upload photos."
     }
+  },
+  "projectAudit": {
+    "title": "Project client-protection audit",
+    "lede": "Off-plan projects must pass every check before going live. Approval does not publish — use Publish project after audit passes.",
+    "publish": "Publish project",
+    "approvedReady": "Audit passed — you can publish this project.",
+    "rejectedToDraft": "Project rejected and returned to draft.",
+    "published": "Project published."
   },
   "adminAlerts": {
     "bellLabel": "Admin alerts",

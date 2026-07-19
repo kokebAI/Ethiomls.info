@@ -67,6 +67,7 @@ export const ROLE_HUBS: Record<RoleHubSlug, RoleHubDef> = {
       { id: "workspace", href: "/workspace/admin", primary: true },
       { id: "addListing", href: "/listings/new" },
       { id: "imports", href: "/admin/imports" },
+      { id: "scrapeReview", href: "/admin/scrape-review" },
       { id: "dashboard", href: "/dashboard" },
       { id: "profile", href: "/profile" },
     ],

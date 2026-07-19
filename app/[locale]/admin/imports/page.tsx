@@ -41,6 +41,16 @@ export default async function AdminImportsPage({
         title={dictionary.imports.title}
         lede={dictionary.imports.lede}
       />
+      <p className="text-sm text-ink-muted">
+        <a
+          href={`/${locale}/admin/scrape-review`}
+          className="font-semibold text-brand-700 hover:underline"
+        >
+          {dictionary.scrapeReview.title}
+        </a>
+        {" — "}
+        {dictionary.scrapeReview.lede}
+      </p>
       <SalesKitImportPanel />
       <ImportSourcesPanel />
     </div>

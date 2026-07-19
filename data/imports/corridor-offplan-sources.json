@@ -34,10 +34,10 @@
     },
     {
       "label": "Ayat Real Estate (Telegram)",
-      "url": "https://t.me/ayatrealestate",
+      "url": "https://t.me/ayatsc",
       "track": "developer",
       "corridor": "east",
-      "notes": "corridor-offplan · east · Ayat Telegram"
+      "notes": "corridor-offplan · east · Ayat Telegram (site: t.me/ayatsc)"
     },
     {
       "label": "Sunshine Real Estate (website)",
@@ -167,17 +167,17 @@
     },
     {
       "label": "Temer Properties (website)",
-      "url": "https://temerproperties.com",
+      "url": "https://temerrealestatesales.com",
       "track": "developer",
       "corridor": "east",
-      "notes": "corridor-offplan · east · Temer Properties"
+      "notes": "corridor-offplan · east · Temer sales feed (temerrealestatesales.com/api/properties.php) · also temerproperties.com"
     },
     {
       "label": "Temer Properties (Telegram)",
-      "url": "https://t.me/temer_properties",
+      "url": "https://t.me/Ethioads012",
       "track": "developer",
       "corridor": "east",
-      "notes": "corridor-offplan · east · Temer Telegram"
+      "notes": "corridor-offplan · east · Temer Telegram (t.me/Ethioads012)"
     },
     {
       "label": "Kavod Commercial (website)",
@@ -206,6 +206,27 @@
       "track": "broker",
       "corridor": "all",
       "notes": "corridor-offplan · all · Dream Home-Addis official · contact +251916613223"
+    },
+    {
+      "label": "Ovid Group (website)",
+      "url": "https://ovid-group.com/projects/",
+      "track": "developer",
+      "corridor": "east",
+      "notes": "corridor-offplan · east · Ovid Group projects (African Heights, Kings Towers, Harar Horizon, Bole Bulbula City, Chaka Towers)"
+    },
+    {
+      "label": "Kangaroo Developments (website)",
+      "url": "https://kangaroodevelopments.com",
+      "track": "developer",
+      "corridor": "east",
+      "notes": "corridor-offplan · east · Kangaroo Developments · Bole Bulbula + Belyir Atlas · +251941000888"
+    },
+    {
+      "label": "Tracon Real Estate (website)",
+      "url": "https://www.tracontrading.com/realestate",
+      "track": "developer",
+      "corridor": "south",
+      "notes": "corridor-offplan · south · Tracon Jemo Field Side / Hill Side · +251911205011"
     }
   ]
 }

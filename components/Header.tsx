@@ -86,6 +86,7 @@ export function Header() {
   }
   if (user?.role === "ADMIN") {
     navItems.push({ href: "/admin/imports", key: "nav.imports" });
+    navItems.push({ href: "/admin/scrape-review", key: "nav.scrapeReview" });
   }
   if (user?.role === "ADMIN" || user?.role === "INDEPENDENT_DELALA") {
     navItems.push({ href: "/dashboard", key: "nav.dashboard" });

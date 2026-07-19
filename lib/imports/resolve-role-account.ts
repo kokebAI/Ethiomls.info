@@ -93,6 +93,30 @@ function toSummary(user: UserWithProfiles): RoleAccountSummary | null {
   };
 }
 
+export async function getRoleAccountByUserId(
+  userId: string,
+): Promise<RoleAccountSummary | null> {
+  const user = await prisma.user.findFirst({
+    where: {
+      id: userId,
+      isActive: true,
+      role: {
+        in: [
+          UserRole.CORPORATE_DEVELOPER,
+          UserRole.INDEPENDENT_DELALA,
+          UserRole.PROPERTY_OWNER,
+        ],
+      },
+    },
+    include: {
+      developerProfile: true,
+      delalaProfile: true,
+      _count: { select: { listings: true } },
+    },
+  });
+  return user ? toSummary(user) : null;
+}
+
 export async function listRoleAccounts(opts?: {
   includeOwners?: boolean;
 }): Promise<RoleAccountSummary[]> {

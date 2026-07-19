@@ -70,7 +70,7 @@ export async function POST(request: Request) {
         data: result.account,
         created: result.created,
         message: result.created
-          ? "Account created. They can sign in after resetting password via SMS (Forgot password)."
+          ? "Account created. They can sign in after resetting password via SMS (Reset password)."
           : "Existing account linked.",
       },
       { status: result.created ? 201 : 200 },

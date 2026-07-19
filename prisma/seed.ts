@@ -611,7 +611,12 @@ async function seedMockProjects() {
         description: project.description,
         constructionStage: project.constructionStage,
         completionPercent: project.completionPercent,
-        status: ListingStatus.PUBLISHED,
+        status: ListingStatus.PENDING_REVIEW,
+        publishedAt: null,
+        adminAuditApprovedAt: null,
+        adminAuditedById: null,
+        adminAuditNotes: null,
+        adminAuditChecklist: Prisma.DbNull,
         developerId,
         subCityId,
       },
@@ -623,13 +628,15 @@ async function seedMockProjects() {
         description: project.description,
         constructionStage: project.constructionStage,
         completionPercent: project.completionPercent,
-        status: ListingStatus.PUBLISHED,
+        status: ListingStatus.PENDING_REVIEW,
         requiresEscrow: true,
       },
     });
   }
 
-  console.log(`Seeded ${MOCK_PROJECTS.length} off-plan projects.`);
+  console.log(
+    `Seeded ${MOCK_PROJECTS.length} off-plan projects (PENDING_REVIEW — admin audit required).`,
+  );
 }
 
 async function seedSubCityListings() {

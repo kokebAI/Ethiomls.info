@@ -49,7 +49,12 @@
       "website": "https://ayatrealestate.com",
       "hqCode": "yeka",
       "licenseNumber": null,
-      "tin": null
+      "tin": null,
+      "phone": "+251976606060",
+      "email": "sales@ayatsc.com",
+      "telegram": "https://t.me/ayatsc",
+      "facebook": "https://www.facebook.com/AyatRealEstate",
+      "notes": "Also +251977606060 · WhatsApp/Viber 251976606060 · Head office CMC"
     },
     {
       "tradeName": "Sunshine Real Estate PLC",
@@ -276,10 +281,15 @@
         "am": "ቴምር ፕሮፐርቲስ"
       },
       "registrationNumber": "ET-DIR-TEMER-023",
-      "website": "https://temerproperties.com",
-      "hqCode": "yeka",
+      "website": "https://temerrealestatesales.com",
+      "hqCode": "nifas-silk-lafto",
       "licenseNumber": null,
-      "tin": null
+      "tin": null,
+      "phone": "+251961435054",
+      "email": "almesagadw@gmail.com",
+      "telegram": "https://t.me/Ethioads012",
+      "facebook": "https://facebook.com/temerproperties",
+      "notes": "Also hotline 6033 / +251975666699 · temerproperties.com · sales feed temerrealestatesales.com"
     },
     {
       "tradeName": "Kavod Commercial PLC",
@@ -307,6 +317,52 @@
       "licenseNumber": null,
       "tin": null,
       "notes": "Diaspora sales kit July 2026 — Megenagna Top View SiteStudio"
+    },
+    {
+      "tradeName": "Ovid Group",
+      "displayName": {
+        "en": "Ovid Group",
+        "am": "ኦቪድ ግሩፕ"
+      },
+      "registrationNumber": "ET-DIR-OVID-026",
+      "website": "https://ovid-group.com",
+      "hqCode": "bole",
+      "licenseNumber": null,
+      "tin": null,
+      "email": "info@ovid-group.com",
+      "facebook": "https://www.facebook.com/ovidconstructionet/",
+      "notes": "Parent group of Kavod Commercial · projects at ovid-group.com/projects"
+    },
+    {
+      "tradeName": "Kangaroo Developments",
+      "displayName": {
+        "en": "Kangaroo Developments",
+        "am": "ካንጋሩ ዲቨሎፕመንትስ"
+      },
+      "registrationNumber": "ET-DIR-KANGAROO-027",
+      "website": "https://kangaroodevelopments.com",
+      "hqCode": "bole",
+      "licenseNumber": null,
+      "tin": null,
+      "phone": "+251941000888",
+      "email": "info@kangaroodevelopments.com",
+      "facebook": "https://facebook.com/kangaroodevelopments",
+      "notes": "Also marketing@kangaroodevelopments.com · sister of Kangaroo Plast PLC · Bole Bulbula gated compound ~30,000 sqm"
+    },
+    {
+      "tradeName": "Tracon Trading PLC",
+      "displayName": {
+        "en": "Tracon Real Estate",
+        "am": "ትራኮን ሪል እስቴት"
+      },
+      "registrationNumber": "ET-DIR-TRACON-028",
+      "website": "https://www.tracontrading.com/realestate",
+      "hqCode": "nifas-silk-lafto",
+      "licenseNumber": null,
+      "tin": null,
+      "phone": "+251911205011",
+      "email": "seid@tracontrading.com",
+      "notes": "Also +251911209497 · +251930077604 · iman@tracontrading.com · Jemo 1 estate ~5 ha / 50,000 sqm"
     }
   ]
 }

@@ -282,14 +282,22 @@ export default async function AdminWorkspacePage({
 
   const [
     pendingCount,
+    pendingProjectCount,
     unreadAlertCount,
     readyCount,
     pending,
+    pendingProjects,
     drafts,
     ready,
     alertRows,
   ] = await Promise.all([
     prisma.listing.count({
+      where: {
+        status: ListingStatus.PENDING_REVIEW,
+        adminAuditApprovedAt: null,
+      },
+    }),
+    prisma.project.count({
       where: {
         status: ListingStatus.PENDING_REVIEW,
         adminAuditApprovedAt: null,
@@ -310,6 +318,23 @@ export default async function AdminWorkspacePage({
       orderBy: { createdAt: "desc" },
       take: 80,
       select: pendingSelect,
+    }),
+    prisma.project.findMany({
+      where: {
+        status: { in: [ListingStatus.PENDING_REVIEW, ListingStatus.DRAFT] },
+      },
+      orderBy: { updatedAt: "desc" },
+      take: 40,
+      select: {
+        id: true,
+        title: true,
+        status: true,
+        coverImageUrl: true,
+        galleryImageUrls: true,
+        adminAuditApprovedAt: true,
+        developer: { select: { tradeName: true } },
+        subCity: { select: { code: true, name: true } },
+      },
     }),
     prisma.listing.findMany({
       where: { status: ListingStatus.DRAFT },
@@ -358,11 +383,43 @@ export default async function AdminWorkspacePage({
       <AdminWorkspaceView
         locale={locale}
         pendingCount={pendingCount}
+        pendingProjectCount={pendingProjectCount}
         unreadAlertCount={unreadAlertCount}
         readyCount={readyCount}
         pendingItems={pending.map((listing) =>
           toPendingItem(locale, listing, partyLabels, enums),
         )}
+        pendingProjectItems={pendingProjects.map((project) => {
+          const title =
+            pickLocalized(
+              project.title as Parameters<typeof pickLocalized>[0],
+              locale,
+            ) || project.id;
+          const subCity = project.subCity
+            ? localizedSubCityName(project.subCity, locale)
+            : null;
+          const cover =
+            project.coverImageUrl || project.galleryImageUrls[0] || null;
+          return {
+            id: project.id,
+            href: `/${locale}/projects/${encodeURIComponent(project.id)}`,
+            title,
+            description: [project.developer.tradeName, subCity]
+              .filter(Boolean)
+              .join(" · "),
+            imageUrl: cover,
+            badges: [
+              {
+                label:
+                  enums.listingStatus[project.status] ?? project.status,
+                tone: project.adminAuditApprovedAt ? "emerald" : "amber",
+              },
+              ...(project.adminAuditApprovedAt
+                ? [{ label: enums.auditPassed, tone: "emerald" as const }]
+                : []),
+            ],
+          };
+        })}
         draftItems={drafts.map((listing) =>
           toDirectoryItem(locale, listing, enums),
         )}
@@ -373,6 +430,7 @@ export default async function AdminWorkspacePage({
         copy={{
           snapshotTitle: ws.snapshotTitle,
           snapshotPending: ws.snapshotPending,
+          snapshotPendingProjects: ws.snapshotPendingProjects,
           snapshotAlerts: ws.snapshotAlerts,
           snapshotReady: ws.snapshotReady,
           addListing: ws.addListing ?? "Add listing",
@@ -381,6 +439,8 @@ export default async function AdminWorkspacePage({
             "Goes to pending review — audit and verify after.",
           pendingTitle: ws.pendingTitle,
           pendingEmpty: ws.pendingEmpty,
+          pendingProjectsTitle: ws.pendingProjectsTitle,
+          pendingProjectsEmpty: ws.pendingProjectsEmpty,
           draftsTitle: ws.draftsTitle ?? "Drafts",
           draftsEmpty: ws.draftsEmpty ?? "No draft listings.",
           readyTitle: ws.readyTitle,

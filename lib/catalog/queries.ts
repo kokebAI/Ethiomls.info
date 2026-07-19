@@ -114,10 +114,15 @@ export async function fetchPublishedProjects() {
   }
 }
 
-export async function fetchProjectById(id: string) {
+export async function fetchProjectById(
+  id: string,
+  opts?: { allowUnpublished?: boolean },
+) {
   try {
     return await prisma.project.findFirst({
-      where: { id, status: ListingStatus.PUBLISHED },
+      where: opts?.allowUnpublished
+        ? { id }
+        : { id, status: ListingStatus.PUBLISHED },
       include: {
         developer: {
           select: {
@@ -132,7 +137,9 @@ export async function fetchProjectById(id: string) {
           select: { code: true, name: true },
         },
         listings: {
-          where: { status: ListingStatus.PUBLISHED },
+          where: opts?.allowUnpublished
+            ? undefined
+            : { status: ListingStatus.PUBLISHED },
           orderBy: [{ createdAt: "asc" }],
         },
       },

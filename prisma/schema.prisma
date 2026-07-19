@@ -88,6 +88,21 @@ enum ListingStatus {
   ARCHIVED
 }
 
+/// HaHu / SMS invite dispatch state for scraped imports.
+/// Kept separate from `ListingStatus` (publication / admin audit gate).
+enum NotificationStatus {
+  /// Manual / non-import listings — never enter the scrape review queue.
+  NOT_APPLICABLE
+  /// Scraped + structured; waiting for admin Edit & Send (manual mode default).
+  PENDING_REVIEW
+  /// HaHu invite was dispatched successfully.
+  SENT
+  /// HaHu dispatch attempted and failed.
+  FAILED
+  /// Admin discarded the scrape as junk / spam.
+  DISCARDED
+}
+
 /// Lifecycle of a parent building stack for off-plan / multi-unit inventory.
 /// (Kept separate from `ListingStatus`, which tracks moderation/publication.)
 enum BuildingStackStatus {
@@ -200,6 +215,7 @@ model User {
   leadsAsBroker    Lead[]                 @relation("LeadBroker")
   billingEvents    BillingWebhookEvent[]
   auditedListings  Listing[]              @relation("ListingAuditor")
+  auditedProjects  Project[]              @relation("ProjectAuditor")
   importSources    ImportSource[]         @relation("ImportSourceCreator")
   scrapeRuns       ScrapeRun[]            @relation("ScrapeRunStarter")
 
@@ -309,16 +325,28 @@ model Project {
   galleryImageUrls      String[]          @default([])
   /// Proc. 1357/2024 — whether this off-plan project requires escrow
   requiresEscrow        Boolean           @default(true)
+  /// Set when an admin publishes after audit (mirrors Listing.publishedAt).
+  publishedAt           DateTime?
+  /// Admin audit gate: projects cannot be published until this is set.
+  adminAuditApprovedAt  DateTime?
+  adminAuditedById      String?
+  adminAuditNotes       String?
+  /// Snapshot of required developer/escrow/media/compliance checks.
+  adminAuditChecklist   Json?
   createdAt             DateTime          @default(now())
   updatedAt             DateTime          @updatedAt
 
   developer DeveloperProfile @relation(fields: [developerId], references: [id], onDelete: Cascade)
   subCity   SubCity?         @relation(fields: [subCityId], references: [id])
+  adminAuditedBy User?       @relation("ProjectAuditor", fields: [adminAuditedById], references: [id], onDelete: SetNull)
   listings  Listing[]
   escrow    EscrowAccount?
 
   @@index([developerId])
   @@index([constructionStage])
+  @@index([status])
+  @@index([adminAuditApprovedAt])
+  @@index([adminAuditedById])
   @@map("projects")
 }
 
@@ -429,6 +457,12 @@ model Listing {
   sourceExternalId   String?
   importSourceId     String?
   scrapeRunId        String?
+  /// Original scraped Telegram/Facebook/website post text for admin review.
+  scrapedRawText     String?
+  /// HaHu invite dispatch lifecycle for scraped listings.
+  notificationStatus NotificationStatus @default(NOT_APPLICABLE)
+  notificationSentAt DateTime?
+  notificationError  String?
   createdAt          DateTime          @default(now())
   updatedAt          DateTime          @updatedAt
 
@@ -461,6 +495,7 @@ model Listing {
   @@index([contactPhone])
   @@index([importSourceId])
   @@index([sourceUrl])
+  @@index([notificationStatus])
   @@map("listings")
 }
 

@@ -225,7 +225,7 @@
       "mismatch": "Passwords do not match."
     },
     "reset": {
-      "link": "Forgot password?",
+      "link": "Reset password",
       "title": "Reset password",
       "lede": "Enter your Ethiopian mobile and a new password. We will SMS a code to confirm.",
       "newPassword": "New password",
@@ -397,7 +397,10 @@
       "backToRoles": "Back to admin hub",
       "auditPassed": "Audit passed",
       "groupOther": "Other",
-      "listingFallback": "Listing"
+      "listingFallback": "Listing",
+      "pendingProjectsTitle": "Projects awaiting audit",
+      "pendingProjectsEmpty": "No projects waiting for audit.",
+      "snapshotPendingProjects": "{count} project(s) awaiting audit"
     }
   },
   "enums": {
@@ -533,6 +536,14 @@
       "uploadFailed": "Could not upload photos."
     }
   },
+  "projectAudit": {
+    "title": "Project client-protection audit",
+    "lede": "Off-plan projects must pass every check before going live. Approval does not publish — use Publish project after audit passes.",
+    "publish": "Publish project",
+    "approvedReady": "Audit passed — you can publish this project.",
+    "rejectedToDraft": "Project rejected and returned to draft.",
+    "published": "Project published."
+  },
   "adminAlerts": {
     "bellLabel": "Admin alerts",
     "title": "Alerts",
@@ -604,7 +615,7 @@
   "imports": {
     "eyebrow": "Admin",
     "title": "Import sources",
-    "lede": "Add public Telegram channels, Facebook Pages, websites, or upload sales kits below. Scraped and kit-imported listings stay pending until admin audit. Link inventory to a developer or broker account so they can claim login via Forgot password.",
+    "lede": "Add public Telegram channels, Facebook Pages, websites, or upload sales kits below. Scraped and kit-imported listings stay pending until admin audit. Link inventory to a developer or broker account so they can claim login via Reset password.",
     "addTitle": "Add a source",
     "addLede": "Paste a Telegram handle (e.g. @gechocommission8), a Facebook Page URL (facebook.com/YourPage), or a website URL. Tag corridor off-plan sources with notes containing corridor-offplan.",
     "url": "Telegram, Facebook, or website URL",
@@ -659,11 +670,13 @@
     "sourceLink": "Source",
     "unknownSource": "Manual / unknown source",
     "noRaw": "(No raw text stored)",
-    "priceOnRequest": "On request"
+    "priceOnRequest": "On request",
+    "accountCreated": "Created {role} account “{label}” — they claim login via Reset password.",
+    "accountLinked": "Linked existing {role} “{label}”."
   },
   "salesKit": {
     "title": "Sales kit → role account",
-    "lede": "Upload a developer/broker sales PDF or DOCX. Extract listings, attach them to an existing developer or broker account, or create one with their phone so they can sign in via Forgot password.",
+    "lede": "Upload a developer/broker sales PDF or DOCX. Extract listings, attach them to an existing developer or broker account, or create one with their phone so they can sign in via Reset password.",
     "createNew": "Create a new developer/broker account for this kit",
     "selectAccount": "Attach to role account",
     "selectPlaceholder": "Select developer or broker…",

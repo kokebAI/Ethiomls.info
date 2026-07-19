@@ -1,7 +1,7 @@
 {
   "source": "curated-recent-projects",
   "description": "Recent (2024–2026) Addis Ababa developer projects compiled for EthioMLS import. Linked to data/developers/addis-developers.json via registrationNumber (ET-DIR-*). Not an official registry extract.",
-  "updatedAt": "2026-07-18",
+  "updatedAt": "2026-07-19",
   "projects": [
     {
       "slug": "SKYTOWER-2025",
@@ -522,7 +522,8 @@
       "completionPercent": 74,
       "requiresEscrow": true,
       "website": "https://ayatrealestate.com",
-      "telegram": "https://t.me/ayatrealestate",
+      "telegram": "https://t.me/ayatsc",
+      "contactPhone": "+251976606060",
       "sourceUpdatedAt": "2026-05-28",
       "amenities": [
         "parking",
@@ -2963,6 +2964,1971 @@
                   "elevator",
                   "parking",
                   "security"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "slug": "OVID-AFRICAN-HEIGHTS",
+      "registrationNumber": "ET-DIR-OVID-026",
+      "subCityCode": "bole",
+      "category": "RESIDENTIAL",
+      "title": {
+        "en": "African Heights",
+        "am": "አፍሪካን ሃይትስ"
+      },
+      "description": {
+        "en": "Mid-luxury apartment project in Addis Ababa (Ovid Group). 324 apartments on ~4,161 m² with 349 parking spaces. Near Bole Airport, Meskel Square, and stadiums. Amenities: reception, café, CCTV, parking per apartment. Target completion 2025. Source: https://ovid-group.com/project/african-heights/",
+        "am": "በአዲስ አበባ የኦቪድ ግሩፕ መካከለኛ-ላግዥ አፓርታማ። 324 አፓርታማ · ~4,161 ካሬ · 349 መኪና ማቆሚያ። ማጠናቀቂያ 2025።"
+      },
+      "addressLine": "Addis Ababa · near Bole Airport / Meskel Square corridor",
+      "constructionStage": "SUPERSTRUCTURE",
+      "completionPercent": 55,
+      "requiresEscrow": true,
+      "website": "https://ovid-group.com/project/african-heights/",
+      "telegram": null,
+      "sourceUpdatedAt": "2026-07-19",
+      "coverImageUrl": "https://ovid-group.com/wp-content/uploads/2024/09/download-3-1920x1080.jpg",
+      "galleryImageUrls": [
+        "https://ovid-group.com/wp-content/uploads/2024/09/download-3-1920x1080.jpg",
+        "https://ovid-group.com/wp-content/uploads/2024/09/download-3-768x432.jpg"
+      ],
+      "amenities": [
+        "parking",
+        "elevator",
+        "security",
+        "cctv"
+      ],
+      "building": {
+        "floors": [
+          {
+            "level": 0,
+            "label": {
+              "en": "Typical residences",
+              "am": "መደበኛ መኖሪያዎች"
+            },
+            "units": [
+              {
+                "unitLabel": "TYP-RES",
+                "floor": 0,
+                "bedrooms": 2,
+                "bathrooms": 2,
+                "floorAreaSqm": 90,
+                "price": 1,
+                "currency": "ETB",
+                "listingType": "OFF_PLAN",
+                "status": "available",
+                "category": "RESIDENTIAL",
+                "title": {
+                  "en": "African Heights · mid-luxury apartment (price on request)",
+                  "am": "አፍሪካን ሃይትስ · አፓርታማ (ዋጋ ለማወቅ)"
+                },
+                "description": {
+                  "en": "Off-plan mid-luxury apartment at African Heights (324 units, completion ~2025). Reception, café, CCTV, parking. Contact Ovid Group — info@ovid-group.com · https://ovid-group.com/project/african-heights/. Price on request.",
+                  "am": "አፍሪካን ሃይትስ ኦፍ-ፕላን አፓርታማ። ዋጋ ለማወቅ — info@ovid-group.com"
+                },
+                "amenities": [
+                  "parking",
+                  "elevator",
+                  "security"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "slug": "OVID-KINGS-TOWERS",
+      "registrationNumber": "ET-DIR-OVID-026",
+      "subCityCode": "kirkos",
+      "category": "MIXED_USE",
+      "title": {
+        "en": "Kings' Towers",
+        "am": "ኪንግስ ታወርስ"
+      },
+      "description": {
+        "en": "Luxury high-rise mixed-use development in central Addis Ababa (Ovid Group). ~49,600 m² site, 1,740 apartments, 1,854 parking spaces, 19 floors — residential, commercial, basement parking, and greenery. Near Unity Park, Holy Trinity Cathedral, and the National Palace. Target completion 2026. Source: https://ovid-group.com/project/kings-towers/",
+        "am": "በመሃል ከተማ የኦቪድ የላግዥ ሚክስድ-ዩዝ ታወር። ~49,600 ካሬ · 1,740 አፓርታማ · 19 ፎቅ። ማጠናቀቂያ 2026።"
+      },
+      "addressLine": "Central Addis Ababa · near Unity Park / Holy Trinity Cathedral",
+      "constructionStage": "SUPERSTRUCTURE",
+      "completionPercent": 35,
+      "requiresEscrow": true,
+      "website": "https://ovid-group.com/project/kings-towers/",
+      "telegram": null,
+      "sourceUpdatedAt": "2026-07-19",
+      "coverImageUrl": "https://ovid-group.com/wp-content/uploads/2024/09/download-5-1920x1080.jpg",
+      "galleryImageUrls": [
+        "https://ovid-group.com/wp-content/uploads/2024/09/download-5-1920x1080.jpg",
+        "https://ovid-group.com/wp-content/uploads/2024/09/download-5-768x432.jpg",
+        "https://ovid-group.com/wp-content/uploads/2024/09/download-5.png"
+      ],
+      "amenities": [
+        "parking",
+        "elevator",
+        "security",
+        "cctv"
+      ],
+      "building": {
+        "floors": [
+          {
+            "level": 0,
+            "label": {
+              "en": "Residential / commercial shells",
+              "am": "መኖሪያ / ንግድ"
+            },
+            "units": [
+              {
+                "unitLabel": "TYP-APT",
+                "floor": 0,
+                "bedrooms": 3,
+                "bathrooms": 2,
+                "floorAreaSqm": 120,
+                "price": 1,
+                "currency": "ETB",
+                "listingType": "OFF_PLAN",
+                "status": "available",
+                "category": "RESIDENTIAL",
+                "title": {
+                  "en": "Kings' Towers · luxury apartment (price on request)",
+                  "am": "ኪንግስ ታወርስ · ላግዥ አፓርታማ (ዋጋ ለማወቅ)"
+                },
+                "description": {
+                  "en": "Off-plan luxury apartment at Kings' Towers (1,740 units · 19 floors · completion ~2026). Mixed-use with commercial and greenery. Contact Ovid Group — info@ovid-group.com · https://ovid-group.com/project/kings-towers/. Price on request.",
+                  "am": "ኪንግስ ታወርስ ኦፍ-ፕላን አፓርታማ። ዋጋ ለማወቅ — info@ovid-group.com"
+                },
+                "amenities": [
+                  "parking",
+                  "elevator",
+                  "security"
+                ]
+              },
+              {
+                "unitLabel": "TYP-COM",
+                "floor": 0,
+                "bedrooms": 0,
+                "bathrooms": 1,
+                "floorAreaSqm": 50,
+                "price": 1,
+                "currency": "ETB",
+                "listingType": "OFF_PLAN",
+                "status": "available",
+                "category": "COMMERCIAL",
+                "title": {
+                  "en": "Kings' Towers · commercial bay (price on request)",
+                  "am": "ኪንግስ ታወርስ · የንግድ ቦታ (ዋጋ ለማወቅ)"
+                },
+                "description": {
+                  "en": "Off-plan commercial space in Kings' Towers mixed-use development. Contact Ovid Group — info@ovid-group.com. Price on request.",
+                  "am": "ኪንግስ ታወርስ የንግድ ቦታ። ዋጋ ለማወቅ — info@ovid-group.com"
+                },
+                "amenities": [
+                  "parking",
+                  "elevator",
+                  "security"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "slug": "OVID-HARAR-HORIZON",
+      "registrationNumber": "ET-DIR-OVID-026",
+      "subCityCode": "bole",
+      "category": "RESIDENTIAL",
+      "title": {
+        "en": "Harar Horizon",
+        "am": "ሐረር ሆራይዘን"
+      },
+      "description": {
+        "en": "Mid-luxury apartment project in Addis Ababa (Ovid Group). 60 apartments on ~885 m². Target completion 2025. Source: https://ovid-group.com/project/harar-horizon/",
+        "am": "በአዲስ አበባ የኦቪድ መካከለኛ-ላግዥ አፓርታማ። 60 አፓርታማ · ~885 ካሬ። ማጠናቀቂያ 2025።"
+      },
+      "addressLine": "Addis Ababa · Harar Horizon",
+      "constructionStage": "SUPERSTRUCTURE",
+      "completionPercent": 50,
+      "requiresEscrow": true,
+      "website": "https://ovid-group.com/project/harar-horizon/",
+      "telegram": null,
+      "sourceUpdatedAt": "2026-07-19",
+      "coverImageUrl": "https://ovid-group.com/wp-content/uploads/2024/09/download-8.png",
+      "galleryImageUrls": [
+        "https://ovid-group.com/wp-content/uploads/2024/09/download-8.png",
+        "https://ovid-group.com/wp-content/uploads/2024/09/download-8-768x432.png"
+      ],
+      "amenities": [
+        "parking",
+        "elevator",
+        "security"
+      ],
+      "building": {
+        "floors": [
+          {
+            "level": 0,
+            "label": {
+              "en": "Typical residences",
+              "am": "መደበኛ መኖሪያዎች"
+            },
+            "units": [
+              {
+                "unitLabel": "TYP-RES",
+                "floor": 0,
+                "bedrooms": 2,
+                "bathrooms": 2,
+                "floorAreaSqm": 75,
+                "price": 1,
+                "currency": "ETB",
+                "listingType": "OFF_PLAN",
+                "status": "available",
+                "category": "RESIDENTIAL",
+                "title": {
+                  "en": "Harar Horizon · mid-luxury apartment (price on request)",
+                  "am": "ሐረር ሆራይዘን · አፓርታማ (ዋጋ ለማወቅ)"
+                },
+                "description": {
+                  "en": "Off-plan mid-luxury apartment at Harar Horizon (60 units, completion ~2025). Contact Ovid Group — info@ovid-group.com · https://ovid-group.com/project/harar-horizon/. Price on request.",
+                  "am": "ሐረር ሆራይዘን ኦፍ-ፕላን አፓርታማ። ዋጋ ለማወቅ — info@ovid-group.com"
+                },
+                "amenities": [
+                  "parking",
+                  "elevator",
+                  "security"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "slug": "OVID-BOLE-BULBULA-CITY",
+      "registrationNumber": "ET-DIR-OVID-026",
+      "subCityCode": "bole",
+      "category": "MIXED_USE",
+      "title": {
+        "en": "Ovid Bole Bulbula City",
+        "am": "ኦቪድ ቦሌ ቡልቡላ ሲቲ"
+      },
+      "description": {
+        "en": "Large-scale urban development in Bole Bulbula, Addis Ababa (Ovid Group). Planned ~6,000 units with mixed sustainable living. Source: https://ovid-group.com/project/ovid-bole-bulbula-city/",
+        "am": "በቦሌ ቡልቡላ የኦቪድ ሰፊ የከተማ ልማት። ~6,000 ክፍሎች።"
+      },
+      "addressLine": "Bole Bulbula · Addis Ababa",
+      "constructionStage": "EARTHWORKS_FOUNDATION",
+      "completionPercent": 15,
+      "requiresEscrow": true,
+      "website": "https://ovid-group.com/project/ovid-bole-bulbula-city/",
+      "telegram": null,
+      "sourceUpdatedAt": "2026-07-19",
+      "coverImageUrl": "https://ovid-group.com/wp-content/uploads/2024/09/download-2.png",
+      "galleryImageUrls": [
+        "https://ovid-group.com/wp-content/uploads/2024/09/download-2.png",
+        "https://ovid-group.com/wp-content/uploads/2024/09/download-2-768x432.png"
+      ],
+      "amenities": [
+        "parking",
+        "security"
+      ],
+      "building": {
+        "floors": [
+          {
+            "level": 0,
+            "label": {
+              "en": "Masterplan units",
+              "am": "ማስተርፕላን ክፍሎች"
+            },
+            "units": [
+              {
+                "unitLabel": "TYP-RES",
+                "floor": 0,
+                "bedrooms": 2,
+                "bathrooms": 2,
+                "floorAreaSqm": 80,
+                "price": 1,
+                "currency": "ETB",
+                "listingType": "OFF_PLAN",
+                "status": "available",
+                "category": "RESIDENTIAL",
+                "title": {
+                  "en": "Bole Bulbula City · residential unit (price on request)",
+                  "am": "ቦሌ ቡልቡላ ሲቲ · መኖሪያ (ዋጋ ለማወቅ)"
+                },
+                "description": {
+                  "en": "Off-plan residential unit in Ovid Bole Bulbula City (~6,000-unit masterplan). Contact Ovid Group — info@ovid-group.com · https://ovid-group.com/project/ovid-bole-bulbula-city/. Price on request.",
+                  "am": "ቦሌ ቡልቡላ ሲቲ ኦፍ-ፕላን መኖሪያ። ዋጋ ለማወቅ — info@ovid-group.com"
+                },
+                "amenities": [
+                  "parking",
+                  "security"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "slug": "OVID-CHAKA-TOWERS",
+      "registrationNumber": "ET-DIR-OVID-026",
+      "subCityCode": "yeka",
+      "category": "RESIDENTIAL",
+      "title": {
+        "en": "Chaka Towers",
+        "am": "ቻካ ታወርስ"
+      },
+      "description": {
+        "en": "Forest-sanctuary apartment community on ~9 hectares / ~313,000 m² in Addis Ababa (Ovid Group). ~1,900 apartments with retail, green space, and nearby education. Target completion 2026. Source: https://ovid-group.com/project/chaka-towers/",
+        "am": "በአዲስ አበባ ~9 ሄክታር የደን መሠረት አፓርታማ ማህበረሰብ (ኦቪድ)። ~1,900 አፓርታማ። ማጠናቀቂያ 2026።"
+      },
+      "addressLine": "Addis Ababa · Chaka Towers (forest sanctuary)",
+      "constructionStage": "SUPERSTRUCTURE",
+      "completionPercent": 30,
+      "requiresEscrow": true,
+      "website": "https://ovid-group.com/project/chaka-towers/",
+      "telegram": null,
+      "sourceUpdatedAt": "2026-07-19",
+      "coverImageUrl": "https://ovid-group.com/wp-content/uploads/2023/09/Chaka-03-1920x1422.jpg",
+      "galleryImageUrls": [
+        "https://ovid-group.com/wp-content/uploads/2023/09/Chaka-03-1920x1422.jpg",
+        "https://ovid-group.com/wp-content/uploads/2023/09/ch-1-1920x1199.png",
+        "https://ovid-group.com/wp-content/uploads/2023/09/ch-1-768x479.png"
+      ],
+      "amenities": [
+        "parking",
+        "elevator",
+        "security",
+        "garden"
+      ],
+      "building": {
+        "floors": [
+          {
+            "level": 0,
+            "label": {
+              "en": "Typical residences",
+              "am": "መደበኛ መኖሪያዎች"
+            },
+            "units": [
+              {
+                "unitLabel": "TYP-RES",
+                "floor": 0,
+                "bedrooms": 3,
+                "bathrooms": 2,
+                "floorAreaSqm": 110,
+                "price": 1,
+                "currency": "ETB",
+                "listingType": "OFF_PLAN",
+                "status": "available",
+                "category": "RESIDENTIAL",
+                "title": {
+                  "en": "Chaka Towers · apartment (price on request)",
+                  "am": "ቻካ ታወርስ · አፓርታማ (ዋጋ ለማወቅ)"
+                },
+                "description": {
+                  "en": "Off-plan apartment at Chaka Towers (~1,900 units · forest sanctuary · completion ~2026). Contact Ovid Group — info@ovid-group.com · https://ovid-group.com/project/chaka-towers/. Price on request.",
+                  "am": "ቻካ ታወርስ ኦፍ-ፕላን አፓርታማ። ዋጋ ለማወቅ — info@ovid-group.com"
+                },
+                "amenities": [
+                  "parking",
+                  "elevator",
+                  "security",
+                  "garden"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "slug": "AYAT-CCE-CMC",
+      "registrationNumber": "ET-DIR-AYAT-004",
+      "subCityCode": "yeka",
+      "category": "RESIDENTIAL",
+      "title": {
+        "en": "Ayat CCE-CMC Apartments",
+        "am": "አያት CCE-CMC አፓርታማዎች"
+      },
+      "description": {
+        "en": "Ayat CCE-CMC residential apartments behind St. Michael Church (CMC). 2–4 bedrooms · 40–161 m² · mixed-use, duplex, and standard types. 15% down + milestone plan; credit path leaves 40% as 10–30 year mortgage at 9.5%. Delivery under construction. Source: https://ayatrealestate.com/residential/cmc/",
+        "am": "በCMC ከቅድስት ሚካኤል ቤተክርስቲያን በስተጀርባ የአያት አፓርታማዎች። 2–4 መኝታ · 40–161 ካሬ። 15% ቅድመ ክፍያ።"
+      },
+      "addressLine": "CMC · behind St. Michael Church · Yeka",
+      "constructionStage": "SUPERSTRUCTURE",
+      "completionPercent": 45,
+      "requiresEscrow": true,
+      "website": "https://ayatrealestate.com/residential/cmc/",
+      "telegram": "https://t.me/ayatsc",
+      "contactPhone": "+251976606060",
+      "sourceUpdatedAt": "2026-07-19",
+      "downPaymentPercent": 15,
+      "paymentStructure": "MILESTONE_BASED",
+      "coverImageUrl": "https://ayatrealestate.com/_next/static/media/property_fourteen.de1f8e64.webp",
+      "galleryImageUrls": [
+        "https://ayatrealestate.com/_next/static/media/property_fourteen.de1f8e64.webp",
+        "https://ayatrealestate.com/_next/static/media/property_one.1b834f55.webp",
+        "https://ayatrealestate.com/_next/static/media/property_twenty.a8b4cc3b.webp",
+        "https://ayatrealestate.com/_next/static/media/dinning.a4854143.webp",
+        "https://ayatrealestate.com/_next/static/media/kitchen.a5072cfc.webp"
+      ],
+      "amenities": [
+        "parking",
+        "elevator",
+        "security",
+        "power-backup"
+      ],
+      "building": {
+        "floors": [
+          {
+            "level": 0,
+            "label": {
+              "en": "Unit types",
+              "am": "የክፍል ዓይነቶች"
+            },
+            "units": [
+              {
+                "unitLabel": "CCE-TY-40",
+                "floor": 0,
+                "bedrooms": 2,
+                "bathrooms": 1,
+                "floorAreaSqm": 40,
+                "price": 1,
+                "currency": "ETB",
+                "listingType": "OFF_PLAN",
+                "status": "available",
+                "category": "RESIDENTIAL",
+                "downPaymentPercent": 15,
+                "paymentStructure": "MILESTONE_BASED",
+                "title": {
+                  "en": "CCE-TY-40 · 2BR · 40 m²",
+                  "am": "CCE-TY-40 · 2 መኝታ · 40 ካሬ"
+                },
+                "description": {
+                  "en": "Ayat CCE-CMC off-plan 2BR 40 m². 15% on signing · milestone payments · optional 40% mortgage (10–30 yrs @ 9.5%). Call +251 976 60 60 60. https://ayatrealestate.com/residential/cmc/",
+                  "am": "Ayat CCE-CMC off-plan 2BR 40 m². 15% on signing · milestone payments · optional 40% mortgage (10–30 yrs @ 9.5%). Call +251 976 60 60 60. https://ayatrealestate.com/residential/cmc/"
+                },
+                "amenities": [
+                  "parking",
+                  "elevator",
+                  "security",
+                  "power-backup"
+                ]
+              },
+              {
+                "unitLabel": "CCE-APC-85",
+                "floor": 0,
+                "bedrooms": 2,
+                "bathrooms": 2,
+                "floorAreaSqm": 85,
+                "price": 1,
+                "currency": "ETB",
+                "listingType": "OFF_PLAN",
+                "status": "available",
+                "category": "RESIDENTIAL",
+                "downPaymentPercent": 15,
+                "paymentStructure": "MILESTONE_BASED",
+                "title": {
+                  "en": "CCE-APC-85 · 2BR · 85 m²",
+                  "am": "CCE-APC-85 · 2 መኝታ · 85 ካሬ"
+                },
+                "description": {
+                  "en": "Ayat CCE-CMC off-plan 2BR 85 m². Payment: 15% signing + construction milestones. +251 976 60 60 60.",
+                  "am": "Ayat CCE-CMC off-plan 2BR 85 m². Payment: 15% signing + construction milestones. +251 976 60 60 60."
+                },
+                "amenities": [
+                  "parking",
+                  "elevator",
+                  "security",
+                  "power-backup"
+                ]
+              },
+              {
+                "unitLabel": "CCE-APH-107",
+                "floor": 0,
+                "bedrooms": 3,
+                "bathrooms": 2,
+                "floorAreaSqm": 107,
+                "price": 1,
+                "currency": "ETB",
+                "listingType": "OFF_PLAN",
+                "status": "available",
+                "category": "RESIDENTIAL",
+                "downPaymentPercent": 15,
+                "paymentStructure": "MILESTONE_BASED",
+                "title": {
+                  "en": "CCE-APH-107 · 3BR · 107 m²",
+                  "am": "CCE-APH-107 · 3 መኝታ · 107 ካሬ"
+                },
+                "description": {
+                  "en": "Ayat CCE-CMC off-plan 3BR 107 m². CMC behind St. Michael Church. +251 976 60 60 60.",
+                  "am": "Ayat CCE-CMC off-plan 3BR 107 m². CMC behind St. Michael Church. +251 976 60 60 60."
+                },
+                "amenities": [
+                  "parking",
+                  "elevator",
+                  "security",
+                  "power-backup"
+                ]
+              },
+              {
+                "unitLabel": "CCE-APC-138",
+                "floor": 0,
+                "bedrooms": 3,
+                "bathrooms": 2,
+                "floorAreaSqm": 138,
+                "price": 1,
+                "currency": "ETB",
+                "listingType": "OFF_PLAN",
+                "status": "available",
+                "category": "RESIDENTIAL",
+                "downPaymentPercent": 15,
+                "paymentStructure": "MILESTONE_BASED",
+                "title": {
+                  "en": "CCE-APC-138 · 3BR · 138 m²",
+                  "am": "CCE-APC-138 · 3 መኝታ · 138 ካሬ"
+                },
+                "description": {
+                  "en": "Ayat CCE-CMC off-plan 3BR 138 m². Price on request. +251 976 60 60 60.",
+                  "am": "Ayat CCE-CMC off-plan 3BR 138 m². Price on request. +251 976 60 60 60."
+                },
+                "amenities": [
+                  "parking",
+                  "elevator",
+                  "security",
+                  "power-backup"
+                ]
+              },
+              {
+                "unitLabel": "CCE-APA-161",
+                "floor": 0,
+                "bedrooms": 4,
+                "bathrooms": 3,
+                "floorAreaSqm": 161,
+                "price": 1,
+                "currency": "ETB",
+                "listingType": "OFF_PLAN",
+                "status": "available",
+                "category": "RESIDENTIAL",
+                "downPaymentPercent": 15,
+                "paymentStructure": "MILESTONE_BASED",
+                "title": {
+                  "en": "CCE-APA-161 · 4BR · 161 m²",
+                  "am": "CCE-APA-161 · 4 መኝታ · 161 ካሬ"
+                },
+                "description": {
+                  "en": "Ayat CCE-CMC off-plan 4BR 161 m². Price on request. +251 976 60 60 60.",
+                  "am": "Ayat CCE-CMC off-plan 4BR 161 m². Price on request. +251 976 60 60 60."
+                },
+                "amenities": [
+                  "parking",
+                  "elevator",
+                  "security",
+                  "power-backup"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "slug": "AYAT-MERI-1",
+      "registrationNumber": "ET-DIR-AYAT-004",
+      "subCityCode": "lemi-kura",
+      "category": "RESIDENTIAL",
+      "title": {
+        "en": "Ayat Meri-1 Apartments",
+        "am": "አያት መሪ-1 አፓርታማዎች"
+      },
+      "description": {
+        "en": "Luxury high-rise Meri-1 community apartments (Ayat). 1–4 bedrooms · 70–150 m² with balconies and green amenity spaces. Same 15% / milestone payment structure as CMC. Source: https://ayatrealestate.com/residential/meri/",
+        "am": "የአያት መሪ-1 ላግዥ አፓርታማዎች። 1–4 መኝታ · 70–150 ካሬ። 15% ቅድመ ክፍያ።"
+      },
+      "addressLine": "Meri area · Lemi Kura",
+      "constructionStage": "SUPERSTRUCTURE",
+      "completionPercent": 40,
+      "requiresEscrow": true,
+      "website": "https://ayatrealestate.com/residential/meri/",
+      "telegram": "https://t.me/ayatsc",
+      "contactPhone": "+251976606060",
+      "sourceUpdatedAt": "2026-07-19",
+      "downPaymentPercent": 15,
+      "paymentStructure": "MILESTONE_BASED",
+      "coverImageUrl": "https://ayatrealestate.com/_next/static/media/Design1-min.ee978c88.png",
+      "galleryImageUrls": [
+        "https://ayatrealestate.com/_next/static/media/Design1-min.ee978c88.png",
+        "https://ayatrealestate.com/_next/static/media/LivingRoom-min.bb2779a6.png",
+        "https://ayatrealestate.com/_next/static/media/Kitchen-min.e94e7cae.png",
+        "https://ayatrealestate.com/_next/static/media/Bath-room-min.4965a5bd.png"
+      ],
+      "amenities": [
+        "parking",
+        "elevator",
+        "security",
+        "power-backup"
+      ],
+      "building": {
+        "floors": [
+          {
+            "level": 0,
+            "label": {
+              "en": "Unit types",
+              "am": "የክፍል ዓይነቶች"
+            },
+            "units": [
+              {
+                "unitLabel": "MER-AO2-70",
+                "floor": 0,
+                "bedrooms": 1,
+                "bathrooms": 1,
+                "floorAreaSqm": 70,
+                "price": 1,
+                "currency": "ETB",
+                "listingType": "OFF_PLAN",
+                "status": "available",
+                "category": "RESIDENTIAL",
+                "downPaymentPercent": 15,
+                "paymentStructure": "MILESTONE_BASED",
+                "title": {
+                  "en": "MER-AO2-70 · 1BR · 70 m²",
+                  "am": "MER-AO2-70 · 1 መኝታ · 70 ካሬ"
+                },
+                "description": {
+                  "en": "Ayat Meri-1 off-plan 1BR 70 m². 15% down + milestones. +251 976 60 60 60. https://ayatrealestate.com/residential/meri/",
+                  "am": "Ayat Meri-1 off-plan 1BR 70 m². 15% down + milestones. +251 976 60 60 60. https://ayatrealestate.com/residential/meri/"
+                },
+                "amenities": [
+                  "parking",
+                  "elevator",
+                  "security",
+                  "power-backup"
+                ]
+              },
+              {
+                "unitLabel": "MER-BO2-100",
+                "floor": 0,
+                "bedrooms": 2,
+                "bathrooms": 2,
+                "floorAreaSqm": 100,
+                "price": 1,
+                "currency": "ETB",
+                "listingType": "OFF_PLAN",
+                "status": "available",
+                "category": "RESIDENTIAL",
+                "downPaymentPercent": 15,
+                "paymentStructure": "MILESTONE_BASED",
+                "title": {
+                  "en": "MER-BO2-100 · 2BR · 100 m²",
+                  "am": "MER-BO2-100 · 2 መኝታ · 100 ካሬ"
+                },
+                "description": {
+                  "en": "Ayat Meri-1 off-plan 2BR 100 m². Price on request. +251 976 60 60 60.",
+                  "am": "Ayat Meri-1 off-plan 2BR 100 m². Price on request. +251 976 60 60 60."
+                },
+                "amenities": [
+                  "parking",
+                  "elevator",
+                  "security",
+                  "power-backup"
+                ]
+              },
+              {
+                "unitLabel": "MER-AO21-120",
+                "floor": 0,
+                "bedrooms": 2,
+                "bathrooms": 2,
+                "floorAreaSqm": 120,
+                "price": 1,
+                "currency": "ETB",
+                "listingType": "OFF_PLAN",
+                "status": "available",
+                "category": "RESIDENTIAL",
+                "downPaymentPercent": 15,
+                "paymentStructure": "MILESTONE_BASED",
+                "title": {
+                  "en": "MER-AO21-120 · 2BR · 120 m²",
+                  "am": "MER-AO21-120 · 2 መኝታ · 120 ካሬ"
+                },
+                "description": {
+                  "en": "Ayat Meri-1 off-plan 2BR 120 m². Price on request. +251 976 60 60 60.",
+                  "am": "Ayat Meri-1 off-plan 2BR 120 m². Price on request. +251 976 60 60 60."
+                },
+                "amenities": [
+                  "parking",
+                  "elevator",
+                  "security",
+                  "power-backup"
+                ]
+              },
+              {
+                "unitLabel": "MER-AO2-150",
+                "floor": 0,
+                "bedrooms": 4,
+                "bathrooms": 3,
+                "floorAreaSqm": 150,
+                "price": 1,
+                "currency": "ETB",
+                "listingType": "OFF_PLAN",
+                "status": "available",
+                "category": "RESIDENTIAL",
+                "downPaymentPercent": 15,
+                "paymentStructure": "MILESTONE_BASED",
+                "title": {
+                  "en": "MER-AO2-150 · 4BR · 150 m²",
+                  "am": "MER-AO2-150 · 4 መኝታ · 150 ካሬ"
+                },
+                "description": {
+                  "en": "Ayat Meri-1 off-plan 4BR 150 m². Price on request. +251 976 60 60 60.",
+                  "am": "Ayat Meri-1 off-plan 4BR 150 m². Price on request. +251 976 60 60 60."
+                },
+                "amenities": [
+                  "parking",
+                  "elevator",
+                  "security",
+                  "power-backup"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "slug": "AYAT-GRAND-MALL",
+      "registrationNumber": "ET-DIR-AYAT-004",
+      "subCityCode": "yeka",
+      "category": "COMMERCIAL",
+      "title": {
+        "en": "Ayat Grand Mall",
+        "am": "አያት ግራንድ ሞል"
+      },
+      "description": {
+        "en": "Ayat Grand Mall at CMC behind St. Michael Church — ~3,000 shops across ~240,000 m². G–3rd floor retail for restaurants, cafés, fashion, banks, medical, fitness. 20% on agreement / 80% to delivery · up to 30% USD / 25% ETB cash discount · ~18 month delivery. Source: https://ayatrealestate.com/commercial/ayat-grand-mall/",
+        "am": "በCMC የአያት ግራንድ ሞል · ~3,000 ሱቆች · ~240,000 ካሬ። 20% ስምምነት · ~18 ወር ማስረከብ።"
+      },
+      "addressLine": "CMC · behind St. Michael Church · Yeka",
+      "constructionStage": "SUPERSTRUCTURE",
+      "completionPercent": 40,
+      "requiresEscrow": true,
+      "website": "https://ayatrealestate.com/commercial/ayat-grand-mall/",
+      "telegram": "https://t.me/ayatsc",
+      "contactPhone": "+251976606060",
+      "sourceUpdatedAt": "2026-07-19",
+      "downPaymentPercent": 20,
+      "paymentStructure": "MILESTONE_BASED",
+      "coverImageUrl": "https://ayatrealestate.com/_next/static/media/grand_mall.48cd067e.webp",
+      "galleryImageUrls": [
+        "https://ayatrealestate.com/_next/static/media/grand_mall.48cd067e.webp",
+        "https://ayatrealestate.com/_next/static/media/ayat_grand_mall.aa724b33.webp",
+        "https://ayatrealestate.com/_next/static/media/commercial_design2.1c1cf9b5.webp",
+        "https://ayatrealestate.com/_next/static/media/property_four.a0f57bfe.webp"
+      ],
+      "amenities": [
+        "parking",
+        "elevator",
+        "security",
+        "power-backup"
+      ],
+      "building": {
+        "floors": [
+          {
+            "level": 0,
+            "label": {
+              "en": "Ground · retail",
+              "am": "መሬት · ቸርቻሪ"
+            },
+            "units": [
+              {
+                "unitLabel": "G-SHOP",
+                "floor": 0,
+                "bedrooms": 0,
+                "bathrooms": 1,
+                "floorAreaSqm": 25,
+                "price": 1,
+                "currency": "ETB",
+                "listingType": "OFF_PLAN",
+                "status": "available",
+                "category": "COMMERCIAL",
+                "downPaymentPercent": 15,
+                "paymentStructure": "MILESTONE_BASED",
+                "title": {
+                  "en": "Grand Mall · ground shop (price on request)",
+                  "am": "ግራንድ ሞል · የመሬት ሱቅ"
+                },
+                "description": {
+                  "en": "Off-plan ground-floor shop at Ayat Grand Mall (CMC). 20% on signing · 80% to delivery · up to 30% USD cash discount · ~18 months. +251 976 60 60 60.",
+                  "am": "Off-plan ground-floor shop at Ayat Grand Mall (CMC). 20% on signing · 80% to delivery · up to 30% USD cash discount · ~18 months. +251 976 60 60 60."
+                },
+                "amenities": [
+                  "parking",
+                  "elevator",
+                  "security",
+                  "power-backup"
+                ]
+              }
+            ]
+          },
+          {
+            "level": 2,
+            "label": {
+              "en": "Upper floors · retail",
+              "am": "ላይኛ ፎቆች"
+            },
+            "units": [
+              {
+                "unitLabel": "UP-SHOP",
+                "floor": 0,
+                "bedrooms": 0,
+                "bathrooms": 1,
+                "floorAreaSqm": 30,
+                "price": 1,
+                "currency": "ETB",
+                "listingType": "OFF_PLAN",
+                "status": "available",
+                "category": "COMMERCIAL",
+                "downPaymentPercent": 15,
+                "paymentStructure": "MILESTONE_BASED",
+                "title": {
+                  "en": "Grand Mall · upper-floor shop (price on request)",
+                  "am": "ግራንድ ሞል · የላይኛ ሱቅ"
+                },
+                "description": {
+                  "en": "Off-plan upper-floor shop (1st–3rd) at Ayat Grand Mall. Banks, clinics, fashion, F&B suited. +251 976 60 60 60.",
+                  "am": "Off-plan upper-floor shop (1st–3rd) at Ayat Grand Mall. Banks, clinics, fashion, F&B suited. +251 976 60 60 60."
+                },
+                "amenities": [
+                  "parking",
+                  "elevator",
+                  "security",
+                  "power-backup"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "slug": "AYAT-HILL-BOTTOM",
+      "registrationNumber": "ET-DIR-AYAT-004",
+      "subCityCode": "yeka",
+      "category": "MIXED_USE",
+      "title": {
+        "en": "Ayat Hill Bottom Apartments & Outlets",
+        "am": "አያት ሂል ቦተም አፓርታማ እና አውትሌቶች"
+      },
+      "description": {
+        "en": "Hill Bottom residences and business outlets near Ayat Roundabout / Derartu Tulu Square — walkable amenities, gyms, shops, hospitals, metro. Residential + commercial outlet inventory. Source: https://ayatrealestate.com/residential/ and /commercial/",
+        "am": "ከአያት ክብ / ደራርቱ ስኴር አጠገብ ሂል ቦተም መኖሪያ እና የንግድ አውትሌቶች።"
+      },
+      "addressLine": "Ayat Roundabout · Derartu Tulu Square · Yeka",
+      "constructionStage": "SUPERSTRUCTURE",
+      "completionPercent": 55,
+      "requiresEscrow": true,
+      "website": "https://ayatrealestate.com/residential/",
+      "telegram": "https://t.me/ayatsc",
+      "contactPhone": "+251976606060",
+      "sourceUpdatedAt": "2026-07-19",
+      "coverImageUrl": "https://ayatrealestate.com/_next/static/media/property_seven.4c5fd5d9.webp",
+      "galleryImageUrls": [
+        "https://ayatrealestate.com/_next/static/media/property_seven.4c5fd5d9.webp",
+        "https://ayatrealestate.com/_next/static/media/property_six.ee9b2d50.webp",
+        "https://ayatrealestate.com/_next/static/media/property_eight.b501865d.webp"
+      ],
+      "amenities": [
+        "parking",
+        "elevator",
+        "security"
+      ],
+      "building": {
+        "floors": [
+          {
+            "level": 0,
+            "label": {
+              "en": "Hill Bottom mix",
+              "am": "ሂል ቦተም"
+            },
+            "units": [
+              {
+                "unitLabel": "HB-APT",
+                "floor": 0,
+                "bedrooms": 2,
+                "bathrooms": 2,
+                "floorAreaSqm": 95,
+                "price": 1,
+                "currency": "ETB",
+                "listingType": "OFF_PLAN",
+                "status": "available",
+                "category": "RESIDENTIAL",
+                "downPaymentPercent": 15,
+                "paymentStructure": "MILESTONE_BASED",
+                "title": {
+                  "en": "Hill Bottom · apartment (price on request)",
+                  "am": "ሂል ቦተም · አፓርታማ"
+                },
+                "description": {
+                  "en": "Ayat Hill Bottom apartment near Ayat Roundabout. Amenities and metro access. +251 976 60 60 60.",
+                  "am": "Ayat Hill Bottom apartment near Ayat Roundabout. Amenities and metro access. +251 976 60 60 60."
+                },
+                "amenities": [
+                  "parking",
+                  "elevator",
+                  "security",
+                  "power-backup"
+                ]
+              },
+              {
+                "unitLabel": "HB-OUTLET",
+                "floor": 0,
+                "bedrooms": 0,
+                "bathrooms": 1,
+                "floorAreaSqm": 30,
+                "price": 1,
+                "currency": "ETB",
+                "listingType": "OFF_PLAN",
+                "status": "available",
+                "category": "COMMERCIAL",
+                "downPaymentPercent": 15,
+                "paymentStructure": "MILESTONE_BASED",
+                "title": {
+                  "en": "Hill Bottom · business outlet (price on request)",
+                  "am": "ሂል ቦተም · የንግድ አውትሌት"
+                },
+                "description": {
+                  "en": "Ayat Hill Bottom commercial outlet in affluent residential footprint. +251 976 60 60 60.",
+                  "am": "Ayat Hill Bottom commercial outlet in affluent residential footprint. +251 976 60 60 60."
+                },
+                "amenities": [
+                  "parking",
+                  "elevator",
+                  "security",
+                  "power-backup"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "slug": "KANGAROO-RESIDENTIAL-COMPLEX",
+      "registrationNumber": "ET-DIR-KANGAROO-027",
+      "subCityCode": "bole",
+      "category": "MIXED_USE",
+      "title": {
+        "en": "Kangaroo Residential Complex · Bole Bulbula",
+        "am": "ካንጋሩ ሬሲደንሻል ኮምፕሌክስ · ቦሌ ቡልቡላ"
+      },
+      "description": {
+        "en": "Fully gated ~30,000+ sqm mixed-use compound in Bole Bulbula (Kangaroo Developments). Includes under-construction G+4 modern apartments (1 unit/floor, 2–3BR), completed G+8 mixed-use (studio–3BR + retail), and completed G+1 luxury villas (4BR + master). Amenities: concierge, gym, kids play, movie theater, rooftop lounge, sauna, yoga, overnight security, basement parking. Contact +251 941 000 888 · https://kangaroodevelopments.com",
+        "am": "በቦሌ ቡልቡላ የካንጋሩ ~30,000+ ካሬ በር የተገደበ ውስብስብ። G+4 አፓርታማ · G+8 ሚክስድ-ዩዝ · G+1 ቪላ። +251 941 000 888"
+      },
+      "addressLine": "Bole Bulbula · Addis Ababa · Kangaroo gated compound",
+      "constructionStage": "SUPERSTRUCTURE",
+      "completionPercent": 60,
+      "requiresEscrow": true,
+      "website": "https://kangaroodevelopments.com/property",
+      "telegram": null,
+      "contactPhone": "+251941000888",
+      "sourceUpdatedAt": "2026-07-19",
+      "coverImageUrl": "https://kangaroodevelopmentsmainv2.darihabesha.com/storage/properties/thumbnails/01KHT7D1WFJM8EMNMY0011AZDM.jpg",
+      "galleryImageUrls": [
+        "https://kangaroodevelopmentsmainv2.darihabesha.com/storage/properties/thumbnails/01KHT7D1WFJM8EMNMY0011AZDM.jpg",
+        "https://kangaroodevelopmentsmainv2.darihabesha.com/storage/properties/thumbnails/01KHT7CCE85AF45BQ7MZNNPXMD.jpg",
+        "https://kangaroodevelopmentsmainv2.darihabesha.com/storage/properties/thumbnails/01KHT7DRX7EVQQEK984ZJMFWRK.jpg"
+      ],
+      "amenities": [
+        "parking",
+        "elevator",
+        "security",
+        "power-backup",
+        "gym",
+        "garden"
+      ],
+      "building": {
+        "floors": [
+          {
+            "level": 0,
+            "label": {
+              "en": "G+4 Modern Apartments (under construction)",
+              "am": "G+4 ዘመናዊ አፓርታማ"
+            },
+            "units": [
+              {
+                "unitLabel": "G4-2BR",
+                "floor": 0,
+                "bedrooms": 2,
+                "bathrooms": 2,
+                "floorAreaSqm": 250,
+                "price": 1,
+                "currency": "ETB",
+                "listingType": "OFF_PLAN",
+                "status": "available",
+                "category": "RESIDENTIAL",
+                "title": {
+                  "en": "G+4 Modern Apartment · 2BR (price on request)",
+                  "am": "G+4 · 2 መኝታ"
+                },
+                "description": {
+                  "en": "Kangaroo G+4 modern apartment · 1 unit per floor · under construction · dedicated parking · Bole Bulbula compound. Price on request. +251 941 000 888 · https://kangaroodevelopments.com/property/g4-modern-apartments",
+                  "am": "Kangaroo G+4 modern apartment · 1 unit per floor · under construction · dedicated parking · Bole Bulbula compound. Price on request. +251 941 000 888 · https://kangaroodevelopments.com/property/g4-modern-apartments"
+                },
+                "amenities": [
+                  "parking",
+                  "elevator",
+                  "security",
+                  "power-backup",
+                  "gym"
+                ]
+              },
+              {
+                "unitLabel": "G4-3BR",
+                "floor": 0,
+                "bedrooms": 3,
+                "bathrooms": 2,
+                "floorAreaSqm": 250,
+                "price": 1,
+                "currency": "ETB",
+                "listingType": "OFF_PLAN",
+                "status": "available",
+                "category": "RESIDENTIAL",
+                "title": {
+                  "en": "G+4 Modern Apartment · 3BR (price on request)",
+                  "am": "G+4 · 3 መኝታ"
+                },
+                "description": {
+                  "en": "Kangaroo G+4 modern apartment · 3BR option · under construction · Bole Bulbula. Price on request. +251 941 000 888",
+                  "am": "Kangaroo G+4 modern apartment · 3BR option · under construction · Bole Bulbula. Price on request. +251 941 000 888"
+                },
+                "amenities": [
+                  "parking",
+                  "elevator",
+                  "security",
+                  "power-backup",
+                  "gym"
+                ]
+              }
+            ]
+          },
+          {
+            "level": 1,
+            "label": {
+              "en": "G+8 Mixed-Use (completed)",
+              "am": "G+8 ሚክስድ-ዩዝ"
+            },
+            "units": [
+              {
+                "unitLabel": "G8-1BR",
+                "floor": 0,
+                "bedrooms": 1,
+                "bathrooms": 1,
+                "floorAreaSqm": 100,
+                "price": 1,
+                "currency": "ETB",
+                "listingType": "SALE",
+                "status": "available",
+                "category": "RESIDENTIAL",
+                "title": {
+                  "en": "G+8 Mixed-Use · 1BR (price on request)",
+                  "am": "G+8 · 1 መኝታ"
+                },
+                "description": {
+                  "en": "Completed G+8 mixed-use residential unit · kangaroo compound Bole Bulbula · shopping/retail downstairs. Price on request. +251 941 000 888 · https://kangaroodevelopments.com/property/g8-mixed-use",
+                  "am": "Completed G+8 mixed-use residential unit · kangaroo compound Bole Bulbula · shopping/retail downstairs. Price on request. +251 941 000 888 · https://kangaroodevelopments.com/property/g8-mixed-use"
+                },
+                "amenities": [
+                  "parking",
+                  "elevator",
+                  "security",
+                  "power-backup",
+                  "gym"
+                ]
+              },
+              {
+                "unitLabel": "G8-2BR",
+                "floor": 0,
+                "bedrooms": 2,
+                "bathrooms": 1,
+                "floorAreaSqm": 100,
+                "price": 1,
+                "currency": "ETB",
+                "listingType": "SALE",
+                "status": "available",
+                "category": "RESIDENTIAL",
+                "title": {
+                  "en": "G+8 Mixed-Use · 2BR (price on request)",
+                  "am": "G+8 · 2 መኝታ"
+                },
+                "description": {
+                  "en": "Completed G+8 mixed-use 2BR · Bole Bulbula. Price on request. +251 941 000 888",
+                  "am": "Completed G+8 mixed-use 2BR · Bole Bulbula. Price on request. +251 941 000 888"
+                },
+                "amenities": [
+                  "parking",
+                  "elevator",
+                  "security",
+                  "power-backup",
+                  "gym"
+                ]
+              },
+              {
+                "unitLabel": "G8-3BR",
+                "floor": 0,
+                "bedrooms": 3,
+                "bathrooms": 1,
+                "floorAreaSqm": 100,
+                "price": 1,
+                "currency": "ETB",
+                "listingType": "SALE",
+                "status": "available",
+                "category": "RESIDENTIAL",
+                "title": {
+                  "en": "G+8 Mixed-Use · 3BR (price on request)",
+                  "am": "G+8 · 3 መኝታ"
+                },
+                "description": {
+                  "en": "Completed G+8 mixed-use 3BR · commercial + residential building. Price on request. +251 941 000 888",
+                  "am": "Completed G+8 mixed-use 3BR · commercial + residential building. Price on request. +251 941 000 888"
+                },
+                "amenities": [
+                  "parking",
+                  "elevator",
+                  "security",
+                  "power-backup",
+                  "gym"
+                ]
+              },
+              {
+                "unitLabel": "G8-RETAIL",
+                "floor": 0,
+                "bedrooms": 0,
+                "bathrooms": 1,
+                "floorAreaSqm": 50,
+                "price": 1,
+                "currency": "ETB",
+                "listingType": "SALE",
+                "status": "available",
+                "category": "COMMERCIAL",
+                "title": {
+                  "en": "G+8 Mixed-Use · retail bay (price on request)",
+                  "am": "G+8 · የንግድ ቦታ"
+                },
+                "description": {
+                  "en": "Retail/shop space in completed G+8 mixed-use building · Kangaroo Bole Bulbula. Price on request. +251 941 000 888",
+                  "am": "Retail/shop space in completed G+8 mixed-use building · Kangaroo Bole Bulbula. Price on request. +251 941 000 888"
+                },
+                "amenities": [
+                  "parking",
+                  "elevator",
+                  "security",
+                  "power-backup",
+                  "gym"
+                ]
+              }
+            ]
+          },
+          {
+            "level": 2,
+            "label": {
+              "en": "G+1 Luxury Villas (completed)",
+              "am": "G+1 ላግዥ ቪላ"
+            },
+            "units": [
+              {
+                "unitLabel": "VILLA-4M",
+                "floor": 0,
+                "bedrooms": 5,
+                "bathrooms": 2,
+                "floorAreaSqm": 370,
+                "price": 1,
+                "currency": "ETB",
+                "listingType": "SALE",
+                "status": "available",
+                "category": "RESIDENTIAL",
+                "title": {
+                  "en": "G+1 Luxury Villa · 4BR + master (price on request)",
+                  "am": "G+1 ቪላ · 4+መስተር"
+                },
+                "description": {
+                  "en": "Completed G+1 luxury villa · 4 bedrooms + master · living room · open & traditional kitchen · maid room · private garage · green space · Kangaroo compound. Price on request. +251 941 000 888 · https://kangaroodevelopments.com/property/g1-luxury-villas",
+                  "am": "Completed G+1 luxury villa · 4 bedrooms + master · living room · open & traditional kitchen · maid room · private garage · green space · Kangaroo compound. Price on request. +251 941 000 888 · https://kangaroodevelopment"
+                },
+                "amenities": [
+                  "parking",
+                  "elevator",
+                  "security",
+                  "power-backup",
+                  "gym"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "slug": "KANGAROO-BELYIR-ATLAS",
+      "registrationNumber": "ET-DIR-KANGAROO-027",
+      "subCityCode": "bole",
+      "category": "RESIDENTIAL",
+      "title": {
+        "en": "Belyir Apartments · Bole Atlas",
+        "am": "በልይር አፓርታማዎች · ቦሌ አትላስ"
+      },
+      "description": {
+        "en": "Planned Belyir Apartments on Namibia St, Bole Atlas (next to Azzeman Hotel). Kangaroo Developments project. Contact for price. +251 941 000 888 · https://kangaroodevelopments.com/property/belyir-apartments-jGbZj2",
+        "am": "በቦሌ አትላስ ናሚቢያ ጎዳና (ከአዜማን ሆቴል አጠገብ) የታሰበ የበልይር አፓርታማ። +251 941 000 888"
+      },
+      "addressLine": "Namibia St · Bole Atlas · next to Azzeman Hotel",
+      "constructionStage": "EARTHWORKS_FOUNDATION",
+      "completionPercent": 10,
+      "requiresEscrow": true,
+      "website": "https://kangaroodevelopments.com/property/belyir-apartments-jGbZj2",
+      "telegram": null,
+      "contactPhone": "+251941000888",
+      "sourceUpdatedAt": "2026-07-19",
+      "coverImageUrl": "https://kangaroodevelopmentsmainv2.darihabesha.com/storage/properties/thumbnails/01KJ70C36P0KANXGXRXABZN21N.jpg",
+      "galleryImageUrls": [
+        "https://kangaroodevelopmentsmainv2.darihabesha.com/storage/properties/thumbnails/01KJ70C36P0KANXGXRXABZN21N.jpg",
+        "https://kangaroodevelopmentsmainv2.darihabesha.com/storage/1/01KJ70C3728F32Z3N9Q1NXZSFK.jpg",
+        "https://kangaroodevelopmentsmainv2.darihabesha.com/storage/2/01KJ70C37NNY560EHTC728403D.jpg"
+      ],
+      "amenities": [
+        "parking",
+        "elevator",
+        "security",
+        "power-backup"
+      ],
+      "building": {
+        "floors": [
+          {
+            "level": 0,
+            "label": {
+              "en": "Planned apartments",
+              "am": "የታሰቡ አፓርታማዎች"
+            },
+            "units": [
+              {
+                "unitLabel": "BEL-APT",
+                "floor": 0,
+                "bedrooms": 2,
+                "bathrooms": 2,
+                "floorAreaSqm": 90,
+                "price": 1,
+                "currency": "ETB",
+                "listingType": "OFF_PLAN",
+                "status": "available",
+                "category": "RESIDENTIAL",
+                "title": {
+                  "en": "Belyir Apartment · planned (price on request)",
+                  "am": "በልይር አፓርታማ · የታሰበ"
+                },
+                "description": {
+                  "en": "Planned Belyir Apartments · Namibia St Bole Atlas (next to Azzeman Hotel). Price on request. +251 941 000 888 · https://kangaroodevelopments.com/property/belyir-apartments-jGbZj2",
+                  "am": "Planned Belyir Apartments · Namibia St Bole Atlas (next to Azzeman Hotel). Price on request. +251 941 000 888 · https://kangaroodevelopments.com/property/belyir-apartments-jGbZj2"
+                },
+                "amenities": [
+                  "parking",
+                  "elevator",
+                  "security",
+                  "power-backup",
+                  "gym"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "slug": "TRACON-FIELD-SIDE",
+      "registrationNumber": "ET-DIR-TRACON-028",
+      "subCityCode": "nifas-silk-lafto",
+      "category": "RESIDENTIAL",
+      "title": {
+        "en": "Tracon Field Side",
+        "am": "ትራኮን ፊልድ ሳይድ"
+      },
+      "description": {
+        "en": "NOW SELLING — under construction at Tracon’s Jemo 1 estate (~5 ha / 50,000 sqm compound with Seven Courtyards & Hill Side). High-ceiling 3–5 bedroom apartments with wide corridors and balconies. Estate amenities: 24h security CCTV, groundwater + 90,000L tanker, elevators, private gardens, extra parking, generator, park with pool/tennis/basketball; gym & spa planned. Contact +251 91 120 5011 · https://www.tracontrading.com/filedside.html",
+        "am": "በጀሞ 1 የትራኮን ፊልድ ሳይድ (በግንባታ ላይ) · 3–5 መኝታ · ከፍተኛ ጣሪያ። ዋጋ ለማወቅ +251 91 120 5011"
+      },
+      "addressLine": "Jemo 1 · Nifas Silk-Lafto · Tracon estate · Field Side",
+      "constructionStage": "SUPERSTRUCTURE",
+      "completionPercent": 45,
+      "requiresEscrow": true,
+      "website": "https://www.tracontrading.com/filedside.html",
+      "contactPhone": "+251911205011",
+      "sourceUpdatedAt": "2026-07-19",
+      "coverImageUrl": "https://www.tracontrading.com/img/realestate/Fieldside.png",
+      "galleryImageUrls": [
+        "https://www.tracontrading.com/img/realestate/Fieldside.png",
+        "https://www.tracontrading.com/img/realestate/11111.jpg",
+        "https://www.tracontrading.com/img/realestate/mm2.jpg"
+      ],
+      "amenities": [
+        "parking",
+        "elevator",
+        "security",
+        "power-backup",
+        "water",
+        "garden"
+      ],
+      "building": {
+        "floors": [
+          {
+            "level": 0,
+            "label": {
+              "en": "Apartment types",
+              "am": "የአፓርታማ ዓይነቶች"
+            },
+            "units": [
+              {
+                "unitLabel": "FS-3BR",
+                "floor": 0,
+                "bedrooms": 3,
+                "bathrooms": 2,
+                "floorAreaSqm": 140,
+                "price": 1,
+                "currency": "ETB",
+                "listingType": "OFF_PLAN",
+                "status": "available",
+                "category": "RESIDENTIAL",
+                "title": {
+                  "en": "Field Side · 3BR (price on request)",
+                  "am": "ፊልድ ሳይድ · 3 መኝታ"
+                },
+                "description": {
+                  "en": "Tracon Field Side under-construction 3BR high-ceiling apartment · Jemo 1 estate. Price on request. +251 91 120 5011 · https://www.tracontrading.com/filedside.html",
+                  "am": "Tracon Field Side under-construction 3BR high-ceiling apartment · Jemo 1 estate. Price on request. +251 91 120 5011 · https://www.tracontrading.com/filedside.html"
+                },
+                "amenities": [
+                  "parking",
+                  "elevator",
+                  "security",
+                  "power-backup",
+                  "water",
+                  "garden"
+                ]
+              },
+              {
+                "unitLabel": "FS-4BR",
+                "floor": 0,
+                "bedrooms": 4,
+                "bathrooms": 3,
+                "floorAreaSqm": 180,
+                "price": 1,
+                "currency": "ETB",
+                "listingType": "OFF_PLAN",
+                "status": "available",
+                "category": "RESIDENTIAL",
+                "title": {
+                  "en": "Field Side · 4BR (price on request)",
+                  "am": "ፊልድ ሳይድ · 4 መኝታ"
+                },
+                "description": {
+                  "en": "Tracon Field Side under-construction 4BR apartment · Jemo estate amenities. Price on request. +251 91 120 5011",
+                  "am": "Tracon Field Side under-construction 4BR apartment · Jemo estate amenities. Price on request. +251 91 120 5011"
+                },
+                "amenities": [
+                  "parking",
+                  "elevator",
+                  "security",
+                  "power-backup",
+                  "water",
+                  "garden"
+                ]
+              },
+              {
+                "unitLabel": "FS-5BR",
+                "floor": 0,
+                "bedrooms": 5,
+                "bathrooms": 3,
+                "floorAreaSqm": 220,
+                "price": 1,
+                "currency": "ETB",
+                "listingType": "OFF_PLAN",
+                "status": "available",
+                "category": "RESIDENTIAL",
+                "title": {
+                  "en": "Field Side · 5BR (price on request)",
+                  "am": "ፊልድ ሳይድ · 5 መኝታ"
+                },
+                "description": {
+                  "en": "Tracon Field Side under-construction 5BR luxury apartment · Jemo 1. Price on request. +251 91 120 5011",
+                  "am": "Tracon Field Side under-construction 5BR luxury apartment · Jemo 1. Price on request. +251 91 120 5011"
+                },
+                "amenities": [
+                  "parking",
+                  "elevator",
+                  "security",
+                  "power-backup",
+                  "water",
+                  "garden"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "slug": "TRACON-HILL-SIDE",
+      "registrationNumber": "ET-DIR-TRACON-028",
+      "subCityCode": "nifas-silk-lafto",
+      "category": "RESIDENTIAL",
+      "title": {
+        "en": "Tracon Hill Side",
+        "am": "ትራኮን ሂል ሳይድ"
+      },
+      "description": {
+        "en": "Under construction — Tracon’s tallest tower yet: 2 basement + 30 stories beside Hachhalu Hundessa highway, same Jemo compound as Seven Courtyards & Field Side. High-ceiling 3–5BR apartments in four size options. Shared estate amenities (security, water, elevators, parking, park, planned gym/spa). Contact +251 91 120 5011 · https://www.tracontrading.com/hillside.html",
+        "am": "በጀሞ የትራኮን ሂል ሳይድ · 2 ቤዝመንት + 30 ፎቅ · 3–5 መኝታ። +251 91 120 5011"
+      },
+      "addressLine": "Jemo 1 · by Hachhalu Hundessa highway · Tracon estate · Hill Side",
+      "constructionStage": "SUPERSTRUCTURE",
+      "completionPercent": 35,
+      "requiresEscrow": true,
+      "website": "https://www.tracontrading.com/hillside.html",
+      "contactPhone": "+251911205011",
+      "sourceUpdatedAt": "2026-07-19",
+      "coverImageUrl": "https://www.tracontrading.com/img/realestate/888.jpg",
+      "galleryImageUrls": [
+        "https://www.tracontrading.com/img/realestate/888.jpg",
+        "https://www.tracontrading.com/img/realestate/11111.jpg",
+        "https://www.tracontrading.com/img/realestate/Fieldside.png"
+      ],
+      "amenities": [
+        "parking",
+        "elevator",
+        "security",
+        "power-backup",
+        "water"
+      ],
+      "building": {
+        "floors": [
+          {
+            "level": 0,
+            "label": {
+              "en": "Tower unit types",
+              "am": "የታወር ዓይነቶች"
+            },
+            "units": [
+              {
+                "unitLabel": "HS-3BR",
+                "floor": 0,
+                "bedrooms": 3,
+                "bathrooms": 2,
+                "floorAreaSqm": 150,
+                "price": 1,
+                "currency": "ETB",
+                "listingType": "OFF_PLAN",
+                "status": "available",
+                "category": "RESIDENTIAL",
+                "title": {
+                  "en": "Hill Side · 3BR (price on request)",
+                  "am": "ሂል ሳይድ · 3 መኝታ"
+                },
+                "description": {
+                  "en": "Tracon Hill Side 30-storey under-construction 3BR · Jemo. Price on request. +251 91 120 5011 · https://www.tracontrading.com/hillside.html",
+                  "am": "Tracon Hill Side 30-storey under-construction 3BR · Jemo. Price on request. +251 91 120 5011 · https://www.tracontrading.com/hillside.html"
+                },
+                "amenities": [
+                  "parking",
+                  "elevator",
+                  "security",
+                  "power-backup",
+                  "water",
+                  "garden"
+                ]
+              },
+              {
+                "unitLabel": "HS-4BR",
+                "floor": 0,
+                "bedrooms": 4,
+                "bathrooms": 3,
+                "floorAreaSqm": 190,
+                "price": 1,
+                "currency": "ETB",
+                "listingType": "OFF_PLAN",
+                "status": "available",
+                "category": "RESIDENTIAL",
+                "title": {
+                  "en": "Hill Side · 4BR (price on request)",
+                  "am": "ሂል ሳይድ · 4 መኝታ"
+                },
+                "description": {
+                  "en": "Tracon Hill Side 4BR apartment · 2B+G+30. Price on request. +251 91 120 5011",
+                  "am": "Tracon Hill Side 4BR apartment · 2B+G+30. Price on request. +251 91 120 5011"
+                },
+                "amenities": [
+                  "parking",
+                  "elevator",
+                  "security",
+                  "power-backup",
+                  "water",
+                  "garden"
+                ]
+              },
+              {
+                "unitLabel": "HS-5BR",
+                "floor": 0,
+                "bedrooms": 5,
+                "bathrooms": 3,
+                "floorAreaSqm": 230,
+                "price": 1,
+                "currency": "ETB",
+                "listingType": "OFF_PLAN",
+                "status": "available",
+                "category": "RESIDENTIAL",
+                "title": {
+                  "en": "Hill Side · 5BR (price on request)",
+                  "am": "ሂል ሳይድ · 5 መኝታ"
+                },
+                "description": {
+                  "en": "Tracon Hill Side 5BR high-ceiling apartment · four size lines. Price on request. +251 91 120 5011",
+                  "am": "Tracon Hill Side 5BR high-ceiling apartment · four size lines. Price on request. +251 91 120 5011"
+                },
+                "amenities": [
+                  "parking",
+                  "elevator",
+                  "security",
+                  "power-backup",
+                  "water",
+                  "garden"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "slug": "TRACON-SEVEN-COURTYARDS",
+      "registrationNumber": "ET-DIR-TRACON-028",
+      "subCityCode": "nifas-silk-lafto",
+      "category": "RESIDENTIAL",
+      "title": {
+        "en": "Tracon Seven Courtyards",
+        "am": "ትራኮን ሴቨን ኮርትያርድስ"
+      },
+      "description": {
+        "en": "SOLD OUT — first Tracon apartment estate in Jemo (~50,000 sqm). 220 apartments across seven buildings; fully completed 2017; inaugurated Feb 2021 by Mayor Adanech Abiebie. Listed for portfolio completeness. https://www.tracontrading.com/courtyards.html",
+        "am": "ተሽጧል — የትራኮን የመጀመሪያ ጀሞ እስቴት · 220 አፓርታማ በ7 ሕንጻ። 2017 ተጠናቋል።"
+      },
+      "addressLine": "Jemo · Nifas Silk-Lafto · Seven Courtyards",
+      "constructionStage": "FULLY_COMPLETED",
+      "completionPercent": 100,
+      "requiresEscrow": false,
+      "website": "https://www.tracontrading.com/courtyards.html",
+      "contactPhone": "+251911205011",
+      "sourceUpdatedAt": "2026-07-19",
+      "coverImageUrl": "https://www.tracontrading.com/img/realestate/mm2.jpg",
+      "galleryImageUrls": [
+        "https://www.tracontrading.com/img/realestate/mm2.jpg",
+        "https://www.tracontrading.com/img/realestate/Fieldside.png"
+      ],
+      "amenities": [
+        "parking",
+        "elevator",
+        "security",
+        "power-backup",
+        "water",
+        "garden"
+      ],
+      "building": {
+        "floors": [
+          {
+            "level": 0,
+            "label": {
+              "en": "Completed stock (sold out)",
+              "am": "ተጠናቋል (ተሽጧል)"
+            },
+            "units": [
+              {
+                "unitLabel": "SC-APT",
+                "floor": 0,
+                "bedrooms": 3,
+                "bathrooms": 2,
+                "floorAreaSqm": 120,
+                "price": 1,
+                "currency": "ETB",
+                "listingType": "SALE",
+                "status": "available",
+                "category": "RESIDENTIAL",
+                "title": {
+                  "en": "Seven Courtyards · apartment (sold out)",
+                  "am": "ሴቨን ኮርትያርድስ · አፓርታማ (ተሽጧል)"
+                },
+                "description": {
+                  "en": "Tracon Seven Courtyards Jemo — 220 apts in 7 buildings; completed 2017; sold out. Portfolio record. +251 91 120 5011",
+                  "am": "Tracon Seven Courtyards Jemo — 220 apts in 7 buildings; completed 2017; sold out. Portfolio record. +251 91 120 5011"
+                },
+                "amenities": [
+                  "parking",
+                  "elevator",
+                  "security",
+                  "power-backup",
+                  "water",
+                  "garden"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "slug": "TRACON-VILLA-VILLAGE",
+      "registrationNumber": "ET-DIR-TRACON-028",
+      "subCityCode": "nifas-silk-lafto",
+      "category": "RESIDENTIAL",
+      "title": {
+        "en": "Tracon First Villa Village",
+        "am": "ትራኮን የመጀመሪያ ቪላ ቪሌጅ"
+      },
+      "description": {
+        "en": "Completed villa village in Jemo, Addis Ababa — 39 units. Portfolio listing from tracontrading.com/realestate.",
+        "am": "በጀሞ የተጠናቀቀ ቪላ ቪሌጅ · 39 ክፍሎች።"
+      },
+      "addressLine": "Jemo · Addis Ababa · First Villa Village",
+      "constructionStage": "FULLY_COMPLETED",
+      "completionPercent": 100,
+      "requiresEscrow": false,
+      "website": "https://www.tracontrading.com/realestate",
+      "contactPhone": "+251911205011",
+      "sourceUpdatedAt": "2026-07-19",
+      "coverImageUrl": "https://www.tracontrading.com/img/realestate/11111.jpg",
+      "galleryImageUrls": [
+        "https://www.tracontrading.com/img/realestate/11111.jpg"
+      ],
+      "amenities": [
+        "parking",
+        "security",
+        "garden"
+      ],
+      "building": {
+        "floors": [
+          {
+            "level": 0,
+            "label": {
+              "en": "Villas",
+              "am": "ቪላዎች"
+            },
+            "units": [
+              {
+                "unitLabel": "VV-VILLA",
+                "floor": 0,
+                "bedrooms": 4,
+                "bathrooms": 3,
+                "floorAreaSqm": 250,
+                "price": 1,
+                "currency": "ETB",
+                "listingType": "SALE",
+                "status": "available",
+                "category": "RESIDENTIAL",
+                "title": {
+                  "en": "Villa Village · villa (price on request)",
+                  "am": "ቪላ ቪሌጅ · ቪላ"
+                },
+                "description": {
+                  "en": "Tracon First Villa Village · Jemo · 39 units. Price on request. +251 91 120 5011",
+                  "am": "Tracon First Villa Village · Jemo · 39 units. Price on request. +251 91 120 5011"
+                },
+                "amenities": [
+                  "parking",
+                  "elevator",
+                  "security",
+                  "power-backup",
+                  "water",
+                  "garden"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "slug": "TRACON-LEYLA-BUILDING",
+      "registrationNumber": "ET-DIR-TRACON-028",
+      "subCityCode": "addis-ketema",
+      "category": "COMMERCIAL",
+      "title": {
+        "en": "Tracon Leyla Building",
+        "am": "ትራኮን ለይላ ሕንጻ"
+      },
+      "description": {
+        "en": "Leyla Building in Merkato, Addis Ababa — basement + 7 floors commercial. Portfolio listing.",
+        "am": "በመርካቶ የለይላ ሕንጻ · ቤዝመንት + 7 ፎቅ።"
+      },
+      "addressLine": "Merkato · Addis Ketema · Leyla Building",
+      "constructionStage": "FULLY_COMPLETED",
+      "completionPercent": 100,
+      "requiresEscrow": false,
+      "website": "https://www.tracontrading.com/realestate",
+      "contactPhone": "+251911205011",
+      "sourceUpdatedAt": "2026-07-19",
+      "coverImageUrl": "https://www.tracontrading.com/img/realestate/ley.jpg",
+      "galleryImageUrls": [
+        "https://www.tracontrading.com/img/realestate/ley.jpg"
+      ],
+      "amenities": [
+        "parking",
+        "elevator",
+        "security"
+      ],
+      "building": {
+        "floors": [
+          {
+            "level": 0,
+            "label": {
+              "en": "Commercial floors",
+              "am": "የንግድ ፎቆች"
+            },
+            "units": [
+              {
+                "unitLabel": "LEY-FLOOR",
+                "floor": 0,
+                "bedrooms": 0,
+                "bathrooms": 1,
+                "floorAreaSqm": 80,
+                "price": 1,
+                "currency": "ETB",
+                "listingType": "SALE",
+                "status": "available",
+                "category": "COMMERCIAL",
+                "title": {
+                  "en": "Leyla Building · commercial floor (price on request)",
+                  "am": "ለይላ · የንግድ ፎቅ"
+                },
+                "description": {
+                  "en": "Tracon Leyla Building Merkato · B+7 commercial. Price on request. +251 91 120 5011",
+                  "am": "Tracon Leyla Building Merkato · B+7 commercial. Price on request. +251 91 120 5011"
+                },
+                "amenities": [
+                  "parking",
+                  "elevator",
+                  "security",
+                  "power-backup",
+                  "water",
+                  "garden"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "slug": "TRACON-TOWER",
+      "registrationNumber": "ET-DIR-TRACON-028",
+      "subCityCode": "arada",
+      "category": "COMMERCIAL",
+      "title": {
+        "en": "Tracon Tower",
+        "am": "ትራኮን ታወር"
+      },
+      "description": {
+        "en": "Tracon Tower at Tikur Ambessa, Addis Ababa — 2 basement + G+13 high-rise. Portfolio listing.",
+        "am": "በጥቁር አንበሳ የትራኮን ታወር · 2 ቤዝመንት + G+13።"
+      },
+      "addressLine": "Tikur Ambessa · Addis Ababa · Tracon Tower",
+      "constructionStage": "FULLY_COMPLETED",
+      "completionPercent": 100,
+      "requiresEscrow": false,
+      "website": "https://www.tracontrading.com/realestate",
+      "contactPhone": "+251911205011",
+      "sourceUpdatedAt": "2026-07-19",
+      "coverImageUrl": "https://www.tracontrading.com/img/realestate/tt.jpg",
+      "galleryImageUrls": [
+        "https://www.tracontrading.com/img/realestate/tt.jpg"
+      ],
+      "amenities": [
+        "parking",
+        "elevator",
+        "security"
+      ],
+      "building": {
+        "floors": [
+          {
+            "level": 0,
+            "label": {
+              "en": "Office / mixed floors",
+              "am": "ቢሮ / ሚክስድ"
+            },
+            "units": [
+              {
+                "unitLabel": "TT-FLOOR",
+                "floor": 0,
+                "bedrooms": 0,
+                "bathrooms": 1,
+                "floorAreaSqm": 100,
+                "price": 1,
+                "currency": "ETB",
+                "listingType": "SALE",
+                "status": "available",
+                "category": "COMMERCIAL",
+                "title": {
+                  "en": "Tracon Tower · floor plate (price on request)",
+                  "am": "ትራኮን ታወር · ፎቅ"
+                },
+                "description": {
+                  "en": "Tracon Tower Tikur Ambessa · 2B+G+13. Price on request. +251 91 120 5011",
+                  "am": "Tracon Tower Tikur Ambessa · 2B+G+13. Price on request. +251 91 120 5011"
+                },
+                "amenities": [
+                  "parking",
+                  "elevator",
+                  "security",
+                  "power-backup",
+                  "water",
+                  "garden"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "slug": "TRACON-OLD-AIRPORT",
+      "registrationNumber": "ET-DIR-TRACON-028",
+      "subCityCode": "kirkos",
+      "category": "RESIDENTIAL",
+      "title": {
+        "en": "Tracon Old Airport (Coming Soon)",
+        "am": "ትራኮን ኦልድ ኤርፖርት (በቅርብ)"
+      },
+      "description": {
+        "en": "Coming soon — Tracon project at Old Airport, Addis Ababa. Details TBA. +251 91 120 5011 · https://www.tracontrading.com/realestate",
+        "am": "በቅርብ — በኦልድ ኤርፖርት የትራኮን ፕሮጀክት።"
+      },
+      "addressLine": "Old Airport · Addis Ababa",
+      "constructionStage": "EARTHWORKS_FOUNDATION",
+      "completionPercent": 5,
+      "requiresEscrow": true,
+      "website": "https://www.tracontrading.com/realestate",
+      "contactPhone": "+251911205011",
+      "sourceUpdatedAt": "2026-07-19",
+      "coverImageUrl": "https://www.tracontrading.com/img/realestate/11111.jpg",
+      "galleryImageUrls": [
+        "https://www.tracontrading.com/img/realestate/11111.jpg"
+      ],
+      "amenities": [
+        "parking",
+        "security"
+      ],
+      "building": {
+        "floors": [
+          {
+            "level": 0,
+            "label": {
+              "en": "Coming soon",
+              "am": "በቅርብ"
+            },
+            "units": [
+              {
+                "unitLabel": "OA-TBA",
+                "floor": 0,
+                "bedrooms": 3,
+                "bathrooms": 2,
+                "floorAreaSqm": 120,
+                "price": 1,
+                "currency": "ETB",
+                "listingType": "OFF_PLAN",
+                "status": "available",
+                "category": "RESIDENTIAL",
+                "title": {
+                  "en": "Old Airport · unit TBA (coming soon)",
+                  "am": "ኦልድ ኤርፖርት · በቅርብ"
+                },
+                "description": {
+                  "en": "Tracon Old Airport coming soon. Register interest +251 91 120 5011",
+                  "am": "Tracon Old Airport coming soon. Register interest +251 91 120 5011"
+                },
+                "amenities": [
+                  "parking",
+                  "elevator",
+                  "security",
+                  "power-backup",
+                  "water",
+                  "garden"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "slug": "TRACON-CMC",
+      "registrationNumber": "ET-DIR-TRACON-028",
+      "subCityCode": "yeka",
+      "category": "RESIDENTIAL",
+      "title": {
+        "en": "Tracon CMC (Coming Soon)",
+        "am": "ትራኮን CMC (በቅርብ)"
+      },
+      "description": {
+        "en": "Coming soon — Tracon project at CMC behind Gast Mall, Addis Ababa. Details TBA. +251 91 120 5011 · https://www.tracontrading.com/realestate",
+        "am": "በቅርብ — በCMC ከGast Mall በስተጀርባ የትራኮን ፕሮጀክት።"
+      },
+      "addressLine": "CMC · behind Gast Mall · Yeka",
+      "constructionStage": "EARTHWORKS_FOUNDATION",
+      "completionPercent": 5,
+      "requiresEscrow": true,
+      "website": "https://www.tracontrading.com/realestate",
+      "contactPhone": "+251911205011",
+      "sourceUpdatedAt": "2026-07-19",
+      "coverImageUrl": "https://www.tracontrading.com/img/realestate/11111.jpg",
+      "galleryImageUrls": [
+        "https://www.tracontrading.com/img/realestate/11111.jpg"
+      ],
+      "amenities": [
+        "parking",
+        "security"
+      ],
+      "building": {
+        "floors": [
+          {
+            "level": 0,
+            "label": {
+              "en": "Coming soon",
+              "am": "በቅርብ"
+            },
+            "units": [
+              {
+                "unitLabel": "CMC-TBA",
+                "floor": 0,
+                "bedrooms": 3,
+                "bathrooms": 2,
+                "floorAreaSqm": 120,
+                "price": 1,
+                "currency": "ETB",
+                "listingType": "OFF_PLAN",
+                "status": "available",
+                "category": "RESIDENTIAL",
+                "title": {
+                  "en": "CMC · unit TBA (coming soon)",
+                  "am": "CMC · በቅርብ"
+                },
+                "description": {
+                  "en": "Tracon CMC (behind Gast Mall) coming soon. +251 91 120 5011",
+                  "am": "Tracon CMC (behind Gast Mall) coming soon. +251 91 120 5011"
+                },
+                "amenities": [
+                  "parking",
+                  "elevator",
+                  "security",
+                  "power-backup",
+                  "water",
+                  "garden"
                 ]
               }
             ]

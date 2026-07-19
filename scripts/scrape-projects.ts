@@ -77,6 +77,7 @@ type CuratedProject = {
   requiresEscrow?: boolean;
   website?: string | null;
   telegram?: string | null;
+  contactPhone?: string | null;
   sourceUpdatedAt: string;
   coverImageUrl?: string | null;
   galleryImageUrls?: string[];
@@ -434,6 +435,13 @@ async function upsertProject(
       ...amenityFlags,
       publishedAt: null,
       lastRefreshDate: publishedAt,
+      ...(rec.contactPhone
+        ? {
+            contactPhone: rec.contactPhone,
+            contactName: rec.title.en.split("·")[0]?.trim() || "Developer",
+            sourceUrl: rec.website ?? null,
+          }
+        : {}),
     };
 
     if (existingListing) {

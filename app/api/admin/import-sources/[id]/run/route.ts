@@ -2,12 +2,13 @@ import { NextRequest, NextResponse } from "next/server";
 import { getCurrentAdmin } from "@/lib/auth/admin";
 import { prisma } from "@/lib/db/prisma";
 import { runImportSource } from "@/lib/imports/run-import";
+import { resolveAutoSendFlag } from "@/lib/imports/scrape-invite";
 
 export const runtime = "nodejs";
 export const maxDuration = 60;
 
 export async function POST(
-  _request: NextRequest,
+  request: NextRequest,
   context: { params: Promise<{ id: string }> },
 ) {
   const admin = await getCurrentAdmin();
@@ -36,12 +37,28 @@ export async function POST(
     );
   }
 
+  let body: Record<string, unknown> = {};
+  try {
+    const raw = await request.json();
+    if (raw && typeof raw === "object" && !Array.isArray(raw)) {
+      body = raw as Record<string, unknown>;
+    }
+  } catch {
+    body = {};
+  }
+
+  const autoSend = resolveAutoSendFlag({
+    searchParams: request.nextUrl.searchParams,
+    body,
+  });
+
   try {
     const run = await runImportSource({
       sourceId: id,
       adminUserId: admin.id,
+      autoSend,
     });
-    return NextResponse.json({ data: run });
+    return NextResponse.json({ data: run, autoSend });
   } catch (error) {
     const message =
       error instanceof Error ? error.message : "Scrape run failed";

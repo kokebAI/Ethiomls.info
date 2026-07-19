@@ -1,0 +1,80 @@
+import type { Metadata } from "next";
+import { NotificationStatus } from "@prisma/client";
+import { redirect } from "next/navigation";
+import {
+  ScrapeReviewQueue,
+  type ScrapeReviewItem,
+} from "@/components/admin/ScrapeReviewQueue";
+import { PageIntro } from "@/components/PageIntro";
+import { getCurrentAdmin } from "@/lib/auth/admin";
+import { prisma } from "@/lib/db/prisma";
+import { buildScrapeInviteMessage } from "@/lib/imports/scrape-invite";
+import { isLocale, type Locale } from "@/lib/i18n/config";
+import { getDictionary } from "@/lib/i18n/getDictionary";
+
+export const dynamic = "force-dynamic";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale: raw } = await params;
+  const locale = (isLocale(raw) ? raw : "am") as Locale;
+  const dictionary = getDictionary(locale);
+  return { title: dictionary.scrapeReview.title };
+}
+
+export default async function AdminScrapeReviewPage({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale: raw } = await params;
+  const locale = (isLocale(raw) ? raw : "am") as Locale;
+  const dictionary = getDictionary(locale);
+  const admin = await getCurrentAdmin();
+
+  if (!admin) {
+    redirect(`/${locale}/login`);
+  }
+
+  const pending = await prisma.listing.findMany({
+    where: { notificationStatus: NotificationStatus.PENDING_REVIEW },
+    orderBy: { createdAt: "desc" },
+    take: 100,
+    include: {
+      importSource: { select: { label: true } },
+    },
+  });
+
+  const items: ScrapeReviewItem[] = pending.map((listing) => ({
+    id: listing.id,
+    scrapedRawText: listing.scrapedRawText,
+    titleEn: listing.titleEn,
+    titleAm: listing.titleAm,
+    descriptionEn: listing.descriptionEn,
+    descriptionAm: listing.descriptionAm,
+    contactPhone: listing.contactPhone,
+    priceAmount: listing.priceAmount.toString(),
+    priceCurrency: listing.priceCurrency,
+    listingType: listing.listingType,
+    bedrooms: listing.bedrooms,
+    addressLine: listing.addressLine,
+    sourceUrl: listing.sourceUrl,
+    messagePreview: buildScrapeInviteMessage(listing),
+    importSourceLabel: listing.importSource?.label ?? null,
+    createdAt: listing.createdAt.toISOString(),
+  }));
+
+  return (
+    <div className="mx-auto flex max-w-6xl flex-col gap-6">
+      <PageIntro
+        eyebrow={dictionary.scrapeReview.eyebrow}
+        title={dictionary.scrapeReview.title}
+        lede={dictionary.scrapeReview.lede}
+      />
+      <ScrapeReviewQueue initialItems={items} />
+    </div>
+  );
+}

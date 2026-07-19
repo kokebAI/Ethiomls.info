@@ -9,12 +9,15 @@ import {
 export type AdminWorkspaceCopy = {
   snapshotTitle: string;
   snapshotPending: string;
+  snapshotPendingProjects?: string;
   snapshotAlerts: string;
   snapshotReady: string;
   addListing: string;
   addListingHint: string;
   pendingTitle: string;
   pendingEmpty: string;
+  pendingProjectsTitle?: string;
+  pendingProjectsEmpty?: string;
   draftsTitle: string;
   draftsEmpty: string;
   readyTitle: string;
@@ -42,9 +45,11 @@ export type AdminWorkspaceProps = {
   locale: string;
   copy: AdminWorkspaceCopy;
   pendingCount: number;
+  pendingProjectCount?: number;
   unreadAlertCount: number;
   readyCount: number;
   pendingItems: AdminPendingDirectoryItem[];
+  pendingProjectItems?: DirectoryItem[];
   draftItems: DirectoryItem[];
   readyItems: DirectoryItem[];
   alerts: AdminAlertItem[];
@@ -65,9 +70,11 @@ export function AdminWorkspaceView({
   locale,
   copy,
   pendingCount,
+  pendingProjectCount = 0,
   unreadAlertCount,
   readyCount,
   pendingItems,
+  pendingProjectItems = [],
   draftItems,
   readyItems,
   alerts,
@@ -118,6 +125,15 @@ export function AdminWorkspaceView({
             </span>
           </li>
           <li className="flex items-start gap-3 text-sm text-ink">
+            <StatusDot ok={pendingProjectCount === 0} />
+            <span>
+              {(
+                copy.snapshotPendingProjects ??
+                "{count} project(s) awaiting audit"
+              ).replace("{count}", String(pendingProjectCount))}
+            </span>
+          </li>
+          <li className="flex items-start gap-3 text-sm text-ink">
             <StatusDot ok={unreadAlertCount === 0} />
             <span>
               {copy.snapshotAlerts.replace(
@@ -136,6 +152,26 @@ export function AdminWorkspaceView({
       </section>
 
       <AdminPendingQueue items={pendingItems} copy={pendingQueueCopy} />
+
+      <section
+        id="admin-pending-projects"
+        className="space-y-4 scroll-mt-28"
+        aria-labelledby="admin-pending-projects-heading"
+      >
+        <h2
+          id="admin-pending-projects-heading"
+          className="text-lg font-semibold tracking-tight text-slate-deep"
+        >
+          {copy.pendingProjectsTitle ?? "Projects awaiting audit"}
+        </h2>
+        <PageDirectory
+          items={pendingProjectItems}
+          emptyMessage={
+            copy.pendingProjectsEmpty ?? "No projects waiting for audit."
+          }
+          layout="grid"
+        />
+      </section>
 
       <section
         id="admin-drafts"

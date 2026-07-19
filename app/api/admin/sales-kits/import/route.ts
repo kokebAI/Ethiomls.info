@@ -101,7 +101,7 @@ export async function POST(request: Request) {
         ...result,
       },
       message: created
-        ? `Created account for ${account.label} and imported ${result.created} listings (pending review). They sign in via Forgot password on ${account.phone ?? "their phone"}.`
+        ? `Created account for ${account.label} and imported ${result.created} listings (pending review). They sign in via Reset password on ${account.phone ?? "their phone"}.`
         : `Imported ${result.created} listings for ${account.label} (pending review).`,
     });
   } catch (error) {

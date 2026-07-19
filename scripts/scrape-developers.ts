@@ -76,6 +76,7 @@ type CuratedDeveloper = {
   tin?: string | null;
   email?: string | null;
   fullName?: string | null;
+  phone?: string | null;
 };
 
 type CuratedFile = {
@@ -93,6 +94,7 @@ type ImportRecord = {
   tin: string | null;
   email: string;
   fullName: string;
+  phone: string | null;
   source: string;
 };
 
@@ -214,6 +216,7 @@ async function loadCurated(filePath: string): Promise<ImportRecord[]> {
       tin: d.tin?.trim() || null,
       email: d.email?.trim() || emailForRegistration(registrationNumber),
       fullName: d.fullName?.trim() || `${tradeName} Admin`,
+      phone: d.phone?.trim() || null,
       source: parsed.source || "curated-public-directory",
     };
   });
@@ -296,6 +299,7 @@ LIMIT 80
       tin: null,
       email: emailForRegistration(registrationNumber),
       fullName: `${label} Admin`,
+      phone: null,
       source: "wikidata",
     });
   }
@@ -376,6 +380,19 @@ async function upsertDeveloper(
       localePrefs: ["am", "en"],
     },
   });
+
+  if (rec.phone) {
+    const phoneTaken = await prisma.user.findFirst({
+      where: { phone: rec.phone, NOT: { id: user.id } },
+      select: { id: true },
+    });
+    if (!phoneTaken) {
+      await prisma.user.update({
+        where: { id: user.id },
+        data: { phone: rec.phone },
+      });
+    }
+  }
 
   // If registration exists but is tied to a different user email, keep the profile
   // linked to its original user and only refresh directory fields.
