@@ -11,6 +11,7 @@
     "developers": "ገንቢዎች",
     "dashboard": "ዳሽቦርድ",
     "imports": "አስመጣ",
+    "scrapeReview": "የስክራፕ ግምገማ",
     "profile": "መገለጫ",
     "forYou": "ለእርስዎ",
     "roles": "ሚናዎች",
@@ -435,6 +436,34 @@
     "runFailed": "መሰብሰብ አልተሳካም።",
     "runDone": "ተጠናቋል — አዲስ {created}፣ የተሻሻለ {updated}፣ የተዘለለ {skipped}።"
   },
+  "scrapeReview": {
+    "eyebrow": "አስተዳዳሪ",
+    "title": "የስክራፕ ግብዣ ግምገማ",
+    "lede": "ከHaHu SMS በፊት የተሰበሰቡ ዝርዝሮችን ያፀድቁ። ግራ፡ ድፍን ጽሑፍ። ቀኝ፡ የGemini መስኮች እና የአማርኛ መልእክት ቅድመ-እይታ።",
+    "empty": "ለግብዣ ማጽደቅ የሚጠባበቅ ስክራፕ የለም።",
+    "backToImports": "ወደ ማስመጫ ምንጮች ተመለስ",
+    "queueCount": "{count} በመጠባበቅ ላይ",
+    "rawLabel": "ድፍን የተሰበሰበ ጽሑፍ",
+    "structuredLabel": "የተዋቀሩ መስኮች",
+    "titleEn": "ርዕስ (EN)",
+    "titleAm": "ርዕስ (አማ)",
+    "price": "ዋጋ",
+    "phone": "ስልክ",
+    "details": "ዝርዝር",
+    "beds": "መኝታ",
+    "messagePreview": "የአማርኛ HaHu ቅድመ-እይታ",
+    "editSend": "አርትዕ እና ላክ",
+    "discard": "አስወግድ",
+    "sendDone": "ግብዣ ለ {id} ተልኳል።",
+    "sendFailed": "ግብዣ መላክ አልተሳካም።",
+    "discardDone": "{id} ተወግዷል።",
+    "discardFailed": "ማስወገድ አልተሳካም።",
+    "openListing": "ዝርዝር ክፈት",
+    "sourceLink": "ምንጭ",
+    "unknownSource": "በእጅ / ያልታወቀ ምንጭ",
+    "noRaw": "(ድፍን ጽሑፍ የለም)",
+    "priceOnRequest": "በጥያቄ"
+  },
   "salesKit": {
     "title": "የሽያጭ ፋይል → ሚና መለያ",
     "lede": "የገንቢ/ብሮከር PDF ወይም DOCX ይጫኑ። ዝርዝሮችን ያውጡ እና ከነባር መለያ ጋር ያገናኙ ወይም በስልክ አዲስ መለያ ይፍጠሩ (Forgot password በመጠቀም ይግቡ)።",
@@ -528,6 +557,7 @@
         "workspace": "የስራ ቦታ ክፈት",
         "addListing": "ዝርዝር ጨምር",
         "imports": "የማስመጫ ምንጮች",
+        "scrapeReview": "የስክራፕ ግብዣ ግምገማ",
         "dashboard": "የዳሽቦርድ መለኪያዎች",
         "profile": "መገለጫዎ"
       }
@@ -691,7 +721,24 @@
       "loadFailed": "መለያዎችን መጫን አልተቻለም።",
       "roleDeveloper": "ገንቢ",
       "roleBroker": "ደላላ",
-      "roleOwner": "ባለቤት"
+      "roleOwner": "ባለቤት",
+      "deactivateTitle": "ገንቢን አቦዝን",
+      "deactivateLede": "መግቢያቸውን ያጠፋል እና ይህን ዝርዝር ወደ ረቂቅ ያዛውራል። ምክንያት ይምረጡ።",
+      "deactivateReasonLabel": "ምክንያት",
+      "deactivateCta": "አቦዝን እና ወደ ረቂቅ",
+      "deactivating": "በማቦዘን ላይ…",
+      "deactivated": "ገንቢ ታቦዝኗል እና ዝርዝሩ ወደ ረቂቅ ተዛውሯል።",
+      "deactivateFailed": "ገንቢን ማቦዘን አልተቻለም",
+      "deactivateNeedReason": "መጀመሪያ ከዝርዝሩ ምክንያት ይምረጡ።",
+      "deactivateNoDeveloper": "ከዚህ ዝርዝር ጋር የተገናኘ ገንቢ የለም።",
+      "reasons": {
+        "FRAUDULENT_PROFILE": "የሐሰት ወይም የማጭበርበር የገንቢ መገለጫ",
+        "UNLICENSED_OR_UNAUTHORIZED": "ያልተፈቀደ ወይም ፈቃድ የሌለው",
+        "REPEATED_NONCOMPLIANT_LISTINGS": "ተደጋጋሚ ያልተሟሉ ወይም ያልተከበሩ ዝርዝሮች",
+        "DUPLICATE_ACCOUNT": "ድጋሚ የገንቢ መለያ",
+        "OWNER_REQUESTED_REMOVAL": "ገንቢ መለያ መሰረዝ ጠይቋል",
+        "POLICY_VIOLATION": "ሌላ የEthioMLS ፖሊሲ ጥሰት"
+      }
     },
     "enrich": {
       "title": "የሚጠባበቅ ዝርዝር አበልጽግ",

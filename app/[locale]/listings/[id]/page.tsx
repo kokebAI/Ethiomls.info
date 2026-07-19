@@ -289,6 +289,7 @@ export default async function ListingDetailPage({
             ownerRole: listing.owner?.role ?? "",
             ownerPhone: listing.owner?.phone ?? null,
             developerTradeName: listing.developer?.tradeName ?? null,
+            developerUserId: listing.developer?.userId ?? null,
             delalaDisplayName:
               listing.delala?.displayName &&
               typeof listing.delala.displayName === "object" &&
@@ -349,6 +350,16 @@ export default async function ListingDetailPage({
               roleDeveloper: auditCopy.attach?.roleDeveloper ?? "Developer",
               roleBroker: auditCopy.attach?.roleBroker ?? "Broker",
               roleOwner: auditCopy.attach?.roleOwner ?? "Owner",
+              deactivateTitle: auditCopy.attach?.deactivateTitle,
+              deactivateLede: auditCopy.attach?.deactivateLede,
+              deactivateReasonLabel: auditCopy.attach?.deactivateReasonLabel,
+              deactivateCta: auditCopy.attach?.deactivateCta,
+              deactivating: auditCopy.attach?.deactivating,
+              deactivated: auditCopy.attach?.deactivated,
+              deactivateFailed: auditCopy.attach?.deactivateFailed,
+              deactivateNeedReason: auditCopy.attach?.deactivateNeedReason,
+              deactivateNoDeveloper: auditCopy.attach?.deactivateNoDeveloper,
+              reasons: auditCopy.attach?.reasons,
             },
           }}
         />

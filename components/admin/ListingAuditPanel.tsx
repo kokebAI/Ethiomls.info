@@ -43,6 +43,44 @@ export type ListingAuditAttachCopy = {
   roleDeveloper: string;
   roleBroker: string;
   roleOwner: string;
+  deactivateTitle?: string;
+  deactivateLede?: string;
+  deactivateReasonLabel?: string;
+  deactivateCta?: string;
+  deactivating?: string;
+  deactivated?: string;
+  deactivateFailed?: string;
+  deactivateNeedReason?: string;
+  deactivateNoDeveloper?: string;
+  reasons?: {
+    FRAUDULENT_PROFILE?: string;
+    UNLICENSED_OR_UNAUTHORIZED?: string;
+    REPEATED_NONCOMPLIANT_LISTINGS?: string;
+    DUPLICATE_ACCOUNT?: string;
+    OWNER_REQUESTED_REMOVAL?: string;
+    POLICY_VIOLATION?: string;
+  };
+};
+
+const DEACTIVATE_REASON_KEYS = [
+  "FRAUDULENT_PROFILE",
+  "UNLICENSED_OR_UNAUTHORIZED",
+  "REPEATED_NONCOMPLIANT_LISTINGS",
+  "DUPLICATE_ACCOUNT",
+  "OWNER_REQUESTED_REMOVAL",
+  "POLICY_VIOLATION",
+] as const;
+
+type DeactivateReason = (typeof DEACTIVATE_REASON_KEYS)[number];
+
+const DEACTIVATE_REASON_FALLBACKS: Record<DeactivateReason, string> = {
+  FRAUDULENT_PROFILE: "Fraudulent or fake developer profile",
+  UNLICENSED_OR_UNAUTHORIZED: "Unlicensed or unauthorized to list",
+  REPEATED_NONCOMPLIANT_LISTINGS:
+    "Repeated incomplete or non-compliant listings",
+  DUPLICATE_ACCOUNT: "Duplicate developer account",
+  OWNER_REQUESTED_REMOVAL: "Developer requested account removal",
+  POLICY_VIOLATION: "Other EthioMLS policy violation",
 };
 
 export type ListingAuditPanelCopy = {
@@ -79,6 +117,8 @@ export type ListingAttachmentSummary = {
   ownerPhone: string | null;
   developerTradeName: string | null;
   delalaDisplayName: string | null;
+  /** User id of the linked corporate developer (if any). */
+  developerUserId?: string | null;
 };
 
 type RoleAccountOption = {
@@ -145,7 +185,7 @@ export function ListingAuditPanel({
   );
   const [notes, setNotes] = useState("");
   const [busy, setBusy] = useState<
-    "approve" | "reject" | "publish" | "attach" | null
+    "approve" | "reject" | "publish" | "attach" | "deactivate" | null
   >(null);
   const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(
@@ -158,6 +198,9 @@ export function ListingAuditPanel({
   const [accounts, setAccounts] = useState<RoleAccountOption[]>([]);
   const [selectedUserId, setSelectedUserId] = useState("");
   const [accountsError, setAccountsError] = useState<string | null>(null);
+  const [deactivateReason, setDeactivateReason] = useState<DeactivateReason | "">(
+    "",
+  );
 
   useEffect(() => {
     setAttachment(initialAttachment);
@@ -216,6 +259,11 @@ export function ListingAuditPanel({
   const notesReadyForApprove = notes.trim().length >= 10;
   const isPublished = status === "PUBLISHED";
   const canPublish = approved && status === "PENDING_REVIEW";
+  const canDeactivateDeveloper = Boolean(
+    attachment.developerUserId ||
+      attachment.developerTradeName ||
+      attachment.ownerRole === "CORPORATE_DEVELOPER",
+  );
 
   function setAllChecks(value: boolean) {
     setChecks(
@@ -224,6 +272,75 @@ export function ListingAuditPanel({
         boolean
       >,
     );
+  }
+
+  async function deactivateDeveloper() {
+    if (!canDeactivateDeveloper) {
+      setError(
+        copy.attach.deactivateNoDeveloper ??
+          "No developer is attached to this listing.",
+      );
+      return;
+    }
+    if (!deactivateReason) {
+      setError(
+        copy.attach.deactivateNeedReason ??
+          "Choose a reason before deactivating the developer.",
+      );
+      return;
+    }
+    setBusy("deactivate");
+    setError(null);
+    setMessage(null);
+    try {
+      const res = await fetch(
+        `/api/listings/${listingId}/deactivate-developer`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            reason: deactivateReason,
+            ...(attachment.developerUserId
+              ? { userId: attachment.developerUserId }
+              : attachment.ownerRole === "CORPORATE_DEVELOPER"
+                ? { userId: attachment.ownerId }
+                : {}),
+          }),
+        },
+      );
+      const data = (await res.json().catch(() => ({}))) as {
+        message?: string;
+        data?: { status?: string };
+      };
+      if (!res.ok) {
+        throw new Error(
+          data.message ??
+            copy.attach.deactivateFailed ??
+            "Could not deactivate developer",
+        );
+      }
+      setApproved(false);
+      setStatus(data.data?.status ?? "DRAFT");
+      setAttachment((prev) => ({
+        ...prev,
+        developerTradeName: null,
+        developerUserId: null,
+      }));
+      setDeactivateReason("");
+      setMessage(
+        copy.attach.deactivated ??
+          "Developer deactivated and listing moved to draft.",
+      );
+      router.refresh();
+    } catch (err) {
+      setError(
+        err instanceof Error
+          ? err.message
+          : (copy.attach.deactivateFailed ?? "Could not deactivate developer"),
+      );
+    } finally {
+      setBusy(null);
+    }
   }
 
   async function attachAccount() {
@@ -435,6 +552,55 @@ export function ListingAuditPanel({
             </button>
           </div>
         )}
+
+        {canDeactivateDeveloper ? (
+          <div className="mt-4 rounded-xl border border-rose-200 bg-rose-50/70 p-3">
+            <h4 className="text-sm font-semibold text-rose-900">
+              {copy.attach.deactivateTitle ?? "Deactivate developer"}
+            </h4>
+            <p className="mt-1 text-xs leading-relaxed text-rose-800/90">
+              {copy.attach.deactivateLede ??
+                "Turns off their login and moves this listing to draft."}
+            </p>
+            <div className="mt-3 flex flex-col gap-2 sm:flex-row sm:items-end">
+              <label className="grid min-w-0 flex-1 gap-1.5">
+                <span className="text-sm font-medium text-rose-900">
+                  {copy.attach.deactivateReasonLabel ?? "Reason"}
+                </span>
+                <select
+                  value={deactivateReason}
+                  onChange={(event) =>
+                    setDeactivateReason(
+                      event.target.value as DeactivateReason | "",
+                    )
+                  }
+                  className="rounded-xl border border-rose-200 bg-white px-3 py-2.5 text-sm text-slate-900 outline-none focus:border-rose-400 focus:ring-2 focus:ring-rose-400/20"
+                >
+                  <option value="">—</option>
+                  {DEACTIVATE_REASON_KEYS.map((key) => (
+                    <option key={key} value={key}>
+                      {copy.attach.reasons?.[key] ??
+                        DEACTIVATE_REASON_FALLBACKS[key]}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <button
+                type="button"
+                disabled={Boolean(busy) || !deactivateReason}
+                onClick={() => void deactivateDeveloper()}
+                className="inline-flex items-center justify-center gap-2 rounded-full bg-rose-700 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-rose-800 disabled:opacity-50"
+              >
+                {busy === "deactivate" ? (
+                  <LoaderCircle className="h-4 w-4 animate-spin" />
+                ) : null}
+                {busy === "deactivate"
+                  ? (copy.attach.deactivating ?? "Deactivating…")
+                  : (copy.attach.deactivateCta ?? "Deactivate & draft listing")}
+              </button>
+            </div>
+          </div>
+        ) : null}
       </div>
 
       <div className="mt-5 grid gap-4 lg:grid-cols-3 lg:items-start">

@@ -11,6 +11,7 @@
     "developers": "Developers",
     "dashboard": "Dashboard",
     "imports": "Imports",
+    "scrapeReview": "Scrape review",
     "profile": "Profile",
     "forYou": "For you",
     "roles": "Roles",
@@ -322,6 +323,7 @@
         "workspace": "Open workspace",
         "addListing": "Add listing",
         "imports": "Import sources",
+        "scrapeReview": "Scrape invite review",
         "dashboard": "Dashboard metrics",
         "profile": "Your profile"
       }
@@ -485,7 +487,24 @@
       "loadFailed": "Could not load role accounts.",
       "roleDeveloper": "Developer",
       "roleBroker": "Broker",
-      "roleOwner": "Owner"
+      "roleOwner": "Owner",
+      "deactivateTitle": "Deactivate developer",
+      "deactivateLede": "Turns off their login and moves this listing to draft. Choose a reason.",
+      "deactivateReasonLabel": "Reason",
+      "deactivateCta": "Deactivate & draft listing",
+      "deactivating": "Deactivating…",
+      "deactivated": "Developer deactivated and listing moved to draft.",
+      "deactivateFailed": "Could not deactivate developer",
+      "deactivateNeedReason": "Choose a reason from the dropdown first.",
+      "deactivateNoDeveloper": "No developer is attached to this listing.",
+      "reasons": {
+        "FRAUDULENT_PROFILE": "Fraudulent or fake developer profile",
+        "UNLICENSED_OR_UNAUTHORIZED": "Unlicensed or unauthorized to list",
+        "REPEATED_NONCOMPLIANT_LISTINGS": "Repeated incomplete or non-compliant listings",
+        "DUPLICATE_ACCOUNT": "Duplicate developer account",
+        "OWNER_REQUESTED_REMOVAL": "Developer requested account removal",
+        "POLICY_VIOLATION": "Other EthioMLS policy violation"
+      }
     },
     "enrich": {
       "title": "Enrich pending listing",
@@ -613,6 +632,34 @@
     "loadFailed": "Could not load sources.",
     "runFailed": "Scrape failed.",
     "runDone": "Scrape finished — created {created}, updated {updated}, skipped {skipped}."
+  },
+  "scrapeReview": {
+    "eyebrow": "Admin",
+    "title": "Scrape invite review",
+    "lede": "Approve scraped listings before HaHu SMS goes out. Left: raw post. Right: Gemini-structured fields and Amharic message preview. Manual mode is the default; use ?mode=auto on ingest to skip this queue.",
+    "empty": "No scrapes waiting for invite approval.",
+    "backToImports": "Back to import sources",
+    "queueCount": "{count} pending invite(s)",
+    "rawLabel": "Raw scraped text",
+    "structuredLabel": "Structured fields",
+    "titleEn": "Title (EN)",
+    "titleAm": "Title (AM)",
+    "price": "Price",
+    "phone": "Phone",
+    "details": "Details",
+    "beds": "beds",
+    "messagePreview": "Amharic HaHu preview",
+    "editSend": "Edit & Send",
+    "discard": "Discard",
+    "sendDone": "Invite sent for {id}.",
+    "sendFailed": "Could not send invite.",
+    "discardDone": "Discarded {id}.",
+    "discardFailed": "Could not discard listing.",
+    "openListing": "Open listing",
+    "sourceLink": "Source",
+    "unknownSource": "Manual / unknown source",
+    "noRaw": "(No raw text stored)",
+    "priceOnRequest": "On request"
   },
   "salesKit": {
     "title": "Sales kit → role account",

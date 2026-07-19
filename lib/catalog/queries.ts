@@ -182,6 +182,7 @@ export async function fetchListingById(
             tradeName: true,
             displayName: true,
             website: true,
+            userId: true,
           },
         },
         delala: {
