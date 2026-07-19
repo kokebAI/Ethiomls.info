@@ -21,7 +21,8 @@
     "cron:stale-listings:schedule": "tsx src/cron/stale-listings.ts --schedule",
     "scrape:developers": "tsx scripts/scrape-developers.ts",
     "scrape:projects": "tsx scripts/scrape-projects.ts",
-    "scrape:offplan-ads": "tsx scripts/scrape-offplan-ads.ts"
+    "scrape:offplan-ads": "tsx scripts/scrape-offplan-ads.ts",
+    "scrape:facebook": "tsx scripts/scrape-facebook-listings.ts"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"

@@ -150,11 +150,11 @@ function formatSubCityLabel(code: AddisSubCityCode): string {
 function detectListingType(text: string): ListingType {
   const lower = text.toLowerCase();
   if (
-    /off[\s-]?plan|ቀድሞ|under construction|installment|አዲስ ፕሮጀክት/.test(lower)
+    /off[\s-]?plan|ቀድሞ|ቅድመ|under construction|installment|አዲስ ፕሮጀክት/.test(lower)
   ) {
     return ListingType.OFF_PLAN;
   }
-  if (/for\s*rent|to\s*rent|ለኪራይ|rent\b|monthly/.test(lower)) {
+  if (/for\s*rent|to\s*rent|ለኪራይ|ኪራይ|አከራይ|rent\b|monthly/.test(lower)) {
     return ListingType.RENT;
   }
   return ListingType.SALE;
@@ -175,10 +175,10 @@ function extractPrice(text: string): {
   currency: CurrencyCode;
 } | null {
   const usd = text.match(
-    /(?:USD|\$)\s*([0-9]{1,3}(?:[, ]?[0-9]{3})*(?:\.[0-9]+)?)/i,
+    /(?:USD|\$)\s*([0-9]{1,3}(?:[, ]?[0-9]{3})*(?:\.[0-9]+)?)|([0-9]{1,3}(?:[, ]?[0-9]{3})*(?:\.[0-9]+)?)\s*(?:USD|\$)/i,
   );
   if (usd) {
-    const amount = Number(usd[1].replace(/[, ]/g, ""));
+    const amount = Number((usd[1] ?? usd[2] ?? "").replace(/[, ]/g, ""));
     if (Number.isFinite(amount) && amount > 0) {
       return { amount, currency: CurrencyCode.USD };
     }

@@ -11,9 +11,17 @@ import {
 import type { ScrapedCandidate } from "@/lib/imports/telegram-scraper";
 
 /**
- * Best-effort public Facebook Page scrape via mbasic HTML.
- * Private pages, login walls, and heavy JS feeds will yield few/no candidates.
+ * Best-effort public Facebook Page scrape.
+ * Prefers www.facebook.com HTML (embedded GraphQL/message JSON) because
+ * mbasic often redirects to login/cookie walls from datacenter IPs.
  */
+
+const FB_FETCH_HEADERS = {
+  Accept: "text/html,application/xhtml+xml",
+  "Accept-Language": "en-US,en;q=0.9,am;q=0.8",
+  "User-Agent":
+    "Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)",
+} as const;
 
 function stripHtml(html: string): string {
   return html
@@ -31,6 +39,20 @@ function stripHtml(html: string): string {
     .trim();
 }
 
+function decodeJsString(raw: string): string {
+  try {
+    return JSON.parse(`"${raw}"`) as string;
+  } catch {
+    try {
+      return raw.replace(/\\u([0-9a-fA-F]{4})/g, (_, hex: string) =>
+        String.fromCharCode(Number.parseInt(hex, 16)),
+      );
+    } catch {
+      return raw;
+    }
+  }
+}
+
 function extractImages(html: string, baseUrl: string): string[] {
   const urls = new Set<string>();
   for (const match of html.matchAll(/<img[^>]+src=["']([^"']+)["']/gi)) {
@@ -46,7 +68,34 @@ function extractImages(html: string, baseUrl: string): string[] {
       // ignore malformed urls
     }
   }
+  for (const match of html.matchAll(
+    /"(?:uri|url|src)":"(https:\\\/\\\/[^"]+(?:scontent|fbcdn)[^"]+)"/gi,
+  )) {
+    try {
+      const absolute = match[1].replace(/\\\//g, "/");
+      if (/scontent|fbcdn/i.test(absolute)) urls.add(absolute);
+    } catch {
+      // ignore
+    }
+  }
   return [...urls].slice(0, 8);
+}
+
+/** Pull post bodies from Facebook's embedded page JSON. */
+function extractEmbeddedMessages(html: string): string[] {
+  const texts: string[] = [];
+  const patterns = [
+    /"message":\{"text":"(.*?)"(?:,|})/g,
+    /"message":\{"__typename":"TextWithEntities","text":"(.*?)"(?:,|})/g,
+    /"comet_sections"[\s\S]{0,200}?"message":\{"text":"(.*?)"(?:,|})/g,
+  ];
+  for (const pattern of patterns) {
+    for (const match of html.matchAll(pattern)) {
+      const decoded = decodeJsString(match[1] ?? "").trim();
+      if (decoded.length >= 40) texts.push(decoded);
+    }
+  }
+  return texts;
 }
 
 /** Prefer story/article blocks when mbasic exposes them; else paragraph chunks. */
@@ -68,6 +117,14 @@ function splitFacebookPosts(html: string, text: string): string[] {
   return text.length >= 60 ? [text.slice(0, 5000)] : [];
 }
 
+function toWwwUrl(url: string): string {
+  const parsed = new URL(url);
+  parsed.protocol = "https:";
+  parsed.hostname = "www.facebook.com";
+  parsed.hash = "";
+  return parsed.toString().replace(/\/$/, "");
+}
+
 function toMbasicUrl(url: string): string {
   const parsed = new URL(url);
   parsed.protocol = "https:";
@@ -76,46 +133,104 @@ function toMbasicUrl(url: string): string {
   return parsed.toString().replace(/\/$/, "");
 }
 
-export async function scrapeFacebookPage(url: string): Promise<ScrapedCandidate[]> {
+function uniqueChunks(chunks: string[]): string[] {
+  const seen = new Set<string>();
+  const out: string[] = [];
+  for (const chunk of chunks) {
+    const key = chunk.replace(/\s+/g, " ").trim().toLowerCase();
+    if (key.length < 40 || seen.has(key)) continue;
+    seen.add(key);
+    out.push(chunk.trim());
+  }
+  return out;
+}
+
+function toCandidates(
+  chunks: string[],
+  sourceUrl: string,
+  pageImages: string[],
+): ScrapedCandidate[] {
+  const candidates: ScrapedCandidate[] = [];
+  for (const chunk of chunks) {
+    if (!looksLikeListing(chunk)) continue;
+    const parsed: ParsedListingDraft = parseListingText(chunk);
+    const phones = extractEthiopiaPhones(chunk);
+    // Require a phone in the post itself — page-level numbers create greeting/promo noise.
+    if (!phones.length) continue;
+    candidates.push({
+      externalId: contentFingerprint(chunk),
+      sourceUrl,
+      text: chunk,
+      imageUrls: pageImages,
+      contactPhones: phones,
+      parsed,
+    });
+  }
+  return candidates.slice(0, 20);
+}
+
+async function scrapeWwwFacebookPage(url: string): Promise<ScrapedCandidate[]> {
+  const wwwUrl = toWwwUrl(url);
+  const { html, url: finalUrl } = await fetchPublicText(wwwUrl, {
+    headers: FB_FETCH_HEADERS,
+  });
+
+  const messages = uniqueChunks(extractEmbeddedMessages(html));
+  const pageImages = extractImages(html, finalUrl);
+  const sourceUrl = finalUrl.includes("facebook.com")
+    ? finalUrl.replace("mbasic.facebook.com", "www.facebook.com")
+    : wwwUrl;
+
+  if (messages.length >= 1) {
+    return toCandidates(messages, sourceUrl, pageImages);
+  }
+
+  // Fallback: treat paragraph chunks from stripped HTML
+  return toCandidates(
+    uniqueChunks(splitFacebookPosts(html, stripHtml(html))),
+    sourceUrl,
+    pageImages,
+  );
+}
+
+async function scrapeMbasicFacebookPage(
+  url: string,
+): Promise<ScrapedCandidate[]> {
   const mbasicUrl = toMbasicUrl(url);
   const { html, url: finalUrl } = await fetchPublicText(mbasicUrl, {
     headers: {
-      Accept: "text/html,application/xhtml+xml",
-      "Accept-Language": "en-US,en;q=0.9,am;q=0.8",
+      ...FB_FETCH_HEADERS,
       "User-Agent":
         "Mozilla/5.0 (compatible; EthioMLSImportBot/1.0; +https://ethiomls.info)",
     },
   });
 
-  const lower = html.toLowerCase();
-  if (
-    lower.includes("login") &&
-    (lower.includes("password") || lower.includes("log in to facebook")) &&
-    !looksLikeListing(stripHtml(html).slice(0, 500))
-  ) {
-    // Soft signal — still try parse; many public pages mix login chrome with posts.
-  }
-
   const text = stripHtml(html);
   const pageImages = extractImages(html, finalUrl);
-  const pagePhones = extractEthiopiaPhones(text);
-  const candidates: ScrapedCandidate[] = [];
+  const sourceUrl = finalUrl.includes("facebook.com")
+    ? finalUrl.replace("mbasic.facebook.com", "www.facebook.com")
+    : finalUrl;
 
-  for (const chunk of splitFacebookPosts(html, text)) {
-    if (!looksLikeListing(chunk)) continue;
-    const parsed: ParsedListingDraft = parseListingText(chunk);
-    const phones = extractEthiopiaPhones(chunk);
-    candidates.push({
-      externalId: contentFingerprint(chunk),
-      sourceUrl: finalUrl.includes("facebook.com")
-        ? finalUrl.replace("mbasic.facebook.com", "www.facebook.com")
-        : finalUrl,
-      text: chunk,
-      imageUrls: pageImages,
-      contactPhones: phones.length ? phones : pagePhones,
-      parsed,
-    });
+  return toCandidates(
+    uniqueChunks(splitFacebookPosts(html, text)),
+    sourceUrl,
+    pageImages,
+  );
+}
+
+export async function scrapeFacebookPage(
+  url: string,
+): Promise<ScrapedCandidate[]> {
+  try {
+    const www = await scrapeWwwFacebookPage(url);
+    if (www.length > 0) return www;
+  } catch {
+    // fall through to mbasic
   }
 
-  return candidates.slice(0, 20);
+  try {
+    return await scrapeMbasicFacebookPage(url);
+  } catch {
+    return [];
+  }
 }

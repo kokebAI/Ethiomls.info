@@ -19,6 +19,8 @@ export type RunImportFilters = {
   corridorOffPlanOnly?: boolean;
   /** @deprecated Prefer corridorOffPlanOnly */
   eastOffPlanOnly?: boolean;
+  /** Only upsert SALE and RENT (skip OFF_PLAN). */
+  saleOrRentOnly?: boolean;
 };
 
 async function allocateListingId(): Promise<string> {
@@ -174,13 +176,20 @@ export async function runImportSource(input: {
     if (corridorFilter) {
       candidates = filterCorridorOffPlanCandidates(candidates);
     }
+    if (input.filters?.saleOrRentOnly) {
+      candidates = candidates.filter(
+        (candidate) =>
+          candidate.parsed.listingType === ListingType.SALE ||
+          candidate.parsed.listingType === ListingType.RENT,
+      );
+    }
 
     let created = 0;
     let updated = 0;
     let skipped = 0;
 
-    // Candidates filtered out by corridor-offplan count as skipped.
-    if (corridorFilter) {
+    // Candidates filtered out count as skipped.
+    if (corridorFilter || input.filters?.saleOrRentOnly) {
       skipped += postsSeen - candidates.length;
     }
 
@@ -215,6 +224,7 @@ export async function runImportSource(input: {
           url: source.normalizedUrl,
           corridorOffPlanOnly: Boolean(corridorFilter),
           eastOffPlanOnly: Boolean(input.filters?.eastOffPlanOnly),
+          saleOrRentOnly: Boolean(input.filters?.saleOrRentOnly),
           matchedAfterFilter: candidates.length,
           sampleTitles: candidates.slice(0, 5).map((c) => c.parsed.title),
         },

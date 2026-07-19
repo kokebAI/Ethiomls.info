@@ -192,6 +192,20 @@
       "track": "broker",
       "corridor": "all",
       "notes": "corridor-offplan · all · starter broker — audit contacts"
+    },
+    {
+      "label": "Zola Advertising (Telegram)",
+      "url": "https://t.me/zolaadivertising",
+      "track": "broker",
+      "corridor": "all",
+      "notes": "corridor-offplan · all · broker ads channel — audit contacts"
+    },
+    {
+      "label": "Dream Home Addis (Telegram)",
+      "url": "https://t.me/DreamHomeAddis",
+      "track": "broker",
+      "corridor": "all",
+      "notes": "corridor-offplan · all · Dream Home-Addis official · contact +251916613223"
     }
   ]
 }

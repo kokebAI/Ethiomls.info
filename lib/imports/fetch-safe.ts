@@ -76,7 +76,7 @@ export async function fetchPublicText(
     const finalUrl = response.url || url.toString();
     await assertPublicHttpUrl(finalUrl);
     const html = await response.text();
-    if (html.length > 2_000_000) {
+    if (html.length > 8_000_000) {
       throw new Error("Response is too large to scrape");
     }
     return { url: finalUrl, html };
