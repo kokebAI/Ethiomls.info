@@ -440,6 +440,7 @@ export async function POST(request: NextRequest) {
               descriptionEn: bilingual.descriptionEn || null,
               descriptionAm: bilingual.descriptionAm || null,
               listingType: input.listingType,
+              listingScope: input.listingScope,
               category: input.propertyType,
               status,
               priceAmount: input.price,

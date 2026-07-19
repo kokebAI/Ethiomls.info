@@ -21,6 +21,7 @@ const draftSchema = z.object({
   floor: z.number().int().optional().nullable(),
   unitLabel: z.string().trim().max(40).optional().nullable(),
   listingType: z.enum(["SALE", "RENT", "OFF_PLAN"]).default("OFF_PLAN"),
+  listingScope: z.enum(["SINGLE", "PROPERTY"]).default("SINGLE"),
   category: z
     .enum(["RESIDENTIAL", "COMMERCIAL", "MIXED_USE", "LAND"])
     .default("RESIDENTIAL"),
@@ -29,7 +30,7 @@ const draftSchema = z.object({
 
 const enrichSchema = z.object({
   draft: draftSchema.optional(),
-  editReason: z.string().trim().min(10).max(4000).optional(),
+  editReason: z.string().trim().max(4000).optional(),
   contactPhone: z.string().trim().max(40).optional().nullable(),
   contactName: z.string().trim().max(120).optional().nullable(),
   tourUrl: z.string().trim().url().max(2000).optional().nullable(),
@@ -106,12 +107,11 @@ export async function PATCH(
   }
 
   const data = parsed.data;
-  if (data.draft && (!data.editReason || data.editReason.length < 10)) {
+  if (data.draft && data.editReason !== undefined && data.editReason.length > 0 && data.editReason.length < 3) {
     return NextResponse.json(
       {
         error: "ValidationError",
-        message:
-          "Provide an edit reason (min. 10 characters) before applying changes",
+        message: "Edit reason is too short",
       },
       { status: 400 },
     );
@@ -165,7 +165,7 @@ export async function PATCH(
     tags.add(`floor:${data.draft.floor}`);
   }
 
-  const editNote = data.editReason?.trim();
+  const editNote = (data.editReason?.trim() || (data.draft ? "Admin audit edit" : "")).trim();
   const nextAuditNotes = editNote
     ? [listing.adminAuditNotes?.trim(), `Edit: ${editNote}`]
         .filter(Boolean)

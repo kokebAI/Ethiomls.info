@@ -11,6 +11,8 @@ export type AdminWorkspaceCopy = {
   snapshotPending: string;
   snapshotAlerts: string;
   snapshotReady: string;
+  addListing: string;
+  addListingHint: string;
   pendingTitle: string;
   pendingEmpty: string;
   draftsTitle: string;
@@ -89,12 +91,25 @@ export function AdminWorkspaceView({
         className="rounded-2xl border border-slate-200/90 bg-white/90 p-5 shadow-[var(--shadow-card)] sm:p-6"
         aria-labelledby="admin-snapshot-heading"
       >
-        <h2
-          id="admin-snapshot-heading"
-          className="text-xs font-bold uppercase tracking-[0.14em] text-slate-500"
-        >
-          {copy.snapshotTitle}
-        </h2>
+        <div className="flex flex-wrap items-start justify-between gap-4">
+          <h2
+            id="admin-snapshot-heading"
+            className="text-xs font-bold uppercase tracking-[0.14em] text-slate-500"
+          >
+            {copy.snapshotTitle}
+          </h2>
+          <div className="flex max-w-md flex-col items-stretch gap-1.5 sm:items-end">
+            <Link
+              href={`${base}/listings/new`}
+              className="inline-flex items-center justify-center rounded-full bg-brand-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-700"
+            >
+              {copy.addListing}
+            </Link>
+            <p className="text-xs leading-snug text-ink-muted sm:text-right">
+              {copy.addListingHint}
+            </p>
+          </div>
+        </div>
         <ul className="mt-4 space-y-3">
           <li className="flex items-start gap-3 text-sm text-ink">
             <StatusDot ok={pendingCount === 0} />

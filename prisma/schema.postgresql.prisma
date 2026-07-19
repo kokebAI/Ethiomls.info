@@ -110,6 +110,13 @@ enum ListingType {
   OFF_PLAN
 }
 
+/// Inventory offered as one unit vs the whole property/building.
+/// All non-client listing roles may pick either at create time.
+enum ListingScope {
+  SINGLE
+  PROPERTY
+}
+
 enum PropertyCategory {
   RESIDENTIAL
   COMMERCIAL
@@ -349,6 +356,8 @@ model Listing {
   /// Amharic description slot (source or Gemini-translated)
   descriptionAm      String?
   listingType        ListingType
+  /// Single unit vs whole property/building — chosen by the listing creator
+  listingScope       ListingScope      @default(SINGLE)
   category           PropertyCategory  @default(RESIDENTIAL)
   status             ListingStatus     @default(DRAFT)
   priceAmount        Decimal           @db.Decimal(18, 2)

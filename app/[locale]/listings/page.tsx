@@ -118,7 +118,16 @@ export default async function ListingsPage({
       ]
         .filter(Boolean)
         .join(" · "),
-      badges: [listingBadge(listing.listingType, t)],
+      badges: [
+        listingBadge(listing.listingType, t),
+        {
+          label:
+            listing.listingScope === "PROPERTY"
+              ? t("listing.scopeProperty")
+              : t("listing.scopeSingle"),
+          tone: listing.listingScope === "PROPERTY" ? "amber" : "slate",
+        } as DirectoryBadge,
+      ],
       subCityCode,
       listingType: listing.listingType,
       priceAmount: Number(listing.priceAmount),

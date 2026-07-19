@@ -47,6 +47,9 @@
     "plotArea": "የቦታ ስፋት",
     "propertyType": "የንብረት አይነት",
     "listingType": "የዝርዝር አይነት",
+    "listingScope": "ነጠላ ወይም ንብረት",
+    "scopeSingle": "ነጠላ ክፍል",
+    "scopeProperty": "ሙሉ ንብረት",
     "status": "ሁኔታ",
     "address": "አኼራሻ",
     "constructionStage": "የግንባታ ደረጃ",
@@ -282,11 +285,17 @@
   "auth": {
     "accessEyebrow": "ደህንነቱ የተጠበቀ መግቢያ",
     "title": "ወደ EthioMLS ይግቡ",
-    "lede": "በስልክ ቁጥር እና የይለፍ ቃል ይግቡ። SMS ማረጋገጫ በአዲስ መሣሪያ ላይ ብቻ ነው። ኢሜይል በኋላ በመገለጫዎ ማከል ይችላሉ።",
+    "lede": "በኢሜይል ወይም በኢትዮጵያ ስልክ እና የይለፍ ቃል ይግቡ። በውጭ ያሉ ደንበኞች ኢሜይል መጠቀም ይችላሉ፤ SMS የአካባቢ ስልክ ባለው አዲስ መሣሪያ ላይ ብቻ ነው።",
     "loginTab": "ግባ",
     "registerTab": "ተመዝገብ",
     "fullName": "ሙሉ ስም",
     "fullNamePlaceholder": "ስምዎ",
+    "identifier": "ኢሜይል ወይም የኢትዮጵያ ስልክ",
+    "identifierPlaceholder": "you@email.com ወይም 09XXXXXXXX",
+    "identifierHint": "ከውጭ፡ የመለያዎን ኢሜይል ይጠቀሙ። በኢትዮጵያ፡ የአካባቢ ስልክ (+251 9… / 7…)።",
+    "identifierClient": "ኢሜይል ወይም የኢትዮጵያ ስልክ",
+    "identifierClientPlaceholder": "you@email.com ወይም 09XXXXXXXX",
+    "identifierClientHint": "በውጭ ነዎት? ኢሜይልዎን ይጠቀሙ። በኢትዮጵያ? የአካባቢ ስልክ — በSMS ኮድ እናረጋግጣለን።",
     "phone": "የኢትዮጵያ ስልክ ቁጥር",
     "phonePlaceholder": "09XXXXXXXX ወይም 07XXXXXXXX",
     "phoneHint": "አካባቢያዊ ቁጥሮች ብቻ (+251 9… / +251 7…)። ዓለም አቀፍ ቁጥሮች አይቀበሉም።",
@@ -295,6 +304,8 @@
     "loginCta": "ግባ",
     "registerCta": "መለያ ፍጠር",
     "verify": "አረጋግጥ እና ቀጥል",
+    "resendOtp": "ኮድ እንደገና ላክ",
+    "resendIn": "በ {seconds}ሰ እንደገና ላክ",
     "back": "ተመለስ",
     "codeSent": "በSMS የማረጋገጫ ኮድ ልከናል።",
     "newDeviceHint": "አዲስ መሣሪያ — ለመግባት የSMS ኮድ ያስገቡ።",
@@ -303,20 +314,22 @@
     "smsFailed": "SMS መላክ አልተቻለም።",
     "verifyFailed": "ማረጋገጥ አልተሳካም።",
     "loginFailed": "መግባት አልተሳካም።",
+    "registerFailed": "መለያ መፍጠር አልተቻለም።",
+    "resetEmailOnly": "የይለፍ ቃል ዳግም ማስጀመር አሁን የኢትዮጵያ ስልክ ያስፈልገዋል። በኢሜይል የተመዘገቡ ከሆነ የይለፍ ቃልዎን ያስታውሱ ወይም በGoogle ይግቡ።",
     "or": "ወይም",
     "googleCta": "በGoogle ይቀጥሉ",
     "password": {
       "label": "የይለፍ ቃል",
       "confirm": "የይለፍ ቃል ያረጋግጡ",
       "placeholder": "ቢያንስ 8 ቁምፊዎች",
-      "hint": "ቢያንስ 8 ቁምፊዎች። SMS ኮድ በአዲስ መሣሪያ ላይ ብቻ።",
+      "hint": "ቢያንስ 8 ቁምፊዎች። SMS ኮድ በአዲስ መሣሪያ ላይ ብቻ (የአካባቢ ስልክ ሲኖር)።",
       "tooShort": "የይለፍ ቃል ቢያንስ 8 ቁምፊዎች መሆን አለበት።",
       "mismatch": "የይለፍ ቃላት አይዛመዱም።"
     },
     "reset": {
       "link": "የይለፍ ቃል ረሱ?",
       "title": "የይለፍ ቃል ዳግም ያስጀምሩ",
-      "lede": "ስልክዎን እና አዲስ የይለፍ ቃል ያስገቡ። በSMS ኮድ እናረጋግጣለን።",
+      "lede": "የኢትዮጵያ ስልክዎን እና አዲስ የይለፍ ቃል ያስገቡ። በSMS ኮድ እናረጋግጣለን።",
       "newPassword": "አዲስ የይለፍ ቃል",
       "passwordHint": "አዲስ የይለፍ ቃል ይምረጡ (ቢያንስ 8)።",
       "sendCode": "የማስጀመሪያ ኮድ ላክ",
@@ -333,7 +346,7 @@
       "locked": "ሚናዎ በምዝገባ ጊዜ ተቀምጧል እና መቀየር አይቻልም።",
       "admin": "አስተዳዳሪ",
       "client": "ደንበኛ / ተከራይ",
-      "clientHint": "ቤቶችን ይፈልጉ እና ይጠይቁ።",
+      "clientHint": "ቤቶችን ይፈልጉ — በኢሜይል (ከውጭ) ወይም በኢትዮጵያ ስልክ ይመዝገቡ።",
       "owner": "የንብረት ባለቤት",
       "ownerHint": "የራስዎን ቤት ለሽያጭ ወይም ኪራይ ያስመዝግቡ።",
       "broker": "ደላላ",
@@ -510,9 +523,10 @@
     "admin": {
       "eyebrow": "አስተዳዳሪ",
       "title": "ገበያውን ኦዲት ያድርጉ እና ያስመጡ",
-      "lede": "ቴሌግራም እና ድረ-ገጾችን ይቃኙ፣ በመጠባበቅ ላይ ያሉ ዝርዝሮችን ይገምግሙ።",
+      "lede": "ቴሌግራም እና ድረ-ገጾችን ይቃኙ፣ ዝርዝሮችን ለግምገማ ያክሉ፣ ከዚያ ኦዲት ያድርጉ።",
       "ctas": {
         "workspace": "የስራ ቦታ ክፈት",
+        "addListing": "ዝርዝር ጨምር",
         "imports": "የማስመጫ ምንጮች",
         "dashboard": "የዳሽቦርድ መለኪያዎች",
         "profile": "መገለጫዎ"
@@ -548,8 +562,10 @@
     "admin": {
       "eyebrow": "የአስተዳዳሪ የስራ ቦታ",
       "title": "ገምግም፣ ኦዲት አድርግ፣ አትም",
-      "lede": "በመጠባበቅ ላይ ያለውን ወረፋ ይስሩ፣ ማስጠንቀቂያዎችን ያጽዱ፣ እና ከደንበኛ ጥበቃ ዝርዝር በኋላ ብቻ ያትሙ።",
+      "lede": "በመጠባበቅ ላይ ያለውን ወረፋ ይስሩ፣ ከማረጋገጥ በፊት ዝርዝሮችን ያክሉ፣ ማስጠንቀቂያዎችን ያጽዱ።",
       "openQueue": "የግምገማ ወረፋ ክፈት",
+      "addListing": "ዝርዝር ጨምር",
+      "addListingHint": "ወደ በመጠባበቅ ላይ ግምገማ ይገባል — ከማተም በፊት ኦዲት ያድርጉ።",
       "importSources": "የማስመጫ ምንጮች",
       "dashboard": "የዳሽቦርድ መለኪያዎች",
       "accountProfile": "የመለያ መገለጫ",
@@ -582,7 +598,51 @@
       "readyEmpty": "እስካሁን የተኦዲተ ዝርዝር የለም።",
       "alertsTitle": "ያልተነበቡ ማስጠንቀቂያዎች",
       "alertsEmpty": "ያልተነበበ ማስጠንቀቂያ የለም።",
-      "backToRoles": "ወደ አስተዳዳሪ ማዕከል ተመለስ"
+      "backToRoles": "ወደ አስተዳዳሪ ማዕከል ተመለስ",
+      "auditPassed": "ኦዲት አልፏል",
+      "groupOther": "ሌላ",
+      "listingFallback": "ዝርዝር"
+    }
+  },
+  "enums": {
+    "listingStatus": {
+      "DRAFT": "ረቂቅ",
+      "PENDING_REVIEW": "በግምገማ ላይ",
+      "PUBLISHED": "ታትሟል",
+      "UNDER_OFFER": "በቅናሽ ላይ",
+      "SOLD": "ተሽጧል",
+      "RENTED": "ተከራይቷል",
+      "ARCHIVED": "ተቀምጧል"
+    },
+    "listingType": {
+      "SALE": "ሽያጭ",
+      "RENT": "ኪራይ",
+      "OFF_PLAN": "ከእቅድ በፊት"
+    },
+    "listingScope": {
+      "SINGLE": "ነጠላ ክፍል",
+      "PROPERTY": "ሙሉ ንብረት"
+    },
+    "propertyCategory": {
+      "RESIDENTIAL": "መኖሪያ",
+      "COMMERCIAL": "ንግድ",
+      "MIXED_USE": "ድብልቅ አጠቃቀም",
+      "LAND": "መሬት"
+    },
+    "constructionStage": {
+      "EARTHWORKS_FOUNDATION": "መሬት ስራ እና መሠረት",
+      "SUBSTRUCTURE": "ታችኛው መዋቅር",
+      "SUPERSTRUCTURE": "ላይኛው መዋቅር",
+      "ROOFING_ENVELOPE": "ጣሪያ እና ኤንቨሎፕ",
+      "MEP_INSTALLATION": "MEP ጭነት",
+      "INTERIOR_FINISHING": "የውስጥ አጨራረስ",
+      "EXTERNAL_WORKS": "የውጭ ስራዎች",
+      "FULLY_COMPLETED": "ሙሉ በሙሉ ተጠናቋል"
+    },
+    "paymentStructure": {
+      "MILESTONE_BASED": "በደረጃ ላይ የተመሰረተ",
+      "CASH_DISCOUNT_USD": "የጥሬ ገንዘብ ቅናሽ (USD)",
+      "SEMI_FINISHED_DISCOUNT": "ከፊል-የተጠናቀቀ ቅናሽ"
     }
   },
   "adminAudit": {
@@ -597,6 +657,11 @@
     "saving": "በማስቀመጥ ላይ…",
     "approvedReady": "ኦዲት አልፏል — ይህን ዝርዝር ማተም ይችላሉ።",
     "statusLabel": "ሁኔታ",
+    "rejectedToDraft": "ዝርዝሩ ውድቅ ሆኖ ወደ ረቂቅ ተመልሷል።",
+    "published": "ዝርዝሩ ታትሟል።",
+    "attachFailed": "መለያ ማያያዝ አልተቻለም",
+    "auditFailed": "ኦዲት አልተሳካም",
+    "publishFailed": "ማተም አልተሳካም",
     "checks": {
       "sellerIdentity": "የሻጭ ማንነት ተረጋግጧል",
       "ownershipOrAuthority": "ባለቤትነት ወይም ስልጣን ተረጋግጧል",

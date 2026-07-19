@@ -20,6 +20,7 @@ import {
   CurrencyCode,
   ListingStatus,
   ListingType,
+  PaymentPlan,
   PrismaClient,
   PropertyCategory,
 } from "@prisma/client";
@@ -53,6 +54,9 @@ type CuratedUnit = {
   description: Localized;
   amenities?: string[];
   category?: "RESIDENTIAL" | "COMMERCIAL" | "MIXED_USE" | "LAND";
+  downPaymentPercent?: number;
+  paymentStructure?: "MILESTONE_BASED" | "CASH_DISCOUNT_USD" | "SEMI_FINISHED_DISCOUNT";
+  paymentTiers?: Record<string, number>;
 };
 
 type CuratedFloor = {
@@ -74,6 +78,10 @@ type CuratedProject = {
   website?: string | null;
   telegram?: string | null;
   sourceUpdatedAt: string;
+  coverImageUrl?: string | null;
+  galleryImageUrls?: string[];
+  downPaymentPercent?: number;
+  paymentStructure?: "MILESTONE_BASED" | "CASH_DISCOUNT_USD" | "SEMI_FINISHED_DISCOUNT";
   amenities?: string[];
   category?: "RESIDENTIAL" | "COMMERCIAL" | "MIXED_USE" | "LAND";
   building: { floors: CuratedFloor[] };
@@ -190,6 +198,19 @@ function parseCategory(
   throw new Error(`Invalid category: ${raw}`);
 }
 
+function parsePaymentStructure(
+  raw: string | null | undefined,
+): PaymentPlan | undefined {
+  if (
+    raw === "MILESTONE_BASED" ||
+    raw === "CASH_DISCOUNT_USD" ||
+    raw === "SEMI_FINISHED_DISCOUNT"
+  ) {
+    return raw;
+  }
+  return undefined;
+}
+
 async function loadCurated(filePath: string): Promise<CuratedProject[]> {
   const raw = await readFile(filePath, "utf8");
   const parsed = JSON.parse(raw) as CuratedFile;
@@ -236,6 +257,17 @@ async function upsertProject(
   });
 
   const stage = parseStage(rec.constructionStage);
+  const galleryImageUrls = [
+    ...new Set(
+      (rec.galleryImageUrls ?? []).filter(
+        (url): url is string => typeof url === "string" && url.length > 0,
+      ),
+    ),
+  ];
+  const coverImageUrl =
+    (typeof rec.coverImageUrl === "string" && rec.coverImageUrl) ||
+    galleryImageUrls[0] ||
+    null;
   const walkthrough = {
     telegram: rec.telegram ?? null,
     website: rec.website ?? null,
@@ -284,6 +316,8 @@ async function upsertProject(
       // Imported inventory is never trusted automatically. An admin must
       // complete the audit checklist before activation/publication.
       status: ListingStatus.PENDING_REVIEW,
+      coverImageUrl,
+      galleryImageUrls,
       virtualWalkthroughConfig: walkthrough,
     },
     create: {
@@ -297,6 +331,8 @@ async function upsertProject(
       completionPercent: rec.completionPercent,
       requiresEscrow: rec.requiresEscrow ?? true,
       status: ListingStatus.PENDING_REVIEW,
+      coverImageUrl,
+      galleryImageUrls,
       virtualWalkthroughConfig: walkthrough,
     },
   });
@@ -348,12 +384,26 @@ async function upsertProject(
       inventoryStatus: unit.status,
       floor: unit.floor,
       unitLabel: unit.unitLabel,
+      ...(unit.paymentTiers ? { paymentTiers: unit.paymentTiers } : {}),
+      salesKit:
+        rec.registrationNumber === "ET-DIR-SEKEN-025"
+          ? "data/sales-kits/seken-megenagna-topview-diaspora-july-2026.pdf"
+          : undefined,
     };
 
     const amenityFlags = amenityFlagsFromTags([
       ...(unit.amenities ?? []),
       ...(rec.amenities ?? []),
     ]);
+
+    const downPaymentPercent =
+      unit.downPaymentPercent ?? rec.downPaymentPercent ?? null;
+    const paymentStructure =
+      parsePaymentStructure(unit.paymentStructure) ??
+      parsePaymentStructure(rec.paymentStructure) ??
+      (listingType === ListingType.OFF_PLAN
+        ? PaymentPlan.MILESTONE_BASED
+        : undefined);
 
     const listingData = {
       ownerId: developer.userId,
@@ -374,8 +424,13 @@ async function upsertProject(
       constructionStage: stage,
       completionPercent: rec.completionPercent,
       isUnfinished: listingType === ListingType.OFF_PLAN,
+      ...(downPaymentPercent != null ? { downPaymentPercent } : {}),
+      ...(paymentStructure ? { paymentStructure } : {}),
       metadataTags,
       virtualWalkthroughConfig: unitConfig,
+      coverImageUrl,
+      galleryImageUrls,
+      images: galleryImageUrls,
       ...amenityFlags,
       publishedAt: null,
       lastRefreshDate: publishedAt,

@@ -15,38 +15,33 @@ import {
 import { getCurrentAdmin } from "@/lib/auth/admin";
 import { prisma } from "@/lib/db/prisma";
 import { isLocale, type Locale } from "@/lib/i18n/config";
+import {
+  labelEnum,
+  localizedListingTitle,
+  localizedSubCityName,
+} from "@/lib/i18n/enums";
 import { getDictionary } from "@/lib/i18n/getDictionary";
+import { pickLocalized } from "@/lib/i18n/pickLocalized";
 
 export const dynamic = "force-dynamic";
 
-function listingTitle(listing: {
-  titleEn: string | null;
-  title: unknown;
-}): string {
-  if (listing.titleEn?.trim()) return listing.titleEn.trim();
-  if (
-    listing.title &&
-    typeof listing.title === "object" &&
-    listing.title !== null &&
-    "en" in listing.title
-  ) {
-    const en = (listing.title as { en?: string }).en;
-    if (en?.trim()) return en.trim();
-  }
-  return "Listing";
-}
+type EnumMaps = {
+  listingStatus: Record<string, string>;
+  listingType: Record<string, string>;
+  listingFallback: string;
+  groupOther: string;
+  auditPassed: string;
+};
 
-function delalaDisplayName(displayName: unknown): string | null {
-  if (
-    displayName &&
-    typeof displayName === "object" &&
-    displayName !== null &&
-    "en" in displayName
-  ) {
-    const en = (displayName as { en?: string }).en;
-    return en?.trim() || null;
-  }
-  return null;
+function delalaDisplayName(
+  displayName: unknown,
+  locale: Locale,
+): string | null {
+  const label = pickLocalized(
+    displayName as Parameters<typeof pickLocalized>[0],
+    locale,
+  ).trim();
+  return label || null;
 }
 
 function partyBadgeTone(
@@ -74,7 +69,7 @@ function partyBadgeLabel(
 }
 
 function toPendingItem(
-  locale: string,
+  locale: Locale,
   listing: {
     id: string;
     titleEn: string | null;
@@ -92,14 +87,9 @@ function toPendingItem(
     delala: { displayName: unknown } | null;
   },
   partyLabels: Record<AuditPartyCategory, string>,
+  enums: EnumMaps,
 ): AdminPendingDirectoryItem {
-  const subCityName =
-    listing.subCity?.name &&
-    typeof listing.subCity.name === "object" &&
-    listing.subCity.name !== null &&
-    "en" in listing.subCity.name
-      ? String((listing.subCity.name as { en?: string }).en ?? "")
-      : "";
+  const subCityName = localizedSubCityName(listing.subCity, locale);
 
   const party = classifyListingParty({
     developerId: listing.developerId,
@@ -110,20 +100,20 @@ function toPendingItem(
 
   const partyName = partyLabelFromListing({
     developerTradeName: listing.developer?.tradeName,
-    delalaDisplayName: delalaDisplayName(listing.delala?.displayName),
+    delalaDisplayName: delalaDisplayName(listing.delala?.displayName, locale),
     ownerFullName: listing.owner.fullName,
     ownerRole: listing.owner.role,
   });
 
   const groupLabel =
     listing.developer?.tradeName?.trim() ||
-    delalaDisplayName(listing.delala?.displayName) ||
+    delalaDisplayName(listing.delala?.displayName, locale) ||
     listing.owner.fullName?.trim() ||
-    "Other";
+    enums.groupOther;
 
   const badges: DirectoryItem["badges"] = [
     {
-      label: listing.status.replaceAll("_", " "),
+      label: labelEnum(enums.listingStatus, listing.status),
       tone: "amber",
     },
     {
@@ -134,11 +124,15 @@ function toPendingItem(
 
   return {
     id: listing.id,
-    title: listingTitle(listing),
+    title: localizedListingTitle(
+      listing,
+      locale,
+      enums.listingFallback,
+    ),
     meta: [
       partyName,
       listing.id,
-      listing.listingType.replaceAll("_", " "),
+      labelEnum(enums.listingType, listing.listingType),
       subCityName,
     ]
       .filter(Boolean)
@@ -153,7 +147,7 @@ function toPendingItem(
 }
 
 function toDirectoryItem(
-  locale: string,
+  locale: Locale,
   listing: {
     id: string;
     titleEn: string | null;
@@ -164,19 +158,14 @@ function toDirectoryItem(
     galleryImageUrls: string[];
     subCity: { name: unknown } | null;
   },
+  enums: EnumMaps,
   badgeExtra?: string,
 ): DirectoryItem {
-  const subCityName =
-    listing.subCity?.name &&
-    typeof listing.subCity.name === "object" &&
-    listing.subCity.name !== null &&
-    "en" in listing.subCity.name
-      ? String((listing.subCity.name as { en?: string }).en ?? "")
-      : "";
+  const subCityName = localizedSubCityName(listing.subCity, locale);
 
   const badges: DirectoryItem["badges"] = [
     {
-      label: listing.status.replaceAll("_", " "),
+      label: labelEnum(enums.listingStatus, listing.status),
       tone:
         listing.status === ListingStatus.PUBLISHED
           ? "emerald"
@@ -191,8 +180,16 @@ function toDirectoryItem(
 
   return {
     id: listing.id,
-    title: listingTitle(listing),
-    meta: [listing.id, listing.listingType.replaceAll("_", " "), subCityName]
+    title: localizedListingTitle(
+      listing,
+      locale,
+      enums.listingFallback,
+    ),
+    meta: [
+      listing.id,
+      labelEnum(enums.listingType, listing.listingType),
+      subCityName,
+    ]
       .filter(Boolean)
       .join(" · "),
     href: `/${locale}/listings/${listing.id}`,
@@ -273,6 +270,14 @@ export default async function AdminWorkspacePage({
     brokers: ws.partyBrokers ?? "Brokers",
     owners: ws.partyOwners ?? "Owners",
     imported: ws.partyImported ?? "Imported",
+  };
+
+  const enums: EnumMaps = {
+    listingStatus: dictionary.enums?.listingStatus ?? {},
+    listingType: dictionary.enums?.listingType ?? {},
+    listingFallback: ws.listingFallback ?? "Listing",
+    groupOther: ws.groupOther ?? "Other",
+    auditPassed: ws.auditPassed ?? "Audit passed",
   };
 
   const [
@@ -356,11 +361,13 @@ export default async function AdminWorkspacePage({
         unreadAlertCount={unreadAlertCount}
         readyCount={readyCount}
         pendingItems={pending.map((listing) =>
-          toPendingItem(locale, listing, partyLabels),
+          toPendingItem(locale, listing, partyLabels, enums),
         )}
-        draftItems={drafts.map((listing) => toDirectoryItem(locale, listing))}
+        draftItems={drafts.map((listing) =>
+          toDirectoryItem(locale, listing, enums),
+        )}
         readyItems={ready.map((listing) =>
-          toDirectoryItem(locale, listing, "Audit passed"),
+          toDirectoryItem(locale, listing, enums, enums.auditPassed),
         )}
         alerts={alerts}
         copy={{
@@ -368,6 +375,10 @@ export default async function AdminWorkspacePage({
           snapshotPending: ws.snapshotPending,
           snapshotAlerts: ws.snapshotAlerts,
           snapshotReady: ws.snapshotReady,
+          addListing: ws.addListing ?? "Add listing",
+          addListingHint:
+            ws.addListingHint ??
+            "Goes to pending review — audit and verify after.",
           pendingTitle: ws.pendingTitle,
           pendingEmpty: ws.pendingEmpty,
           draftsTitle: ws.draftsTitle ?? "Drafts",

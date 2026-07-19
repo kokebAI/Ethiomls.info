@@ -25,7 +25,7 @@ const auditSchema = z
     checklist: checklistSchema,
   })
   .superRefine((value, ctx) => {
-    // Approve and reject both need a written reason for the audit trail.
+    // Both decisions need a written reason on the audit trail.
     if (value.notes.length < 10) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,

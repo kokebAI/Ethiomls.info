@@ -3,6 +3,7 @@ import {
   ConstructionStage,
   CurrencyCode,
   LandHoldType,
+  ListingScope,
   ListingType,
   PropertyCategory,
 } from "@prisma/client";
@@ -52,6 +53,7 @@ export const createPropertySchema = z
       ti: z.string().trim().min(1).optional(),
     }),
     listingType: z.nativeEnum(ListingType),
+    listingScope: z.nativeEnum(ListingScope).default(ListingScope.SINGLE),
     propertyType: z.nativeEnum(PropertyCategory),
     subCity: z.enum(ADDIS_SUB_CITY_CODES, {
       errorMap: () => ({

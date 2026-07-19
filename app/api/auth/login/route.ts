@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import { issueOtp, normalizeEthiopiaPhone } from "@/lib/auth/otp";
+import { UserRole } from "@prisma/client";
+import { resolveLoginIdentifier } from "@/lib/auth/identifier";
+import { issueOtp } from "@/lib/auth/otp";
 import {
   isPasswordStrong,
   isPlaceholderPasswordHash,
@@ -19,7 +21,10 @@ export const runtime = "nodejs";
 
 /**
  * POST /api/auth/login
- * Phone + password. Trusted devices skip OTP; new devices get an SMS code.
+ * Phone or email + password.
+ * - Trusted devices skip OTP.
+ * - Phone accounts on a new device get SMS OTP.
+ * - Email-only (diaspora) clients skip SMS and sign in after password.
  */
 export async function POST(request: NextRequest) {
   let body: unknown;
@@ -32,33 +37,34 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const phoneRaw =
+  const record =
     body && typeof body === "object" && !Array.isArray(body)
-      ? String((body as { phone?: unknown }).phone ?? "")
-      : "";
-  const password =
-    body && typeof body === "object" && !Array.isArray(body)
-      ? String((body as { password?: unknown }).password ?? "")
-      : "";
-  const localeRaw =
-    body && typeof body === "object" && !Array.isArray(body)
-      ? String((body as { locale?: unknown }).locale ?? "en")
-      : "en";
+      ? (body as Record<string, unknown>)
+      : {};
+  const identifierRaw = String(
+    record.identifier ?? record.email ?? record.phone ?? "",
+  );
+  const password = String(record.password ?? "");
+  const localeRaw = String(record.locale ?? "en");
   const locale = isLocale(localeRaw) ? localeRaw : "en";
 
-  const phone = normalizeEthiopiaPhone(phoneRaw);
-  if (!phone || !isPasswordStrong(password)) {
+  const identifier = resolveLoginIdentifier(identifierRaw);
+  if (!identifier || !isPasswordStrong(password)) {
     return NextResponse.json(
       {
         error: "ValidationError",
-        message: "Enter a valid Ethiopian mobile number and password (min 8 characters)",
+        message:
+          "Enter a valid email or Ethiopian mobile number and password (min 8 characters)",
       },
       { status: 400 },
     );
   }
 
   const user = await prisma.user.findFirst({
-    where: { phone, isActive: true },
+    where:
+      identifier.kind === "email"
+        ? { email: identifier.email, isActive: true }
+        : { phone: identifier.phone, isActive: true },
     select: {
       id: true,
       email: true,
@@ -73,7 +79,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(
       {
         error: "InvalidCredentials",
-        message: "Wrong phone number or password",
+        message: "Wrong email/phone or password",
       },
       { status: 401 },
     );
@@ -84,7 +90,9 @@ export async function POST(request: NextRequest) {
       {
         error: "PasswordRequired",
         message:
-          "This account needs a password. Register again or reset via SMS verification.",
+          user.email && !user.phone
+            ? "This Google account needs a password set in your profile, or continue with Google."
+            : "This account needs a password. Register again or reset via SMS verification.",
       },
       { status: 403 },
     );
@@ -95,41 +103,60 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(
       {
         error: "InvalidCredentials",
-        message: "Wrong phone number or password",
+        message: "Wrong email/phone or password",
       },
       { status: 401 },
     );
   }
 
-  if (await isTrustedDevice(user.id)) {
+  async function completeSession() {
     await setSessionCookie({
-      userId: user.id,
-      email: user.email,
-      phone: user.phone,
-      fullName: user.fullName,
+      userId: user!.id,
+      email: user!.email,
+      phone: user!.phone,
+      fullName: user!.fullName,
     });
-    await setTrustedDeviceCookie(user.id);
+    await setTrustedDeviceCookie(user!.id);
     return NextResponse.json({
       ok: true,
       needsOtp: false,
       user: {
-        id: user.id,
-        fullName: user.fullName,
-        phone: user.phone,
-        email: user.email,
-        role: user.role,
+        id: user!.id,
+        fullName: user!.fullName,
+        phone: user!.phone,
+        email: user!.email,
+        role: user!.role,
       },
     });
   }
 
-  // New / unrecognized device — require SMS OTP before session.
+  if (await isTrustedDevice(user.id)) {
+    return completeSession();
+  }
+
+  // Email-only diaspora clients (and Google users who set a password) — no SMS path.
+  if (!user.phone) {
+    if (user.role !== UserRole.BUYER_RENTER && user.role !== UserRole.ADMIN) {
+      return NextResponse.json(
+        {
+          error: "PhoneRequired",
+          message:
+            "This role must sign in with an Ethiopian mobile number.",
+        },
+        { status: 403 },
+      );
+    }
+    return completeSession();
+  }
+
+  // New device + phone on file — SMS OTP challenge.
   await setPendingPasswordLogin(user.id);
   const { code, ttlSec } = await issueOtp({
-    phone,
+    phone: user.phone,
     locale,
   });
   const sms = await smsNotificationEngine.sendRaw({
-    toE164: phone,
+    toE164: user.phone,
     locale,
     body: `EthioMLS code: ${code}. Valid ${Math.floor(ttlSec / 60)} min.`,
   });
@@ -147,7 +174,7 @@ export async function POST(request: NextRequest) {
   return NextResponse.json({
     ok: true,
     needsOtp: true,
-    phone,
+    phone: user.phone,
     provider: sms.provider,
     expiresInSec: ttlSec,
     debugCode: sms.provider === "mock" ? code : undefined,

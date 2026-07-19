@@ -6,29 +6,17 @@ import type { DirectoryItem } from "@/components/PageDirectory";
 import { getSession } from "@/lib/auth/session";
 import { prisma } from "@/lib/db/prisma";
 import { isLocale, type Locale } from "@/lib/i18n/config";
+import {
+  labelEnum,
+  localizedListingTitle,
+  localizedSubCityName,
+} from "@/lib/i18n/enums";
 import { getDictionary } from "@/lib/i18n/getDictionary";
 
 export const dynamic = "force-dynamic";
 
-function listingTitle(listing: {
-  titleEn: string | null;
-  title: unknown;
-}): string {
-  if (listing.titleEn?.trim()) return listing.titleEn.trim();
-  if (
-    listing.title &&
-    typeof listing.title === "object" &&
-    listing.title !== null &&
-    "en" in listing.title
-  ) {
-    const en = (listing.title as { en?: string }).en;
-    if (en?.trim()) return en.trim();
-  }
-  return "Listing";
-}
-
 function toDirectoryItem(
-  locale: string,
+  locale: Locale,
   listing: {
     id: string;
     titleEn: string | null;
@@ -39,19 +27,22 @@ function toDirectoryItem(
     galleryImageUrls: string[];
     subCity: { name: unknown } | null;
   },
+  enums: {
+    listingStatus: Record<string, string>;
+    listingType: Record<string, string>;
+    listingFallback: string;
+  },
 ): DirectoryItem {
-  const subCityName =
-    listing.subCity?.name &&
-    typeof listing.subCity.name === "object" &&
-    listing.subCity.name !== null &&
-    "en" in listing.subCity.name
-      ? String((listing.subCity.name as { en?: string }).en ?? "")
-      : "";
+  const subCityName = localizedSubCityName(listing.subCity, locale);
 
   return {
     id: listing.id,
-    title: listingTitle(listing),
-    meta: [listing.id, listing.listingType.replaceAll("_", " "), subCityName]
+    title: localizedListingTitle(listing, locale, enums.listingFallback),
+    meta: [
+      listing.id,
+      labelEnum(enums.listingType, listing.listingType),
+      subCityName,
+    ]
       .filter(Boolean)
       .join(" · "),
     href: `/${locale}/listings/${listing.id}`,
@@ -59,7 +50,7 @@ function toDirectoryItem(
     photoCount: listing.galleryImageUrls.length,
     badges: [
       {
-        label: listing.status.replaceAll("_", " "),
+        label: labelEnum(enums.listingStatus, listing.status),
         tone:
           listing.status === ListingStatus.PUBLISHED
             ? "emerald"
@@ -101,32 +92,45 @@ export default async function DeveloperWorkspacePage({
 
   const user = await prisma.user.findFirst({
     where: { id: session.userId, isActive: true },
-    select: {
-      id: true,
-      role: true,
-      faydaIdentity: { select: { id: true } },
-      developerProfile: {
-        select: { id: true, tradeName: true },
-      },
-    },
+    select: { id: true, role: true },
   });
 
-  if (!user) {
-    redirect(`/${locale}/login`);
-  }
-
-  if (user.role !== UserRole.CORPORATE_DEVELOPER && user.role !== UserRole.ADMIN) {
+  if (!user || user.role !== UserRole.CORPORATE_DEVELOPER) {
     redirect(`/${locale}/roles/developer`);
   }
 
-  const [pending, published] = await Promise.all([
+  const dictionary = getDictionary(locale);
+  const ws = dictionary.workspace?.developer;
+  if (!ws) {
+    redirect(`/${locale}/roles/developer`);
+  }
+
+  const enums = {
+    listingStatus: dictionary.enums?.listingStatus ?? {},
+    listingType: dictionary.enums?.listingType ?? {},
+    listingFallback:
+      dictionary.workspace?.admin?.listingFallback ?? "Listing",
+  };
+
+  const profile = await prisma.developerProfile.findUnique({
+    where: { userId: user.id },
+    select: {
+      id: true,
+      tradeName: true,
+      isVerified: true,
+    },
+  });
+
+  const [pending, published, faydaOk] = await Promise.all([
     prisma.listing.findMany({
       where: {
         ownerId: user.id,
-        status: ListingStatus.PENDING_REVIEW,
+        status: {
+          in: [ListingStatus.DRAFT, ListingStatus.PENDING_REVIEW],
+        },
       },
-      orderBy: { createdAt: "desc" },
-      take: 12,
+      orderBy: { updatedAt: "desc" },
+      take: 24,
       select: {
         id: true,
         titleEn: true,
@@ -144,7 +148,7 @@ export default async function DeveloperWorkspacePage({
         status: ListingStatus.PUBLISHED,
       },
       orderBy: { publishedAt: "desc" },
-      take: 12,
+      take: 24,
       select: {
         id: true,
         titleEn: true,
@@ -156,26 +160,24 @@ export default async function DeveloperWorkspacePage({
         subCity: { select: { name: true } },
       },
     }),
+    prisma.user.findFirst({
+      where: { id: user.id, faydaVerifiedAt: { not: null } },
+      select: { id: true },
+    }),
   ]);
-
-  const dictionary = getDictionary(locale);
-  const ws = dictionary.workspace?.developer;
-  if (!ws) {
-    redirect(`/${locale}/roles/developer`);
-  }
 
   return (
     <main>
       <DeveloperWorkspaceView
         locale={locale}
-        tradeName={user.developerProfile?.tradeName ?? null}
-        developerId={user.developerProfile?.id ?? null}
-        hasFayda={Boolean(user.faydaIdentity)}
+        profileName={profile?.tradeName ?? null}
+        profileId={profile?.id ?? null}
+        faydaVerified={Boolean(faydaOk)}
         pendingItems={pending.map((listing) =>
-          toDirectoryItem(locale, listing),
+          toDirectoryItem(locale, listing, enums),
         )}
         publishedItems={published.map((listing) =>
-          toDirectoryItem(locale, listing),
+          toDirectoryItem(locale, listing, enums),
         )}
         copy={{
           eyebrow: ws.eyebrow,
@@ -191,12 +193,6 @@ export default async function DeveloperWorkspacePage({
           readinessProfileNeeded: ws.readinessProfileNeeded,
           readinessFaydaOk: ws.readinessFaydaOk,
           readinessFaydaNeeded: ws.readinessFaydaNeeded,
-          readinessPending: ws.readinessPending,
-          packTitle: ws.packTitle,
-          packLede: ws.packLede,
-          packPhotos: ws.packPhotos,
-          packFayda: ws.packFayda,
-          packCta: ws.packCta,
           pendingTitle: ws.pendingTitle,
           pendingEmpty: ws.pendingEmpty,
           publishedTitle: ws.publishedTitle,

@@ -1,5 +1,6 @@
 import {
   CurrencyCode,
+  ListingScope,
   ListingType,
   PropertyCategory,
   type Prisma,
@@ -9,6 +10,11 @@ import type { SalesKitListingDraft } from "@/lib/imports/sales-kit-parse";
 function parseListingType(raw: string): ListingType {
   if (raw === "SALE" || raw === "RENT" || raw === "OFF_PLAN") return raw;
   return ListingType.OFF_PLAN;
+}
+
+function parseListingScope(raw: string | undefined): ListingScope {
+  if (raw === "PROPERTY") return ListingScope.PROPERTY;
+  return ListingScope.SINGLE;
 }
 
 function parseCategory(raw: string): PropertyCategory {
@@ -43,6 +49,7 @@ export function listingUpdateFromSalesKitDraft(
     descriptionEn: draft.description,
     descriptionAm: draft.description,
     listingType,
+    listingScope: parseListingScope(draft.listingScope),
     category: parseCategory(draft.category),
     priceAmount,
     priceCurrency: parseCurrency(draft.currency),

@@ -47,6 +47,9 @@
     "plotArea": "Plot area",
     "propertyType": "Property type",
     "listingType": "Listing type",
+    "listingScope": "Single or property",
+    "scopeSingle": "Single unit",
+    "scopeProperty": "Whole property",
     "status": "Status",
     "address": "Address",
     "constructionStage": "Construction stage",
@@ -179,11 +182,17 @@
   "auth": {
     "accessEyebrow": "Secure access",
     "title": "Sign in to EthioMLS",
-    "lede": "Sign in with your Ethiopian mobile number and password. SMS verification is only required on new devices. Add email later in your profile.",
+    "lede": "Sign in with email or Ethiopian mobile and password. Clients abroad can use email; SMS is only for new devices with a local phone. Add more details later in your profile.",
     "loginTab": "Sign in",
     "registerTab": "Register",
     "fullName": "Full name",
     "fullNamePlaceholder": "Your name",
+    "identifier": "Email or Ethiopian mobile",
+    "identifierPlaceholder": "you@email.com or 09XXXXXXXX",
+    "identifierHint": "Diaspora clients: use the email on your account. Local users: Ethiopian mobile (+251 9… / 7…).",
+    "identifierClient": "Email or Ethiopian mobile",
+    "identifierClientPlaceholder": "you@email.com or 09XXXXXXXX",
+    "identifierClientHint": "Abroad? Use your email. In Ethiopia? Use a local mobile — we will SMS a code.",
     "phone": "Ethiopian mobile number",
     "phonePlaceholder": "09XXXXXXXX or 07XXXXXXXX",
     "phoneHint": "Local numbers only (+251 9… / +251 7…). International numbers are not accepted.",
@@ -192,6 +201,8 @@
     "loginCta": "Sign in",
     "registerCta": "Create account",
     "verify": "Verify & continue",
+    "resendOtp": "Resend code",
+    "resendIn": "Resend in {seconds}s",
     "back": "Back",
     "codeSent": "We sent a verification code by SMS.",
     "newDeviceHint": "New device detected — enter the SMS code to finish signing in. Trusted devices skip this next time.",
@@ -200,20 +211,22 @@
     "smsFailed": "Could not send SMS.",
     "verifyFailed": "Verification failed.",
     "loginFailed": "Sign-in failed.",
+    "registerFailed": "Could not create account.",
+    "resetEmailOnly": "Password reset currently needs an Ethiopian mobile. If you registered with email only, use the password you set or continue with Google.",
     "or": "or",
     "googleCta": "Continue with Google",
     "password": {
       "label": "Password",
       "confirm": "Confirm password",
       "placeholder": "At least 8 characters",
-      "hint": "Min. 8 characters. SMS code is only required on new devices.",
+      "hint": "Min. 8 characters. SMS is only for new devices with a local phone — email clients skip it.",
       "tooShort": "Password must be at least 8 characters.",
       "mismatch": "Passwords do not match."
     },
     "reset": {
       "link": "Forgot password?",
       "title": "Reset password",
-      "lede": "Enter your phone and a new password. We will SMS a code to confirm.",
+      "lede": "Enter your Ethiopian mobile and a new password. We will SMS a code to confirm.",
       "newPassword": "New password",
       "passwordHint": "Choose a new password (min. 8 characters).",
       "sendCode": "Send reset code",
@@ -230,7 +243,7 @@
       "locked": "Your role was set at signup and cannot be changed.",
       "admin": "Admin",
       "client": "Client / renter",
-      "clientHint": "Browse and enquire about homes.",
+      "clientHint": "Browse homes — sign up with email (abroad) or Ethiopian mobile.",
       "owner": "Property owner",
       "ownerHint": "List your own home for sale or rent.",
       "broker": "Broker",
@@ -304,9 +317,10 @@
     "admin": {
       "eyebrow": "Admin",
       "title": "Audit and import the market",
-      "lede": "Scrape Telegram and websites, review pending listings, and publish only after the client-protection checklist passes.",
+      "lede": "Scrape Telegram and websites, add listings to pending review, and publish only after the client-protection checklist passes.",
       "ctas": {
         "workspace": "Open workspace",
+        "addListing": "Add listing",
         "imports": "Import sources",
         "dashboard": "Dashboard metrics",
         "profile": "Your profile"
@@ -342,8 +356,10 @@
     "admin": {
       "eyebrow": "Admin workspace",
       "title": "Review, audit, and publish",
-      "lede": "Work the pending queue, clear collision alerts, and publish only after the client-protection checklist passes.",
+      "lede": "Work the pending queue, add listings before you verify them, clear collision alerts, and publish only after the client-protection checklist passes.",
       "openQueue": "Open review queue",
+      "addListing": "Add listing",
+      "addListingHint": "Enters pending review — audit and verify before publish.",
       "importSources": "Import sources",
       "dashboard": "Dashboard metrics",
       "accountProfile": "Account profile",
@@ -376,7 +392,51 @@
       "readyEmpty": "Nothing audited yet — approve a pending listing to see it here.",
       "alertsTitle": "Unread alerts",
       "alertsEmpty": "No unread alerts.",
-      "backToRoles": "Back to admin hub"
+      "backToRoles": "Back to admin hub",
+      "auditPassed": "Audit passed",
+      "groupOther": "Other",
+      "listingFallback": "Listing"
+    }
+  },
+  "enums": {
+    "listingStatus": {
+      "DRAFT": "Draft",
+      "PENDING_REVIEW": "Pending review",
+      "PUBLISHED": "Published",
+      "UNDER_OFFER": "Under offer",
+      "SOLD": "Sold",
+      "RENTED": "Rented",
+      "ARCHIVED": "Archived"
+    },
+    "listingType": {
+      "SALE": "Sale",
+      "RENT": "Rent",
+      "OFF_PLAN": "Off-plan"
+    },
+    "listingScope": {
+      "SINGLE": "Single unit",
+      "PROPERTY": "Whole property"
+    },
+    "propertyCategory": {
+      "RESIDENTIAL": "Residential",
+      "COMMERCIAL": "Commercial",
+      "MIXED_USE": "Mixed use",
+      "LAND": "Land"
+    },
+    "constructionStage": {
+      "EARTHWORKS_FOUNDATION": "Earthworks & foundation",
+      "SUBSTRUCTURE": "Substructure",
+      "SUPERSTRUCTURE": "Superstructure",
+      "ROOFING_ENVELOPE": "Roofing & envelope",
+      "MEP_INSTALLATION": "MEP installation",
+      "INTERIOR_FINISHING": "Interior finishing",
+      "EXTERNAL_WORKS": "External works",
+      "FULLY_COMPLETED": "Fully completed"
+    },
+    "paymentStructure": {
+      "MILESTONE_BASED": "Milestone-based",
+      "CASH_DISCOUNT_USD": "Cash discount (USD)",
+      "SEMI_FINISHED_DISCOUNT": "Semi-finished discount"
     }
   },
   "adminAudit": {
@@ -391,6 +451,11 @@
     "saving": "Saving…",
     "approvedReady": "Audit passed — you can publish this listing.",
     "statusLabel": "Status",
+    "rejectedToDraft": "Listing rejected and returned to draft.",
+    "published": "Listing published.",
+    "attachFailed": "Could not attach account",
+    "auditFailed": "Audit failed",
+    "publishFailed": "Publish failed",
     "checks": {
       "sellerIdentity": "Seller identity verified",
       "ownershipOrAuthority": "Ownership or listing authority verified",

@@ -2,8 +2,9 @@
 
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "@/hooks/useTranslation";
+import { looksLikeEmail } from "@/lib/auth/identifier";
 import {
   SIGNUP_ROLE_OPTIONS,
   type SignupRole,
@@ -21,6 +22,8 @@ type AuthPanelProps = {
 
 const fieldClass =
   "rounded-xl border border-white/15 bg-white/10 px-4 py-3 text-white outline-none backdrop-blur placeholder:text-slate-400 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30";
+
+const RESEND_COOLDOWN_SEC = 30;
 
 export function AuthPanel({
   initialError,
@@ -48,6 +51,7 @@ export function AuthPanel({
   const [error, setError] = useState<string | null>(initialError ?? null);
   const [hint, setHint] = useState<string | null>(null);
   const [debugCode, setDebugCode] = useState<string | null>(null);
+  const [resendIn, setResendIn] = useState(0);
 
   const next = searchParams.get("next");
   const isDeveloperSignup =
@@ -57,6 +61,16 @@ export function AuthPanel({
     step === "credentials" &&
     (mode === "login" ||
       (mode === "register" && role === "BUYER_RENTER"));
+
+  useEffect(() => {
+    if (resendIn <= 0) return;
+    const id = window.setTimeout(() => setResendIn((s) => s - 1), 1000);
+    return () => window.clearTimeout(id);
+  }, [resendIn]);
+
+  function startResendCooldown() {
+    setResendIn(RESEND_COOLDOWN_SEC);
+  }
 
   function googleHref() {
     const params = new URLSearchParams({
@@ -85,6 +99,7 @@ export function AuthPanel({
     setCode("");
     setPassword("");
     setPasswordConfirm("");
+    setResendIn(0);
   }
 
   async function loginWithPassword() {
@@ -99,7 +114,7 @@ export function AuthPanel({
       const res = await fetch("/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ phone, password, locale }),
+        body: JSON.stringify({ identifier: phone, password, locale }),
       });
       const data = (await res.json().catch(() => ({}))) as {
         message?: string;
@@ -112,6 +127,7 @@ export function AuthPanel({
 
       if (data.needsOtp) {
         setStep("code");
+        startResendCooldown();
         setHint(
           data.provider === "mock"
             ? t("auth.mockHint")
@@ -124,6 +140,44 @@ export function AuthPanel({
       goToHub(data.user?.role);
     } catch (err) {
       setError(err instanceof Error ? err.message : t("auth.loginFailed"));
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function registerWithEmail() {
+    setBusy(true);
+    setError(null);
+    setHint(null);
+    setDebugCode(null);
+    try {
+      if (fullName.trim().length < 2) {
+        throw new Error(t("auth.fullName"));
+      }
+      if (password.trim().length < 8) {
+        throw new Error(t("auth.password.tooShort"));
+      }
+      if (password !== passwordConfirm) {
+        throw new Error(t("auth.password.mismatch"));
+      }
+      const res = await fetch("/api/auth/register-email", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: phone.trim(),
+          fullName: fullName.trim(),
+          password,
+          locale,
+        }),
+      });
+      const data = (await res.json().catch(() => ({}))) as {
+        message?: string;
+        user?: { role?: string };
+      };
+      if (!res.ok) throw new Error(data.message ?? t("auth.registerFailed"));
+      goToHub(data.user?.role ?? "BUYER_RENTER");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : t("auth.registerFailed"));
     } finally {
       setBusy(false);
     }
@@ -178,6 +232,7 @@ export function AuthPanel({
       };
       if (!res.ok) throw new Error(data.message ?? t("auth.smsFailed"));
       setStep("code");
+      startResendCooldown();
       setHint(
         data.provider === "mock" ? t("auth.mockHint") : t("auth.codeSent"),
       );
@@ -195,6 +250,9 @@ export function AuthPanel({
     setHint(null);
     setDebugCode(null);
     try {
+      if (looksLikeEmail(phone)) {
+        throw new Error(t("auth.resetEmailOnly"));
+      }
       if (password.trim().length < 8) {
         throw new Error(t("auth.password.tooShort"));
       }
@@ -214,6 +272,7 @@ export function AuthPanel({
       };
       if (!res.ok) throw new Error(data.message ?? t("auth.smsFailed"));
       setStep("code");
+      startResendCooldown();
       setHint(
         data.provider === "mock"
           ? t("auth.mockHint")
@@ -225,6 +284,21 @@ export function AuthPanel({
     } finally {
       setBusy(false);
     }
+  }
+
+  async function resendOtp() {
+    if (busy || resendIn > 0) return;
+    setCode("");
+    setDebugCode(null);
+    if (mode === "login") {
+      await loginWithPassword();
+      return;
+    }
+    if (mode === "register") {
+      await registerRequestOtp();
+      return;
+    }
+    await resetRequestOtp();
   }
 
   async function verifyOtp() {
@@ -273,14 +347,27 @@ export function AuthPanel({
   }
 
   function credentialsDisabled() {
-    if (busy || phone.trim().length < 9) return true;
-    if (mode === "login") return password.trim().length < 8;
+    if (busy || phone.trim().length < 3) return true;
+    if (mode === "login") {
+      return password.trim().length < 8;
+    }
     if (mode === "reset") {
       return (
-        password.trim().length < 8 || password !== passwordConfirm
+        phone.trim().length < 9 ||
+        password.trim().length < 8 ||
+        password !== passwordConfirm
+      );
+    }
+    // Client email signup
+    if (role === "BUYER_RENTER" && looksLikeEmail(phone)) {
+      return (
+        password.trim().length < 8 ||
+        fullName.trim().length < 2 ||
+        password !== passwordConfirm
       );
     }
     return (
+      phone.trim().length < 9 ||
       password.trim().length < 8 ||
       fullName.trim().length < 2 ||
       !role ||
@@ -437,17 +524,43 @@ export function AuthPanel({
 
           <label className="grid gap-1.5">
             <span className="text-sm font-medium text-slate-200">
-              {t("auth.phone")}
+              {mode === "login"
+                ? t("auth.identifier")
+                : mode === "register" && role === "BUYER_RENTER"
+                  ? t("auth.identifierClient")
+                  : t("auth.phone")}
             </span>
             <input
               className={fieldClass}
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
-              inputMode="tel"
-              autoComplete="tel"
-              placeholder={t("auth.phonePlaceholder")}
+              inputMode={
+                mode === "login" ||
+                (mode === "register" && role === "BUYER_RENTER")
+                  ? "email"
+                  : "tel"
+              }
+              autoComplete={
+                mode === "login" ||
+                (mode === "register" && role === "BUYER_RENTER")
+                  ? "username"
+                  : "tel"
+              }
+              placeholder={
+                mode === "login"
+                  ? t("auth.identifierPlaceholder")
+                  : mode === "register" && role === "BUYER_RENTER"
+                    ? t("auth.identifierClientPlaceholder")
+                    : t("auth.phonePlaceholder")
+              }
             />
-            <span className="text-xs text-slate-400">{t("auth.phoneHint")}</span>
+            <span className="text-xs text-slate-400">
+              {mode === "login"
+                ? t("auth.identifierHint")
+                : mode === "register" && role === "BUYER_RENTER"
+                  ? t("auth.identifierClientHint")
+                  : t("auth.phoneHint")}
+            </span>
           </label>
 
           <label className="grid gap-1.5">
@@ -495,8 +608,13 @@ export function AuthPanel({
             className="rounded-full bg-brand-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-brand-700 disabled:opacity-45"
             onClick={() => {
               if (mode === "login") void loginWithPassword();
-              else if (mode === "register") void registerRequestOtp();
-              else void resetRequestOtp();
+              else if (mode === "register") {
+                if (role === "BUYER_RENTER" && looksLikeEmail(phone)) {
+                  void registerWithEmail();
+                } else {
+                  void registerRequestOtp();
+                }
+              } else void resetRequestOtp();
             }}
           >
             {busy
@@ -578,11 +696,22 @@ export function AuthPanel({
             </button>
             <button
               type="button"
+              disabled={busy || resendIn > 0}
+              className="rounded-full border border-white/20 px-4 py-3 text-sm font-semibold text-slate-200 hover:bg-white/10 disabled:opacity-45"
+              onClick={() => void resendOtp()}
+            >
+              {resendIn > 0
+                ? t("auth.resendIn").replace("{seconds}", String(resendIn))
+                : t("auth.resendOtp")}
+            </button>
+            <button
+              type="button"
               className="rounded-full border border-white/20 px-4 py-3 text-sm font-semibold text-slate-200 hover:bg-white/10"
               onClick={() => {
                 setStep("credentials");
                 setCode("");
                 setDebugCode(null);
+                setResendIn(0);
               }}
             >
               {t("auth.back")}

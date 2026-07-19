@@ -426,6 +426,11 @@ export function ListingAuditPanel({
           placeholder={copy.notesPlaceholder}
           className="rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-900 outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20"
         />
+        {notes.trim().length > 0 && notes.trim().length < 10 ? (
+          <span className="text-xs text-amber-700">
+            {10 - notes.trim().length} more characters needed for reject / approve
+          </span>
+        ) : null}
       </label>
 
       {error ? (

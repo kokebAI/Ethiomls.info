@@ -175,6 +175,13 @@ export default async function ListingDetailPage({
       : null,
     { label: t("listing.propertyType"), value: prettyEnum(listing.category) },
     { label: t("listing.listingType"), value: typeLabel },
+    {
+      label: t("listing.listingScope"),
+      value:
+        listing.listingScope === "PROPERTY"
+          ? t("listing.scopeProperty")
+          : t("listing.scopeSingle"),
+    },
     listing.constructionStage
       ? {
           label: t("listing.constructionStage"),

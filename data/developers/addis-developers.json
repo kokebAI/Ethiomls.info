@@ -292,6 +292,19 @@
       "tin": null,
       "email": "yemwedih.tadele@kavodcommercial.com",
       "fullName": "Yemwedih Tadele"
+    },
+    {
+      "tradeName": "Seken Real Estate PLC",
+      "displayName": {
+        "en": "Seken Real Estate",
+        "am": "ሰከን ሪል ኢስቴት"
+      },
+      "registrationNumber": "ET-DIR-SEKEN-025",
+      "website": null,
+      "hqCode": "yeka",
+      "licenseNumber": null,
+      "tin": null,
+      "notes": "Diaspora sales kit July 2026 — Megenagna Top View SiteStudio"
     }
   ]
 }

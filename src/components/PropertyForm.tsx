@@ -1,6 +1,13 @@
 "use client";
 
-import { useEffect, useRef, useState, type DragEvent, type FormEvent } from "react";
+import {
+  useEffect,
+  useRef,
+  useState,
+  type DragEvent,
+  type FormEvent,
+} from "react";
+import { useParams, useRouter } from "next/navigation";
 import {
   CheckCircle2,
   Circle,
@@ -11,6 +18,7 @@ import {
   X,
 } from "lucide-react";
 import { CONSTRUCTION_STAGE_OPTIONS } from "@/lib/domain/construction-stage";
+import { isLocale } from "@/lib/i18n/config";
 import {
   EVIDENCE_KIND_LABELS,
   MIN_GALLERY_PHOTOS,
@@ -115,6 +123,7 @@ type FormValues = {
   description: string;
   addressLine: string;
   listingType: "SALE" | "RENT" | "OFF_PLAN";
+  listingScope: "SINGLE" | "PROPERTY";
   propertyType: "RESIDENTIAL" | "COMMERCIAL" | "MIXED_USE" | "LAND";
   constructionStage: string;
   escrowAccountNumber: string;
@@ -155,6 +164,7 @@ const EMPTY_FORM: FormValues = {
   description: "",
   addressLine: "",
   listingType: "SALE",
+  listingScope: "SINGLE",
   propertyType: "RESIDENTIAL",
   constructionStage: "SUPERSTRUCTURE",
   escrowAccountNumber: "",
@@ -279,6 +289,11 @@ export function PropertyForm({
   allowOffPlan = false,
   onCreated,
 }: PropertyFormProps) {
+  const router = useRouter();
+  const params = useParams();
+  const localeRaw = params?.locale;
+  const locale =
+    typeof localeRaw === "string" && isLocale(localeRaw) ? localeRaw : "en";
   const inputRef = useRef<HTMLInputElement>(null);
   const [propertyId, setPropertyId] = useState("");
   const [values, setValues] = useState<FormValues>(() => ({
@@ -301,6 +316,7 @@ export function PropertyForm({
   } | null>(null);
 
   const isDeveloper = role === "CORPORATE_DEVELOPER";
+  const isAdmin = role === "ADMIN";
   const needsFullPack = isDeveloper && values.listingType === "OFF_PLAN";
 
   useEffect(() => {
@@ -549,6 +565,7 @@ export function PropertyForm({
         title: { en: values.title },
         description: { en: values.description },
         listingType: values.listingType,
+        listingScope: values.listingScope,
         propertyType: values.propertyType,
         subCity: values.subCity,
         price: Number(values.price),
@@ -558,6 +575,7 @@ export function PropertyForm({
         sizeM2: Number(values.sizeM2),
         metadata: [
           "document-assisted-submission",
+          ...(isAdmin ? ["admin-manual"] : []),
           ...(documentNames.length > 0
             ? [`docs:${documentNames.length}`]
             : []),
@@ -629,9 +647,15 @@ export function PropertyForm({
 
       setMessage({
         tone: "success",
-        text: `Submitted ${payload.data.id} for admin review.`,
+        text: isAdmin
+          ? `Added ${payload.data.id} to pending review. Opening audit…`
+          : `Submitted ${payload.data.id} for admin review.`,
       });
       onCreated?.(payload.data.id);
+      if (isAdmin) {
+        router.push(`/${locale}/listings/${payload.data.id}`);
+        router.refresh();
+      }
     } catch (error) {
       setMessage({
         tone: "error",
@@ -655,15 +679,21 @@ export function PropertyForm({
       <header className="bg-slate-950 px-6 py-7 text-white sm:px-10">
         <p className="mb-2 flex items-center gap-2 text-xs font-bold uppercase tracking-[0.2em] text-amber-400">
           <Sparkles className="h-4 w-4" />
-          AI-assisted listing
+          {isAdmin ? "Admin listing intake" : "AI-assisted listing"}
         </p>
         <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">
-          {needsFullPack ? "Submit off-plan inventory" : "Submit a property"}
+          {isAdmin
+            ? "Add listing for pending review"
+            : needsFullPack
+              ? "Submit off-plan inventory"
+              : "Submit a property"}
         </h1>
         <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-300">
-          {needsFullPack
-            ? "Upload the full developer pack (org docs, floor plan, title/lease, permit, escrow, photos), verify Fayda, then review fields before submit."
-            : "Upload deeds, brochures, or listing sheets to prefill the form, then review every value before submission."}
+          {isAdmin
+            ? "Save core facts now — the listing enters the pending queue. Complete the client-protection checklist and verify before you publish."
+            : needsFullPack
+              ? "Upload the full developer pack (org docs, floor plan, title/lease, permit, escrow, photos), verify Fayda, then review fields before submit."
+              : "Upload deeds, brochures, or listing sheets to prefill the form, then review every value before submission."}
         </p>
       </header>
 
@@ -1037,6 +1067,26 @@ export function PropertyForm({
             </select>
           </label>
           <label>
+            <span className={labelClass}>Single or property</span>
+            <select
+              value={values.listingScope}
+              onChange={(event) =>
+                update(
+                  "listingScope",
+                  event.target.value as FormValues["listingScope"],
+                )
+              }
+              className={fieldClass}
+            >
+              <option value="SINGLE">Single unit</option>
+              <option value="PROPERTY">Whole property</option>
+            </select>
+            <span className="mt-1 block text-xs text-slate-500">
+              Single = one home or apartment. Property = the whole building or
+              site.
+            </span>
+          </label>
+          <label>
             <span className={labelClass}>Property type</span>
             <select
               value={values.propertyType}
@@ -1183,8 +1233,10 @@ export function PropertyForm({
           {isSubmitting ? (
             <>
               <LoaderCircle className="h-5 w-5 animate-spin text-amber-400" />
-              Submitting property...
+              {isAdmin ? "Adding to pending review…" : "Submitting property..."}
             </>
+          ) : isAdmin ? (
+            "Add to pending review"
           ) : (
             "Submit property"
           )}
