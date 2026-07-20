@@ -4,9 +4,12 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import {
   ClipboardCheck,
+  Filter,
   LoaderCircle,
   MessageSquare,
   Pencil,
+  RotateCcw,
+  Search,
   Trash2,
 } from "lucide-react";
 import {
@@ -19,6 +22,13 @@ import {
   type ScrapeReviewItem,
   type ScrapeReviewSourceGroup,
 } from "@/lib/imports/scrape-review-groups";
+import {
+  DEFAULT_SCRAPE_REVIEW_FILTERS,
+  filterScrapeReviewItems,
+  filtersAreActive,
+  scrapeReviewSourceOptions,
+  type ScrapeReviewFilters,
+} from "@/lib/imports/scrape-review-filters";
 import { buildScrapeInviteMessageForListings } from "@/lib/imports/scrape-invite-message";
 import { useTranslation } from "@/hooks/useTranslation";
 
@@ -97,13 +107,27 @@ export function ScrapeReviewQueue({ initialItems }: ScrapeReviewQueueProps) {
     text: string;
   } | null>(null);
 
+  const [filters, setFilters] = useState<ScrapeReviewFilters>(
+    DEFAULT_SCRAPE_REVIEW_FILTERS,
+  );
+
   useEffect(() => {
     setItems(initialItems);
   }, [initialItems]);
 
+  const sourceOptions = useMemo(
+    () => scrapeReviewSourceOptions(items),
+    [items],
+  );
+
+  const filteredItems = useMemo(
+    () => filterScrapeReviewItems(items, filters),
+    [items, filters],
+  );
+
   const groups = useMemo(
     () =>
-      groupScrapeReviewItems(items).map((sourceGroup) => ({
+      groupScrapeReviewItems(filteredItems).map((sourceGroup) => ({
         ...sourceGroup,
         phoneGroups: sourceGroup.phoneGroups.map((phoneGroup) => ({
           ...phoneGroup,
@@ -112,8 +136,17 @@ export function ScrapeReviewQueue({ initialItems }: ScrapeReviewQueueProps) {
           ),
         })),
       })),
-    [items],
+    [filteredItems],
   );
+
+  const activeFilters = filtersAreActive(filters);
+
+  function patchFilter<K extends keyof ScrapeReviewFilters>(
+    key: K,
+    value: ScrapeReviewFilters[K],
+  ) {
+    setFilters((prev) => ({ ...prev, [key]: value }));
+  }
 
   const removeItems = useCallback((ids: string[]) => {
     const drop = new Set(ids);
@@ -281,13 +314,217 @@ export function ScrapeReviewQueue({ initialItems }: ScrapeReviewQueueProps) {
         </div>
       ) : null}
 
-      <p className="text-sm text-ink-muted">
-        {t("scrapeReview.queueCount", { count: items.length })}
-        {" · "}
-        {t("scrapeReview.sortedOldestFirst")}
-      </p>
+      <section
+        className="rounded-2xl border border-slate-200/90 bg-white/90 p-4 shadow-[var(--shadow-card)] sm:p-5"
+        aria-labelledby="scrape-review-filters-heading"
+      >
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <h2
+            id="scrape-review-filters-heading"
+            className="inline-flex items-center gap-2 text-sm font-semibold text-slate-deep"
+          >
+            <Filter className="h-4 w-4 text-slate-500" aria-hidden />
+            {t("scrapeReview.filterTitle")}
+          </h2>
+          <div className="flex flex-wrap items-center gap-3 text-sm text-ink-muted">
+            <span>
+              {t("scrapeReview.filterShowing", {
+                filtered: filteredItems.length,
+                total: items.length,
+              })}
+            </span>
+            {activeFilters ? (
+              <button
+                type="button"
+                onClick={() => setFilters(DEFAULT_SCRAPE_REVIEW_FILTERS)}
+                className="inline-flex items-center gap-1.5 font-semibold text-brand-700 hover:underline"
+              >
+                <RotateCcw className="h-3.5 w-3.5" aria-hidden />
+                {t("scrapeReview.filterReset")}
+              </button>
+            ) : null}
+          </div>
+        </div>
 
-      {groups.map((sourceGroup) => {
+        <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          <label className="block sm:col-span-2 lg:col-span-2">
+            <span className="mb-1 block text-xs font-semibold text-slate-500">
+              {t("scrapeReview.filterSearch")}
+            </span>
+            <span className="relative block">
+              <Search
+                className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400"
+                aria-hidden
+              />
+              <input
+                type="search"
+                value={filters.query}
+                onChange={(e) => patchFilter("query", e.target.value)}
+                placeholder={t("scrapeReview.filterSearchPlaceholder")}
+                className="w-full rounded-xl border border-slate-200 bg-white py-2.5 pl-9 pr-3 text-sm text-slate-900 outline-none ring-brand-500/30 focus:ring-2"
+              />
+            </span>
+          </label>
+
+          <label className="block">
+            <span className="mb-1 block text-xs font-semibold text-slate-500">
+              {t("scrapeReview.filterSource")}
+            </span>
+            <select
+              value={filters.sourceKey}
+              onChange={(e) => patchFilter("sourceKey", e.target.value)}
+              className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-900 outline-none ring-brand-500/30 focus:ring-2"
+            >
+              <option value="all">{t("scrapeReview.filterAllSources")}</option>
+              {sourceOptions.map((opt) => (
+                <option key={opt.key} value={opt.key}>
+                  {opt.label} ({opt.count})
+                </option>
+              ))}
+            </select>
+          </label>
+
+          <label className="block">
+            <span className="mb-1 block text-xs font-semibold text-slate-500">
+              {t("scrapeReview.filterListingType")}
+            </span>
+            <select
+              value={filters.listingType}
+              onChange={(e) => patchFilter("listingType", e.target.value)}
+              className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-900 outline-none ring-brand-500/30 focus:ring-2"
+            >
+              <option value="all">{t("scrapeReview.filterAllTypes")}</option>
+              <option value="SALE">{t("scrapeReview.filterTypeSale")}</option>
+              <option value="RENT">{t("scrapeReview.filterTypeRent")}</option>
+              <option value="OFF_PLAN">
+                {t("scrapeReview.filterTypeOffPlan")}
+              </option>
+            </select>
+          </label>
+
+          <label className="block">
+            <span className="mb-1 block text-xs font-semibold text-slate-500">
+              {t("scrapeReview.filterDatePreset")}
+            </span>
+            <select
+              value={filters.datePreset}
+              onChange={(e) =>
+                patchFilter(
+                  "datePreset",
+                  e.target.value as ScrapeReviewFilters["datePreset"],
+                )
+              }
+              className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-900 outline-none ring-brand-500/30 focus:ring-2"
+            >
+              <option value="any">{t("scrapeReview.filterDateAny")}</option>
+              <option value="7d">{t("scrapeReview.filterDate7d")}</option>
+              <option value="30d">{t("scrapeReview.filterDate30d")}</option>
+              <option value="90d">{t("scrapeReview.filterDate90d")}</option>
+              <option value="older90">
+                {t("scrapeReview.filterDateOlder90")}
+              </option>
+              <option value="missingDate">
+                {t("scrapeReview.filterDateMissing")}
+              </option>
+            </select>
+          </label>
+
+          <label className="block">
+            <span className="mb-1 block text-xs font-semibold text-slate-500">
+              {t("scrapeReview.filterPostedFrom")}
+            </span>
+            <input
+              type="date"
+              value={filters.postedFrom}
+              onChange={(e) => patchFilter("postedFrom", e.target.value)}
+              className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-900 outline-none ring-brand-500/30 focus:ring-2"
+            />
+          </label>
+
+          <label className="block">
+            <span className="mb-1 block text-xs font-semibold text-slate-500">
+              {t("scrapeReview.filterPostedTo")}
+            </span>
+            <input
+              type="date"
+              value={filters.postedTo}
+              onChange={(e) => patchFilter("postedTo", e.target.value)}
+              className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-900 outline-none ring-brand-500/30 focus:ring-2"
+            />
+          </label>
+
+          <label className="block">
+            <span className="mb-1 block text-xs font-semibold text-slate-500">
+              {t("scrapeReview.filterMinPrice")}
+            </span>
+            <input
+              type="number"
+              min={0}
+              inputMode="numeric"
+              value={filters.minPrice}
+              onChange={(e) => patchFilter("minPrice", e.target.value)}
+              placeholder="0"
+              className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-900 outline-none ring-brand-500/30 focus:ring-2"
+            />
+          </label>
+
+          <label className="block">
+            <span className="mb-1 block text-xs font-semibold text-slate-500">
+              {t("scrapeReview.filterMaxPrice")}
+            </span>
+            <input
+              type="number"
+              min={0}
+              inputMode="numeric"
+              value={filters.maxPrice}
+              onChange={(e) => patchFilter("maxPrice", e.target.value)}
+              placeholder="∞"
+              className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-900 outline-none ring-brand-500/30 focus:ring-2"
+            />
+          </label>
+
+          <label className="block sm:col-span-2 lg:col-span-1">
+            <span className="mb-1 block text-xs font-semibold text-slate-500">
+              {t("scrapeReview.filterSort")}
+            </span>
+            <select
+              value={filters.sort}
+              onChange={(e) =>
+                patchFilter("sort", e.target.value as ScrapeReviewFilters["sort"])
+              }
+              className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-900 outline-none ring-brand-500/30 focus:ring-2"
+            >
+              <option value="oldest">{t("scrapeReview.filterSortOldest")}</option>
+              <option value="newest">{t("scrapeReview.filterSortNewest")}</option>
+              <option value="priceAsc">
+                {t("scrapeReview.filterSortPriceAsc")}
+              </option>
+              <option value="priceDesc">
+                {t("scrapeReview.filterSortPriceDesc")}
+              </option>
+              <option value="source">
+                {t("scrapeReview.filterSortSource")}
+              </option>
+            </select>
+          </label>
+        </div>
+      </section>
+
+      {filteredItems.length === 0 ? (
+        <div className="rounded-2xl border border-dashed border-slate-200 bg-white/70 px-4 py-10 text-center text-sm text-ink-muted">
+          <p>{t("scrapeReview.filterEmpty")}</p>
+          {activeFilters ? (
+            <button
+              type="button"
+              onClick={() => setFilters(DEFAULT_SCRAPE_REVIEW_FILTERS)}
+              className="mt-3 font-semibold text-brand-700 hover:underline"
+            >
+              {t("scrapeReview.filterReset")}
+            </button>
+          ) : null}
+        </div>
+      ) : (
+        groups.map((sourceGroup) => {
         const sourceStale = isStalePosted(sourceGroup.oldestPostedAt);
         return (
           <section key={sourceGroup.importSourceId ?? "manual"} className="space-y-4">
@@ -520,7 +757,8 @@ export function ScrapeReviewQueue({ initialItems }: ScrapeReviewQueueProps) {
             })}
           </section>
         );
-      })}
+      })
+      )}
     </div>
   );
 }
