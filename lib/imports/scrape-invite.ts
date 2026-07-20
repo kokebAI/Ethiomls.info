@@ -59,9 +59,12 @@ export function resolveInvitePhone(
   return normalizeEthiopiaPhone(trimmed);
 }
 
+/** Soft cap for concatenated Unicode SMS via HaHu (multipart). */
+const INVITE_SMS_MAX_CHARS = 600;
+
 /**
- * Build a short HaHu invite SMS (≤160 chars, GSM-safe Latin script).
- * Longer Unicode Amharic bodies get truncated by the gateway.
+ * Build scrape-invite SMS: full Amharic first, then English.
+ * Includes listing link, reset instructions, and in-app tips note.
  */
 export function buildScrapeInviteMessage(
   listing: ScrapeInviteListing,
@@ -70,20 +73,27 @@ export function buildScrapeInviteMessage(
   const claimLoginUrl = smsNotificationEngine.buildAbsoluteUrl(
     `/am/login?mode=reset`,
   );
-  const phone =
-    resolveInvitePhone(listing.contactPhone) ??
-    listing.contactPhone?.trim() ??
-    "";
+  const listingUrl = smsNotificationEngine.buildAbsoluteUrl(
+    `/am/listings/${encodeURIComponent(listing.id)}`,
+  );
 
-  // Keep under 160 characters so HaHu does not cut off mid-sentence.
-  const withPhone = phone
-    ? `EthioMLS: Use phone ${phone}. Reset password: ${claimLoginUrl} Then sign in & edit your listing.`
-    : `EthioMLS: Use your phone. Reset password: ${claimLoginUrl} Then sign in & edit your listing.`;
+  const amharic =
+    `የEthioMLS AI መተግበሪያ ዝርዝርዎን አግኝቶ ትኩረት የሚስብ ሆኖ አግኝቶታል። ` +
+    `ዝርዝር፡ ${listingUrl} ` +
+    `ተመሳሳይ ስልክ በመጠቀም የይለፍ ቃል ዳግም ያስጀምሩ፡ ${claimLoginUrl} ` +
+    `ከዚያ ይግቡና ዝርዝርዎን ያርሙ። ለግምገማ ሲገቡ ጠቃሚ ፍንጮችና መመሪያዎች ይረዱዎታል።`;
 
-  if (withPhone.length <= 160) return withPhone;
+  const english =
+    `EthioMLS AI found your listing interesting. ` +
+    `Listing: ${listingUrl} ` +
+    `Use the same phone, then Reset password: ${claimLoginUrl} ` +
+    `Sign in and edit your listing. Tooltips and other aids will help once you come in to review.`;
 
-  const short = `EthioMLS: Reset password: ${claimLoginUrl} Then sign in & edit listing.`;
-  return short.length <= 160 ? short : short.slice(0, 160);
+  const message = `${amharic}\n\n${english}`;
+
+  const chars = [...message];
+  if (chars.length <= INVITE_SMS_MAX_CHARS) return message;
+  return chars.slice(0, INVITE_SMS_MAX_CHARS).join("");
 }
 
 /**

@@ -173,7 +173,14 @@ export class SmsNotificationEngine {
     if (!device) throw new Error("HAHU_DEVICE_ID is not configured");
 
     const url = new URL(endpoint);
-    // Prefer POST form body so long/short messages are not truncated by URL length.
+    // Prefer POST form body so messages are not truncated by query-string length.
+    // Allow multipart Unicode SMS (Amharic+English invites); avoid mid-glyph cuts.
+    const maxChars = Number(process.env.HAHU_SMS_MAX_CHARS ?? "600");
+    const safeMax =
+      Number.isFinite(maxChars) && maxChars > 0
+        ? Math.min(Math.trunc(maxChars), 900)
+        : 600;
+    const message = [...body].slice(0, safeMax).join("");
     const form = new URLSearchParams({
       secret,
       mode: "devices",
@@ -181,7 +188,7 @@ export class SmsNotificationEngine {
       sim,
       priority,
       phone: to,
-      message: body.slice(0, 160),
+      message,
     });
 
     const response = await fetch(url.toString(), {
