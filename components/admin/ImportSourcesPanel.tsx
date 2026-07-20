@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { LoaderCircle, Plus, RefreshCw } from "lucide-react";
+import { LoaderCircle, Plus, RefreshCw, Trash2 } from "lucide-react";
 import { useTranslation } from "@/hooks/useTranslation";
 
 type ScrapeRunSummary = {
@@ -31,6 +31,27 @@ type ImportSourceRow = {
   _count: { listings: number };
 };
 
+async function readApiError(
+  response: Response,
+  fallback: string,
+): Promise<string> {
+  const raw = await response.text();
+  try {
+    const payload = JSON.parse(raw) as { message?: string; error?: string };
+    if (payload.message) return payload.message;
+    if (payload.error) return payload.error;
+  } catch {
+    // Non-JSON (often a platform timeout HTML page)
+  }
+  if (response.status === 504 || response.status === 502) {
+    return "Scrape timed out before finishing. The run will be marked failed — try again.";
+  }
+  if (raw.trim().startsWith("<")) {
+    return "Server returned an HTML error (often a timeout). Try again in a moment.";
+  }
+  return fallback;
+}
+
 export function ImportSourcesPanel() {
   const { t } = useTranslation();
   const [sources, setSources] = useState<ImportSourceRow[]>([]);
@@ -40,6 +61,7 @@ export function ImportSourcesPanel() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [runningId, setRunningId] = useState<string | null>(null);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
   const [message, setMessage] = useState<{
     tone: "success" | "error";
     text: string;
@@ -49,13 +71,12 @@ export function ImportSourcesPanel() {
     setLoading(true);
     try {
       const response = await fetch("/api/admin/import-sources");
+      if (!response.ok) {
+        throw new Error(await readApiError(response, t("imports.loadFailed")));
+      }
       const payload = (await response.json()) as {
         data?: ImportSourceRow[];
-        message?: string;
       };
-      if (!response.ok) {
-        throw new Error(payload.message ?? t("imports.loadFailed"));
-      }
       setSources(payload.data ?? []);
     } catch (error) {
       setMessage({
@@ -86,9 +107,8 @@ export function ImportSourcesPanel() {
           notes: notes.trim() || undefined,
         }),
       });
-      const payload = (await response.json()) as { message?: string };
       if (!response.ok) {
-        throw new Error(payload.message ?? t("imports.saveFailed"));
+        throw new Error(await readApiError(response, t("imports.saveFailed")));
       }
       setUrl("");
       setLabel("");
@@ -113,13 +133,12 @@ export function ImportSourcesPanel() {
       const response = await fetch(`/api/admin/import-sources/${id}/run`, {
         method: "POST",
       });
+      if (!response.ok) {
+        throw new Error(await readApiError(response, t("imports.runFailed")));
+      }
       const payload = (await response.json()) as {
         data?: ScrapeRunSummary;
-        message?: string;
       };
-      if (!response.ok) {
-        throw new Error(payload.message ?? t("imports.runFailed"));
-      }
       const run = payload.data;
       setMessage({
         tone: "success",
@@ -135,8 +154,51 @@ export function ImportSourcesPanel() {
         tone: "error",
         text: error instanceof Error ? error.message : t("imports.runFailed"),
       });
+      await loadSources();
     } finally {
       setRunningId(null);
+    }
+  }
+
+  async function deleteSource(source: ImportSourceRow) {
+    const confirmed = window.confirm(
+      t("imports.deleteConfirm", {
+        label: source.label,
+        count: source._count.listings,
+      }),
+    );
+    if (!confirmed) return;
+
+    setDeletingId(source.id);
+    setMessage(null);
+    try {
+      const response = await fetch(`/api/admin/import-sources/${source.id}`, {
+        method: "DELETE",
+      });
+      if (!response.ok) {
+        throw new Error(
+          await readApiError(response, t("imports.deleteFailed")),
+        );
+      }
+      const payload = (await response.json()) as {
+        data?: { listingsDeleted?: number };
+      };
+      setMessage({
+        tone: "success",
+        text: t("imports.deleteDone", {
+          label: source.label,
+          count: payload.data?.listingsDeleted ?? source._count.listings,
+        }),
+      });
+      await loadSources();
+    } catch (error) {
+      setMessage({
+        tone: "error",
+        text:
+          error instanceof Error ? error.message : t("imports.deleteFailed"),
+      });
+    } finally {
+      setDeletingId(null);
     }
   }
 
@@ -247,6 +309,8 @@ export function ImportSourcesPanel() {
               const lastRun = source.runs[0];
               const isCorridorOffPlan =
                 /corridor-offplan|east-offplan/i.test(source.notes ?? "");
+              const busy =
+                runningId === source.id || deletingId === source.id;
               return (
                 <li
                   key={source.id}
@@ -290,19 +354,36 @@ export function ImportSourcesPanel() {
                         </p>
                       ) : null}
                     </div>
-                    <button
-                      type="button"
-                      disabled={runningId === source.id || !source.isActive}
-                      onClick={() => void runSource(source.id)}
-                      className="inline-flex items-center gap-2 rounded-full bg-brand-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-700 disabled:opacity-45"
-                    >
-                      {runningId === source.id ? (
-                        <LoaderCircle className="h-4 w-4 animate-spin" />
-                      ) : null}
-                      {runningId === source.id
-                        ? t("imports.running")
-                        : t("imports.runCta")}
-                    </button>
+                    <div className="flex flex-wrap gap-2">
+                      <button
+                        type="button"
+                        disabled={busy || !source.isActive}
+                        onClick={() => void runSource(source.id)}
+                        className="inline-flex items-center gap-2 rounded-full bg-brand-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-700 disabled:opacity-45"
+                      >
+                        {runningId === source.id ? (
+                          <LoaderCircle className="h-4 w-4 animate-spin" />
+                        ) : null}
+                        {runningId === source.id
+                          ? t("imports.running")
+                          : t("imports.runCta")}
+                      </button>
+                      <button
+                        type="button"
+                        disabled={busy}
+                        onClick={() => void deleteSource(source)}
+                        className="inline-flex items-center gap-2 rounded-full border border-red-200 bg-white px-4 py-2 text-sm font-semibold text-red-700 transition hover:bg-red-50 disabled:opacity-45"
+                      >
+                        {deletingId === source.id ? (
+                          <LoaderCircle className="h-4 w-4 animate-spin" />
+                        ) : (
+                          <Trash2 className="h-4 w-4" />
+                        )}
+                        {deletingId === source.id
+                          ? t("imports.deleting")
+                          : t("imports.deleteCta")}
+                      </button>
+                    </div>
                   </div>
                 </li>
               );

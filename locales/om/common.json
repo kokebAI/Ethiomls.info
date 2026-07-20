@@ -521,7 +521,12 @@
     "saveFailed": "Could not save source.",
     "loadFailed": "Could not load sources.",
     "runFailed": "Scrape failed.",
-    "runDone": "Scrape finished — created {created}, updated {updated}, skipped {skipped}."
+    "runDone": "Scrape finished — created {created}, updated {updated}, skipped {skipped}.",
+    "deleteCta": "Delete",
+    "deleting": "Deleting…",
+    "deleteConfirm": "Delete “{label}” and permanently remove its {count} scraped listing(s)? Curated project inventory is kept.",
+    "deleteDone": "Deleted “{label}” and {count} scraped listing(s).",
+    "deleteFailed": "Could not delete this source."
   },
   "scrapeReview": {
     "eyebrow": "Admin",
@@ -544,11 +549,11 @@
     "sendToAudit": "Gara pending audit ergi",
     "sendToAuditDone": "{id} gara pending audit sochooseera.",
     "sendToAuditFailed": "Gara pending audit erguu hin dandeenye.",
-    "discard": "Gati",
+    "discard": "Delete",
     "sendDone": "Afeerri {id}f ergameera.",
     "sendFailed": "SMS erguu hin dandeenye",
-    "discardDone": "{id} gatameera.",
-    "discardFailed": "Tarree gatuun hin dandeenye.",
+    "discardDone": "Deleted {id}.",
+    "discardFailed": "Could not delete listing.",
     "openListing": "Tarree bani",
     "sourceLink": "Madda",
     "unknownSource": "Harkaan / maddi hin beekamne",

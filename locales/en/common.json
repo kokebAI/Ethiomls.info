@@ -660,7 +660,12 @@
     "saveFailed": "Could not save source.",
     "loadFailed": "Could not load sources.",
     "runFailed": "Scrape failed.",
-    "runDone": "Scrape finished — created {created}, updated {updated}, skipped {skipped}."
+    "runDone": "Scrape finished — created {created}, updated {updated}, skipped {skipped}.",
+    "deleteCta": "Delete",
+    "deleting": "Deleting…",
+    "deleteConfirm": "Delete “{label}” and permanently remove its {count} scraped listing(s)? Curated project inventory is kept.",
+    "deleteDone": "Deleted “{label}” and {count} scraped listing(s).",
+    "deleteFailed": "Could not delete this source."
   },
   "scrapeReview": {
     "eyebrow": "Admin",
@@ -686,11 +691,11 @@
     "sendToAudit": "Send to pending audit",
     "sendToAuditDone": "Moved {id} to pending audit.",
     "sendToAuditFailed": "Could not send to pending audit.",
-    "discard": "Discard",
+    "discard": "Delete",
     "sendDone": "Invite sent for {id}.",
     "sendFailed": "Could not send invite.",
-    "discardDone": "Discarded {id}.",
-    "discardFailed": "Could not discard listing.",
+    "discardDone": "Deleted {id}.",
+    "discardFailed": "Could not delete listing.",
     "openListing": "Open listing",
     "sourceLink": "Source",
     "unknownSource": "Manual / unknown source",

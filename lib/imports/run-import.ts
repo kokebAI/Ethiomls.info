@@ -306,6 +306,32 @@ export async function ingestScrapedText(input: {
   };
 }
 
+/** Mark scrape runs left RUNNING after serverless timeouts as FAILED. */
+export async function failStaleRunningScrapeRuns(options?: {
+  importSourceId?: string;
+  /** Default 90s — slightly above admin route maxDuration. */
+  olderThanMs?: number;
+}): Promise<number> {
+  const olderThanMs = options?.olderThanMs ?? 90_000;
+  const cutoff = new Date(Date.now() - olderThanMs);
+  const result = await prisma.scrapeRun.updateMany({
+    where: {
+      status: ScrapeRunStatus.RUNNING,
+      startedAt: { lt: cutoff },
+      ...(options?.importSourceId
+        ? { importSourceId: options.importSourceId }
+        : {}),
+    },
+    data: {
+      status: ScrapeRunStatus.FAILED,
+      finishedAt: new Date(),
+      errorMessage:
+        "Scrape timed out or was interrupted before finishing. Try again — Facebook/website pages can be large.",
+    },
+  });
+  return result.count;
+}
+
 export async function runImportSource(input: {
   sourceId: string;
   adminUserId: string;
@@ -318,6 +344,9 @@ export async function runImportSource(input: {
   });
   if (!source) throw new Error("Import source not found");
   if (!source.isActive) throw new Error("Import source is inactive");
+
+  // Recover runs killed by platform timeouts (left RUNNING forever).
+  await failStaleRunningScrapeRuns({ importSourceId: source.id });
 
   const autoSend = Boolean(input.autoSend);
   const run = await prisma.scrapeRun.create({

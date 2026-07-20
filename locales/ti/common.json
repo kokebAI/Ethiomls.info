@@ -521,7 +521,12 @@
     "saveFailed": "Could not save source.",
     "loadFailed": "Could not load sources.",
     "runFailed": "Scrape failed.",
-    "runDone": "Scrape finished — created {created}, updated {updated}, skipped {skipped}."
+    "runDone": "Scrape finished — created {created}, updated {updated}, skipped {skipped}.",
+    "deleteCta": "Delete",
+    "deleting": "Deleting…",
+    "deleteConfirm": "Delete “{label}” and permanently remove its {count} scraped listing(s)? Curated project inventory is kept.",
+    "deleteDone": "Deleted “{label}” and {count} scraped listing(s).",
+    "deleteFailed": "Could not delete this source."
   },
   "scrapeReview": {
     "eyebrow": "Admin",
@@ -544,11 +549,11 @@
     "sendToAudit": "ናብ pending audit ስደድ",
     "sendToAuditDone": "{id} ናብ pending audit ተሰጋጊሩ።",
     "sendToAuditFailed": "ናብ pending audit ምልኣኽ ኣይተኻእለን።",
-    "discard": "ድርባይ",
+    "discard": "Delete",
     "sendDone": "ን {id} ዕድመት ተልኢኹ።",
     "sendFailed": "SMS ምልኣኽ ኣይተኻእለን",
-    "discardDone": "{id} ተደርብዩ።",
-    "discardFailed": "ዝርዝር ምድርባይ ኣይተኻእለን።",
+    "discardDone": "Deleted {id}.",
+    "discardFailed": "Could not delete listing.",
     "openListing": "ዝርዝር ክፈት",
     "sourceLink": "ምንጪ",
     "unknownSource": "ብኢድ / ዘይፍለጥ ምንጪ",

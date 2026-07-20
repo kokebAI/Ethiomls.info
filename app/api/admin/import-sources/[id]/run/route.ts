@@ -5,7 +5,8 @@ import { runImportSource } from "@/lib/imports/run-import";
 import { resolveAutoSendFlag } from "@/lib/imports/scrape-invite";
 
 export const runtime = "nodejs";
-export const maxDuration = 60;
+/** Facebook HTML can be large; keep under platform limits but above common hangs. */
+export const maxDuration = 120;
 
 export async function POST(
   request: NextRequest,

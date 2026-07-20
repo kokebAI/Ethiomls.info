@@ -98,13 +98,25 @@ function extractEmbeddedMessages(html: string): string[] {
   return texts;
 }
 
-/** Prefer story/article blocks when mbasic exposes them; else paragraph chunks. */
+/**
+ * Prefer story/article blocks when mbasic exposes them; else paragraph chunks.
+ * Avoid nested `[\s\S]*?` over full Facebook HTML — it can hang the serverless
+ * function past `maxDuration` and leave ScrapeRun stuck in RUNNING.
+ */
 function splitFacebookPosts(html: string, text: string): string[] {
   const fromArticles: string[] = [];
-  for (const match of html.matchAll(
-    /<(?:article|div)[^>]*(?:role=["']article["']|data-ft=|class=["'][^"']*story[^"']*["'])[^>]*>([\s\S]*?)<\/(?:article|div)>/gi,
-  )) {
-    const chunk = stripHtml(match[1] ?? "").trim();
+  // Bound scan size; Facebook pages are often multi‑MB of JSON + markup.
+  const scan = html.length > 1_500_000 ? html.slice(0, 1_500_000) : html;
+  const articleOpen =
+    /<(?:article|div)\b[^>]{0,400}(?:role=["']article["']|data-ft=|class=["'][^"']{0,120}story[^"']{0,120}["'])[^>]{0,200}>/gi;
+  let openMatch: RegExpExecArray | null;
+  let safety = 0;
+  while ((openMatch = articleOpen.exec(scan)) !== null && safety < 40) {
+    safety += 1;
+    const start = openMatch.index + openMatch[0].length;
+    const closeTag = scan.slice(start, start + 12_000).search(/<\/(?:article|div)>/i);
+    if (closeTag < 0) continue;
+    const chunk = stripHtml(scan.slice(start, start + closeTag)).trim();
     if (chunk.length >= 60) fromArticles.push(chunk);
   }
   if (fromArticles.length >= 2) return fromArticles.slice(0, 25);
@@ -171,9 +183,11 @@ function toCandidates(
 
 async function scrapeWwwFacebookPage(url: string): Promise<ScrapedCandidate[]> {
   const wwwUrl = toWwwUrl(url);
-  const { html, url: finalUrl } = await fetchPublicText(wwwUrl, {
+  const { html: rawHtml, url: finalUrl } = await fetchPublicText(wwwUrl, {
     headers: FB_FETCH_HEADERS,
   });
+  // Cap HTML for regex extraction so admin scrapes finish within function limits.
+  const html = rawHtml.length > 2_500_000 ? rawHtml.slice(0, 2_500_000) : rawHtml;
 
   const messages = uniqueChunks(extractEmbeddedMessages(html));
   const pageImages = extractImages(html, finalUrl);

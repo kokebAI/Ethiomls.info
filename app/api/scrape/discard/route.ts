@@ -1,13 +1,13 @@
-import { NotificationStatus, ListingStatus } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 import { getCurrentAdmin } from "@/lib/auth/admin";
 import { prisma } from "@/lib/db/prisma";
+import { hardDeleteScrapedListing } from "@/lib/imports/delete-scrape-data";
 
 export const runtime = "nodejs";
 
 /**
  * POST /api/scrape/discard
- * Body: `{ listingId: string }` — mark scraped listing as junk (DISCARDED + ARCHIVED).
+ * Body: `{ listingId: string }` — permanently delete scraped listing data.
  */
 export async function POST(request: NextRequest) {
   const admin = await getCurrentAdmin();
@@ -38,7 +38,7 @@ export async function POST(request: NextRequest) {
 
   const listing = await prisma.listing.findUnique({
     where: { id: listingId },
-    select: { id: true, notificationStatus: true },
+    select: { id: true },
   });
   if (!listing) {
     return NextResponse.json(
@@ -47,21 +47,17 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const updated = await prisma.listing.update({
-    where: { id: listingId },
-    data: {
-      notificationStatus: NotificationStatus.DISCARDED,
-      status: ListingStatus.ARCHIVED,
-      publishedAt: null,
-      notificationError: "Discarded by admin as spam/junk",
-      adminAuditNotes: `Discarded by admin ${admin.id} at ${new Date().toISOString()}`,
-    },
-    select: {
-      id: true,
-      notificationStatus: true,
-      status: true,
-    },
-  });
-
-  return NextResponse.json({ data: updated });
+  try {
+    await hardDeleteScrapedListing(listingId);
+    return NextResponse.json({
+      data: { id: listingId, deleted: true },
+    });
+  } catch (error) {
+    const message =
+      error instanceof Error ? error.message : "Could not delete listing";
+    return NextResponse.json(
+      { error: "DeleteFailed", message },
+      { status: 500 },
+    );
+  }
 }

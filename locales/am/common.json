@@ -480,7 +480,12 @@
     "saveFailed": "ምንጭ ማስቀመጥ አልተሳካም።",
     "loadFailed": "ምንጮችን መጫን አልተሳካም።",
     "runFailed": "መሰብሰብ አልተሳካም።",
-    "runDone": "ተጠናቋል — አዲስ {created}፣ የተሻሻለ {updated}፣ የተዘለለ {skipped}።"
+    "runDone": "ተጠናቋል — አዲስ {created}፣ የተሻሻለ {updated}፣ የተዘለለ {skipped}።",
+    "deleteCta": "Delete",
+    "deleting": "Deleting…",
+    "deleteConfirm": "Delete “{label}” and permanently remove its {count} scraped listing(s)? Curated project inventory is kept.",
+    "deleteDone": "Deleted “{label}” and {count} scraped listing(s).",
+    "deleteFailed": "Could not delete this source."
   },
   "scrapeReview": {
     "eyebrow": "አስተዳዳሪ",
@@ -506,11 +511,11 @@
     "sendToAudit": "ወደ በመጠባበቅ ላይ ኦዲት ላክ",
     "sendToAuditDone": "{id} ወደ በመጠባበቅ ላይ ኦዲት ተዛውሯል።",
     "sendToAuditFailed": "ወደ በመጠባበቅ ላይ ኦዲት መላክ አልተሳካም።",
-    "discard": "አስወግድ",
+    "discard": "Delete",
     "sendDone": "ግብዣ ለ {id} ተልኳል።",
     "sendFailed": "ግብዣ መላክ አልተሳካም።",
-    "discardDone": "{id} ተወግዷል።",
-    "discardFailed": "ማስወገድ አልተሳካም።",
+    "discardDone": "Deleted {id}.",
+    "discardFailed": "Could not delete listing.",
     "openListing": "ዝርዝር ክፈት",
     "sourceLink": "ምንጭ",
     "unknownSource": "በእጅ / ያልታወቀ ምንጭ",
