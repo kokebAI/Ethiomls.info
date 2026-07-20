@@ -21,7 +21,7 @@ async function main() {
       { metadataTags: { has: "import" } },
       { metadataTags: { has: "sales-kit-import" } },
     ],
-  } as const;
+  };
 
   const preview = await prisma.listing.findMany({
     where,
