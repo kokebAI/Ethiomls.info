@@ -38,7 +38,29 @@ type ScrapeReviewQueueProps = {
   initialItems: ScrapeReviewItem[];
 };
 
-type BusyAction = "invite" | "audit" | "discard";
+type BusyAction = "invite" | "audit" | "discard" | "save";
+
+function isMissingPhone(phone: string | null | undefined): boolean {
+  const raw = phone?.trim() ?? "";
+  return !raw || raw.startsWith("telegram:@");
+}
+
+function missingFieldsFor(item: ScrapeReviewItem): string[] {
+  const missing: string[] = [];
+  if (isMissingPhone(item.contactPhone)) missing.push("phone");
+  if (!(Number(item.priceAmount) > 1)) missing.push("price");
+  if (!(item.titleEn?.trim() || item.titleAm?.trim())) missing.push("title");
+  if (!item.addressLine?.trim()) missing.push("address");
+  if (item.postedAtIsEstimated) missing.push("postedAt");
+  return missing;
+}
+
+function toDatetimeLocalValue(iso: string): string {
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return "";
+  const pad = (n: number) => String(n).padStart(2, "0");
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
 
 function ageLabel(
   postedAt: string,
@@ -152,6 +174,69 @@ export function ScrapeReviewQueue({ initialItems }: ScrapeReviewQueueProps) {
     const drop = new Set(ids);
     setItems((prev) => prev.filter((item) => !drop.has(item.id)));
   }, []);
+
+  const patchItem = useCallback((id: string, patch: Partial<ScrapeReviewItem>) => {
+    setItems((prev) =>
+      prev.map((item) => (item.id === id ? { ...item, ...patch } : item)),
+    );
+  }, []);
+
+  async function saveFields(
+    id: string,
+    fields: Record<string, string | number | null>,
+  ) {
+    setBusyId(id);
+    setBusyAction("save");
+    setMessage(null);
+    try {
+      const response = await fetch("/api/scrape/update-fields", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ listingId: id, ...fields }),
+      });
+      const payload = (await response.json()) as {
+        message?: string;
+        data?: Partial<ScrapeReviewItem> & { id: string };
+      };
+      if (!response.ok) {
+        throw new Error(payload.message ?? t("scrapeReview.saveFailed"));
+      }
+      if (payload.data) {
+        patchItem(id, {
+          contactPhone: payload.data.contactPhone ?? null,
+          contactName: payload.data.contactName ?? null,
+          titleEn: payload.data.titleEn ?? null,
+          titleAm: payload.data.titleAm ?? null,
+          priceAmount: payload.data.priceAmount ?? "1",
+          priceCurrency: payload.data.priceCurrency ?? "ETB",
+          addressLine: payload.data.addressLine ?? null,
+          bedrooms:
+            typeof payload.data.bedrooms === "number"
+              ? payload.data.bedrooms
+              : null,
+          listingType: payload.data.listingType ?? "SALE",
+          sourcePostedAt: payload.data.sourcePostedAt ?? null,
+          postedAt: payload.data.postedAt ?? new Date().toISOString(),
+          postedAtIsEstimated: Boolean(payload.data.postedAtIsEstimated),
+        });
+      }
+      setMessage({
+        tone: "success",
+        text: t("scrapeReview.saveDone", { id }),
+      });
+    } catch (error) {
+      setMessage({
+        tone: "error",
+        text:
+          error instanceof Error
+            ? error.message
+            : t("scrapeReview.saveFailed"),
+      });
+    } finally {
+      setBusyId(null);
+      setBusyAction(null);
+    }
+  }
 
   async function sendInviteGroup(
     phoneGroup: ScrapeReviewSourceGroup["phoneGroups"][number] & {
@@ -559,7 +644,7 @@ export function ScrapeReviewQueue({ initialItems }: ScrapeReviewQueueProps) {
               return (
                 <div
                   key={phoneGroup.phoneKey}
-                  className="space-y-3 rounded-2xl border border-slate-200/80 bg-slate-50/50 p-4"
+                  className="space-y-2 rounded-xl border border-slate-200/80 bg-slate-50/40 p-3"
                 >
                   <div className="flex flex-wrap items-center justify-between gap-3">
                     <div>
@@ -596,65 +681,101 @@ export function ScrapeReviewQueue({ initialItems }: ScrapeReviewQueueProps) {
                     </button>
                   </div>
 
-                  <pre className="max-h-40 overflow-auto whitespace-pre-wrap rounded-xl border border-amber-200/80 bg-amber-50/60 p-3 text-xs leading-relaxed text-slate-900">
-                    {phoneGroup.messagePreview}
-                  </pre>
+                  <details className="rounded-lg border border-amber-200/70 bg-amber-50/40 px-3 py-2">
+                    <summary className="cursor-pointer text-xs font-semibold text-amber-900">
+                      {t("scrapeReview.messagePreview")}
+                    </summary>
+                    <pre className="mt-2 max-h-28 overflow-auto whitespace-pre-wrap text-xs leading-relaxed text-slate-800">
+                      {phoneGroup.messagePreview}
+                    </pre>
+                  </details>
 
-                  <div className="grid gap-4">
+                  <div className="grid gap-2">
                     {phoneGroup.listings.map((item) => {
                       const busy = busyId === item.id;
-                      const price =
+                      const missing = missingFieldsFor(item);
+                      const priceValue =
                         Number(item.priceAmount) > 1
-                          ? `${Math.round(Number(item.priceAmount)).toLocaleString("en-US")} ${item.priceCurrency}`
-                          : t("scrapeReview.priceOnRequest");
+                          ? String(Math.round(Number(item.priceAmount)))
+                          : "";
 
                       return (
                         <article
                           key={item.id}
-                          className="overflow-hidden rounded-2xl border border-slate-200/90 bg-white/90 shadow-[var(--shadow-card)]"
+                          className={`rounded-xl border bg-white px-3 py-2.5 shadow-sm ${
+                            missing.length > 0
+                              ? "border-amber-300/90"
+                              : "border-slate-200/90"
+                          }`}
                         >
-                          <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 px-4 py-3 sm:px-5">
-                            <div className="min-w-0">
-                              <p className="font-mono text-xs font-semibold tracking-wide text-slate-500">
-                                {item.id}
-                              </p>
-                              {item.sourceUrl ? (
-                                <p className="mt-0.5 truncate text-sm text-ink-muted">
+                          <div className="flex flex-wrap items-start justify-between gap-2">
+                            <div className="min-w-0 flex-1">
+                              <div className="flex flex-wrap items-center gap-2">
+                                <span className="font-mono text-[11px] font-semibold text-slate-500">
+                                  {item.id}
+                                </span>
+                                <span className="rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-slate-600">
+                                  {item.listingType}
+                                </span>
+                                {item.sourceUrl ? (
                                   <a
                                     href={item.sourceUrl}
                                     target="_blank"
                                     rel="noreferrer"
-                                    className="text-brand-700 hover:underline"
+                                    className="text-[11px] font-semibold text-brand-700 hover:underline"
                                   >
                                     {t("scrapeReview.sourceLink")}
                                   </a>
-                                </p>
-                              ) : null}
-              <PostedAgeLine item={item} locale={locale} t={t} />
-                              {item.postedAtIsEstimated ? (
-                                <p className="mt-1 text-xs font-semibold text-red-700">
-                                  {t("scrapeReview.missingPostDate")}
-                                </p>
+                                ) : null}
+                              </div>
+                              <p className="mt-0.5 truncate text-sm font-medium text-slate-900">
+                                {item.titleEn ||
+                                  item.titleAm ||
+                                  t("scrapeReview.untitled")}
+                              </p>
+                              <PostedAgeLine item={item} locale={locale} t={t} />
+                              {missing.length > 0 ? (
+                                <div className="mt-1.5 flex flex-wrap gap-1">
+                                  <span className="text-[11px] font-semibold text-amber-800">
+                                    {t("scrapeReview.missingFields")}:
+                                  </span>
+                                  {missing.map((field) => (
+                                    <span
+                                      key={field}
+                                      className="rounded-full bg-amber-100 px-2 py-0.5 text-[11px] font-semibold text-amber-900"
+                                    >
+                                      {field === "phone"
+                                        ? t("scrapeReview.missingPhone")
+                                        : field === "price"
+                                          ? t("scrapeReview.missingPrice")
+                                          : field === "title"
+                                            ? t("scrapeReview.missingTitle")
+                                            : field === "address"
+                                              ? t("scrapeReview.missingAddress")
+                                              : t("scrapeReview.missingPostedAt")}
+                                    </span>
+                                  ))}
+                                </div>
                               ) : null}
                             </div>
-                            <div className="flex flex-wrap gap-2">
+                            <div className="flex flex-wrap gap-1.5">
                               <Link
                                 href={`/${locale}/listings/${item.id}`}
-                                className="inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-ink transition hover:bg-slate-50"
+                                className="inline-flex items-center gap-1 rounded-full border border-slate-200 px-2.5 py-1 text-xs font-semibold text-ink hover:bg-slate-50"
                               >
-                                <Pencil className="h-4 w-4" />
+                                <Pencil className="h-3.5 w-3.5" />
                                 {t("scrapeReview.edit")}
                               </Link>
                               <button
                                 type="button"
                                 disabled={busy}
                                 onClick={() => void sendToPendingAudit(item.id)}
-                                className="inline-flex items-center gap-1.5 rounded-full bg-slate-950 px-4 py-2 text-sm font-semibold text-white transition hover:bg-slate-800 disabled:opacity-45"
+                                className="inline-flex items-center gap-1 rounded-full bg-slate-950 px-2.5 py-1 text-xs font-semibold text-white hover:bg-slate-800 disabled:opacity-45"
                               >
                                 {busy && busyAction === "audit" ? (
-                                  <LoaderCircle className="h-4 w-4 animate-spin" />
+                                  <LoaderCircle className="h-3.5 w-3.5 animate-spin" />
                                 ) : (
-                                  <ClipboardCheck className="h-4 w-4" />
+                                  <ClipboardCheck className="h-3.5 w-3.5" />
                                 )}
                                 {t("scrapeReview.sendToAudit")}
                               </button>
@@ -662,92 +783,246 @@ export function ScrapeReviewQueue({ initialItems }: ScrapeReviewQueueProps) {
                                 type="button"
                                 disabled={busy}
                                 onClick={() => void discard(item.id)}
-                                className="inline-flex items-center gap-1.5 rounded-full border border-red-200 bg-white px-4 py-2 text-sm font-semibold text-red-700 transition hover:bg-red-50 disabled:opacity-45"
+                                className="inline-flex items-center gap-1 rounded-full border border-red-200 px-2.5 py-1 text-xs font-semibold text-red-700 hover:bg-red-50 disabled:opacity-45"
                               >
-                                <Trash2 className="h-4 w-4" />
+                                <Trash2 className="h-3.5 w-3.5" />
                                 {t("scrapeReview.discard")}
                               </button>
                             </div>
                           </div>
 
-                          <div className="grid gap-0 lg:grid-cols-2">
-                            <section className="border-b border-slate-100 p-4 sm:p-5 lg:border-b-0 lg:border-r">
-                              <h4 className="text-xs font-bold uppercase tracking-wider text-slate-500">
-                                {t("scrapeReview.rawLabel")}
-                              </h4>
-                              <pre className="mt-3 max-h-80 overflow-auto whitespace-pre-wrap rounded-xl bg-slate-50 p-3 text-sm leading-relaxed text-slate-800">
-                                {item.scrapedRawText?.trim() ||
-                                  t("scrapeReview.noRaw")}
-                              </pre>
-                            </section>
-
-                            <section className="p-4 sm:p-5">
-                              <h4 className="text-xs font-bold uppercase tracking-wider text-slate-500">
-                                {t("scrapeReview.structuredLabel")}
-                              </h4>
-                              <dl className="mt-3 grid gap-2.5 text-sm">
-                                <div>
-                                  <dt className="text-xs font-semibold text-slate-500">
-                                    {t("scrapeReview.titleEn")}
-                                  </dt>
-                                  <dd className="font-medium text-slate-900">
-                                    {item.titleEn || "—"}
-                                  </dd>
-                                </div>
-                                <div>
-                                  <dt className="text-xs font-semibold text-slate-500">
-                                    {t("scrapeReview.titleAm")}
-                                  </dt>
-                                  <dd className="font-medium text-slate-900">
-                                    {item.titleAm || "—"}
-                                  </dd>
-                                </div>
-                                <div className="grid grid-cols-2 gap-3">
-                                  <div>
-                                    <dt className="text-xs font-semibold text-slate-500">
-                                      {t("scrapeReview.price")}
-                                    </dt>
-                                    <dd className="font-medium tabular-nums text-slate-900">
-                                      {price}
-                                    </dd>
-                                  </div>
-                                  <div>
-                                    <dt className="text-xs font-semibold text-slate-500">
-                                      {t("scrapeReview.phone")}
-                                    </dt>
-                                    <dd className="font-medium tabular-nums text-slate-900">
-                                      {item.contactPhone || "—"}
-                                    </dd>
-                                  </div>
-                                </div>
-                                {(item.bedrooms != null || item.addressLine) && (
-                                  <div>
-                                    <dt className="text-xs font-semibold text-slate-500">
-                                      {t("scrapeReview.details")}
-                                    </dt>
-                                    <dd className="text-slate-800">
-                                      {[
-                                        item.bedrooms != null
-                                          ? `${item.bedrooms} ${t("scrapeReview.beds")}`
-                                          : null,
-                                        item.listingType,
-                                        item.addressLine,
-                                      ]
-                                        .filter(Boolean)
-                                        .join(" · ")}
-                                    </dd>
-                                  </div>
-                                )}
-                              </dl>
-
-                              <Link
-                                href={`/${locale}/listings/${item.id}`}
-                                className="mt-4 inline-flex text-sm font-semibold text-brand-700 hover:underline"
+                          <form
+                            key={[
+                              item.id,
+                              item.contactPhone,
+                              item.titleEn,
+                              item.priceAmount,
+                              item.addressLine,
+                              item.bedrooms,
+                              item.listingType,
+                              item.postedAt,
+                            ].join("|")}
+                            className="mt-2 grid gap-2 sm:grid-cols-2 lg:grid-cols-3"
+                            onSubmit={(event) => {
+                              event.preventDefault();
+                              const form = new FormData(event.currentTarget);
+                              const phone = String(form.get("contactPhone") ?? "").trim();
+                              const titleEn = String(form.get("titleEn") ?? "").trim();
+                              const priceRaw = String(form.get("priceAmount") ?? "").trim();
+                              const addressLine = String(
+                                form.get("addressLine") ?? "",
+                              ).trim();
+                              const bedroomsRaw = String(
+                                form.get("bedrooms") ?? "",
+                              ).trim();
+                              const listingType = String(
+                                form.get("listingType") ?? item.listingType,
+                              );
+                              const postedLocal = String(
+                                form.get("sourcePostedAt") ?? "",
+                              ).trim();
+                              void saveFields(item.id, {
+                                contactPhone: phone || null,
+                                titleEn: titleEn || null,
+                                priceAmount: priceRaw ? Number(priceRaw) : 1,
+                                addressLine: addressLine || null,
+                                bedrooms: bedroomsRaw ? Number(bedroomsRaw) : null,
+                                listingType,
+                                sourcePostedAt: postedLocal
+                                  ? new Date(postedLocal).toISOString()
+                                  : null,
+                              });
+                            }}
+                          >
+                            <label className="block">
+                              <span
+                                className={`mb-0.5 block text-[11px] font-semibold ${
+                                  isMissingPhone(item.contactPhone)
+                                    ? "text-amber-800"
+                                    : "text-slate-500"
+                                }`}
                               >
-                                {t("scrapeReview.openListing")}
-                              </Link>
-                            </section>
-                          </div>
+                                {t("scrapeReview.phone")}
+                                {isMissingPhone(item.contactPhone)
+                                  ? ` · ${t("scrapeReview.notFound")}`
+                                  : ""}
+                              </span>
+                              <input
+                                name="contactPhone"
+                                defaultValue={
+                                  isMissingPhone(item.contactPhone)
+                                    ? ""
+                                    : (item.contactPhone ?? "")
+                                }
+                                placeholder="09…"
+                                className={`w-full rounded-lg border px-2.5 py-1.5 text-sm outline-none ring-brand-500/20 focus:ring-2 ${
+                                  isMissingPhone(item.contactPhone)
+                                    ? "border-amber-300 bg-amber-50/50"
+                                    : "border-slate-200 bg-white"
+                                }`}
+                              />
+                            </label>
+
+                            <label className="block">
+                              <span
+                                className={`mb-0.5 block text-[11px] font-semibold ${
+                                  !(Number(item.priceAmount) > 1)
+                                    ? "text-amber-800"
+                                    : "text-slate-500"
+                                }`}
+                              >
+                                {t("scrapeReview.price")}
+                                {!(Number(item.priceAmount) > 1)
+                                  ? ` · ${t("scrapeReview.notFound")}`
+                                  : ""}
+                              </span>
+                              <input
+                                name="priceAmount"
+                                type="number"
+                                min={0}
+                                defaultValue={priceValue}
+                                placeholder={t("scrapeReview.priceOnRequest")}
+                                className={`w-full rounded-lg border px-2.5 py-1.5 text-sm outline-none ring-brand-500/20 focus:ring-2 ${
+                                  !(Number(item.priceAmount) > 1)
+                                    ? "border-amber-300 bg-amber-50/50"
+                                    : "border-slate-200 bg-white"
+                                }`}
+                              />
+                            </label>
+
+                            <label className="block">
+                              <span className="mb-0.5 block text-[11px] font-semibold text-slate-500">
+                                {t("scrapeReview.filterListingType")}
+                              </span>
+                              <select
+                                name="listingType"
+                                defaultValue={item.listingType}
+                                className="w-full rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 text-sm outline-none ring-brand-500/20 focus:ring-2"
+                              >
+                                <option value="SALE">
+                                  {t("scrapeReview.filterTypeSale")}
+                                </option>
+                                <option value="RENT">
+                                  {t("scrapeReview.filterTypeRent")}
+                                </option>
+                                <option value="OFF_PLAN">
+                                  {t("scrapeReview.filterTypeOffPlan")}
+                                </option>
+                              </select>
+                            </label>
+
+                            <label className="block sm:col-span-2">
+                              <span
+                                className={`mb-0.5 block text-[11px] font-semibold ${
+                                  !(item.titleEn?.trim() || item.titleAm?.trim())
+                                    ? "text-amber-800"
+                                    : "text-slate-500"
+                                }`}
+                              >
+                                {t("scrapeReview.titleEn")}
+                                {!(item.titleEn?.trim() || item.titleAm?.trim())
+                                  ? ` · ${t("scrapeReview.notFound")}`
+                                  : ""}
+                              </span>
+                              <input
+                                name="titleEn"
+                                defaultValue={item.titleEn ?? ""}
+                                placeholder={t("scrapeReview.untitled")}
+                                className={`w-full rounded-lg border px-2.5 py-1.5 text-sm outline-none ring-brand-500/20 focus:ring-2 ${
+                                  !(item.titleEn?.trim() || item.titleAm?.trim())
+                                    ? "border-amber-300 bg-amber-50/50"
+                                    : "border-slate-200 bg-white"
+                                }`}
+                              />
+                            </label>
+
+                            <label className="block">
+                              <span className="mb-0.5 block text-[11px] font-semibold text-slate-500">
+                                {t("scrapeReview.beds")}
+                              </span>
+                              <input
+                                name="bedrooms"
+                                type="number"
+                                min={0}
+                                defaultValue={item.bedrooms ?? ""}
+                                className="w-full rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 text-sm outline-none ring-brand-500/20 focus:ring-2"
+                              />
+                            </label>
+
+                            <label className="block sm:col-span-2">
+                              <span
+                                className={`mb-0.5 block text-[11px] font-semibold ${
+                                  !item.addressLine?.trim()
+                                    ? "text-amber-800"
+                                    : "text-slate-500"
+                                }`}
+                              >
+                                {t("scrapeReview.address")}
+                                {!item.addressLine?.trim()
+                                  ? ` · ${t("scrapeReview.notFound")}`
+                                  : ""}
+                              </span>
+                              <input
+                                name="addressLine"
+                                defaultValue={item.addressLine ?? ""}
+                                className={`w-full rounded-lg border px-2.5 py-1.5 text-sm outline-none ring-brand-500/20 focus:ring-2 ${
+                                  !item.addressLine?.trim()
+                                    ? "border-amber-300 bg-amber-50/50"
+                                    : "border-slate-200 bg-white"
+                                }`}
+                              />
+                            </label>
+
+                            <label className="block">
+                              <span
+                                className={`mb-0.5 block text-[11px] font-semibold ${
+                                  item.postedAtIsEstimated
+                                    ? "text-amber-800"
+                                    : "text-slate-500"
+                                }`}
+                              >
+                                {t("scrapeReview.postedOnSourceLabel")}
+                                {item.postedAtIsEstimated
+                                  ? ` · ${t("scrapeReview.notFound")}`
+                                  : ""}
+                              </span>
+                              <input
+                                name="sourcePostedAt"
+                                type="datetime-local"
+                                defaultValue={toDatetimeLocalValue(item.postedAt)}
+                                className={`w-full rounded-lg border px-2.5 py-1.5 text-sm outline-none ring-brand-500/20 focus:ring-2 ${
+                                  item.postedAtIsEstimated
+                                    ? "border-amber-300 bg-amber-50/50"
+                                    : "border-slate-200 bg-white"
+                                }`}
+                              />
+                            </label>
+
+                            <div className="flex items-end sm:col-span-2 lg:col-span-1">
+                              <button
+                                type="submit"
+                                disabled={busy}
+                                className="inline-flex w-full items-center justify-center gap-1.5 rounded-full bg-brand-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-brand-700 disabled:opacity-45"
+                              >
+                                {busy && busyAction === "save" ? (
+                                  <LoaderCircle className="h-3.5 w-3.5 animate-spin" />
+                                ) : null}
+                                {busy && busyAction === "save"
+                                  ? t("scrapeReview.saving")
+                                  : t("scrapeReview.saveFields")}
+                              </button>
+                            </div>
+                          </form>
+
+                          <details className="mt-2">
+                            <summary className="cursor-pointer text-[11px] font-semibold text-slate-500">
+                              {t("scrapeReview.rawLabel")}
+                            </summary>
+                            <pre className="mt-1 max-h-36 overflow-auto whitespace-pre-wrap rounded-lg bg-slate-50 p-2 text-xs leading-relaxed text-slate-700">
+                              {item.scrapedRawText?.trim() ||
+                                t("scrapeReview.noRaw")}
+                            </pre>
+                          </details>
                         </article>
                       );
                     })}

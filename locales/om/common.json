@@ -632,7 +632,20 @@
     "filterSortPriceAsc": "Price: low to high",
     "filterSortPriceDesc": "Price: high to low",
     "filterSortSource": "Developer / source A–Z",
-    "filterEmpty": "No scrapes match these filters."
+    "filterEmpty": "No scrapes match these filters.",
+    "notFound": "not found",
+    "missingFields": "Missing",
+    "missingPhone": "Phone",
+    "missingPrice": "Price",
+    "missingTitle": "Title",
+    "missingAddress": "Address",
+    "missingPostedAt": "Post date",
+    "address": "Address",
+    "untitled": "Untitled listing",
+    "saveFields": "Save fields",
+    "saving": "Saving…",
+    "saveDone": "Saved fields for {id}.",
+    "saveFailed": "Could not save fields."
   },
   "salesKit": {
     "title": "Sales kit → role account",

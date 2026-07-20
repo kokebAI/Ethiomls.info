@@ -569,7 +569,20 @@
     "filterSortPriceAsc": "ዋጋ፡ ዝቅተኛ ወደ ከፍተኛ",
     "filterSortPriceDesc": "ዋጋ፡ ከፍተኛ ወደ ዝቅተኛ",
     "filterSortSource": "ገንቢ / ምንጭ A–Z",
-    "filterEmpty": "ከእነዚህ ማጣሪያዎች ጋር የሚዛመድ ስክሬፕ የለም።"
+    "filterEmpty": "ከእነዚህ ማጣሪያዎች ጋር የሚዛመድ ስክሬፕ የለም።",
+    "notFound": "አልተገኘም",
+    "missingFields": "ጠፍተዋል",
+    "missingPhone": "ስልክ",
+    "missingPrice": "ዋጋ",
+    "missingTitle": "ርዕስ",
+    "missingAddress": "አድራሻ",
+    "missingPostedAt": "የተለጠፈበት ቀን",
+    "address": "አድራሻ",
+    "untitled": "ርዕስ የሌለው ዝርዝር",
+    "saveFields": "መስኮችን አስቀምጥ",
+    "saving": "በማስቀመጥ ላይ…",
+    "saveDone": "ለ {id} መስኮች ተቀምጠዋል።",
+    "saveFailed": "መስኮችን ማስቀመጥ አልተቻለም።"
   },
   "salesKit": {
     "title": "የሽያጭ ፋይል → ሚና መለያ",
