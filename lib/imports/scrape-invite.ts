@@ -10,6 +10,10 @@ import {
   getRoleAccountByUserId,
   type RoleAccountSummary,
 } from "@/lib/imports/resolve-role-account";
+import {
+  buildScrapeInviteMessage,
+  buildScrapeInviteMessageForListings,
+} from "@/lib/imports/scrape-invite-message";
 import { smsNotificationEngine } from "@/src/services/sms.service";
 
 export type ScrapeInviteListing = Pick<
@@ -59,42 +63,7 @@ export function resolveInvitePhone(
   return normalizeEthiopiaPhone(trimmed);
 }
 
-/** Soft cap for concatenated Unicode SMS via HaHu (multipart). */
-const INVITE_SMS_MAX_CHARS = 600;
-
-/**
- * Build scrape-invite SMS: full Amharic first, then English.
- * Includes listing link, reset instructions, and in-app tips note.
- */
-export function buildScrapeInviteMessage(
-  listing: ScrapeInviteListing,
-  _opts?: { accountCreated?: boolean },
-): string {
-  const claimLoginUrl = smsNotificationEngine.buildAbsoluteUrl(
-    `/am/login?mode=reset`,
-  );
-  const listingUrl = smsNotificationEngine.buildAbsoluteUrl(
-    `/am/listings/${encodeURIComponent(listing.id)}`,
-  );
-
-  const amharic =
-    `የEthioMLS AI መተግበሪያ ዝርዝርዎን አግኝቶ ትኩረት የሚስብ ሆኖ አግኝቶታል። ` +
-    `ዝርዝር፡ ${listingUrl} ` +
-    `ተመሳሳይ ስልክ በመጠቀም የይለፍ ቃል ዳግም ያስጀምሩ፡ ${claimLoginUrl} ` +
-    `ከዚያ ይግቡና ዝርዝርዎን ያርሙ። ለግምገማ ሲገቡ ጠቃሚ ፍንጮችና መመሪያዎች ይረዱዎታል።`;
-
-  const english =
-    `EthioMLS AI found your listing interesting. ` +
-    `Listing: ${listingUrl} ` +
-    `Use the same phone, then Reset password: ${claimLoginUrl} ` +
-    `Sign in and edit your listing. Tooltips and other aids will help once you come in to review.`;
-
-  const message = `${amharic}\n\n${english}`;
-
-  const chars = [...message];
-  if (chars.length <= INVITE_SMS_MAX_CHARS) return message;
-  return chars.slice(0, INVITE_SMS_MAX_CHARS).join("");
-}
+export { buildScrapeInviteMessage, buildScrapeInviteMessageForListings };
 
 /**
  * Resolve or create a developer (OFF_PLAN) / broker (SALE|RENT) from the
@@ -166,10 +135,7 @@ export async function ensureInvitePartyAttached(
 }
 
 /**
- * Dispatch HaHu invite SMS for a scraped listing:
- * 1) ensure developer/broker stub from phone + attach listing
- * 2) send SMS with listing + Forgot-password claim link
- * 3) flip notificationStatus
+ * Dispatch HaHu invite SMS for a scraped listing (single-listing wrapper).
  */
 export async function sendScrapeInvite(listingId: string): Promise<{
   ok: boolean;
@@ -178,51 +144,80 @@ export async function sendScrapeInvite(listingId: string): Promise<{
   account?: RoleAccountSummary;
   accountCreated?: boolean;
   error?: string;
+  sentListingIds?: string[];
 }> {
-  const listing = await prisma.listing.findUnique({
-    where: { id: listingId },
-  });
-  if (!listing) {
+  const result = await sendScrapeInviteForPhoneGroup([listingId]);
+  const primary =
+    result.listings.find((listing) => listing.id === listingId) ??
+    result.listings[0];
+  if (!primary) {
     throw new Error("Listing not found");
   }
-  if (listing.notificationStatus === NotificationStatus.DISCARDED) {
-    throw new Error("Listing was discarded");
+  return {
+    ok: result.ok,
+    listing: primary,
+    messagePreview: result.messagePreview,
+    account: result.account,
+    accountCreated: result.accountCreated,
+    error: result.error,
+    sentListingIds: result.sentListingIds,
+  };
+}
+
+const INVITE_ELIGIBLE_STATUSES = new Set<NotificationStatus>([
+  NotificationStatus.PENDING_REVIEW,
+  NotificationStatus.FAILED,
+  NotificationStatus.NOT_APPLICABLE,
+]);
+
+/**
+ * One HaHu SMS per phone: attach all listings, send combined message, mark all SENT/FAILED.
+ */
+export async function sendScrapeInviteForPhoneGroup(
+  listingIds: string[],
+): Promise<{
+  ok: boolean;
+  listings: ScrapeInviteListing[];
+  messagePreview: string;
+  account?: RoleAccountSummary;
+  accountCreated?: boolean;
+  error?: string;
+  sentListingIds: string[];
+}> {
+  const uniqueIds = [...new Set(listingIds.map((id) => id.trim()).filter(Boolean))];
+  if (uniqueIds.length === 0) {
+    throw new Error("At least one listingId is required");
   }
 
-  let account: RoleAccountSummary | undefined;
-  let accountCreated = false;
-  let workingListing: ScrapeInviteListing = listing;
-
-  try {
-    const attached = await ensureInvitePartyAttached(listingId);
-    account = attached.account;
-    accountCreated = attached.created;
-    workingListing = attached.listing;
-  } catch (error) {
-    const message =
-      error instanceof Error ? error.message : "Could not attach role account";
-    await prisma.listing.update({
-      where: { id: listing.id },
-      data: {
-        notificationStatus: NotificationStatus.FAILED,
-        notificationError: message,
-      },
-    });
-    return {
-      ok: false,
-      listing,
-      messagePreview: buildScrapeInviteMessage(listing),
-      error: message,
-    };
-  }
-
-  const messagePreview = buildScrapeInviteMessage(workingListing, {
-    accountCreated,
+  const rows = await prisma.listing.findMany({
+    where: { id: { in: uniqueIds } },
   });
-  const toE164 = resolveInvitePhone(workingListing.contactPhone);
-  if (!toE164) {
-    await prisma.listing.update({
-      where: { id: workingListing.id },
+  if (rows.length !== uniqueIds.length) {
+    throw new Error("One or more listings were not found");
+  }
+
+  const discarded = rows.find(
+    (row) => row.notificationStatus === NotificationStatus.DISCARDED,
+  );
+  if (discarded) {
+    throw new Error(`Listing ${discarded.id} was discarded`);
+  }
+
+  const ineligible = rows.find(
+    (row) => !INVITE_ELIGIBLE_STATUSES.has(row.notificationStatus),
+  );
+  if (ineligible) {
+    throw new Error(
+      `Listing ${ineligible.id} is not in the invite queue (${ineligible.notificationStatus})`,
+    );
+  }
+
+  const phones = rows.map((row) => resolveInvitePhone(row.contactPhone));
+  const primaryPhone = phones.find(Boolean);
+  if (!primaryPhone) {
+    const messagePreview = buildScrapeInviteMessageForListings(rows);
+    await prisma.listing.updateMany({
+      where: { id: { in: uniqueIds } },
       data: {
         notificationStatus: NotificationStatus.FAILED,
         notificationError: "No valid E.164 contact phone for HaHu invite",
@@ -230,52 +225,99 @@ export async function sendScrapeInvite(listingId: string): Promise<{
     });
     return {
       ok: false,
-      listing: workingListing,
+      listings: rows,
       messagePreview,
-      account,
-      accountCreated,
       error: "No valid E.164 contact phone for HaHu invite",
+      sentListingIds: [],
     };
   }
 
+  if (phones.some((phone) => phone && phone !== primaryPhone)) {
+    throw new Error("All listings in a group must share the same contact phone");
+  }
+
+  let account: RoleAccountSummary | undefined;
+  let accountCreated = false;
+  const workingListings: ScrapeInviteListing[] = [];
+
+  try {
+    for (const listingId of uniqueIds) {
+      const attached = await ensureInvitePartyAttached(listingId);
+      if (!account) {
+        account = attached.account;
+        accountCreated = attached.created;
+      }
+      workingListings.push(attached.listing);
+    }
+  } catch (error) {
+    const message =
+      error instanceof Error ? error.message : "Could not attach role account";
+    await prisma.listing.updateMany({
+      where: { id: { in: uniqueIds } },
+      data: {
+        notificationStatus: NotificationStatus.FAILED,
+        notificationError: message,
+      },
+    });
+    return {
+      ok: false,
+      listings: rows,
+      messagePreview: buildScrapeInviteMessageForListings(rows),
+      error: message,
+      sentListingIds: [],
+    };
+  }
+
+  const messagePreview = buildScrapeInviteMessageForListings(workingListings);
+
   const result = await smsNotificationEngine.sendRaw({
-    toE164,
+    toE164: primaryPhone,
     body: messagePreview,
     locale: "am",
   });
 
   if (result.ok) {
-    const updated = await prisma.listing.update({
-      where: { id: workingListing.id },
+    const sentAt = new Date();
+    await prisma.listing.updateMany({
+      where: { id: { in: uniqueIds } },
       data: {
         notificationStatus: NotificationStatus.SENT,
-        notificationSentAt: new Date(),
+        notificationSentAt: sentAt,
         notificationError: null,
       },
     });
+    const updated = await prisma.listing.findMany({
+      where: { id: { in: uniqueIds } },
+    });
     return {
       ok: true,
-      listing: updated,
+      listings: updated,
       messagePreview,
       account,
       accountCreated,
+      sentListingIds: uniqueIds,
     };
   }
 
-  const updated = await prisma.listing.update({
-    where: { id: workingListing.id },
+  const failMessage = result.error ?? "HaHu dispatch failed";
+  await prisma.listing.updateMany({
+    where: { id: { in: uniqueIds } },
     data: {
       notificationStatus: NotificationStatus.FAILED,
-      notificationError: result.error ?? "HaHu dispatch failed",
+      notificationError: failMessage,
     },
+  });
+  const updated = await prisma.listing.findMany({
+    where: { id: { in: uniqueIds } },
   });
   return {
     ok: false,
-    listing: updated,
+    listings: updated,
     messagePreview,
     account,
     accountCreated,
-    error: result.error ?? "HaHu dispatch failed",
+    error: failMessage,
+    sentListingIds: [],
   };
 }
 

@@ -529,7 +529,17 @@
     "ageHours": "{count} ሰዓት",
     "ageDays": "{count} ቀን",
     "ageWeeks": "{count} ሳምንት",
-    "sortedOldestFirst": "በድሮው መጀመሪያ — ረጅም ጊዜ የጠበቁ ማስመጫዎችን ይገምግሙ"
+    "sortedOldestFirst": "በድሮው መጀመሪያ — ረጅም ጊዜ የጠበቁ ማስመጫዎችን ይገምግሙ",
+    "postedOnSourceLabel": "በምንጩ ተለጥፏል",
+    "importedLabel": "ተገብቷል",
+    "importedHint": "የመግቢያ ቀን — የምንጭ ጊዜ አይታወቅም",
+    "groupSource": "የማስመጫ ምንጭ",
+    "groupPhone": "የእውቂያ ስልክ",
+    "groupListingCount": "{count} ዝርዝር(ዎች)",
+    "groupPhoneCount": "በዚህ ስልክ {count} ዝርዝር(ዎች)",
+    "sendGroupInvite": "ግብዣ SMS ላክ ({count})",
+    "sendGroupDone": "ግብዣ ለ {count} ዝርዝር(ዎች) ወደ {phone} ተልኳል።",
+    "missingPostDate": "የምንጭ የተለጠፈበት ቀን ጠፍቷል — እንደገና ስክሬፕ ወይም backfill ያስፈልጋል"
   },
   "salesKit": {
     "title": "የሽያጭ ፋይል → ሚና መለያ",

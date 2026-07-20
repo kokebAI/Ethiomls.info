@@ -4,6 +4,11 @@ import {
 } from "@/lib/imports/extract-contacts";
 import { fetchPublicText } from "@/lib/imports/fetch-safe";
 import {
+  parseIsoOrUnixDate,
+  parsePostedAtFromHtml,
+  parsePostedAtFromText,
+} from "@/lib/imports/parse-source-date";
+import {
   looksLikeListing,
   parseListingText,
   type ParsedListingDraft,
@@ -62,7 +67,28 @@ type ApiProperty = {
   image_url?: string | null;
   phone?: string | null;
   whatsapp?: string | null;
+  created_at?: string | number | null;
+  updated_at?: string | number | null;
+  date?: string | number | null;
+  published_at?: string | number | null;
+  createdAt?: string | number | null;
+  updatedAt?: string | number | null;
 };
+
+function parseApiPostedAt(property: ApiProperty): Date | null {
+  for (const raw of [
+    property.created_at,
+    property.published_at,
+    property.createdAt,
+    property.updated_at,
+    property.updatedAt,
+    property.date,
+  ]) {
+    const parsed = parseIsoOrUnixDate(raw);
+    if (parsed) return parsed;
+  }
+  return null;
+}
 
 function absoluteAsset(origin: string, path: string | null | undefined): string | null {
   if (!path) return null;
@@ -191,6 +217,11 @@ async function scrapeJsonPropertyFeed(
       absoluteAsset(origin, property.image_url) ||
       absoluteAsset(origin, property.image);
 
+    const postedAt =
+      parseApiPostedAt(property) || parsePostedAtFromText(text);
+    // Post age is mandatory — skip undated API rows.
+    if (!postedAt) continue;
+
     const slug = property.slug || String(property.id ?? contentFingerprint(text));
     candidates.push({
       externalId: `temer-api:${property.id ?? slug}`,
@@ -199,6 +230,7 @@ async function scrapeJsonPropertyFeed(
       imageUrls: image ? [image] : [],
       contactPhones: phones,
       parsed,
+      postedAt,
     });
   }
 
@@ -210,10 +242,14 @@ async function scrapeHtmlWebsite(url: string): Promise<ScrapedCandidate[]> {
   const text = stripHtml(html);
   const pageImages = extractImages(html, finalUrl);
   const pagePhones = extractEthiopiaPhones(text);
+  const pagePostedAt = parsePostedAtFromHtml(html);
   const candidates: ScrapedCandidate[] = [];
 
   for (const chunk of splitCandidates(text)) {
     if (!looksLikeListing(chunk)) continue;
+    const postedAt = parsePostedAtFromText(chunk) || pagePostedAt;
+    // Post age is mandatory — skip undated HTML chunks.
+    if (!postedAt) continue;
     const parsed: ParsedListingDraft = parseListingText(chunk);
     const phones = extractEthiopiaPhones(chunk);
     candidates.push({
@@ -223,6 +259,7 @@ async function scrapeHtmlWebsite(url: string): Promise<ScrapedCandidate[]> {
       imageUrls: pageImages,
       contactPhones: phones.length ? phones : pagePhones,
       parsed,
+      postedAt,
     });
   }
 

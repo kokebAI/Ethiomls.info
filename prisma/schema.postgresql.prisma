@@ -468,6 +468,8 @@ model Listing {
   scrapeRunId        String?
   /// Original scraped Telegram/Facebook/website post text for admin review.
   scrapedRawText     String?
+  /// When the listing was posted on the import source (Telegram, website, etc.).
+  sourcePostedAt     DateTime?
   /// HaHu invite dispatch lifecycle for scraped listings.
   notificationStatus NotificationStatus @default(NOT_APPLICABLE)
   notificationSentAt DateTime?
@@ -504,6 +506,7 @@ model Listing {
   @@index([contactPhone])
   @@index([importSourceId])
   @@index([sourceUrl])
+  @@index([sourcePostedAt])
   @@index([notificationStatus])
   @@index([projectId, inventoryStatus])
   @@map("listings")

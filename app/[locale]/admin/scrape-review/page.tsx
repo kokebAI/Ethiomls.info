@@ -1,14 +1,16 @@
 import type { Metadata } from "next";
 import { ListingStatus, NotificationStatus } from "@prisma/client";
 import { redirect } from "next/navigation";
-import {
-  ScrapeReviewQueue,
-  type ScrapeReviewItem,
-} from "@/components/admin/ScrapeReviewQueue";
+import { ScrapeReviewQueue } from "@/components/admin/ScrapeReviewQueue";
 import { PageIntro } from "@/components/PageIntro";
 import { getCurrentAdmin } from "@/lib/auth/admin";
 import { prisma } from "@/lib/db/prisma";
-import { buildScrapeInviteMessage } from "@/lib/imports/scrape-invite";
+import {
+  buildScrapeInviteMessage,
+} from "@/lib/imports/scrape-invite-message";
+import {
+  type ScrapeReviewItem,
+} from "@/lib/imports/scrape-review-groups";
 import { isLocale, type Locale } from "@/lib/i18n/config";
 import { getDictionary } from "@/lib/i18n/getDictionary";
 
@@ -39,7 +41,6 @@ export default async function AdminScrapeReviewPage({
     redirect(`/${locale}/login`);
   }
 
-  // Invite queue: scrapes + imports awaiting SMS review (incl. failed retries).
   const pending = await prisma.listing.findMany({
     where: {
       status: ListingStatus.PENDING_REVIEW,
@@ -60,10 +61,10 @@ export default async function AdminScrapeReviewPage({
         },
       ],
     },
-    orderBy: { createdAt: "asc" },
+    orderBy: [{ sourcePostedAt: "asc" }, { createdAt: "asc" }],
     take: 500,
     include: {
-      importSource: { select: { label: true } },
+      importSource: { select: { id: true, label: true } },
     },
   });
 
@@ -73,6 +74,9 @@ export default async function AdminScrapeReviewPage({
         .find((tag) => tag.startsWith("source:"))
         ?.replace(/^source:/, "")
         .trim() || null;
+    const sourcePostedAt = listing.sourcePostedAt?.toISOString() ?? null;
+    const postedAt = sourcePostedAt ?? listing.createdAt.toISOString();
+
     return {
       id: listing.id,
       scrapedRawText: listing.scrapedRawText,
@@ -81,6 +85,7 @@ export default async function AdminScrapeReviewPage({
       descriptionEn: listing.descriptionEn,
       descriptionAm: listing.descriptionAm,
       contactPhone: listing.contactPhone,
+      contactName: listing.contactName,
       priceAmount: listing.priceAmount.toString(),
       priceCurrency: listing.priceCurrency,
       listingType: listing.listingType,
@@ -90,7 +95,11 @@ export default async function AdminScrapeReviewPage({
       messagePreview: buildScrapeInviteMessage(listing),
       importSourceLabel:
         listing.importSource?.label ?? sourceFromTag ?? null,
+      importSourceId: listing.importSourceId,
       createdAt: listing.createdAt.toISOString(),
+      sourcePostedAt,
+      postedAt,
+      postedAtIsEstimated: !sourcePostedAt,
     };
   });
 

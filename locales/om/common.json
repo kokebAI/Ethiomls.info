@@ -592,7 +592,17 @@
     "toastFailed": "Erguu kufe: {id}",
     "confirmSend": "SMS kana ergi?",
     "roleDeveloper": "Developer",
-    "roleBroker": "Dalaalaa"
+    "roleBroker": "Dalaalaa",
+    "postedOnSourceLabel": "Posted on source",
+    "importedLabel": "Imported",
+    "importedHint": "ingest date — source time unknown",
+    "groupSource": "Import source",
+    "groupPhone": "Contact phone",
+    "groupListingCount": "{count} listing(s)",
+    "groupPhoneCount": "{count} listing(s) on this phone",
+    "sendGroupInvite": "Send invite SMS ({count})",
+    "sendGroupDone": "Invite sent for {count} listing(s) to {phone}.",
+    "missingPostDate": "Missing source post date — re-scrape or backfill required"
   },
   "salesKit": {
     "title": "Sales kit → role account",

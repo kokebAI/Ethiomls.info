@@ -3,6 +3,7 @@ import {
   extractEthiopiaPhones,
 } from "@/lib/imports/extract-contacts";
 import { fetchPublicText } from "@/lib/imports/fetch-safe";
+import { parsePostedAtFromHtml } from "@/lib/imports/parse-source-date";
 import {
   looksLikeListing,
   parseListingText,
@@ -16,6 +17,8 @@ export type ScrapedCandidate = {
   imageUrls: string[];
   contactPhones: string[];
   parsed: ParsedListingDraft;
+  /** When the post went live on the source — required for ingest. */
+  postedAt: Date;
 };
 
 function decodeHtml(value: string): string {
@@ -74,6 +77,10 @@ export async function scrapeTelegramChannel(
     const rawText = textMatch ? decodeHtml(textMatch[1]) : "";
     if (!rawText || !looksLikeListing(rawText)) continue;
 
+    const postedAt = parsePostedAtFromHtml(block);
+    // Post age is mandatory — skip undated Telegram messages.
+    if (!postedAt) continue;
+
     const externalId =
       postMatch?.[1]?.split("/").pop() ?? contentFingerprint(rawText);
     const sourceUrl = postMatch
@@ -90,6 +97,7 @@ export async function scrapeTelegramChannel(
       imageUrls,
       contactPhones,
       parsed,
+      postedAt,
     });
   }
 

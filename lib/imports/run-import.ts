@@ -17,6 +17,12 @@ import { filterCorridorOffPlanCandidates } from "@/lib/imports/corridor-offplan-
 import { scrapeFacebookPage } from "@/lib/imports/facebook-scraper";
 import { parseListingText } from "@/lib/imports/parse-listing-text";
 import {
+  parseIsoOrUnixDate,
+  parsePostedAtFromHtml,
+  parsePostedAtFromText,
+} from "@/lib/imports/parse-source-date";
+import { fetchPublicText } from "@/lib/imports/fetch-safe";
+import {
   buildScrapeInviteMessage,
   sendScrapeInvite,
 } from "@/lib/imports/scrape-invite";
@@ -24,6 +30,39 @@ import { scrapeTelegramChannel } from "@/lib/imports/telegram-scraper";
 import type { ScrapedCandidate } from "@/lib/imports/telegram-scraper";
 import { scrapeWebsite } from "@/lib/imports/website-scraper";
 import { generatePropertyId } from "@/src/utils/generateId";
+
+const TELEGRAM_POST_RE =
+  /^https?:\/\/(?:t\.me|telegram\.me)\/([^/]+)\/(\d+)/i;
+
+async function resolveMandatorySourcePostedAt(input: {
+  sourcePostedAt?: string | Date | null;
+  sourceUrl?: string | null;
+  text: string;
+}): Promise<Date> {
+  const fromInput =
+    input.sourcePostedAt instanceof Date
+      ? input.sourcePostedAt
+      : parseIsoOrUnixDate(input.sourcePostedAt ?? null);
+  if (fromInput) return fromInput;
+
+  const fromText = parsePostedAtFromText(input.text);
+  if (fromText) return fromText;
+
+  const url = input.sourceUrl?.trim() ?? "";
+  const tg = url.match(TELEGRAM_POST_RE);
+  if (tg) {
+    const [, channel, postId] = tg;
+    const { html } = await fetchPublicText(
+      `https://t.me/${channel}/${postId}?embed=1`,
+    );
+    const fromHtml = parsePostedAtFromHtml(html);
+    if (fromHtml) return fromHtml;
+  }
+
+  throw new Error(
+    "Post date (sourcePostedAt) is required for all scrapes. Provide sourcePostedAt, a dated source URL, or include a post date in the text.",
+  );
+}
 
 export type RunImportFilters = {
   /** Only upsert OFF_PLAN ads that match any Addis corridor (central/east/west/south). */
@@ -68,6 +107,10 @@ async function upsertCandidate(input: {
   candidate: ScrapedCandidate;
 }): Promise<{ result: "created" | "updated" | "skipped"; listingId?: string }> {
   const { source, runId, ownerId, candidate } = input;
+  // Post age is mandatory for all scrapes.
+  if (!(candidate.postedAt instanceof Date) || Number.isNaN(candidate.postedAt.getTime())) {
+    return { result: "skipped" };
+  }
   const contactPhone = defaultContactFallback(source, candidate);
   if (!contactPhone) return { result: "skipped" };
 
@@ -118,6 +161,7 @@ async function upsertCandidate(input: {
     importSourceId: source.id,
     scrapeRunId: runId,
     scrapedRawText: candidate.text.slice(0, 12_000),
+    sourcePostedAt: candidate.postedAt,
     notificationStatus:
       existing?.notificationStatus === NotificationStatus.SENT
         ? NotificationStatus.SENT
@@ -169,6 +213,7 @@ export async function ingestScrapedText(input: {
   contactPhone?: string | null;
   contactName?: string | null;
   importSourceId?: string | null;
+  sourcePostedAt?: string | Date | null;
   autoSend?: boolean;
 }): Promise<{
   listingId: string;
@@ -181,6 +226,12 @@ export async function ingestScrapedText(input: {
   if (text.length < 20) {
     throw new Error("Scraped text is too short to ingest");
   }
+
+  const sourcePostedAt = await resolveMandatorySourcePostedAt({
+    sourcePostedAt: input.sourcePostedAt,
+    sourceUrl: input.sourceUrl,
+    text,
+  });
 
   const parsed = parseListingText(text);
   const fingerprint = contentFingerprint(text);
@@ -251,6 +302,7 @@ export async function ingestScrapedText(input: {
     sourceExternalId: externalId,
     importSourceId: importSource?.id ?? null,
     scrapedRawText: text.slice(0, 12_000),
+    sourcePostedAt,
     notificationStatus: NotificationStatus.PENDING_REVIEW,
     notificationError: null,
     metadataTags: [

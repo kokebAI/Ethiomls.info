@@ -66,6 +66,10 @@ export async function POST(request: NextRequest) {
         contactName:
           typeof body.contactName === "string" ? body.contactName : null,
         importSourceId: sourceId,
+        sourcePostedAt:
+          typeof body.sourcePostedAt === "string"
+            ? body.sourcePostedAt
+            : null,
         autoSend,
       });
       return NextResponse.json({

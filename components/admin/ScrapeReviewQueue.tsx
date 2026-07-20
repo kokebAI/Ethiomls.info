@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import {
   ClipboardCheck,
@@ -14,26 +14,15 @@ import {
   isStalePosted,
   postedAgeParts,
 } from "@/lib/datetime/posted-age";
+import {
+  groupScrapeReviewItems,
+  type ScrapeReviewItem,
+  type ScrapeReviewSourceGroup,
+} from "@/lib/imports/scrape-review-groups";
+import { buildScrapeInviteMessageForListings } from "@/lib/imports/scrape-invite-message";
 import { useTranslation } from "@/hooks/useTranslation";
 
-export type ScrapeReviewItem = {
-  id: string;
-  scrapedRawText: string | null;
-  titleEn: string | null;
-  titleAm: string | null;
-  descriptionEn: string | null;
-  descriptionAm: string | null;
-  contactPhone: string | null;
-  priceAmount: string;
-  priceCurrency: string;
-  listingType: string;
-  bedrooms: number | null;
-  addressLine: string | null;
-  sourceUrl: string | null;
-  messagePreview: string;
-  importSourceLabel: string | null;
-  createdAt: string;
-};
+export type { ScrapeReviewItem };
 
 type ScrapeReviewQueueProps = {
   initialItems: ScrapeReviewItem[];
@@ -42,20 +31,66 @@ type ScrapeReviewQueueProps = {
 type BusyAction = "invite" | "audit" | "discard";
 
 function ageLabel(
-  createdAt: string,
+  postedAt: string,
   t: (key: string, params?: Record<string, string | number>) => string,
 ) {
-  const { value, unit } = postedAgeParts(createdAt);
+  const { value, unit } = postedAgeParts(postedAt);
   if (unit === "minutes") return t("scrapeReview.ageMinutes", { count: value });
   if (unit === "hours") return t("scrapeReview.ageHours", { count: value });
   if (unit === "days") return t("scrapeReview.ageDays", { count: value });
   return t("scrapeReview.ageWeeks", { count: value });
 }
 
+function PostedAgeLine({
+  item,
+  locale,
+  t,
+}: {
+  item: ScrapeReviewItem;
+  locale: string;
+  t: (key: string, params?: Record<string, string | number>) => string;
+}) {
+  const stale = isStalePosted(item.postedAt);
+  const dateLabel = item.postedAtIsEstimated
+    ? t("scrapeReview.importedLabel")
+    : t("scrapeReview.postedOnSourceLabel");
+
+  return (
+    <p
+      className={`mt-1.5 text-sm font-medium ${
+        stale ? "text-amber-800" : "text-slate-700"
+      }`}
+    >
+      <span className="text-slate-500">{dateLabel}: </span>
+      {formatPostedDate(item.postedAt, locale)}
+      {item.postedAtIsEstimated ? (
+        <span className="ml-1 text-xs text-slate-500">
+          ({t("scrapeReview.importedHint")})
+        </span>
+      ) : null}
+      <span className="mx-1.5 text-slate-300" aria-hidden>
+        ·
+      </span>
+      <span
+        className={
+          stale
+            ? "rounded-full bg-amber-100 px-2 py-0.5 text-amber-900"
+            : "text-slate-600"
+        }
+      >
+        {t("scrapeReview.waitingFor", {
+          age: ageLabel(item.postedAt, t),
+        })}
+      </span>
+    </p>
+  );
+}
+
 export function ScrapeReviewQueue({ initialItems }: ScrapeReviewQueueProps) {
   const { t, locale } = useTranslation();
   const [items, setItems] = useState(initialItems);
   const [busyId, setBusyId] = useState<string | null>(null);
+  const [busyPhoneKey, setBusyPhoneKey] = useState<string | null>(null);
   const [busyAction, setBusyAction] = useState<BusyAction | null>(null);
   const [message, setMessage] = useState<{
     tone: "success" | "error";
@@ -66,30 +101,50 @@ export function ScrapeReviewQueue({ initialItems }: ScrapeReviewQueueProps) {
     setItems(initialItems);
   }, [initialItems]);
 
-  const removeItem = useCallback((id: string) => {
-    setItems((prev) => prev.filter((item) => item.id !== id));
+  const groups = useMemo(
+    () =>
+      groupScrapeReviewItems(items).map((sourceGroup) => ({
+        ...sourceGroup,
+        phoneGroups: sourceGroup.phoneGroups.map((phoneGroup) => ({
+          ...phoneGroup,
+          messagePreview: buildScrapeInviteMessageForListings(
+            phoneGroup.listings,
+          ),
+        })),
+      })),
+    [items],
+  );
+
+  const removeItems = useCallback((ids: string[]) => {
+    const drop = new Set(ids);
+    setItems((prev) => prev.filter((item) => !drop.has(item.id)));
   }, []);
 
-  async function sendInviteSms(id: string, contactPhone: string | null) {
-    if (!contactPhone?.trim()) {
+  async function sendInviteGroup(
+    phoneGroup: ScrapeReviewSourceGroup["phoneGroups"][number] & {
+      messagePreview: string;
+    },
+  ) {
+    if (!phoneGroup.phone?.trim()) {
       setMessage({
         tone: "error",
         text: t("scrapeReview.phoneMissing"),
       });
       return;
     }
-    setBusyId(id);
+    setBusyPhoneKey(phoneGroup.phoneKey);
     setBusyAction("invite");
     setMessage(null);
     try {
       const response = await fetch("/api/scrape/send-invite", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ listingId: id }),
+        body: JSON.stringify({ listingIds: phoneGroup.listingIds }),
       });
       const payload = (await response.json()) as {
         message?: string;
         data?: {
+          sentListingIds?: string[];
           accountCreated?: boolean;
           account?: { role?: string; label?: string } | null;
         };
@@ -97,7 +152,8 @@ export function ScrapeReviewQueue({ initialItems }: ScrapeReviewQueueProps) {
       if (!response.ok) {
         throw new Error(payload.message ?? t("scrapeReview.sendFailed"));
       }
-      removeItem(id);
+      const sentIds = payload.data?.sentListingIds ?? phoneGroup.listingIds;
+      removeItems(sentIds);
       const accountNote =
         payload.data?.account?.label && payload.data.account.role
           ? payload.data.accountCreated
@@ -112,7 +168,10 @@ export function ScrapeReviewQueue({ initialItems }: ScrapeReviewQueueProps) {
           : "";
       setMessage({
         tone: "success",
-        text: `${t("scrapeReview.sendDone", { id })}${accountNote}`,
+        text: `${t("scrapeReview.sendGroupDone", {
+          count: sentIds.length,
+          phone: phoneGroup.phone ?? "",
+        })}${accountNote}`,
       });
     } catch (error) {
       setMessage({
@@ -123,7 +182,7 @@ export function ScrapeReviewQueue({ initialItems }: ScrapeReviewQueueProps) {
             : t("scrapeReview.sendFailed"),
       });
     } finally {
-      setBusyId(null);
+      setBusyPhoneKey(null);
       setBusyAction(null);
     }
   }
@@ -142,7 +201,7 @@ export function ScrapeReviewQueue({ initialItems }: ScrapeReviewQueueProps) {
       if (!response.ok) {
         throw new Error(payload.message ?? t("scrapeReview.sendToAuditFailed"));
       }
-      removeItem(id);
+      removeItems([id]);
       setMessage({
         tone: "success",
         text: t("scrapeReview.sendToAuditDone", { id }),
@@ -175,7 +234,7 @@ export function ScrapeReviewQueue({ initialItems }: ScrapeReviewQueueProps) {
       if (!response.ok) {
         throw new Error(payload.message ?? t("scrapeReview.discardFailed"));
       }
-      removeItem(id);
+      removeItems([id]);
       setMessage({
         tone: "success",
         text: t("scrapeReview.discardDone", { id }),
@@ -209,7 +268,7 @@ export function ScrapeReviewQueue({ initialItems }: ScrapeReviewQueueProps) {
   }
 
   return (
-    <div className="grid gap-5">
+    <div className="grid gap-6">
       {message ? (
         <div
           className={`rounded-xl px-4 py-3 text-sm font-medium ${
@@ -228,198 +287,238 @@ export function ScrapeReviewQueue({ initialItems }: ScrapeReviewQueueProps) {
         {t("scrapeReview.sortedOldestFirst")}
       </p>
 
-      {items.map((item) => {
-        const busy = busyId === item.id;
-        const stale = isStalePosted(item.createdAt);
-        const price =
-          Number(item.priceAmount) > 1
-            ? `${Math.round(Number(item.priceAmount)).toLocaleString("en-US")} ${item.priceCurrency}`
-            : t("scrapeReview.priceOnRequest");
-
+      {groups.map((sourceGroup) => {
+        const sourceStale = isStalePosted(sourceGroup.oldestPostedAt);
         return (
-          <article
-            key={item.id}
-            className="overflow-hidden rounded-2xl border border-slate-200/90 bg-white/90 shadow-[var(--shadow-card)]"
-          >
-            <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 px-4 py-3 sm:px-5">
-              <div className="min-w-0">
-                <p className="font-mono text-xs font-semibold tracking-wide text-slate-500">
-                  {item.id}
-                </p>
-                <p className="mt-0.5 truncate text-sm text-ink-muted">
-                  {item.importSourceLabel ?? t("scrapeReview.unknownSource")}
-                  {item.sourceUrl ? (
-                    <>
-                      {" · "}
-                      <a
-                        href={item.sourceUrl}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="text-brand-700 hover:underline"
-                      >
-                        {t("scrapeReview.sourceLink")}
-                      </a>
-                    </>
-                  ) : null}
+          <section key={sourceGroup.importSourceId ?? "manual"} className="space-y-4">
+            <header className="flex flex-wrap items-end justify-between gap-3 border-b border-slate-200 pb-3">
+              <div>
+                <h2 className="text-sm font-bold uppercase tracking-[0.12em] text-slate-500">
+                  {t("scrapeReview.groupSource")}
+                </h2>
+                <p className="mt-1 text-lg font-semibold text-slate-deep">
+                  {sourceGroup.label}
                 </p>
                 <p
-                  className={`mt-1.5 text-sm font-medium ${
-                    stale ? "text-amber-800" : "text-slate-700"
+                  className={`mt-1 text-sm ${
+                    sourceStale ? "text-amber-800" : "text-slate-600"
                   }`}
                 >
-                  <span className="text-slate-500">
-                    {t("scrapeReview.postedLabel")}:{" "}
-                  </span>
-                  {formatPostedDate(item.createdAt, locale)}
-                  <span className="mx-1.5 text-slate-300" aria-hidden>
-                    ·
-                  </span>
-                  <span
-                    className={
-                      stale
-                        ? "rounded-full bg-amber-100 px-2 py-0.5 text-amber-900"
-                        : "text-slate-600"
-                    }
-                  >
-                    {t("scrapeReview.waitingFor", {
-                      age: ageLabel(item.createdAt, t),
-                    })}
-                  </span>
+                  {t("scrapeReview.groupListingCount", {
+                    count: sourceGroup.listingCount,
+                  })}
+                  {" · "}
+                  {t("scrapeReview.waitingFor", {
+                    age: ageLabel(sourceGroup.oldestPostedAt, t),
+                  })}
                 </p>
               </div>
-              <div className="flex flex-wrap gap-2">
-                <Link
-                  href={`/${locale}/listings/${item.id}`}
-                  className="inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-ink transition hover:bg-slate-50"
-                >
-                  <Pencil className="h-4 w-4" />
-                  {t("scrapeReview.edit")}
-                </Link>
-                <button
-                  type="button"
-                  disabled={busy}
-                  onClick={() => void sendInviteSms(item.id, item.contactPhone)}
-                  className="inline-flex items-center gap-1.5 rounded-full bg-brand-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-700 disabled:opacity-45"
-                >
-                  {busy && busyAction === "invite" ? (
-                    <LoaderCircle className="h-4 w-4 animate-spin" />
-                  ) : (
-                    <MessageSquare className="h-4 w-4" />
-                  )}
-                  {busy && busyAction === "invite"
-                    ? t("scrapeReview.sending")
-                    : t("scrapeReview.sendInvite")}
-                </button>
-                <button
-                  type="button"
-                  disabled={busy}
-                  onClick={() => void sendToPendingAudit(item.id)}
-                  className="inline-flex items-center gap-1.5 rounded-full bg-slate-950 px-4 py-2 text-sm font-semibold text-white transition hover:bg-slate-800 disabled:opacity-45"
-                >
-                  {busy && busyAction === "audit" ? (
-                    <LoaderCircle className="h-4 w-4 animate-spin" />
-                  ) : (
-                    <ClipboardCheck className="h-4 w-4" />
-                  )}
-                  {t("scrapeReview.sendToAudit")}
-                </button>
-                <button
-                  type="button"
-                  disabled={busy}
-                  onClick={() => void discard(item.id)}
-                  className="inline-flex items-center gap-1.5 rounded-full border border-red-200 bg-white px-4 py-2 text-sm font-semibold text-red-700 transition hover:bg-red-50 disabled:opacity-45"
-                >
-                  <Trash2 className="h-4 w-4" />
-                  {t("scrapeReview.discard")}
-                </button>
-              </div>
-            </div>
+            </header>
 
-            <div className="grid gap-0 lg:grid-cols-2">
-              <section className="border-b border-slate-100 p-4 sm:p-5 lg:border-b-0 lg:border-r">
-                <h3 className="text-xs font-bold uppercase tracking-wider text-slate-500">
-                  {t("scrapeReview.rawLabel")}
-                </h3>
-                <pre className="mt-3 max-h-80 overflow-auto whitespace-pre-wrap rounded-xl bg-slate-50 p-3 text-sm leading-relaxed text-slate-800">
-                  {item.scrapedRawText?.trim() || t("scrapeReview.noRaw")}
-                </pre>
-              </section>
+            {sourceGroup.phoneGroups.map((phoneGroup) => {
+              const phoneBusy = busyPhoneKey === phoneGroup.phoneKey;
+              const multiListing = phoneGroup.listings.length > 1;
 
-              <section className="p-4 sm:p-5">
-                <h3 className="text-xs font-bold uppercase tracking-wider text-slate-500">
-                  {t("scrapeReview.structuredLabel")}
-                </h3>
-                <dl className="mt-3 grid gap-2.5 text-sm">
-                  <div>
-                    <dt className="text-xs font-semibold text-slate-500">
-                      {t("scrapeReview.titleEn")}
-                    </dt>
-                    <dd className="font-medium text-slate-900">
-                      {item.titleEn || "—"}
-                    </dd>
-                  </div>
-                  <div>
-                    <dt className="text-xs font-semibold text-slate-500">
-                      {t("scrapeReview.titleAm")}
-                    </dt>
-                    <dd className="font-medium text-slate-900">
-                      {item.titleAm || "—"}
-                    </dd>
-                  </div>
-                  <div className="grid grid-cols-2 gap-3">
+              return (
+                <div
+                  key={phoneGroup.phoneKey}
+                  className="space-y-3 rounded-2xl border border-slate-200/80 bg-slate-50/50 p-4"
+                >
+                  <div className="flex flex-wrap items-center justify-between gap-3">
                     <div>
-                      <dt className="text-xs font-semibold text-slate-500">
-                        {t("scrapeReview.price")}
-                      </dt>
-                      <dd className="font-medium tabular-nums text-slate-900">
-                        {price}
-                      </dd>
+                      <h3 className="text-xs font-bold uppercase tracking-[0.12em] text-slate-500">
+                        {t("scrapeReview.groupPhone")}
+                      </h3>
+                      <p className="mt-1 text-sm font-semibold text-slate-900">
+                        {phoneGroup.phone ?? t("scrapeReview.phoneMissing")}
+                      </p>
+                      <p className="mt-0.5 text-xs text-slate-500">
+                        {t("scrapeReview.groupPhoneCount", {
+                          count: phoneGroup.listings.length,
+                        })}
+                      </p>
                     </div>
-                    <div>
-                      <dt className="text-xs font-semibold text-slate-500">
-                        {t("scrapeReview.phone")}
-                      </dt>
-                      <dd className="font-medium tabular-nums text-slate-900">
-                        {item.contactPhone || "—"}
-                      </dd>
-                    </div>
+                    <button
+                      type="button"
+                      disabled={phoneBusy || !phoneGroup.phone}
+                      onClick={() => void sendInviteGroup(phoneGroup)}
+                      className="inline-flex items-center gap-1.5 rounded-full bg-brand-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-700 disabled:opacity-45"
+                    >
+                      {phoneBusy && busyAction === "invite" ? (
+                        <LoaderCircle className="h-4 w-4 animate-spin" />
+                      ) : (
+                        <MessageSquare className="h-4 w-4" />
+                      )}
+                      {phoneBusy && busyAction === "invite"
+                        ? t("scrapeReview.sending")
+                        : multiListing
+                          ? t("scrapeReview.sendGroupInvite", {
+                              count: phoneGroup.listings.length,
+                            })
+                          : t("scrapeReview.sendInvite")}
+                    </button>
                   </div>
-                  {(item.bedrooms != null || item.addressLine) && (
-                    <div>
-                      <dt className="text-xs font-semibold text-slate-500">
-                        {t("scrapeReview.details")}
-                      </dt>
-                      <dd className="text-slate-800">
-                        {[
-                          item.bedrooms != null
-                            ? `${item.bedrooms} ${t("scrapeReview.beds")}`
-                            : null,
-                          item.listingType,
-                          item.addressLine,
-                        ]
-                          .filter(Boolean)
-                          .join(" · ")}
-                      </dd>
-                    </div>
-                  )}
-                </dl>
 
-                <h4 className="mt-5 text-xs font-bold uppercase tracking-wider text-slate-500">
-                  {t("scrapeReview.messagePreview")}
-                </h4>
-                <pre className="mt-2 max-h-48 overflow-auto whitespace-pre-wrap rounded-xl border border-amber-200/80 bg-amber-50/60 p-3 text-sm leading-relaxed text-slate-900">
-                  {item.messagePreview}
-                </pre>
+                  <pre className="max-h-40 overflow-auto whitespace-pre-wrap rounded-xl border border-amber-200/80 bg-amber-50/60 p-3 text-xs leading-relaxed text-slate-900">
+                    {phoneGroup.messagePreview}
+                  </pre>
 
-                <Link
-                  href={`/${locale}/listings/${item.id}`}
-                  className="mt-4 inline-flex text-sm font-semibold text-brand-700 hover:underline"
-                >
-                  {t("scrapeReview.openListing")}
-                </Link>
-              </section>
-            </div>
-          </article>
+                  <div className="grid gap-4">
+                    {phoneGroup.listings.map((item) => {
+                      const busy = busyId === item.id;
+                      const price =
+                        Number(item.priceAmount) > 1
+                          ? `${Math.round(Number(item.priceAmount)).toLocaleString("en-US")} ${item.priceCurrency}`
+                          : t("scrapeReview.priceOnRequest");
+
+                      return (
+                        <article
+                          key={item.id}
+                          className="overflow-hidden rounded-2xl border border-slate-200/90 bg-white/90 shadow-[var(--shadow-card)]"
+                        >
+                          <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 px-4 py-3 sm:px-5">
+                            <div className="min-w-0">
+                              <p className="font-mono text-xs font-semibold tracking-wide text-slate-500">
+                                {item.id}
+                              </p>
+                              {item.sourceUrl ? (
+                                <p className="mt-0.5 truncate text-sm text-ink-muted">
+                                  <a
+                                    href={item.sourceUrl}
+                                    target="_blank"
+                                    rel="noreferrer"
+                                    className="text-brand-700 hover:underline"
+                                  >
+                                    {t("scrapeReview.sourceLink")}
+                                  </a>
+                                </p>
+                              ) : null}
+              <PostedAgeLine item={item} locale={locale} t={t} />
+                              {item.postedAtIsEstimated ? (
+                                <p className="mt-1 text-xs font-semibold text-red-700">
+                                  {t("scrapeReview.missingPostDate")}
+                                </p>
+                              ) : null}
+                            </div>
+                            <div className="flex flex-wrap gap-2">
+                              <Link
+                                href={`/${locale}/listings/${item.id}`}
+                                className="inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-ink transition hover:bg-slate-50"
+                              >
+                                <Pencil className="h-4 w-4" />
+                                {t("scrapeReview.edit")}
+                              </Link>
+                              <button
+                                type="button"
+                                disabled={busy}
+                                onClick={() => void sendToPendingAudit(item.id)}
+                                className="inline-flex items-center gap-1.5 rounded-full bg-slate-950 px-4 py-2 text-sm font-semibold text-white transition hover:bg-slate-800 disabled:opacity-45"
+                              >
+                                {busy && busyAction === "audit" ? (
+                                  <LoaderCircle className="h-4 w-4 animate-spin" />
+                                ) : (
+                                  <ClipboardCheck className="h-4 w-4" />
+                                )}
+                                {t("scrapeReview.sendToAudit")}
+                              </button>
+                              <button
+                                type="button"
+                                disabled={busy}
+                                onClick={() => void discard(item.id)}
+                                className="inline-flex items-center gap-1.5 rounded-full border border-red-200 bg-white px-4 py-2 text-sm font-semibold text-red-700 transition hover:bg-red-50 disabled:opacity-45"
+                              >
+                                <Trash2 className="h-4 w-4" />
+                                {t("scrapeReview.discard")}
+                              </button>
+                            </div>
+                          </div>
+
+                          <div className="grid gap-0 lg:grid-cols-2">
+                            <section className="border-b border-slate-100 p-4 sm:p-5 lg:border-b-0 lg:border-r">
+                              <h4 className="text-xs font-bold uppercase tracking-wider text-slate-500">
+                                {t("scrapeReview.rawLabel")}
+                              </h4>
+                              <pre className="mt-3 max-h-80 overflow-auto whitespace-pre-wrap rounded-xl bg-slate-50 p-3 text-sm leading-relaxed text-slate-800">
+                                {item.scrapedRawText?.trim() ||
+                                  t("scrapeReview.noRaw")}
+                              </pre>
+                            </section>
+
+                            <section className="p-4 sm:p-5">
+                              <h4 className="text-xs font-bold uppercase tracking-wider text-slate-500">
+                                {t("scrapeReview.structuredLabel")}
+                              </h4>
+                              <dl className="mt-3 grid gap-2.5 text-sm">
+                                <div>
+                                  <dt className="text-xs font-semibold text-slate-500">
+                                    {t("scrapeReview.titleEn")}
+                                  </dt>
+                                  <dd className="font-medium text-slate-900">
+                                    {item.titleEn || "—"}
+                                  </dd>
+                                </div>
+                                <div>
+                                  <dt className="text-xs font-semibold text-slate-500">
+                                    {t("scrapeReview.titleAm")}
+                                  </dt>
+                                  <dd className="font-medium text-slate-900">
+                                    {item.titleAm || "—"}
+                                  </dd>
+                                </div>
+                                <div className="grid grid-cols-2 gap-3">
+                                  <div>
+                                    <dt className="text-xs font-semibold text-slate-500">
+                                      {t("scrapeReview.price")}
+                                    </dt>
+                                    <dd className="font-medium tabular-nums text-slate-900">
+                                      {price}
+                                    </dd>
+                                  </div>
+                                  <div>
+                                    <dt className="text-xs font-semibold text-slate-500">
+                                      {t("scrapeReview.phone")}
+                                    </dt>
+                                    <dd className="font-medium tabular-nums text-slate-900">
+                                      {item.contactPhone || "—"}
+                                    </dd>
+                                  </div>
+                                </div>
+                                {(item.bedrooms != null || item.addressLine) && (
+                                  <div>
+                                    <dt className="text-xs font-semibold text-slate-500">
+                                      {t("scrapeReview.details")}
+                                    </dt>
+                                    <dd className="text-slate-800">
+                                      {[
+                                        item.bedrooms != null
+                                          ? `${item.bedrooms} ${t("scrapeReview.beds")}`
+                                          : null,
+                                        item.listingType,
+                                        item.addressLine,
+                                      ]
+                                        .filter(Boolean)
+                                        .join(" · ")}
+                                    </dd>
+                                  </div>
+                                )}
+                              </dl>
+
+                              <Link
+                                href={`/${locale}/listings/${item.id}`}
+                                className="mt-4 inline-flex text-sm font-semibold text-brand-700 hover:underline"
+                              >
+                                {t("scrapeReview.openListing")}
+                              </Link>
+                            </section>
+                          </div>
+                        </article>
+                      );
+                    })}
+                  </div>
+                </div>
+              );
+            })}
+          </section>
         );
       })}
     </div>

@@ -4,6 +4,11 @@ import {
 } from "@/lib/imports/extract-contacts";
 import { fetchPublicText } from "@/lib/imports/fetch-safe";
 import {
+  parseFacebookCreationTimes,
+  parsePostedAtFromHtml,
+  parsePostedAtFromText,
+} from "@/lib/imports/parse-source-date";
+import {
   looksLikeListing,
   parseListingText,
   type ParsedListingDraft,
@@ -161,14 +166,25 @@ function toCandidates(
   chunks: string[],
   sourceUrl: string,
   pageImages: string[],
+  pageDates: Date[],
 ): ScrapedCandidate[] {
   const candidates: ScrapedCandidate[] = [];
-  for (const chunk of chunks) {
+  for (let i = 0; i < chunks.length; i += 1) {
+    const chunk = chunks[i];
     if (!looksLikeListing(chunk)) continue;
     const parsed: ParsedListingDraft = parseListingText(chunk);
     const phones = extractEthiopiaPhones(chunk);
     // Require a phone in the post itself — page-level numbers create greeting/promo noise.
     if (!phones.length) continue;
+
+    const postedAt =
+      parsePostedAtFromText(chunk) ||
+      pageDates[i] ||
+      pageDates[0] ||
+      null;
+    // Post age is mandatory — skip undated Facebook posts.
+    if (!postedAt) continue;
+
     candidates.push({
       externalId: contentFingerprint(chunk),
       sourceUrl,
@@ -176,6 +192,7 @@ function toCandidates(
       imageUrls: pageImages,
       contactPhones: phones,
       parsed,
+      postedAt,
     });
   }
   return candidates.slice(0, 20);
@@ -191,12 +208,16 @@ async function scrapeWwwFacebookPage(url: string): Promise<ScrapedCandidate[]> {
 
   const messages = uniqueChunks(extractEmbeddedMessages(html));
   const pageImages = extractImages(html, finalUrl);
+  const pageDates = [
+    ...parseFacebookCreationTimes(html),
+    ...(parsePostedAtFromHtml(html) ? [parsePostedAtFromHtml(html)!] : []),
+  ];
   const sourceUrl = finalUrl.includes("facebook.com")
     ? finalUrl.replace("mbasic.facebook.com", "www.facebook.com")
     : wwwUrl;
 
   if (messages.length >= 1) {
-    return toCandidates(messages, sourceUrl, pageImages);
+    return toCandidates(messages, sourceUrl, pageImages, pageDates);
   }
 
   // Fallback: treat paragraph chunks from stripped HTML
@@ -204,6 +225,7 @@ async function scrapeWwwFacebookPage(url: string): Promise<ScrapedCandidate[]> {
     uniqueChunks(splitFacebookPosts(html, stripHtml(html))),
     sourceUrl,
     pageImages,
+    pageDates,
   );
 }
 
@@ -221,6 +243,10 @@ async function scrapeMbasicFacebookPage(
 
   const text = stripHtml(html);
   const pageImages = extractImages(html, finalUrl);
+  const pageDates = [
+    ...parseFacebookCreationTimes(html),
+    ...(parsePostedAtFromHtml(html) ? [parsePostedAtFromHtml(html)!] : []),
+  ];
   const sourceUrl = finalUrl.includes("facebook.com")
     ? finalUrl.replace("mbasic.facebook.com", "www.facebook.com")
     : finalUrl;
@@ -229,6 +255,7 @@ async function scrapeMbasicFacebookPage(
     uniqueChunks(splitFacebookPosts(html, text)),
     sourceUrl,
     pageImages,
+    pageDates,
   );
 }
 
