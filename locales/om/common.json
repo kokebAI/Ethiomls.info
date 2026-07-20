@@ -522,6 +522,7 @@
     "loadFailed": "Could not load sources.",
     "runFailed": "Scrape failed.",
     "runDone": "Scrape finished — created {created}, updated {updated}, skipped {skipped}.",
+    "runEmpty": "Scrape finished but found 0 listings (skipped {skipped}). The source may be a private Telegram channel, an empty feed, or a JS site without a public API.",
     "deleteCta": "Delete",
     "deleting": "Deleting…",
     "deleteConfirm": "Delete “{label}” and permanently remove its {count} scraped listing(s)? Curated project inventory is kept.",

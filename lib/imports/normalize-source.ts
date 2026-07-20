@@ -123,9 +123,22 @@ export function normalizeImportSourceInput(raw: string): NormalizedImportSource 
   const host = parsed.hostname.toLowerCase().replace(/^www\./, "");
   if (host === "t.me" || host === "telegram.me" || host === "telegram.dog") {
     const parts = parsed.pathname.split("/").filter(Boolean);
-    const handle = parts[0] === "s" ? parts[1] : parts[0];
+    const first = parts[0] ?? "";
+    if (
+      first === "joinchat" ||
+      first === "addstickers" ||
+      first.startsWith("+") ||
+      first === "c"
+    ) {
+      throw new Error(
+        "Private Telegram invite/group links cannot be scraped. Use a public channel @handle (example: @gechocommission8 or https://t.me/s/gechocommission8).",
+      );
+    }
+    const handle = first === "s" ? parts[1] : first;
     if (!handle || !/^[A-Za-z0-9_]{4,64}$/.test(handle)) {
-      throw new Error("Telegram URL must include a public channel handle");
+      throw new Error(
+        "Telegram URL must include a public channel handle (4+ letters/numbers). Private /c/ or invite links are not supported.",
+      );
     }
     return {
       sourceType: ImportSourceType.TELEGRAM,

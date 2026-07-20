@@ -97,6 +97,16 @@ async function resolveSubCityId(code: string | null): Promise<string | null> {
 function defaultContactFallback(source: ImportSource, candidate: ScrapedCandidate) {
   if (candidate.contactPhones[0]) return candidate.contactPhones[0];
   if (source.telegramHandle) return `telegram:@${source.telegramHandle}`;
+  if (source.sourceType === ImportSourceType.WEBSITE) {
+    try {
+      return `website:${new URL(source.normalizedUrl).hostname}`;
+    } catch {
+      return `website:${source.id}`;
+    }
+  }
+  if (source.sourceType === ImportSourceType.FACEBOOK) {
+    return `facebook:${source.normalizedUrl}`;
+  }
   return null;
 }
 
@@ -425,6 +435,12 @@ export async function runImportSource(input: {
       candidates = await scrapeFacebookPage(source.normalizedUrl);
     } else {
       candidates = await scrapeWebsite(source.normalizedUrl);
+    }
+
+    if (candidates.length === 0) {
+      throw new Error(
+        `No listings found from ${source.normalizedUrl}. For Telegram, the channel must be public (t.me/s/…). For websites, listing HTML or a JSON/CMS feed is required.`,
+      );
     }
 
     const postsSeen = candidates.length;

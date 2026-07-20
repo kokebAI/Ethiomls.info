@@ -63,7 +63,7 @@ export function ImportSourcesPanel() {
   const [runningId, setRunningId] = useState<string | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [message, setMessage] = useState<{
-    tone: "success" | "error";
+    tone: "success" | "error" | "warning";
     text: string;
   } | null>(null);
 
@@ -110,10 +110,19 @@ export function ImportSourcesPanel() {
       if (!response.ok) {
         throw new Error(await readApiError(response, t("imports.saveFailed")));
       }
+      const payload = (await response.json()) as {
+        data?: ImportSourceRow;
+        warning?: string | null;
+      };
       setUrl("");
       setLabel("");
       setNotes("");
-      setMessage({ tone: "success", text: t("imports.saved") });
+      setMessage({
+        tone: payload.warning ? "warning" : "success",
+        text: payload.warning
+          ? payload.warning
+          : t("imports.saved"),
+      });
       await loadSources();
     } catch (error) {
       setMessage({
@@ -140,14 +149,29 @@ export function ImportSourcesPanel() {
         data?: ScrapeRunSummary;
       };
       const run = payload.data;
-      setMessage({
-        tone: "success",
-        text: t("imports.runDone", {
-          created: run?.listingsCreated ?? 0,
-          updated: run?.listingsUpdated ?? 0,
-          skipped: run?.listingsSkipped ?? 0,
-        }),
-      });
+      const created = run?.listingsCreated ?? 0;
+      const updated = run?.listingsUpdated ?? 0;
+      const skipped = run?.listingsSkipped ?? 0;
+      if (run?.status === "FAILED" || (created === 0 && updated === 0 && run?.errorMessage)) {
+        setMessage({
+          tone: "error",
+          text: run.errorMessage || t("imports.runFailed"),
+        });
+      } else if (created === 0 && updated === 0) {
+        setMessage({
+          tone: "warning",
+          text: t("imports.runEmpty", { skipped }),
+        });
+      } else {
+        setMessage({
+          tone: "success",
+          text: t("imports.runDone", {
+            created,
+            updated,
+            skipped,
+          }),
+        });
+      }
       await loadSources();
     } catch (error) {
       setMessage({
@@ -273,7 +297,9 @@ export function ImportSourcesPanel() {
           className={`rounded-xl px-4 py-3 text-sm font-medium ${
             message.tone === "success"
               ? "bg-emerald-50 text-emerald-800"
-              : "bg-red-50 text-red-700"
+              : message.tone === "warning"
+                ? "bg-amber-50 text-amber-900"
+                : "bg-red-50 text-red-700"
           }`}
         >
           {message.text}

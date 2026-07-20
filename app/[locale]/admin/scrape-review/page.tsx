@@ -41,20 +41,38 @@ export default async function AdminScrapeReviewPage({
     redirect(`/${locale}/login`);
   }
 
+  // Real scrapes / imports only — exclude seed inventory & project units
+  // that landed in the invite queue without source text or an import source.
   const pending = await prisma.listing.findMany({
     where: {
       status: ListingStatus.PENDING_REVIEW,
-      OR: [
+      AND: [
         {
-          notificationStatus: {
-            in: [NotificationStatus.PENDING_REVIEW, NotificationStatus.FAILED],
-          },
+          OR: [
+            {
+              notificationStatus: {
+                in: [
+                  NotificationStatus.PENDING_REVIEW,
+                  NotificationStatus.FAILED,
+                ],
+              },
+            },
+            {
+              notificationStatus: NotificationStatus.NOT_APPLICABLE,
+              OR: [
+                { importSourceId: { not: null } },
+                { scrapedRawText: { not: null } },
+                { metadataTags: { has: "import" } },
+                { metadataTags: { has: "sales-kit-import" } },
+              ],
+            },
+          ],
         },
         {
-          notificationStatus: NotificationStatus.NOT_APPLICABLE,
           OR: [
-            { importSourceId: { not: null } },
             { scrapedRawText: { not: null } },
+            { importSourceId: { not: null } },
+            { sourceUrl: { not: null } },
             { metadataTags: { has: "import" } },
             { metadataTags: { has: "sales-kit-import" } },
           ],

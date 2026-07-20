@@ -481,6 +481,7 @@
     "loadFailed": "ምንጮችን መጫን አልተሳካም።",
     "runFailed": "መሰብሰብ አልተሳካም።",
     "runDone": "ተጠናቋል — አዲስ {created}፣ የተሻሻለ {updated}፣ የተዘለለ {skipped}።",
+    "runEmpty": "ተጠናቋል ግን ምንም ዝርዝር አልተገኘም (የተዘለለ {skipped})። ምንጩ የግል ቴሌግራም፣ ባዶ ፊድ ወይም ያለ ይፋዊ API የJS ድረ-ገጽ ሊሆን ይችላል።",
     "deleteCta": "Delete",
     "deleting": "Deleting…",
     "deleteConfirm": "Delete “{label}” and permanently remove its {count} scraped listing(s)? Curated project inventory is kept.",
