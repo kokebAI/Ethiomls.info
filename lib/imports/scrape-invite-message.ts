@@ -4,17 +4,19 @@ export type InviteListingRef = {
   id: string;
 };
 
-/** Soft cap for concatenated Unicode SMS via HaHu (multipart). */
-const INVITE_SMS_MAX_CHARS = 600;
-const MAX_LISTING_URLS_IN_SMS = 2;
+/**
+ * Soft upper bound for HaHu multipart Unicode SMS.
+ * Cold-onboarding invite is intentionally long (Amharic + English).
+ */
+const INVITE_SMS_MAX_CHARS = 4_000;
 
-function listingPublicUrl(listingId: string): string {
+function claimUrlFor(listingId: string): string {
   return smsNotificationEngine.buildAbsoluteUrl(
     `/am/listings/${encodeURIComponent(listingId)}`,
   );
 }
 
-function claimLoginUrl(): string {
+function resetUrl(): string {
   return smsNotificationEngine.buildAbsoluteUrl(`/am/login?mode=reset`);
 }
 
@@ -24,63 +26,73 @@ function trimToSmsLimit(message: string): string {
   return chars.slice(0, INVITE_SMS_MAX_CHARS).join("");
 }
 
-function buildSingleListingInviteMessage(listing: InviteListingRef): string {
-  const resetUrl = claimLoginUrl();
-  const listingUrl = listingPublicUrl(listing.id);
-
-  const amharic =
-    `የEthioMLS AI መተግበሪያ ዝርዝርዎን አግኝቶ ትኩረት የሚስብ ሆኖ አግኝቶታል። ` +
-    `ዝርዝር፡ ${listingUrl} ` +
-    `ተመሳሳይ ስልክ በመጠቀም የይለፍ ቃል ዳግም ያስጀምሩ፡ ${resetUrl} ` +
-    `ከዚያ ይግቡና ዝርዝርዎን ያርሙ። ለግምገማ ሲገቡ ጠቃሚ ፍንጮችና መመሪያዎች ይረዱዎታል።`;
-
-  const english =
-    `EthioMLS AI found your listing interesting. ` +
-    `Listing: ${listingUrl} ` +
-    `Use the same phone, then Reset password: ${resetUrl} ` +
-    `Sign in and edit your listing. Tooltips and other aids will help once you come in to review.`;
-
-  return trimToSmsLimit(`${amharic}\n\n${english}`);
-}
-
 /**
- * Build scrape-invite SMS for one or more listings on the same phone.
- * Full Amharic first, then English.
+ * Definitive HaHu cold-onboarding invite — Amharic first, then English.
+ * Tokens: claimUrl (listing), resetUrl (Reset password).
  */
 export function buildScrapeInviteMessageForListings(
   listings: InviteListingRef[],
 ): string {
   if (listings.length === 0) return "";
-  if (listings.length === 1) {
-    return buildSingleListingInviteMessage(listings[0]);
-  }
 
-  const resetUrl = claimLoginUrl();
-  const count = listings.length;
-  const urlLines = listings
-    .slice(0, MAX_LISTING_URLS_IN_SMS)
-    .map((listing) => listingPublicUrl(listing.id))
-    .join(" ");
-  const moreNoteAm =
-    count > MAX_LISTING_URLS_IN_SMS
-      ? ` ሁሉንም ${count} ዝርዝሮች ለማየት ይግቡ።`
+  const primary = listings[0];
+  const claimUrl = claimUrlFor(primary.id);
+  const passwordResetUrl = resetUrl();
+  const extraCount = listings.length - 1;
+
+  const extraLinksAm =
+    extraCount > 0
+      ? `\n\nተጨማሪ ${extraCount} ዝርዝር(ዎች)፦\n${listings
+          .slice(1, 4)
+          .map((listing) => `🔗 ${claimUrlFor(listing.id)}`)
+          .join("\n")}${
+          listings.length > 4
+            ? `\n(ሁሉንም ${listings.length} ዝርዝሮች ለማየት ይግቡ።)`
+            : ""
+        }`
       : "";
-  const moreNoteEn =
-    count > MAX_LISTING_URLS_IN_SMS
-      ? ` Sign in to review all ${count} listings.`
+
+  const extraLinksEn =
+    extraCount > 0
+      ? `\n\nAdditional listing(s) (${extraCount}):\n${listings
+          .slice(1, 4)
+          .map((listing) => `🔗 ${claimUrlFor(listing.id)}`)
+          .join("\n")}${
+          listings.length > 4
+            ? `\n(Sign in to review all ${listings.length} listings.)`
+            : ""
+        }`
       : "";
 
-  const amharic =
-    `የEthioMLS AI መተግበሪያ ${count} ዝርዝሮችዎን አግኝቶ ትኩረት የሚስብ ሆኖ አግኝቶታል። ` +
-    `ዝርዝሮች፡ ${urlLines}${moreNoteAm} ` +
-    `ተመሳሳይ ስልክ በመጠቀም የይለፍ ቃል ዳግም ያስጀምሩ፡ ${resetUrl} ` +
-    `ከዚያ ይግቡና ዝርዝሮችዎን ያርሙ። ለግምገማ ጠቃሚ ፍንጮች ይረዱዎታል።`;
+  const amharic = `ሰላም 👋 አዲስ እና አስደሳች ዜና ለእርስዎ!
 
-  const english =
-    `EthioMLS AI found ${count} of your listings interesting. ` +
-    `Listings: ${urlLines}${moreNoteEn} ` +
-    `Use the same phone, then Reset password: ${resetUrl} ` +
-    `Sign in and edit. Tooltips and other aids will help once you come in to review.`;
+በቅርቡ በየሶሻል ሚዲያው ያወጡትን የቤት ማስታወቂያ በኢትዮጵያ የመጀመሪያው በሆነው በEthioMLS AI (አርቴፊሻል ኢንተለጀንስ) መተግበሪያ ላይ አይተነዋል። የእርስዎን ስራ ይበልጥ ለማቃለል እና ብዙ ደንበኛ ለማግኘት እንዲረዳዎት፣ የእኛ AI ማስታወቂያዎን በነፃ ሙሉ በሙሉ ወደ ዘመናዊ የዲጂታል መገለጫ ቀይሮታል።
+
+የተዘጋጀው ዝርዝርዎ ይኸውልዎት፦
+🔗 ሊንክ፦ ${claimUrl}${extraLinksAm}
+
+ይህ ለእርስዎ ምን ጥቅም አለው?
+• Bilingual (በ2 ቋንቋ)፦ ማስታወቂያዎ በአማርኛ እና በእንግሊዝኛ ተዘጋጅቶ በሀገር ውስጥና በውጭ ሀገር (Diaspora) ላሉ ከፍተኛ ገዢዎች በግልፅ ይታያል።
+• ቁጥጥር በእርስዎ እጅ፦ የእርስዎ ስልክ ቁጥር አስቀድሞ በደህንነት መለያነት ተመዝግቧል። መለያዎን ለመረከብ፣ ፎቶዎችን ለመጨመር እና ዋጋ ለማስተካከል የሚከተሉትን ቀላል ደረጃዎች ይከተሉ፦
+1️⃣ መጀመሪያ የይለፍ ቃልዎን እዚህ ያስተካክሉ፦ ${passwordResetUrl}
+2️⃣ በመቀጠል በመግባት የፈለጉትን መረጃ ያርሙ።
+
+መድረካችን አዲስ እንደመሆኑ መጠን በውስጡ ያሉት መመሪያዎች እና ፍንጮች (Tooltips) ስራዎን እጅግ በጣም ያቀልሉልዎታል። አብረውን ስላደጉ እናመሰግናለን! 🚀`;
+
+  const english = `Hello 👋 Exciting news for your real estate business!
+
+We recently spotted your real estate post and our active EthioMLS AI system has automatically transformed your raw text into a premium, comprehensive digital listing profile on our brand-new platform—completely free of charge.
+
+Your Live Generated Profile:
+🔗 Listing Link: ${claimUrl}${extraLinksEn}
+
+Why activate your EthioMLS account today?
+• Bilingual AI Processing: Your property is instantly optimized and translated into both English and Amharic, giving you direct exposure to local buyers and the high-value diaspora investment market.
+• Complete Control: Your phone number is already securely mapped as the owner. To claim ownership, add high-res interior photos, and manage inquiries:
+1️⃣ First, securely set up your new account password here: ${passwordResetUrl}
+2️⃣ Sign in to unlock your dynamic dashboard and edit your details.
+
+Since EthioMLS is a new, specialized ecosystem designed to help you sell faster, our step-by-step tooltips and smart dashboard aids will guide you through maximizing your reach the moment you log in! 🚀`;
 
   return trimToSmsLimit(`${amharic}\n\n${english}`);
 }

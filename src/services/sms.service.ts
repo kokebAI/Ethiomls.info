@@ -173,13 +173,13 @@ export class SmsNotificationEngine {
     if (!device) throw new Error("HAHU_DEVICE_ID is not configured");
 
     const url = new URL(endpoint);
-    // Prefer POST form body so messages are not truncated by query-string length.
-    // Allow multipart Unicode SMS (Amharic+English invites); avoid mid-glyph cuts.
-    const maxChars = Number(process.env.HAHU_SMS_MAX_CHARS ?? "600");
+    // Prefer POST form body so newlines and long Unicode invites are preserved.
+    // Cold-onboarding bilingual SMS is multipart; keep a high ceiling.
+    const maxChars = Number(process.env.HAHU_SMS_MAX_CHARS ?? "4000");
     const safeMax =
       Number.isFinite(maxChars) && maxChars > 0
-        ? Math.min(Math.trunc(maxChars), 900)
-        : 600;
+        ? Math.min(Math.trunc(maxChars), 6000)
+        : 4000;
     const message = [...body].slice(0, safeMax).join("");
     const form = new URLSearchParams({
       secret,
