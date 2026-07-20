@@ -1,7 +1,7 @@
 {
   "source": "curated-facebook-sale-rent",
   "description": "Public Facebook Pages that post Addis Ababa completed-sale and rental property ads. Scraped via www.facebook.com embedded post text (mbasic is often login-walled). Notes tagged facebook-sale-rent for scrape:facebook.",
-  "updatedAt": "2026-07-19",
+  "updatedAt": "2026-07-20",
   "sources": [
     {
       "label": "House for Rent in Addis Ababa (Facebook)",
@@ -38,6 +38,12 @@
       "url": "https://www.facebook.com/AyatRealEstate",
       "track": "developer",
       "notes": "facebook-sale-rent · sale · developer page"
+    },
+    {
+      "label": "Summer Real Estate / Yalemzwed (Facebook)",
+      "url": "https://www.facebook.com/Summerrealestate",
+      "track": "broker",
+      "notes": "facebook-sale-rent · sale+rent · Summer Real Estate Addis · Yalemzwed"
     }
   ]
 }
