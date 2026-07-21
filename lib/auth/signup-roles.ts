@@ -60,6 +60,8 @@ export function roleLabelKey(role: string): string {
       return "auth.role.broker";
     case UserRole.CORPORATE_DEVELOPER:
       return "auth.role.developer";
+    case UserRole.OFFICE_ASSISTANT:
+      return "auth.role.assistant";
     case UserRole.ADMIN:
       return "auth.role.admin";
     default:

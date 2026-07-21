@@ -357,7 +357,8 @@
       "broker": "ደላላ",
       "brokerHint": "የደንበኛ ንብረት ያስተዳድሩ።",
       "developer": "ገንቢ",
-      "developerHint": "ፕሮጀክቶችን እና ክፍሎችን ያትሙ።"
+      "developerHint": "ፕሮጀክቶችን እና ክፍሎችን ያትሙ።",
+      "assistant": "የቢሮ ረዳት"
     },
     "developer": {
       "hint": "እንደ ገንቢ ለመመዝገብ የንግድ ስም እና የግብር መለያ ቁጥር (TIN) ያስፈልጋሉ። TIN በetrade.gov.et እናረጋግጣለን።",
@@ -682,6 +683,17 @@
         "dashboard": "የዳሽቦርድ መለኪያዎች",
         "profile": "መገለጫዎ"
       }
+    },
+    "assistant": {
+      "eyebrow": "የቢሮ ረዳት",
+      "title": "ዝርዝሮችን አስመጣና አዘጋጅ",
+      "lede": "የስክሬፕ ምንጮችን ያክሉ፣ ማስመጣት ያሂዱ፣ የግብዣ SMS ይገምግሙ፣ ዝርዝር ይፍጠሩ። ሙሉ ኦዲት እና ማተም ለአስተዳዳሪዎች ይቀራል።",
+      "ctas": {
+        "imports": "የማስመጣት ምንጮች",
+        "scrapeReview": "የስክሬፕ ግብዣ ግምገማ",
+        "addListing": "ዝርዝር አክል",
+        "profile": "መገለጫዎ"
+      }
     }
   },
   "workspace": {
@@ -973,5 +985,25 @@
     "dismiss": "አሁን አይደለም",
     "iosHint": "በiPhone፡ Share ን ይጫኑ፣ ከዚያ Add to Home Screen ይምረጡ።",
     "chromeMenuHint": "የአሳሹን ምናሌ (⋮) ይክፈቱ እና Install app / Add to Home screen ይምረጡ።"
+  },
+  "officeAssistants": {
+    "title": "የቢሮ ረዳቶች",
+    "lede": "ውስን ሰራተኞች — ምንጮችን ማስመጣት፣ ስክሬፕ ግምገማ እና ዝርዝር መፍጠር ይችላሉ። ኦዲት/ማተም አይችሉም። አዲስ መለያዎች የይለፍ ቃልን በReset password ያስጀምራሉ።",
+    "phone": "ስልክ",
+    "phonePlaceholder": "0911… ወይም +2519…",
+    "fullName": "ሙሉ ስም (አማራጭ)",
+    "fullNamePlaceholder": "የረዳት ስም",
+    "addCta": "ረዳት አክል",
+    "empty": "እስካሁን የቢሮ ረዳት የለም።",
+    "active": "ንቁ",
+    "inactive": "እንቅስቃሴ የለውም",
+    "activate": "አንቃ",
+    "deactivate": "አሰናክል",
+    "created": "የቢሮ ረዳት ተፈጥሯል — የይለፍ ቃልን በReset password ያስጀምሩ።",
+    "promoted": "ያለው ተጠቃሚ ወደ የቢሮ ረዳት ተሻሽሏል።",
+    "updated": "የቢሮ ረዳት ተዘምኗል።",
+    "loadFailed": "የቢሮ ረዳቶችን መጫን አልተሳካም።",
+    "saveFailed": "የቢሮ ረዳትን ማስቀመጥ አልተሳካም።",
+    "updateFailed": "የቢሮ ረዳትን ማዘመን አልተሳካም።"
   }
 }

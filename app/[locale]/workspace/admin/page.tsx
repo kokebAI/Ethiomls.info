@@ -5,6 +5,7 @@ import {
   AdminWorkspaceView,
   type AdminAlertItem,
 } from "@/components/admin/AdminWorkspaceView";
+import { OfficeAssistantsPanel } from "@/components/admin/OfficeAssistantsPanel";
 import type { AdminPendingDirectoryItem } from "@/components/admin/AdminPendingQueue";
 import type { DirectoryItem } from "@/components/PageDirectory";
 import {
@@ -420,7 +421,10 @@ export default async function AdminWorkspacePage({
   }));
 
   return (
-    <main>
+    <main className="flex flex-col gap-6">
+      <div className="relative z-10 mx-auto w-full max-w-7xl px-4 pt-6 sm:px-6 lg:pt-8">
+        <OfficeAssistantsPanel />
+      </div>
       <AdminWorkspaceView
         locale={locale}
         integrations={integrations}

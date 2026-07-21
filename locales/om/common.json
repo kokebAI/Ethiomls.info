@@ -357,7 +357,8 @@
       "broker": "Dalaalaa",
       "brokerHint": "Qabeenya maamilaa bulchi.",
       "developer": "Ijaartuu",
-      "developerHint": "Pirojektootaafi yunitoota maxxansi."
+      "developerHint": "Pirojektootaafi yunitoota maxxansi.",
+      "assistant": "Office assistant"
     },
     "developer": {
       "hint": "Akka ijaartuu galmaa'uuf maqaa daldalaa fi lakkoofsa TIN barbaachisu. TIN etrade.gov.et irratti mirkaneessina.",
@@ -745,6 +746,17 @@
         "dashboard": "Dashboard metrics",
         "profile": "Your profile"
       }
+    },
+    "assistant": {
+      "eyebrow": "Office assistant",
+      "title": "Import and prepare listings",
+      "lede": "Add scrape sources, run imports, review invite SMS, and create listing data. Full audit and publish stay with admins.",
+      "ctas": {
+        "imports": "Import sources",
+        "scrapeReview": "Scrape invite review",
+        "addListing": "Add listing",
+        "profile": "Your profile"
+      }
     }
   },
   "workspace": {
@@ -1006,5 +1018,25 @@
     "dismiss": "Amma miti",
     "iosHint": "iPhone irratti: Share tuqi, sana booda Add to Home Screen filadhu.",
     "chromeMenuHint": "Menyuu browserii (⋮) baniitii Install app / Add to Home screen filadhu."
+  },
+  "officeAssistants": {
+    "title": "Office assistants",
+    "lede": "Limited staff who can manage imports, scrape review, and listing create. They cannot audit or publish. New accounts claim login via Reset password SMS.",
+    "phone": "Phone",
+    "phonePlaceholder": "0911… or +2519…",
+    "fullName": "Full name (optional)",
+    "fullNamePlaceholder": "Assistant name",
+    "addCta": "Add assistant",
+    "empty": "No office assistants yet.",
+    "active": "Active",
+    "inactive": "Inactive",
+    "activate": "Activate",
+    "deactivate": "Deactivate",
+    "created": "Office assistant created — they set a password via Reset password.",
+    "promoted": "Existing user promoted to office assistant.",
+    "updated": "Office assistant updated.",
+    "loadFailed": "Could not load office assistants.",
+    "saveFailed": "Could not save office assistant.",
+    "updateFailed": "Could not update office assistant."
   }
 }

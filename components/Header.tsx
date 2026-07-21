@@ -96,7 +96,7 @@ export function Header() {
     });
   }
   // Profile is covered by the avatar chip — do not add it to nav tabs.
-  if (user?.role === "ADMIN") {
+  if (user?.role === "ADMIN" || user?.role === "OFFICE_ASSISTANT") {
     rawNavItems.push({ href: "/admin/imports", key: "nav.imports" });
     rawNavItems.push({ href: "/admin/scrape-review", key: "nav.scrapeReview" });
   }

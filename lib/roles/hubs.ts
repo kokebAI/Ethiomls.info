@@ -6,6 +6,7 @@ export type RoleHubSlug =
   | "broker"
   | "owner"
   | "developer"
+  | "assistant"
   | "admin";
 
 export type RoleHubCta = {
@@ -60,6 +61,16 @@ export const ROLE_HUBS: Record<RoleHubSlug, RoleHubDef> = {
       { id: "profile", href: "/profile" },
     ],
   },
+  assistant: {
+    slug: "assistant",
+    role: UserRole.OFFICE_ASSISTANT,
+    ctas: [
+      { id: "imports", href: "/admin/imports", primary: true },
+      { id: "scrapeReview", href: "/admin/scrape-review" },
+      { id: "addListing", href: "/listings/new" },
+      { id: "profile", href: "/profile" },
+    ],
+  },
   admin: {
     slug: "admin",
     role: UserRole.ADMIN,
@@ -86,6 +97,9 @@ export function hubPathForRole(role: string | UserRole | null | undefined): stri
     case UserRole.ADMIN:
     case "ADMIN":
       return "/workspace/admin";
+    case UserRole.OFFICE_ASSISTANT:
+    case "OFFICE_ASSISTANT":
+      return "/admin/imports";
     case UserRole.INDEPENDENT_DELALA:
     case "INDEPENDENT_DELALA":
       return "/roles/broker";
@@ -109,6 +123,9 @@ export function hubDefForRole(
     case UserRole.ADMIN:
     case "ADMIN":
       return ROLE_HUBS.admin;
+    case UserRole.OFFICE_ASSISTANT:
+    case "OFFICE_ASSISTANT":
+      return ROLE_HUBS.assistant;
     case UserRole.INDEPENDENT_DELALA:
     case "INDEPENDENT_DELALA":
       return ROLE_HUBS.broker;

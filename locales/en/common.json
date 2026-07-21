@@ -243,6 +243,7 @@
       "required": "Choose one role to create your account.",
       "locked": "Your role was set at signup and cannot be changed.",
       "admin": "Admin",
+      "assistant": "Office assistant",
       "client": "Client / renter",
       "clientHint": "Browse homes — sign up with email (abroad) or Ethiopian mobile.",
       "owner": "Property owner",
@@ -325,6 +326,17 @@
         "imports": "Import sources",
         "scrapeReview": "Scrape invite review",
         "dashboard": "Dashboard metrics",
+        "profile": "Your profile"
+      }
+    },
+    "assistant": {
+      "eyebrow": "Office assistant",
+      "title": "Import and prepare listings",
+      "lede": "Add scrape sources, run imports, review invite SMS, and create listing data. Full audit and publish stay with admins.",
+      "ctas": {
+        "imports": "Import sources",
+        "scrapeReview": "Scrape invite review",
+        "addListing": "Add listing",
         "profile": "Your profile"
       }
     }
@@ -671,6 +683,26 @@
     "deleteConfirm": "Delete “{label}” and permanently remove its {count} scraped listing(s)? Curated project inventory is kept.",
     "deleteDone": "Deleted “{label}” and {count} scraped listing(s).",
     "deleteFailed": "Could not delete this source."
+  },
+  "officeAssistants": {
+    "title": "Office assistants",
+    "lede": "Limited staff who can manage imports, scrape review, and listing create. They cannot audit or publish. New accounts claim login via Reset password SMS.",
+    "phone": "Phone",
+    "phonePlaceholder": "0911… or +2519…",
+    "fullName": "Full name (optional)",
+    "fullNamePlaceholder": "Assistant name",
+    "addCta": "Add assistant",
+    "empty": "No office assistants yet.",
+    "active": "Active",
+    "inactive": "Inactive",
+    "activate": "Activate",
+    "deactivate": "Deactivate",
+    "created": "Office assistant created — they set a password via Reset password.",
+    "promoted": "Existing user promoted to office assistant.",
+    "updated": "Office assistant updated.",
+    "loadFailed": "Could not load office assistants.",
+    "saveFailed": "Could not save office assistant.",
+    "updateFailed": "Could not update office assistant."
   },
   "scrapeReview": {
     "eyebrow": "Admin",
