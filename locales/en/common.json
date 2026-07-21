@@ -10,6 +10,7 @@
     "projects": "Projects",
     "developers": "Developers",
     "dashboard": "Dashboard",
+    "audit": "Audit",
     "imports": "Imports",
     "scrapeReview": "Scrape review",
     "profile": "Profile",
@@ -321,11 +322,11 @@
       "title": "Audit and import the market",
       "lede": "Scrape Telegram and websites, add listings to pending review, and publish only after the client-protection checklist passes.",
       "ctas": {
-        "workspace": "Open workspace",
+        "workspace": "Home",
+        "audit": "Audit queue",
         "addListing": "Add listing",
         "imports": "Import sources",
         "scrapeReview": "Scrape invite review",
-        "dashboard": "Dashboard metrics",
         "profile": "Your profile"
       }
     },

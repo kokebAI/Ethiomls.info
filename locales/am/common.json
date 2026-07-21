@@ -10,6 +10,7 @@
     "projects": "ፕሮጀክቶች",
     "developers": "ገንቢዎች",
     "dashboard": "ዳሽቦርድ",
+    "audit": "ኦዲት",
     "imports": "አስመጣ",
     "scrapeReview": "የስክራፕ ግምገማ",
     "profile": "መገለጫ",
@@ -676,11 +677,11 @@
       "title": "ገበያውን ኦዲት ያድርጉ እና ያስመጡ",
       "lede": "ቴሌግራም እና ድረ-ገጾችን ይቃኙ፣ ዝርዝሮችን ለግምገማ ያክሉ፣ ከዚያ ኦዲት ያድርጉ።",
       "ctas": {
-        "workspace": "የስራ ቦታ ክፈት",
+        "workspace": "መነሻ",
+        "audit": "የኦዲት ወረፋ",
         "addListing": "ዝርዝር ጨምር",
         "imports": "የማስመጫ ምንጮች",
         "scrapeReview": "የስክራፕ ግብዣ ግምገማ",
-        "dashboard": "የዳሽቦርድ መለኪያዎች",
         "profile": "መገለጫዎ"
       }
     },

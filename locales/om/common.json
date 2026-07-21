@@ -10,6 +10,7 @@
     "projects": "Pirojektoota",
     "developers": "Ijaartoota",
     "dashboard": "Daashboordii",
+    "audit": "Sakatta'iinsa",
     "imports": "Galchuu",
     "scrapeReview": "Sakatta'insa scrape",
     "profile": "Profaayilii",
@@ -739,11 +740,11 @@
       "title": "Audit and import the market",
       "lede": "Scrape Telegram and websites, add listings to pending review, and publish only after the client-protection checklist passes.",
       "ctas": {
-        "workspace": "Open workspace",
+        "workspace": "Mana",
+        "audit": "Tarree sakatta'iinsa",
         "addListing": "Add listing",
         "imports": "Import sources",
         "scrapeReview": "Scrape invite review",
-        "dashboard": "Dashboard metrics",
         "profile": "Your profile"
       }
     },

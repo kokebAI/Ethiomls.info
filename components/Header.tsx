@@ -96,11 +96,16 @@ export function Header() {
     });
   }
   // Profile is covered by the avatar chip — do not add it to nav tabs.
-  if (user?.role === "ADMIN" || user?.role === "OFFICE_ASSISTANT") {
+  if (user?.role === "ADMIN") {
+    rawNavItems.push({ href: "/admin/audit", key: "nav.audit" });
+    rawNavItems.push({ href: "/admin/imports", key: "nav.imports" });
+    rawNavItems.push({ href: "/admin/scrape-review", key: "nav.scrapeReview" });
+  } else if (user?.role === "OFFICE_ASSISTANT") {
     rawNavItems.push({ href: "/admin/imports", key: "nav.imports" });
     rawNavItems.push({ href: "/admin/scrape-review", key: "nav.scrapeReview" });
   }
-  if (user?.role === "ADMIN" || user?.role === "INDEPENDENT_DELALA") {
+  // Admin home already includes dashboard metrics — no separate Dashboard tab.
+  if (user?.role === "INDEPENDENT_DELALA") {
     rawNavItems.push({ href: "/dashboard", key: "nav.dashboard" });
   }
 

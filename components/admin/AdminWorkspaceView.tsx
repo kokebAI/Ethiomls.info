@@ -1,12 +1,9 @@
 import Link from "next/link";
-import { PageDirectory, type DirectoryItem } from "@/components/PageDirectory";
-import {
-  AdminPendingQueue,
-  type AdminPendingDirectoryItem,
-  type AdminPendingQueueCopy,
-} from "@/components/admin/AdminPendingQueue";
+import { DashboardMetrics } from "@/components/dashboard/DashboardMetrics";
 import { IntegrationsStatusPanel } from "@/components/admin/IntegrationsStatusPanel";
 import type { IntegrationStatus } from "@/lib/ops/integration-status";
+import type { DashboardMetricsData } from "@/lib/catalog/dashboard-metrics";
+import type { Dictionary } from "@/lib/i18n/getDictionary";
 
 export type AdminWorkspaceCopy = {
   snapshotTitle: string;
@@ -32,28 +29,10 @@ export type AdminWorkspaceCopy = {
   toolsProjectsHint?: string;
   toolsQueue?: string;
   toolsQueueHint?: string;
-  toolsDashboard?: string;
-  toolsDashboardHint?: string;
   toolsProfile?: string;
   toolsProfileHint?: string;
-  pendingTitle: string;
-  pendingEmpty: string;
-  pendingProjectsTitle?: string;
-  pendingProjectsEmpty?: string;
-  draftsTitle: string;
-  draftsEmpty: string;
-  readyTitle: string;
-  readyEmpty: string;
   alertsTitle: string;
   alertsEmpty: string;
-  partyAll: string;
-  partyDevelopers: string;
-  partyBrokers: string;
-  partyOwners: string;
-  partyImported: string;
-  partyDrafts: string;
-  partyVerified: string;
-  partyEmpty: string;
 };
 
 export type AdminAlertItem = {
@@ -68,16 +47,15 @@ export type AdminAlertItem = {
 export type AdminWorkspaceProps = {
   locale: string;
   copy: AdminWorkspaceCopy;
+  dictionary: Dictionary;
+  metrics: DashboardMetricsData;
+  welcomeName?: string | null;
   integrations: IntegrationStatus[];
   pendingCount: number;
   pendingProjectCount?: number;
   scrapeInviteCount?: number;
   unreadAlertCount: number;
   readyCount: number;
-  pendingItems: AdminPendingDirectoryItem[];
-  pendingProjectItems?: DirectoryItem[];
-  draftItems: DirectoryItem[];
-  readyItems: DirectoryItem[];
   alerts: AdminAlertItem[];
 };
 
@@ -92,36 +70,37 @@ type AdminToolLink = {
 export function AdminWorkspaceView({
   locale,
   copy,
+  dictionary,
+  metrics,
+  welcomeName,
   integrations,
   pendingCount,
   pendingProjectCount = 0,
   scrapeInviteCount = 0,
   unreadAlertCount,
   readyCount,
-  pendingItems,
-  pendingProjectItems = [],
-  draftItems,
-  readyItems,
   alerts,
 }: AdminWorkspaceProps) {
   const base = `/${locale}`;
 
-  const pendingQueueCopy: AdminPendingQueueCopy = {
-    pendingTitle: copy.pendingTitle,
-    pendingEmpty: copy.pendingEmpty,
-    partyAll: copy.partyAll,
-    partyDevelopers: copy.partyDevelopers,
-    partyBrokers: copy.partyBrokers,
-    partyOwners: copy.partyOwners,
-    partyImported: copy.partyImported,
-    partyDrafts: copy.partyDrafts,
-    partyVerified: copy.partyVerified,
-    partyEmpty: copy.partyEmpty,
-    draftsEmpty: copy.draftsEmpty,
-    verifiedEmpty: copy.readyEmpty,
-  };
-
   const tools: AdminToolLink[] = [
+    {
+      href: `${base}/admin/audit`,
+      label: copy.toolsQueue ?? "Listing audit queue",
+      hint:
+        copy.toolsQueueHint ??
+        "Pending, drafts, and verified listings ready to publish.",
+      count: pendingCount,
+      primary: pendingCount > 0,
+    },
+    {
+      href: `${base}/admin/audit#admin-pending-projects`,
+      label: copy.toolsProjects ?? "Projects awaiting audit",
+      hint:
+        copy.toolsProjectsHint ??
+        "Review developer projects before they go public.",
+      count: pendingProjectCount,
+    },
     {
       href: `${base}/admin/scrape-review`,
       label: copy.toolsScrapeReview ?? "Scrape invite review",
@@ -146,30 +125,9 @@ export function AdminWorkspaceView({
       primary: unreadAlertCount > 0,
     },
     {
-      href: `${base}/workspace/admin#admin-pending-projects`,
-      label: copy.toolsProjects ?? "Projects awaiting audit",
-      hint:
-        copy.toolsProjectsHint ??
-        "Review developer projects before they go public.",
-      count: pendingProjectCount,
-    },
-    {
-      href: `${base}/workspace/admin#admin-pending-queue`,
-      label: copy.toolsQueue ?? "Listing audit queue",
-      hint:
-        copy.toolsQueueHint ??
-        "Pending, drafts, and verified listings ready to publish.",
-      count: pendingCount,
-    },
-    {
       href: `${base}/listings/new`,
       label: copy.addListing,
       hint: copy.addListingHint,
-    },
-    {
-      href: `${base}/dashboard`,
-      label: copy.toolsDashboard ?? "Dashboard metrics",
-      hint: copy.toolsDashboardHint ?? "Market and ops metrics.",
     },
     {
       href: `${base}/profile`,
@@ -182,7 +140,7 @@ export function AdminWorkspaceView({
     {
       id: "pending",
       label: copy.snapshotPending.replace("{count}", String(pendingCount)),
-      href: `${base}/workspace/admin#admin-pending-queue`,
+      href: `${base}/admin/audit#admin-pending-queue`,
       ok: pendingCount === 0,
     },
     {
@@ -190,7 +148,7 @@ export function AdminWorkspaceView({
       label: (
         copy.snapshotPendingProjects ?? "{count} project(s) awaiting audit"
       ).replace("{count}", String(pendingProjectCount)),
-      href: `${base}/workspace/admin#admin-pending-projects`,
+      href: `${base}/admin/audit#admin-pending-projects`,
       ok: pendingProjectCount === 0,
     },
     {
@@ -210,6 +168,7 @@ export function AdminWorkspaceView({
     {
       id: "ready",
       label: copy.snapshotReady.replace("{count}", String(readyCount)),
+      href: `${base}/admin/audit`,
       ok: readyCount > 0 || pendingCount === 0,
     },
   ];
@@ -232,6 +191,13 @@ export function AdminWorkspaceView({
             {copy.addListing}
           </Link>
         }
+      />
+
+      <DashboardMetrics
+        dictionary={dictionary}
+        metrics={metrics}
+        welcomeName={welcomeName}
+        isAdmin
       />
 
       <section
@@ -279,35 +245,6 @@ export function AdminWorkspaceView({
             </li>
           ))}
         </ul>
-      </section>
-
-      <div id="admin-pending-queue" className="scroll-mt-28">
-        <AdminPendingQueue
-          items={pendingItems}
-          draftItems={draftItems}
-          verifiedItems={readyItems}
-          copy={pendingQueueCopy}
-        />
-      </div>
-
-      <section
-        id="admin-pending-projects"
-        className="space-y-4 scroll-mt-28"
-        aria-labelledby="admin-pending-projects-heading"
-      >
-        <h2
-          id="admin-pending-projects-heading"
-          className="text-lg font-semibold tracking-tight text-slate-deep"
-        >
-          {copy.pendingProjectsTitle ?? "Projects awaiting audit"}
-        </h2>
-        <PageDirectory
-          items={pendingProjectItems}
-          emptyMessage={
-            copy.pendingProjectsEmpty ?? "No projects waiting for audit."
-          }
-          layout="grid"
-        />
       </section>
 
       <section
