@@ -48,8 +48,8 @@ export async function getCurrentAdmin(): Promise<StaffUser | null> {
 }
 
 /**
- * Full admin or office assistant — imports, scrape review, listing create.
- * Does not grant audit / publish / staff provisioning.
+ * Full admin or office assistant — imports, scrape review, listing create, and audit.
+ * Does not grant publish / staff provisioning (those stay full admin only).
  */
 export async function getCurrentOpsStaff(): Promise<StaffUser | null> {
   const session = await getSession();
@@ -64,4 +64,9 @@ export async function getCurrentOpsStaff(): Promise<StaffUser | null> {
     select: { id: true, fullName: true, role: true },
   });
   return user;
+}
+
+/** Alias: staff who may approve/reject audits (not publish). */
+export async function getCurrentAuditStaff(): Promise<StaffUser | null> {
+  return getCurrentOpsStaff();
 }

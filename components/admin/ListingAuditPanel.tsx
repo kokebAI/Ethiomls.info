@@ -104,6 +104,7 @@ export type ListingAuditPanelCopy = {
   rejectNeedsNotes?: string;
   approveNeedsChecks?: string;
   publishNeedsApprove?: string;
+  publishAdminOnly?: string;
   quickRejectLabel?: string;
   checks: Record<ChecklistKey, string>;
   enrich: AuditEnrichCopy;
@@ -133,6 +134,8 @@ type ListingAuditPanelProps = {
   listingId: string;
   status: string;
   alreadyApproved: boolean;
+  /** Full admins may publish; office assistants audit only. */
+  allowPublish?: boolean;
   attachment: ListingAttachmentSummary;
   copy: ListingAuditPanelCopy;
   factsTitle: string;
@@ -169,6 +172,7 @@ export function ListingAuditPanel({
   listingId,
   status: initialStatus,
   alreadyApproved,
+  allowPublish = true,
   attachment: initialAttachment,
   copy,
   factsTitle,
@@ -258,7 +262,7 @@ export function ListingAuditPanel({
   const notesReadyForReject = notes.trim().length >= 5;
   const notesReadyForApprove = notes.trim().length >= 10;
   const isPublished = status === "PUBLISHED";
-  const canPublish = approved && status === "PENDING_REVIEW";
+  const canPublish = allowPublish && approved && status === "PENDING_REVIEW";
   const canDeactivateDeveloper = Boolean(
     attachment.developerUserId ||
       attachment.developerTradeName ||
@@ -748,28 +752,36 @@ export function ListingAuditPanel({
           ) : null}
           {busy === "reject" ? copy.saving : copy.reject}
         </button>
-        <button
-          type="button"
-          disabled={Boolean(busy) || !canPublish}
-          onClick={() => void publishListing()}
-          title={
-            canPublish
-              ? undefined
-              : (copy.publishNeedsApprove ??
-                "Approve the audit first, then publish")
-          }
-          className="inline-flex items-center justify-center gap-2 rounded-full bg-emerald-700 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-800 disabled:opacity-50"
-        >
-          {busy === "publish" ? (
-            <LoaderCircle className="h-4 w-4 animate-spin" />
-          ) : null}
-          {busy === "publish" ? copy.publishing : copy.publish}
-        </button>
+        {allowPublish ? (
+          <button
+            type="button"
+            disabled={Boolean(busy) || !canPublish}
+            onClick={() => void publishListing()}
+            title={
+              canPublish
+                ? undefined
+                : (copy.publishNeedsApprove ??
+                  "Approve the audit first, then publish")
+            }
+            className="inline-flex items-center justify-center gap-2 rounded-full bg-emerald-700 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-800 disabled:opacity-50"
+          >
+            {busy === "publish" ? (
+              <LoaderCircle className="h-4 w-4 animate-spin" />
+            ) : null}
+            {busy === "publish" ? copy.publishing : copy.publish}
+          </button>
+        ) : null}
       </div>
-      {!canPublish ? (
+      {allowPublish && !canPublish ? (
         <p className="mt-2 text-xs text-slate-500">
           {copy.publishNeedsApprove ??
             "Publish unlocks after you approve every checklist item with a written reason."}
+        </p>
+      ) : null}
+      {!allowPublish ? (
+        <p className="mt-2 text-xs text-slate-500">
+          {copy.publishAdminOnly ??
+            "Publish is admin-only — your audit approval queues the listing for an admin to publish."}
         </p>
       ) : null}
     </section>

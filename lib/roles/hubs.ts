@@ -65,7 +65,8 @@ export const ROLE_HUBS: Record<RoleHubSlug, RoleHubDef> = {
     slug: "assistant",
     role: UserRole.OFFICE_ASSISTANT,
     ctas: [
-      { id: "imports", href: "/admin/imports", primary: true },
+      { id: "audit", href: "/admin/audit", primary: true },
+      { id: "imports", href: "/admin/imports" },
       { id: "scrapeReview", href: "/admin/scrape-review" },
       { id: "addListing", href: "/listings/new" },
       { id: "profile", href: "/profile" },
@@ -99,7 +100,7 @@ export function hubPathForRole(role: string | UserRole | null | undefined): stri
       return "/workspace/admin";
     case UserRole.OFFICE_ASSISTANT:
     case "OFFICE_ASSISTANT":
-      return "/admin/imports";
+      return "/admin/audit";
     case UserRole.INDEPENDENT_DELALA:
     case "INDEPENDENT_DELALA":
       return "/roles/broker";

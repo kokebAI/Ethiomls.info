@@ -750,9 +750,10 @@
     },
     "assistant": {
       "eyebrow": "Office assistant",
-      "title": "Import and prepare listings",
-      "lede": "Add scrape sources, run imports, review invite SMS, and create listing data. Full audit and publish stay with admins.",
+      "title": "Import, prepare, and audit listings",
+      "lede": "Add scrape sources, run imports, review invite SMS, create listing data, and complete client-protection audits. Publishing stays with admins.",
       "ctas": {
+        "audit": "Audit queue",
         "imports": "Import sources",
         "scrapeReview": "Scrape invite review",
         "addListing": "Add listing",
@@ -801,6 +802,9 @@
       "integrationsOpsTitle": "ናይ ስራሕ መስርዕ",
       "integrationsRefresh": "ኣሐድስ",
       "integrationsRefreshing": "ኣብ ምሕዳስ…",
+      "tabOverview": "ሓፈሻዊ",
+      "tabStaff": "ሰራሕተኛታት",
+      "tabAlerts": "መጠንቀቕታታት",
       "snapshotPending": "{count} ዝርዝር(ታት) ምርመራ ይጽበዩ ኣለዉ",
       "snapshotAlerts": "{count} ዘይተነበበ መጠንቀቕታ",
       "snapshotReady": "{count} ተመሪሙ ንምሕታም ድሉው",
@@ -878,6 +882,7 @@
     "rejectNeedsNotes": "Reject needs 5+ characters, or tap a quick reason above.",
     "approveNeedsChecks": "Approve needs every check ticked and a 10+ character reason.",
     "publishNeedsApprove": "Publish unlocks after you approve the audit (check all + reason).",
+    "publishAdminOnly": "Publish is admin-only — your audit approval queues the listing for an admin to publish.",
     "quickRejectLabel": "Quick reject (sends to draft immediately)",
     "checks": {
       "sellerIdentity": "Seller identity verified",
@@ -1022,7 +1027,7 @@
   },
   "officeAssistants": {
     "title": "Office assistants",
-    "lede": "Limited staff who can manage imports, scrape review, and listing create. They cannot audit or publish. New accounts claim login via Reset password SMS.",
+    "lede": "Limited staff who can manage imports, scrape review, listing create, and audits. They cannot publish or provision staff. New accounts claim login via Reset password SMS.",
     "phone": "Phone",
     "phonePlaceholder": "0911… or +2519…",
     "fullName": "Full name (optional)",

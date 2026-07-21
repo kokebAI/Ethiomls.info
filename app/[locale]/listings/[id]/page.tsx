@@ -23,7 +23,7 @@ import { ListingGallery } from "@/components/property/ListingGallery";
 import { ShareListingButton } from "@/components/property/ShareListingButton";
 import { VrViewer } from "@/components/property/vr-viewer";
 import { JsonLd } from "@/components/seo/JsonLd";
-import { getCurrentAdmin } from "@/lib/auth/admin";
+import { getCurrentAdmin, getCurrentOpsStaff } from "@/lib/auth/admin";
 import { getSession } from "@/lib/auth/session";
 import { fetchListingById } from "@/lib/catalog/queries";
 import { formatMoney } from "@/lib/compliance/currency";
@@ -106,14 +106,15 @@ export default async function ListingDetailPage({
   const t = (key: string) => translate(dictionary, key);
   const auditCopy = dictionary.adminAudit;
 
-  const [admin, session] = await Promise.all([
+  const [admin, staff, session] = await Promise.all([
     getCurrentAdmin(),
+    getCurrentOpsStaff(),
     getSession(),
   ]);
 
   // Match project detail: try published first, then unpublished for signed-in staff/owner.
   let listing = await fetchListingById(id);
-  if (!listing && (admin || session)) {
+  if (!listing && (staff || session)) {
     listing = await fetchListingById(id, { allowUnpublished: true });
   }
   if (!listing) notFound();
@@ -126,7 +127,7 @@ export default async function ListingDetailPage({
   );
   if (
     listing.status !== "PUBLISHED" &&
-    !admin &&
+    !staff &&
     !isOwner &&
     !isDeveloperOwner
   ) {
@@ -293,11 +294,12 @@ export default async function ListingDetailPage({
         emptyLabel={t("listing.photoComingSoon")}
       />
 
-      {admin && auditCopy && listing.status !== "PUBLISHED" ? (
+      {staff && auditCopy && listing.status !== "PUBLISHED" ? (
         <ListingAuditPanel
           listingId={listing.id}
           status={listing.status}
           alreadyApproved={Boolean(listing.adminAuditApprovedAt)}
+          allowPublish={Boolean(admin)}
           factsTitle={t("listingDetail.facts")}
           facts={facts}
           priceValue={price}
@@ -342,6 +344,7 @@ export default async function ListingDetailPage({
             rejectNeedsNotes: auditCopy.rejectNeedsNotes,
             approveNeedsChecks: auditCopy.approveNeedsChecks,
             publishNeedsApprove: auditCopy.publishNeedsApprove,
+            publishAdminOnly: auditCopy.publishAdminOnly,
             quickRejectLabel: auditCopy.quickRejectLabel,
             checks: auditCopy.checks,
             enrich: {

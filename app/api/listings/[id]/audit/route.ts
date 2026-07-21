@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { ListingStatus } from "@prisma/client";
 import { z } from "zod";
-import { getCurrentAdmin } from "@/lib/auth/admin";
+import { getCurrentAuditStaff } from "@/lib/auth/admin";
 import { prisma } from "@/lib/db/prisma";
 
 export const runtime = "nodejs";
@@ -40,17 +40,17 @@ const auditSchema = z
 
 /**
  * POST /api/listings/[id]/audit
- * Records an accountable admin decision. Approval does not publish; the
- * separate activation endpoint performs the final publication gate.
+ * Records an accountable staff decision (admin or office assistant).
+ * Approval does not publish; the activate endpoint is admin-only.
  */
 export async function POST(
   request: NextRequest,
   context: { params: Promise<{ id: string }> },
 ) {
-  const admin = await getCurrentAdmin();
-  if (!admin) {
+  const auditor = await getCurrentAuditStaff();
+  if (!auditor) {
     return NextResponse.json(
-      { error: "Forbidden", message: "Admin access required" },
+      { error: "Forbidden", message: "Audit staff access required" },
       { status: 403 },
     );
   }
@@ -119,7 +119,7 @@ export async function POST(
       status: approved ? ListingStatus.PENDING_REVIEW : ListingStatus.DRAFT,
       publishedAt: null,
       adminAuditApprovedAt: approved ? new Date() : null,
-      adminAuditedById: admin.id,
+      adminAuditedById: auditor.id,
       adminAuditNotes: notes,
       adminAuditChecklist: checklist,
     },

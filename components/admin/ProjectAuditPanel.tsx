@@ -39,6 +39,7 @@ export type ProjectAuditPanelCopy = {
   rejectNeedsNotes: string;
   approveNeedsChecks: string;
   publishNeedsApprove: string;
+  publishAdminOnly?: string;
   checks: Record<ChecklistKey, string>;
 };
 
@@ -46,6 +47,8 @@ type ProjectAuditPanelProps = {
   projectId: string;
   status: string;
   alreadyApproved: boolean;
+  /** Full admins may publish; office assistants audit only. */
+  allowPublish?: boolean;
   copy: ProjectAuditPanelCopy;
 };
 
@@ -53,6 +56,7 @@ export function ProjectAuditPanel({
   projectId,
   status: initialStatus,
   alreadyApproved,
+  allowPublish = true,
   copy,
 }: ProjectAuditPanelProps) {
   const router = useRouter();
@@ -77,7 +81,7 @@ export function ProjectAuditPanel({
     () => CHECKLIST_KEYS.every((key) => checks[key]),
     [checks],
   );
-  const canPublish = approved && status === "PENDING_REVIEW";
+  const canPublish = allowPublish && approved && status === "PENDING_REVIEW";
 
   async function submitAudit(decision: "APPROVE" | "REJECT") {
     setBusy(decision === "APPROVE" ? "approve" : "reject");
@@ -293,18 +297,26 @@ export function ProjectAuditPanel({
           ) : null}
           {busy === "reject" ? copy.saving : copy.reject}
         </button>
-        <button
-          type="button"
-          disabled={busy !== null || !canPublish}
-          onClick={() => void publish()}
-          className="inline-flex items-center gap-2 rounded-full bg-brand-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-brand-700 disabled:opacity-45"
-        >
-          {busy === "publish" ? (
-            <LoaderCircle className="h-4 w-4 animate-spin" />
-          ) : null}
-          {busy === "publish" ? copy.publishing : copy.publish}
-        </button>
+        {allowPublish ? (
+          <button
+            type="button"
+            disabled={busy !== null || !canPublish}
+            onClick={() => void publish()}
+            className="inline-flex items-center gap-2 rounded-full bg-brand-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-brand-700 disabled:opacity-45"
+          >
+            {busy === "publish" ? (
+              <LoaderCircle className="h-4 w-4 animate-spin" />
+            ) : null}
+            {busy === "publish" ? copy.publishing : copy.publish}
+          </button>
+        ) : null}
       </div>
+      {!allowPublish ? (
+        <p className="mt-3 text-xs text-slate-500">
+          {copy.publishAdminOnly ??
+            "Publish is admin-only — your audit approval queues the project for an admin to publish."}
+        </p>
+      ) : null}
     </section>
   );
 }

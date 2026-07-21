@@ -687,9 +687,10 @@
     },
     "assistant": {
       "eyebrow": "የቢሮ ረዳት",
-      "title": "ዝርዝሮችን አስመጣና አዘጋጅ",
-      "lede": "የስክሬፕ ምንጮችን ያክሉ፣ ማስመጣት ያሂዱ፣ የግብዣ SMS ይገምግሙ፣ ዝርዝር ይፍጠሩ። ሙሉ ኦዲት እና ማተም ለአስተዳዳሪዎች ይቀራል።",
+      "title": "ዝርዝሮችን አስመጣ፣ አዘጋጅ እና ኦዲት አድርግ",
+      "lede": "የስክሬፕ ምንጮችን ያክሉ፣ ማስመጣት ያሂዱ፣ የግብዣ SMS ይገምግሙ፣ ዝርዝር ይፍጠሩ እና የደንበኛ ጥበቃ ኦዲት ያጠናቁ። ማተም ለአስተዳዳሪዎች ይቀራል።",
       "ctas": {
+        "audit": "የኦዲት ወረፋ",
         "imports": "የማስመጣት ምንጮች",
         "scrapeReview": "የስክሬፕ ግብዣ ግምገማ",
         "addListing": "ዝርዝር አክል",
@@ -738,6 +739,9 @@
       "integrationsOpsTitle": "የስራ ወረፋዎች",
       "integrationsRefresh": "አድስ",
       "integrationsRefreshing": "እየታደሰ…",
+      "tabOverview": "አጠቃላይ",
+      "tabStaff": "ሰራተኞች",
+      "tabAlerts": "ማስጠንቀቂያዎች",
       "snapshotPending": "{count} ዝርዝር(ዎች) ለኦዲት በመጠባበቅ ላይ",
       "snapshotAlerts": "{count} ያልተነበቡ ማስጠንቀቂያ(ዎች)",
       "snapshotReady": "{count} ኦዲት አልፈው ለማተም ዝግጁ",
@@ -856,6 +860,7 @@
     "rejectNeedsNotes": "ውድቅ ቢያንስ 5 ቁምፊ ይፈልጋል፣ ወይም ፈጣን ምክንያት ይጫኑ።",
     "approveNeedsChecks": "ማጽደቅ ሁሉንም ማረጋገጫዎች እና ቢያንስ 10 ቁምፊ ምክንያት ይፈልጋል።",
     "publishNeedsApprove": "ማተም ኦዲቱን ካጸደቁ በኋላ ይከፈታል።",
+    "publishAdminOnly": "ማተም ለአስተዳዳሪ ብቻ ነው — የእርስዎ ኦዲት ማጽደቅ ዝርዝሩን ለአስተዳዳሪ ማተም ያዘጋጃል።",
     "quickRejectLabel": "ፈጣን ውድቅ (ወዲያውኑ ወደ ረቂቅ)",
     "checks": {
       "sellerIdentity": "የሻጭ ማንነት ተረጋግጧል",
@@ -989,7 +994,7 @@
   },
   "officeAssistants": {
     "title": "የቢሮ ረዳቶች",
-    "lede": "ውስን ሰራተኞች — ምንጮችን ማስመጣት፣ ስክሬፕ ግምገማ እና ዝርዝር መፍጠር ይችላሉ። ኦዲት/ማተም አይችሉም። አዲስ መለያዎች የይለፍ ቃልን በReset password ያስጀምራሉ።",
+    "lede": "ውስን ሰራተኞች — ምንጮችን ማስመጣት፣ ስክሬፕ ግምገማ፣ ዝርዝር መፍጠር እና ኦዲት ይችላሉ። ማተም/ሰራተኛ መጨመር አይችሉም። አዲስ መለያዎች የይለፍ ቃልን በReset password ያስጀምራሉ።",
     "phone": "ስልክ",
     "phonePlaceholder": "0911… ወይም +2519…",
     "fullName": "ሙሉ ስም (አማራጭ)",

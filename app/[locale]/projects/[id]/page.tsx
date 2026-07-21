@@ -4,7 +4,7 @@ import { ProjectAuditPanel } from "@/components/admin/ProjectAuditPanel";
 import { ProjectInventoryEditor } from "@/components/inventory/ProjectInventoryEditor";
 import { PageIntro } from "@/components/PageIntro";
 import { ProjectBuildingDetail } from "./project-building-detail";
-import { getCurrentAdmin } from "@/lib/auth/admin";
+import { getCurrentAdmin, getCurrentOpsStaff } from "@/lib/auth/admin";
 import { getSession } from "@/lib/auth/session";
 import {
   projectToBuilding,
@@ -32,14 +32,15 @@ export default async function ProjectDetailPage({
   const { locale: raw, id } = await params;
   const locale = (isLocale(raw) ? raw : "en") as Locale;
   const dictionary = getDictionary(locale);
-  const [admin, session] = await Promise.all([
+  const [admin, staff, session] = await Promise.all([
     getCurrentAdmin(),
+    getCurrentOpsStaff(),
     getSession(),
   ]);
 
-  // First fetch published; if missing and signed-in, allow unpublished for admin/owner.
+  // First fetch published; if missing and signed-in, allow unpublished for staff/owner.
   let project = await fetchProjectById(decodeURIComponent(id));
-  if (!project && (admin || session)) {
+  if (!project && (staff || session)) {
     project = await fetchProjectById(decodeURIComponent(id), {
       allowUnpublished: true,
     });
@@ -54,7 +55,7 @@ export default async function ProjectDetailPage({
   );
   const canEditInventory = Boolean(admin || isDeveloperOwner);
 
-  if (!admin && !isDeveloperOwner && project.status !== "PUBLISHED") {
+  if (!staff && !isDeveloperOwner && project.status !== "PUBLISHED") {
     notFound();
   }
 
@@ -122,11 +123,12 @@ export default async function ProjectDetailPage({
 
       <p className="font-mono text-xs text-slate-500 sm:text-sm">{project.id}</p>
 
-      {admin && project.status !== "PUBLISHED" ? (
+      {staff && project.status !== "PUBLISHED" ? (
         <ProjectAuditPanel
           projectId={project.id}
           status={project.status}
           alreadyApproved={Boolean(project.adminAuditApprovedAt)}
+          allowPublish={Boolean(admin)}
           copy={{
             title: dictionary.projectAudit?.title ?? auditCopy.title,
             lede: dictionary.projectAudit?.lede ?? auditCopy.lede,
@@ -153,6 +155,7 @@ export default async function ProjectDetailPage({
             rejectNeedsNotes: auditCopy.rejectNeedsNotes,
             approveNeedsChecks: auditCopy.approveNeedsChecks,
             publishNeedsApprove: auditCopy.publishNeedsApprove,
+            publishAdminOnly: auditCopy.publishAdminOnly,
             checks: auditCopy.checks,
           }}
         />

@@ -5,7 +5,6 @@ import {
   AdminWorkspaceView,
   type AdminAlertItem,
 } from "@/components/admin/AdminWorkspaceView";
-import { OfficeAssistantsPanel } from "@/components/admin/OfficeAssistantsPanel";
 import { getCurrentAdmin } from "@/lib/auth/admin";
 import { fetchDashboardMetrics } from "@/lib/catalog/dashboard-metrics";
 import { prisma } from "@/lib/db/prisma";
@@ -147,10 +146,7 @@ export default async function AdminWorkspacePage({
   }));
 
   return (
-    <main className="flex flex-col gap-6">
-      <div className="relative z-10 mx-auto w-full max-w-7xl px-4 pt-6 sm:px-6 lg:pt-8">
-        <OfficeAssistantsPanel />
-      </div>
+    <main>
       <AdminWorkspaceView
         locale={locale}
         dictionary={dictionary}
@@ -178,20 +174,9 @@ export default async function AdminWorkspacePage({
           addListingHint:
             ws.addListingHint ??
             "Goes to pending review — audit and verify after.",
-          toolsTitle: ws.toolsTitle,
-          toolsScrapeReview:
-            ws.toolsScrapeReview ?? dictionary.scrapeReview?.title,
-          toolsScrapeReviewHint: ws.toolsScrapeReviewHint,
-          toolsImports: ws.toolsImports ?? ws.importSources,
-          toolsImportsHint: ws.toolsImportsHint,
-          toolsAlerts: ws.toolsAlerts ?? ws.alertsTitle,
-          toolsAlertsHint: ws.toolsAlertsHint,
-          toolsProjects: ws.toolsProjects ?? ws.pendingProjectsTitle,
-          toolsProjectsHint: ws.toolsProjectsHint,
-          toolsQueue: ws.toolsQueue ?? ws.pendingTitle,
-          toolsQueueHint: ws.toolsQueueHint,
-          toolsProfile: ws.toolsProfile ?? ws.accountProfile,
-          toolsProfileHint: ws.toolsProfileHint,
+          tabOverview: ws.tabOverview,
+          tabStaff: ws.tabStaff,
+          tabAlerts: ws.tabAlerts,
           alertsTitle: ws.alertsTitle,
           alertsEmpty: ws.alertsEmpty,
         }}

@@ -10,7 +10,7 @@ import {
   toAuditDirectoryItem,
   toAuditPendingItem,
 } from "@/lib/admin/audit-queue-items";
-import { getCurrentAdmin } from "@/lib/auth/admin";
+import { getCurrentOpsStaff } from "@/lib/auth/admin";
 import { prisma } from "@/lib/db/prisma";
 import { isLocale, type Locale } from "@/lib/i18n/config";
 import { localizedSubCityName } from "@/lib/i18n/enums";
@@ -41,9 +41,9 @@ export default async function AdminAuditPage({
 }) {
   const { locale: raw } = await params;
   const locale = (isLocale(raw) ? raw : "en") as Locale;
-  const admin = await getCurrentAdmin();
+  const staff = await getCurrentOpsStaff();
 
-  if (!admin) {
+  if (!staff) {
     redirect(
       `/${locale}/login?next=${encodeURIComponent(`/${locale}/admin/audit`)}`,
     );
