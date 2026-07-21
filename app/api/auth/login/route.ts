@@ -3,6 +3,10 @@ import { UserRole } from "@prisma/client";
 import { resolveLoginIdentifier } from "@/lib/auth/identifier";
 import { issueOtp } from "@/lib/auth/otp";
 import {
+  assertOtpSmsAllowed,
+  clientIpFromRequest,
+} from "@/lib/auth/otp-rate-limit";
+import {
   isPasswordStrong,
   isPlaceholderPasswordHash,
   verifyPassword,
@@ -150,6 +154,25 @@ export async function POST(request: NextRequest) {
   }
 
   // New device + phone on file — SMS OTP challenge.
+  const rate = await assertOtpSmsAllowed({
+    phone: user.phone,
+    ip: clientIpFromRequest(request),
+    purpose: "login",
+  });
+  if (!rate.ok) {
+    return NextResponse.json(
+      {
+        error: "RateLimited",
+        message: rate.message ?? "Too many SMS requests. Try again later.",
+        retryAfterSec: rate.retryAfterSec,
+      },
+      {
+        status: 429,
+        headers: { "Retry-After": String(rate.retryAfterSec) },
+      },
+    );
+  }
+
   await setPendingPasswordLogin(user.id);
   const { code, ttlSec } = await issueOtp({
     phone: user.phone,

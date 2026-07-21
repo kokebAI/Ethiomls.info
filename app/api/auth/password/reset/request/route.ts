@@ -1,5 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { issueOtp, normalizeEthiopiaPhone } from "@/lib/auth/otp";
+import {
+  assertOtpSmsAllowed,
+  clientIpFromRequest,
+} from "@/lib/auth/otp-rate-limit";
 import { isLocale } from "@/lib/i18n/config";
 import { prisma } from "@/lib/db/prisma";
 import { smsNotificationEngine } from "@/src/services/sms.service";
@@ -54,6 +58,25 @@ export async function POST(request: NextRequest) {
         message: "No active account for this number. Register first.",
       },
       { status: 404 },
+    );
+  }
+
+  const rate = await assertOtpSmsAllowed({
+    phone,
+    ip: clientIpFromRequest(request),
+    purpose: "reset",
+  });
+  if (!rate.ok) {
+    return NextResponse.json(
+      {
+        error: "RateLimited",
+        message: rate.message ?? "Too many SMS requests. Try again later.",
+        retryAfterSec: rate.retryAfterSec,
+      },
+      {
+        status: 429,
+        headers: { "Retry-After": String(rate.retryAfterSec) },
+      },
     );
   }
 

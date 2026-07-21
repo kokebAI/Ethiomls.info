@@ -659,6 +659,17 @@ model SiteDailyMetric {
   @@map("site_daily_metrics")
 }
 
+/// Fixed-window counters for SMS OTP / abuse controls (serverless-safe).
+model RateLimitBucket {
+  key         String   @id
+  count       Int      @default(0)
+  windowStart DateTime
+  updatedAt   DateTime @updatedAt
+
+  @@index([windowStart])
+  @@map("rate_limit_buckets")
+}
+
 // ---------------------------------------------------------------------------
 // Proclamation 1357/2024 — escrow & staged fund release
 // ---------------------------------------------------------------------------

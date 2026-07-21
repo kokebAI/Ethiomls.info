@@ -6,6 +6,10 @@ import {
   type DeveloperBusinessSignup,
 } from "@/lib/auth/otp";
 import {
+  assertOtpSmsAllowed,
+  clientIpFromRequest,
+} from "@/lib/auth/otp-rate-limit";
+import {
   registrationNumberFromTin,
   verifyTinOnEtrade,
 } from "@/lib/auth/etrade-tin";
@@ -126,6 +130,26 @@ export async function POST(request: NextRequest) {
         ...(licenseNumber.length >= 2 ? { licenseNumber } : {}),
       };
     }
+  }
+
+  const rate = await assertOtpSmsAllowed({
+    phone,
+    ip: clientIpFromRequest(request),
+    fullName,
+    purpose: "register",
+  });
+  if (!rate.ok) {
+    return NextResponse.json(
+      {
+        error: "RateLimited",
+        message: rate.message ?? "Too many SMS requests. Try again later.",
+        retryAfterSec: rate.retryAfterSec,
+      },
+      {
+        status: 429,
+        headers: { "Retry-After": String(rate.retryAfterSec) },
+      },
+    );
   }
 
   const { code, ttlSec } = await issueOtp({
