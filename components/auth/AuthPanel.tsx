@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+import { TurnstileWidget } from "@/components/auth/TurnstileWidget";
 import { useTranslation } from "@/hooks/useTranslation";
 import { looksLikeEmail } from "@/lib/auth/identifier";
 import {
@@ -52,6 +53,13 @@ export function AuthPanel({
   const [hint, setHint] = useState<string | null>(null);
   const [debugCode, setDebugCode] = useState<string | null>(null);
   const [resendIn, setResendIn] = useState(0);
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+  const turnstileEnabled = Boolean(
+    process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY?.trim(),
+  );
+  const onCaptchaToken = useCallback((token: string | null) => {
+    setCaptchaToken(token);
+  }, []);
 
   const next = searchParams.get("next");
   const isDeveloperSignup =
@@ -100,6 +108,7 @@ export function AuthPanel({
     setPassword("");
     setPasswordConfirm("");
     setResendIn(0);
+    setCaptchaToken(null);
   }
 
   async function loginWithPassword() {
@@ -207,6 +216,9 @@ export function AuthPanel({
           throw new Error(t("auth.developer.tinRequired"));
         }
       }
+      if (turnstileEnabled && !captchaToken) {
+        throw new Error(t("auth.captchaRequired"));
+      }
 
       const res = await fetch("/api/auth/sms/request", {
         method: "POST",
@@ -217,6 +229,7 @@ export function AuthPanel({
           role,
           mode: "register",
           locale,
+          captchaToken: captchaToken ?? undefined,
           ...(role === "CORPORATE_DEVELOPER"
             ? {
                 tradeName: tradeName.trim(),
@@ -259,11 +272,18 @@ export function AuthPanel({
       if (password !== passwordConfirm) {
         throw new Error(t("auth.password.mismatch"));
       }
+      if (turnstileEnabled && !captchaToken) {
+        throw new Error(t("auth.captchaRequired"));
+      }
 
       const res = await fetch("/api/auth/password/reset/request", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ phone, locale }),
+        body: JSON.stringify({
+          phone,
+          locale,
+          captchaToken: captchaToken ?? undefined,
+        }),
       });
       const data = (await res.json().catch(() => ({}))) as {
         message?: string;
@@ -355,7 +375,8 @@ export function AuthPanel({
       return (
         phone.trim().length < 9 ||
         password.trim().length < 8 ||
-        password !== passwordConfirm
+        password !== passwordConfirm ||
+        (turnstileEnabled && !captchaToken)
       );
     }
     // Client email signup
@@ -372,6 +393,7 @@ export function AuthPanel({
       fullName.trim().length < 2 ||
       !role ||
       password !== passwordConfirm ||
+      (turnstileEnabled && !captchaToken) ||
       (role === "CORPORATE_DEVELOPER" &&
         (tradeName.trim().length < 2 ||
           !/^\d{10}$/.test(tin.replace(/\D/g, ""))))
@@ -600,6 +622,15 @@ export function AuthPanel({
                 placeholder={t("auth.password.placeholder")}
               />
             </label>
+          ) : null}
+
+          {(mode === "register" || mode === "reset") && turnstileEnabled ? (
+            <div className="grid gap-1.5">
+              <span className="text-sm font-medium text-slate-200">
+                {t("auth.captchaLabel")}
+              </span>
+              <TurnstileWidget onToken={onCaptchaToken} />
+            </div>
           ) : null}
 
           <button

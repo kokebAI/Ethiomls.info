@@ -9,6 +9,7 @@ import {
   assertOtpSmsAllowed,
   clientIpFromRequest,
 } from "@/lib/auth/otp-rate-limit";
+import { verifyTurnstileToken } from "@/lib/auth/turnstile";
 import {
   registrationNumberFromTin,
   verifyTinOnEtrade,
@@ -149,6 +150,18 @@ export async function POST(request: NextRequest) {
         status: 429,
         headers: { "Retry-After": String(rate.retryAfterSec) },
       },
+    );
+  }
+
+  const captchaToken = readBodyString(body, "captchaToken");
+  const captcha = await verifyTurnstileToken({
+    token: captchaToken,
+    ip: clientIpFromRequest(request),
+  });
+  if (!captcha.ok) {
+    return NextResponse.json(
+      { error: "CaptchaFailed", message: captcha.message },
+      { status: 400 },
     );
   }
 

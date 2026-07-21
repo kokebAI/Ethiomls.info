@@ -671,6 +671,19 @@ model RateLimitBucket {
   @@map("rate_limit_buckets")
 }
 
+/// Temporary bans for abusive client IPs (OTP spray, etc.).
+model IpBlock {
+  ip           String   @id
+  reason       String
+  blockedUntil DateTime
+  strikeCount  Int      @default(1)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([blockedUntil])
+  @@map("ip_blocks")
+}
+
 // ---------------------------------------------------------------------------
 // Proclamation 1357/2024 — escrow & staged fund release
 // ---------------------------------------------------------------------------

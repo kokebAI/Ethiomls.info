@@ -1,3 +1,4 @@
+import { banIp, isIpBlocked } from "@/lib/auth/ip-blocklist";
 import { prisma } from "@/lib/db/prisma";
 
 export type RateLimitResult =
@@ -65,6 +66,26 @@ export function clientIpFromRequest(request: {
   return "unknown";
 }
 
+async function strikeAndMaybeBan(
+  ip: string,
+  detail: string,
+): Promise<{ banned: boolean }> {
+  const strike = await consumeRateLimit({
+    key: `otp:abuse:${ip}:15m`,
+    limit: 3,
+    windowMs: 15 * 60_000,
+  });
+  // Ban on the 3rd strike (remaining 0) or when the window is already exhausted.
+  if (!strike.ok || strike.remaining === 0) {
+    await banIp({
+      ip,
+      reason: `OTP abuse: ${detail}`.slice(0, 500),
+    });
+    return { banned: true };
+  }
+  return { banned: false };
+}
+
 /**
  * Shared guards for any endpoint that issues an auth OTP SMS.
  */
@@ -75,8 +96,31 @@ export async function assertOtpSmsAllowed(input: {
   fullName?: string | null;
   purpose: "register" | "login" | "reset";
 }): Promise<RateLimitResult & { message?: string }> {
+  const blocked = await isIpBlocked(input.ip);
+  if (blocked.blocked) {
+    return {
+      ok: false,
+      retryAfterSec: blocked.retryAfterSec ?? 3600,
+      message:
+        "This network is temporarily blocked due to suspicious SMS activity. Try again later.",
+    };
+  }
+
   const phoneKey = `otp:phone:${input.phone}`;
   const ipKey = `otp:ip:${input.purpose}:${input.ip}`;
+
+  const fail = async (
+    result: Extract<RateLimitResult, { ok: false }>,
+    message: string,
+  ) => {
+    const { banned } = await strikeAndMaybeBan(input.ip, message);
+    return {
+      ...result,
+      message: banned
+        ? "This network was temporarily blocked after repeated abuse. Try again in 24 hours."
+        : message,
+    };
+  };
 
   // Per-phone: at most 1 SMS / 60s (resend cooldown).
   const phoneBurst = await consumeRateLimit({
@@ -85,10 +129,10 @@ export async function assertOtpSmsAllowed(input: {
     windowMs: 60_000,
   });
   if (!phoneBurst.ok) {
-    return {
-      ...phoneBurst,
-      message: `Wait ${phoneBurst.retryAfterSec}s before requesting another code for this number.`,
-    };
+    return fail(
+      phoneBurst,
+      `Wait ${phoneBurst.retryAfterSec}s before requesting another code for this number.`,
+    );
   }
 
   // Per-phone: at most 5 SMS / hour.
@@ -98,28 +142,25 @@ export async function assertOtpSmsAllowed(input: {
     windowMs: 60 * 60_000,
   });
   if (!phoneHour.ok) {
-    return {
-      ...phoneHour,
-      message:
-        "Too many codes sent to this number. Try again in about an hour.",
-    };
+    return fail(
+      phoneHour,
+      "Too many codes sent to this number. Try again in about an hour.",
+    );
   }
 
   // Per-IP: register is strictest (stops phone spray bots).
   const ipLimit =
     input.purpose === "register" ? 8 : input.purpose === "reset" ? 10 : 15;
-  const ipWindowMs =
-    input.purpose === "register" ? 15 * 60_000 : 15 * 60_000;
   const ipBurst = await consumeRateLimit({
     key: `${ipKey}:15m`,
     limit: ipLimit,
-    windowMs: ipWindowMs,
+    windowMs: 15 * 60_000,
   });
   if (!ipBurst.ok) {
-    return {
-      ...ipBurst,
-      message: `Too many SMS requests from this network. Try again in ${ipBurst.retryAfterSec}s.`,
-    };
+    return fail(
+      ipBurst,
+      `Too many SMS requests from this network. Try again in ${ipBurst.retryAfterSec}s.`,
+    );
   }
 
   if (input.purpose === "register") {
@@ -129,11 +170,10 @@ export async function assertOtpSmsAllowed(input: {
       windowMs: 60 * 60_000,
     });
     if (!ipHour.ok) {
-      return {
-        ...ipHour,
-        message:
-          "Too many signup codes from this network. Try again in about an hour.",
-      };
+      return fail(
+        ipHour,
+        "Too many signup codes from this network. Try again in about an hour.",
+      );
     }
 
     const name = input.fullName?.trim().toLowerCase().replace(/\s+/g, " ");
@@ -144,11 +184,10 @@ export async function assertOtpSmsAllowed(input: {
         windowMs: 60 * 60_000,
       });
       if (!nameHour.ok) {
-        return {
-          ...nameHour,
-          message:
-            "Too many signup attempts under this name. Try again later or use an existing account.",
-        };
+        return fail(
+          nameHour,
+          "Too many signup attempts under this name. Try again later or use an existing account.",
+        );
       }
     }
   }

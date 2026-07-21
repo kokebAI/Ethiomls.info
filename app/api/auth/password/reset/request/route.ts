@@ -4,6 +4,7 @@ import {
   assertOtpSmsAllowed,
   clientIpFromRequest,
 } from "@/lib/auth/otp-rate-limit";
+import { verifyTurnstileToken } from "@/lib/auth/turnstile";
 import { isLocale } from "@/lib/i18n/config";
 import { prisma } from "@/lib/db/prisma";
 import { smsNotificationEngine } from "@/src/services/sms.service";
@@ -77,6 +78,21 @@ export async function POST(request: NextRequest) {
         status: 429,
         headers: { "Retry-After": String(rate.retryAfterSec) },
       },
+    );
+  }
+
+  const captchaToken =
+    body && typeof body === "object" && !Array.isArray(body)
+      ? String((body as { captchaToken?: unknown }).captchaToken ?? "").trim()
+      : "";
+  const captcha = await verifyTurnstileToken({
+    token: captchaToken || null,
+    ip: clientIpFromRequest(request),
+  });
+  if (!captcha.ok) {
+    return NextResponse.json(
+      { error: "CaptchaFailed", message: captcha.message },
+      { status: 400 },
     );
   }
 
