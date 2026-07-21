@@ -174,6 +174,7 @@ export default async function AdminWorkspacePage({
           addListingHint:
             ws.addListingHint ??
             "Goes to pending review — audit and verify after.",
+          assistantsLink: ws.tabStaff ?? dictionary.nav?.assistants,
           tabOverview: ws.tabOverview,
           tabStaff: ws.tabStaff,
           tabAlerts: ws.tabAlerts,

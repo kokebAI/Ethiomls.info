@@ -63,7 +63,34 @@ export function AdminHomeTabs({
     const apply = () => setTab(tabFromHash(window.location.hash));
     apply();
     window.addEventListener("hashchange", apply);
-    return () => window.removeEventListener("hashchange", apply);
+    // Next.js client navigations to the same path with a new hash may not
+    // always fire hashchange — also re-read when the location changes.
+    const onClick = (event: MouseEvent) => {
+      const target = event.target as HTMLElement | null;
+      const anchor = target?.closest?.("a[href]") as HTMLAnchorElement | null;
+      if (!anchor?.href) return;
+      try {
+        const url = new URL(anchor.href);
+        if (
+          url.pathname === window.location.pathname &&
+          url.hash &&
+          (url.hash === "#staff" ||
+            url.hash === "#admin-alerts" ||
+            url.hash === "#overview" ||
+            url.hash === "#alerts")
+        ) {
+          // Let the browser update the hash, then sync the tab.
+          queueMicrotask(apply);
+        }
+      } catch {
+        // ignore
+      }
+    };
+    document.addEventListener("click", onClick);
+    return () => {
+      window.removeEventListener("hashchange", apply);
+      document.removeEventListener("click", onClick);
+    };
   }, []);
 
   const selectTab = useCallback((next: AdminHomeTab) => {

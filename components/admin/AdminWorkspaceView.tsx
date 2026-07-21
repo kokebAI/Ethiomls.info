@@ -21,6 +21,7 @@ export type AdminWorkspaceCopy = {
   integrationsRefreshing?: string;
   addListing: string;
   addListingHint: string;
+  assistantsLink?: string;
   tabOverview?: string;
   tabStaff?: string;
   tabAlerts?: string;
@@ -100,23 +101,21 @@ export function AdminWorkspaceView({
 
   return (
     <div className="relative z-10 mx-auto flex max-w-7xl flex-col gap-6 px-4 py-6 sm:px-6 lg:py-8">
-      <IntegrationsStatusPanel
-        initialIntegrations={integrations}
-        opsChips={opsChips}
-        title={copy.integrationsTitle ?? copy.snapshotTitle}
-        opsTitle={copy.integrationsOpsTitle ?? "Ops queues"}
-        refreshLabel={copy.integrationsRefresh ?? "Refresh"}
-        refreshingLabel={copy.integrationsRefreshing ?? "Refreshing…"}
-        headerAction={
-          <Link
-            href={`${base}/listings/new`}
-            className="inline-flex items-center justify-center rounded-full bg-brand-600 px-3 py-1 text-xs font-semibold text-white transition hover:bg-brand-700"
-            title={copy.addListingHint}
-          >
-            {copy.addListing}
-          </Link>
-        }
-      />
+      <div className="flex flex-wrap items-center justify-end gap-2">
+        <Link
+          href={`${base}/workspace/admin#staff`}
+          className="inline-flex items-center justify-center rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-semibold text-slate-800 transition hover:border-brand-300 hover:bg-brand-50/40"
+        >
+          {copy.assistantsLink ?? copy.tabStaff ?? "Assistants"}
+        </Link>
+        <Link
+          href={`${base}/listings/new`}
+          className="inline-flex items-center justify-center rounded-full bg-brand-600 px-3 py-1 text-xs font-semibold text-white transition hover:bg-brand-700"
+          title={copy.addListingHint}
+        >
+          {copy.addListing}
+        </Link>
+      </div>
 
       <AdminHomeTabs
         locale={locale}
@@ -125,10 +124,19 @@ export function AdminWorkspaceView({
         welcomeName={welcomeName}
         alerts={alerts}
         tabOverview={copy.tabOverview ?? "Overview"}
-        tabStaff={copy.tabStaff ?? "Staff"}
+        tabStaff={copy.tabStaff ?? "Assistants"}
         tabAlerts={copy.tabAlerts ?? "Alerts"}
         alertsTitle={copy.alertsTitle}
         alertsEmpty={copy.alertsEmpty}
+      />
+
+      <IntegrationsStatusPanel
+        initialIntegrations={integrations}
+        opsChips={opsChips}
+        title={copy.integrationsTitle ?? copy.snapshotTitle}
+        opsTitle={copy.integrationsOpsTitle ?? "Ops queues"}
+        refreshLabel={copy.integrationsRefresh ?? "Refresh"}
+        refreshingLabel={copy.integrationsRefreshing ?? "Refreshing…"}
       />
     </div>
   );
