@@ -1,7 +1,7 @@
 {
   "source": "curated-facebook-sale-rent",
   "description": "Public Facebook Pages that post Addis Ababa completed-sale and rental property ads. Scraped via www.facebook.com embedded post text (mbasic is often login-walled). Notes tagged facebook-sale-rent for scrape:facebook.",
-  "updatedAt": "2026-07-20",
+  "updatedAt": "2026-07-21",
   "sources": [
     {
       "label": "House for Rent in Addis Ababa (Facebook)",
@@ -44,6 +44,30 @@
       "url": "https://www.facebook.com/Summerrealestate",
       "track": "broker",
       "notes": "facebook-sale-rent · sale+rent · Summer Real Estate Addis · Yalemzwed"
+    },
+    {
+      "label": "Dema Hope Real Estate / Kali Dema (Facebook)",
+      "url": "https://www.facebook.com/demahoperealestatee",
+      "track": "developer",
+      "notes": "facebook-sale-rent · sale · Dema Hope · Kali Dema"
+    },
+    {
+      "label": "Jenboro Real Estate / Abnet Jenboro (Facebook)",
+      "url": "https://www.facebook.com/jenbororealestate",
+      "track": "developer",
+      "notes": "facebook-sale-rent · sale · Jenboro · Abnet Jenboro sales"
+    },
+    {
+      "label": "Bamacon Real Estate (Facebook)",
+      "url": "https://www.facebook.com/bamaconrealestate",
+      "track": "developer",
+      "notes": "facebook-sale-rent · sale · Bamacon Real Estate"
+    },
+    {
+      "label": "AKOYA Properties profile (Facebook)",
+      "url": "https://www.facebook.com/profile.php?id=61576308533547",
+      "track": "developer",
+      "notes": "facebook-sale-rent · sale · Akoya official profile id from website"
     }
   ]
 }

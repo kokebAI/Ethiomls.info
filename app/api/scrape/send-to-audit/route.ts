@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { ListingStatus, NotificationStatus, Prisma } from "@prisma/client";
-import { getCurrentAdmin } from "@/lib/auth/admin";
+import { getCurrentOpsStaff } from "@/lib/auth/admin";
 import { ensureInvitePartyAttached } from "@/lib/imports/scrape-invite";
 import { prisma } from "@/lib/db/prisma";
 
@@ -12,10 +12,10 @@ export const runtime = "nodejs";
  * into the admin pending-audit workspace (no HaHu SMS).
  */
 export async function POST(request: NextRequest) {
-  const admin = await getCurrentAdmin();
+  const admin = await getCurrentOpsStaff();
   if (!admin) {
     return NextResponse.json(
-      { error: "Forbidden", message: "Admin access required" },
+      { error: "Forbidden", message: "Staff access required" },
       { status: 403 },
     );
   }

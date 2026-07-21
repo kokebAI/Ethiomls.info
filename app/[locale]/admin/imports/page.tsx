@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import { ImportSourcesPanel } from "@/components/admin/ImportSourcesPanel";
 import { SalesKitImportPanel } from "@/components/admin/SalesKitImportPanel";
 import { PageIntro } from "@/components/PageIntro";
-import { getCurrentAdmin } from "@/lib/auth/admin";
+import { getCurrentOpsStaff } from "@/lib/auth/admin";
 import { isLocale, type Locale } from "@/lib/i18n/config";
 import { getDictionary } from "@/lib/i18n/getDictionary";
 
@@ -28,9 +28,9 @@ export default async function AdminImportsPage({
   const { locale: raw } = await params;
   const locale = (isLocale(raw) ? raw : "am") as Locale;
   const dictionary = getDictionary(locale);
-  const admin = await getCurrentAdmin();
+  const staff = await getCurrentOpsStaff();
 
-  if (!admin) {
+  if (!staff) {
     redirect(`/${locale}/login`);
   }
 

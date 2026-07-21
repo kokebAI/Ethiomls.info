@@ -3,7 +3,7 @@ import { ListingStatus, NotificationStatus } from "@prisma/client";
 import { redirect } from "next/navigation";
 import { ScrapeReviewQueue } from "@/components/admin/ScrapeReviewQueue";
 import { PageIntro } from "@/components/PageIntro";
-import { getCurrentAdmin } from "@/lib/auth/admin";
+import { getCurrentOpsStaff } from "@/lib/auth/admin";
 import { prisma } from "@/lib/db/prisma";
 import {
   buildScrapeInviteMessage,
@@ -35,9 +35,9 @@ export default async function AdminScrapeReviewPage({
   const { locale: raw } = await params;
   const locale = (isLocale(raw) ? raw : "am") as Locale;
   const dictionary = getDictionary(locale);
-  const admin = await getCurrentAdmin();
+  const staff = await getCurrentOpsStaff();
 
-  if (!admin) {
+  if (!staff) {
     redirect(`/${locale}/login`);
   }
 

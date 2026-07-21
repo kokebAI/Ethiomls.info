@@ -1,6 +1,6 @@
 import { ListingType, NotificationStatus } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
-import { getCurrentAdmin } from "@/lib/auth/admin";
+import { getCurrentOpsStaff } from "@/lib/auth/admin";
 import { normalizeEthiopiaPhone } from "@/lib/auth/otp";
 import { prisma } from "@/lib/db/prisma";
 
@@ -25,10 +25,10 @@ type Body = {
  * Admin-only: fill missing scrape fields (phone, price, titles, etc.) from review UI.
  */
 export async function PATCH(request: NextRequest) {
-  const admin = await getCurrentAdmin();
+  const admin = await getCurrentOpsStaff();
   if (!admin) {
     return NextResponse.json(
-      { error: "Forbidden", message: "Admin access required" },
+      { error: "Forbidden", message: "Staff access required" },
       { status: 403 },
     );
   }

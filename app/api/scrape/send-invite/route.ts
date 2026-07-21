@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getCurrentAdmin } from "@/lib/auth/admin";
+import { getCurrentOpsStaff } from "@/lib/auth/admin";
 import { sendScrapeInviteForPhoneGroup } from "@/lib/imports/scrape-invite";
 import { prisma } from "@/lib/db/prisma";
 
@@ -27,10 +27,10 @@ function parseListingIds(body: {
  * Body: `{ listingId }` or `{ listingIds: string[] }` — admin invite → HaHu dispatch.
  */
 export async function POST(request: NextRequest) {
-  const admin = await getCurrentAdmin();
+  const admin = await getCurrentOpsStaff();
   if (!admin) {
     return NextResponse.json(
-      { error: "Forbidden", message: "Admin access required" },
+      { error: "Forbidden", message: "Staff access required" },
       { status: 403 },
     );
   }

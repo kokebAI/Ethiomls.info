@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getCurrentAdmin } from "@/lib/auth/admin";
+import { getCurrentOpsStaff } from "@/lib/auth/admin";
 import { prisma } from "@/lib/db/prisma";
 import { deleteImportSourceAndScrapes } from "@/lib/imports/delete-scrape-data";
 
@@ -14,10 +14,10 @@ export async function DELETE(
   _request: NextRequest,
   context: { params: Promise<{ id: string }> },
 ) {
-  const admin = await getCurrentAdmin();
+  const admin = await getCurrentOpsStaff();
   if (!admin) {
     return NextResponse.json(
-      { error: "Forbidden", message: "Admin access required" },
+      { error: "Forbidden", message: "Staff access required" },
       { status: 403 },
     );
   }

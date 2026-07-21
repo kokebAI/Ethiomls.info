@@ -5,6 +5,8 @@ import {
   type AdminPendingDirectoryItem,
   type AdminPendingQueueCopy,
 } from "@/components/admin/AdminPendingQueue";
+import { IntegrationsStatusPanel } from "@/components/admin/IntegrationsStatusPanel";
+import type { IntegrationStatus } from "@/lib/ops/integration-status";
 
 export type AdminWorkspaceCopy = {
   snapshotTitle: string;
@@ -13,6 +15,10 @@ export type AdminWorkspaceCopy = {
   snapshotScrapeInvites?: string;
   snapshotAlerts: string;
   snapshotReady: string;
+  integrationsTitle?: string;
+  integrationsOpsTitle?: string;
+  integrationsRefresh?: string;
+  integrationsRefreshing?: string;
   addListing: string;
   addListingHint: string;
   toolsTitle?: string;
@@ -62,6 +68,7 @@ export type AdminAlertItem = {
 export type AdminWorkspaceProps = {
   locale: string;
   copy: AdminWorkspaceCopy;
+  integrations: IntegrationStatus[];
   pendingCount: number;
   pendingProjectCount?: number;
   scrapeInviteCount?: number;
@@ -82,20 +89,10 @@ type AdminToolLink = {
   primary?: boolean;
 };
 
-function StatusDot({ ok }: { ok: boolean }) {
-  return (
-    <span
-      className={`inline-block h-2 w-2 shrink-0 rounded-full ${
-        ok ? "bg-emerald-500" : "bg-amber-500"
-      }`}
-      aria-hidden
-    />
-  );
-}
-
 export function AdminWorkspaceView({
   locale,
   copy,
+  integrations,
   pendingCount,
   pendingProjectCount = 0,
   scrapeInviteCount = 0,
@@ -181,85 +178,61 @@ export function AdminWorkspaceView({
     },
   ];
 
+  const opsChips = [
+    {
+      id: "pending",
+      label: copy.snapshotPending.replace("{count}", String(pendingCount)),
+      href: `${base}/workspace/admin#admin-pending-queue`,
+      ok: pendingCount === 0,
+    },
+    {
+      id: "projects",
+      label: (
+        copy.snapshotPendingProjects ?? "{count} project(s) awaiting audit"
+      ).replace("{count}", String(pendingProjectCount)),
+      href: `${base}/workspace/admin#admin-pending-projects`,
+      ok: pendingProjectCount === 0,
+    },
+    {
+      id: "scrape",
+      label: (
+        copy.snapshotScrapeInvites ?? "{count} scrape invite(s) awaiting SMS"
+      ).replace("{count}", String(scrapeInviteCount)),
+      href: `${base}/admin/scrape-review`,
+      ok: scrapeInviteCount === 0,
+    },
+    {
+      id: "alerts",
+      label: copy.snapshotAlerts.replace("{count}", String(unreadAlertCount)),
+      href: `${base}/workspace/admin#admin-alerts`,
+      ok: unreadAlertCount === 0,
+    },
+    {
+      id: "ready",
+      label: copy.snapshotReady.replace("{count}", String(readyCount)),
+      ok: readyCount > 0 || pendingCount === 0,
+    },
+  ];
+
   return (
-    <div className="relative z-10 mx-auto flex max-w-7xl flex-col gap-10 px-4 py-10 sm:px-6 lg:py-14">
-      <section
-        className="rounded-2xl border border-slate-200/90 bg-white/90 p-5 shadow-[var(--shadow-card)] sm:p-6"
-        aria-labelledby="admin-snapshot-heading"
-      >
-        <div className="flex flex-wrap items-start justify-between gap-4">
-          <h2
-            id="admin-snapshot-heading"
-            className="text-xs font-bold uppercase tracking-[0.14em] text-slate-500"
+    <div className="relative z-10 mx-auto flex max-w-7xl flex-col gap-8 px-4 py-6 sm:px-6 lg:py-8">
+      <IntegrationsStatusPanel
+        initialIntegrations={integrations}
+        opsChips={opsChips}
+        title={copy.integrationsTitle ?? copy.snapshotTitle}
+        opsTitle={copy.integrationsOpsTitle ?? "Ops queues"}
+        refreshLabel={copy.integrationsRefresh ?? "Refresh"}
+        refreshingLabel={copy.integrationsRefreshing ?? "Refreshing…"}
+        headerAction={
+          <Link
+            href={`${base}/listings/new`}
+            className="inline-flex items-center justify-center rounded-full bg-brand-600 px-3 py-1 text-xs font-semibold text-white transition hover:bg-brand-700"
+            title={copy.addListingHint}
           >
-            {copy.snapshotTitle}
-          </h2>
-          <div className="flex max-w-md flex-col items-stretch gap-1.5 sm:items-end">
-            <Link
-              href={`${base}/listings/new`}
-              className="inline-flex items-center justify-center rounded-full bg-brand-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-700"
-            >
-              {copy.addListing}
-            </Link>
-            <p className="text-xs leading-snug text-ink-muted sm:text-right">
-              {copy.addListingHint}
-            </p>
-          </div>
-        </div>
-        <ul className="mt-4 space-y-3">
-          <li className="flex items-start gap-3 text-sm text-ink">
-            <StatusDot ok={pendingCount === 0} />
-            <Link
-              href={`${base}/workspace/admin#admin-pending-queue`}
-              className="hover:text-brand-800 hover:underline"
-            >
-              {copy.snapshotPending.replace("{count}", String(pendingCount))}
-            </Link>
-          </li>
-          <li className="flex items-start gap-3 text-sm text-ink">
-            <StatusDot ok={pendingProjectCount === 0} />
-            <Link
-              href={`${base}/workspace/admin#admin-pending-projects`}
-              className="hover:text-brand-800 hover:underline"
-            >
-              {(
-                copy.snapshotPendingProjects ??
-                "{count} project(s) awaiting audit"
-              ).replace("{count}", String(pendingProjectCount))}
-            </Link>
-          </li>
-          <li className="flex items-start gap-3 text-sm text-ink">
-            <StatusDot ok={scrapeInviteCount === 0} />
-            <Link
-              href={`${base}/admin/scrape-review`}
-              className="hover:text-brand-800 hover:underline"
-            >
-              {(
-                copy.snapshotScrapeInvites ??
-                "{count} scrape invite(s) awaiting SMS"
-              ).replace("{count}", String(scrapeInviteCount))}
-            </Link>
-          </li>
-          <li className="flex items-start gap-3 text-sm text-ink">
-            <StatusDot ok={unreadAlertCount === 0} />
-            <Link
-              href={`${base}/workspace/admin#admin-alerts`}
-              className="hover:text-brand-800 hover:underline"
-            >
-              {copy.snapshotAlerts.replace(
-                "{count}",
-                String(unreadAlertCount),
-              )}
-            </Link>
-          </li>
-          <li className="flex items-start gap-3 text-sm text-ink">
-            <StatusDot ok={readyCount > 0 || pendingCount === 0} />
-            <span>
-              {copy.snapshotReady.replace("{count}", String(readyCount))}
-            </span>
-          </li>
-        </ul>
-      </section>
+            {copy.addListing}
+          </Link>
+        }
+      />
 
       <section
         id="admin-tools"

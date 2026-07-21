@@ -22,6 +22,7 @@ import {
 } from "@/lib/i18n/enums";
 import { getDictionary } from "@/lib/i18n/getDictionary";
 import { pickLocalized } from "@/lib/i18n/pickLocalized";
+import { collectIntegrationStatuses } from "@/lib/ops/integration-status";
 
 export const dynamic = "force-dynamic";
 
@@ -291,6 +292,7 @@ export default async function AdminWorkspacePage({
     drafts,
     ready,
     alertRows,
+    integrations,
   ] = await Promise.all([
     prisma.listing.count({
       where: {
@@ -402,6 +404,7 @@ export default async function AdminWorkspacePage({
         createdAt: true,
       },
     }),
+    collectIntegrationStatuses(),
   ]);
 
   const alerts: AdminAlertItem[] = alertRows.map((alert) => ({
@@ -420,6 +423,7 @@ export default async function AdminWorkspacePage({
     <main>
       <AdminWorkspaceView
         locale={locale}
+        integrations={integrations}
         pendingCount={pendingCount}
         pendingProjectCount={pendingProjectCount}
         scrapeInviteCount={scrapeInviteCount}
@@ -473,6 +477,10 @@ export default async function AdminWorkspacePage({
           snapshotScrapeInvites: ws.snapshotScrapeInvites,
           snapshotAlerts: ws.snapshotAlerts,
           snapshotReady: ws.snapshotReady,
+          integrationsTitle: ws.integrationsTitle,
+          integrationsOpsTitle: ws.integrationsOpsTitle,
+          integrationsRefresh: ws.integrationsRefresh,
+          integrationsRefreshing: ws.integrationsRefreshing,
           addListing: ws.addListing ?? "Add listing",
           addListingHint:
             ws.addListingHint ??

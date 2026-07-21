@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import { getCurrentAdmin } from "@/lib/auth/admin";
+import { getCurrentOpsStaff } from "@/lib/auth/admin";
 import { importSalesKitListings } from "@/lib/imports/sales-kit-import";
 import { resolveOrCreateRoleAccount } from "@/lib/imports/resolve-role-account";
 
@@ -41,10 +41,10 @@ const bodySchema = z.object({
 
 /** Commit parsed sales-kit listings onto a developer/broker role account. */
 export async function POST(request: Request) {
-  const admin = await getCurrentAdmin();
+  const admin = await getCurrentOpsStaff();
   if (!admin) {
     return NextResponse.json(
-      { error: "Forbidden", message: "Admin access required" },
+      { error: "Forbidden", message: "Staff access required" },
       { status: 403 },
     );
   }

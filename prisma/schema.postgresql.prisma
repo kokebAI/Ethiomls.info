@@ -27,6 +27,8 @@ enum UserRole {
   /// Licensed independent broker (UI label: Broker).
   INDEPENDENT_DELALA
   CORPORATE_DEVELOPER
+  /// Limited staff: imports, scrape review, and listing create — not audit/publish.
+  OFFICE_ASSISTANT
   ADMIN
 }
 

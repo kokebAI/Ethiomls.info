@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getCurrentAdmin } from "@/lib/auth/admin";
+import { getCurrentOpsStaff } from "@/lib/auth/admin";
 import { prisma } from "@/lib/db/prisma";
 import { hardDeleteScrapedListing } from "@/lib/imports/delete-scrape-data";
 
@@ -10,10 +10,10 @@ export const runtime = "nodejs";
  * Body: `{ listingId: string }` — permanently delete scraped listing data.
  */
 export async function POST(request: NextRequest) {
-  const admin = await getCurrentAdmin();
+  const admin = await getCurrentOpsStaff();
   if (!admin) {
     return NextResponse.json(
-      { error: "Forbidden", message: "Admin access required" },
+      { error: "Forbidden", message: "Staff access required" },
       { status: 403 },
     );
   }

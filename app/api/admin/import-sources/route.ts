@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { ImportSourceType } from "@prisma/client";
 import { z } from "zod";
-import { getCurrentAdmin } from "@/lib/auth/admin";
+import { getCurrentOpsStaff } from "@/lib/auth/admin";
 import { prisma } from "@/lib/db/prisma";
 import { fetchPublicText } from "@/lib/imports/fetch-safe";
 import { normalizeImportSourceInput } from "@/lib/imports/normalize-source";
@@ -34,10 +34,10 @@ async function telegramPreviewWarning(
 }
 
 export async function GET() {
-  const admin = await getCurrentAdmin();
+  const admin = await getCurrentOpsStaff();
   if (!admin) {
     return NextResponse.json(
-      { error: "Forbidden", message: "Admin access required" },
+      { error: "Forbidden", message: "Staff access required" },
       { status: 403 },
     );
   }
@@ -57,10 +57,10 @@ export async function GET() {
 }
 
 export async function POST(request: NextRequest) {
-  const admin = await getCurrentAdmin();
+  const admin = await getCurrentOpsStaff();
   if (!admin) {
     return NextResponse.json(
-      { error: "Forbidden", message: "Admin access required" },
+      { error: "Forbidden", message: "Staff access required" },
       { status: 403 },
     );
   }
