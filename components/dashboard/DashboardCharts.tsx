@@ -27,20 +27,34 @@ export function StatusBarChart({
   title,
   segments,
   emptyLabel,
+  dense,
 }: {
   title: string;
   segments: BarSegment[];
   emptyLabel: string;
+  dense?: boolean;
 }) {
   const total = segments.reduce((sum, s) => sum + s.value, 0);
 
   return (
-    <article className="rounded-2xl border border-slate-200/90 bg-white/95 p-4 shadow-[var(--shadow-card)]">
-      <h3 className="text-sm font-semibold text-slate-deep">{title}</h3>
+    <article
+      className={`flex min-h-0 flex-col rounded-2xl border border-slate-200/90 bg-white/95 shadow-[var(--shadow-card)] ${
+        dense ? "p-3" : "p-4"
+      }`}
+    >
+      <h3
+        className={`font-semibold text-slate-deep ${dense ? "text-xs" : "text-sm"}`}
+      >
+        {title}
+      </h3>
       {total === 0 ? (
-        <p className="mt-6 text-center text-sm text-ink-muted">{emptyLabel}</p>
+        <p
+          className={`text-center text-sm text-ink-muted ${dense ? "mt-3" : "mt-6"}`}
+        >
+          {emptyLabel}
+        </p>
       ) : (
-        <ul className="mt-4 space-y-3">
+        <ul className={`mt-3 space-y-2 ${dense ? "" : "mt-4 space-y-3"}`}>
           {segments.map((segment) => {
             const pct = Math.max(2, Math.round((segment.value / total) * 100));
             return (
@@ -56,7 +70,9 @@ export function StatusBarChart({
                     </span>
                   </span>
                 </div>
-                <div className="h-2.5 overflow-hidden rounded-full bg-slate-100">
+                <div
+                  className={`overflow-hidden rounded-full bg-slate-100 ${dense ? "h-2" : "h-2.5"}`}
+                >
                   <div
                     className="h-full rounded-full transition-[width] duration-500"
                     style={{ width: `${pct}%`, backgroundColor: segment.color }}
@@ -76,30 +92,50 @@ export function FunnelChart({
   title,
   steps,
   emptyLabel,
+  dense,
 }: {
   title: string;
   steps: FunnelStep[];
   emptyLabel: string;
+  dense?: boolean;
 }) {
   const max = Math.max(...steps.map((s) => s.value), 0);
 
   return (
-    <article className="rounded-2xl border border-slate-200/90 bg-white/95 p-4 shadow-[var(--shadow-card)]">
-      <h3 className="text-sm font-semibold text-slate-deep">{title}</h3>
+    <article
+      className={`flex min-h-0 flex-col rounded-2xl border border-slate-200/90 bg-white/95 shadow-[var(--shadow-card)] ${
+        dense ? "p-3" : "p-4"
+      }`}
+    >
+      <h3
+        className={`font-semibold text-slate-deep ${dense ? "text-xs" : "text-sm"}`}
+      >
+        {title}
+      </h3>
       {max === 0 ? (
-        <p className="mt-6 text-center text-sm text-ink-muted">{emptyLabel}</p>
+        <p
+          className={`text-center text-sm text-ink-muted ${dense ? "mt-3" : "mt-6"}`}
+        >
+          {emptyLabel}
+        </p>
       ) : (
-        <ul className="mt-4 space-y-2.5">
+        <ul className={`mt-3 space-y-2 ${dense ? "" : "mt-4 space-y-2.5"}`}>
           {steps.map((step) => {
             const width = Math.max(18, Math.round((step.value / max) * 100));
             return (
               <li key={step.id} className="flex items-center gap-3">
-                <span className="w-20 shrink-0 text-xs font-medium text-slate-600 sm:w-24">
+                <span
+                  className={`shrink-0 text-xs font-medium text-slate-600 ${
+                    dense ? "w-16 sm:w-20" : "w-20 sm:w-24"
+                  }`}
+                >
                   {step.label}
                 </span>
                 <div className="min-w-0 flex-1">
                   <div
-                    className="flex h-8 items-center rounded-lg px-2.5 text-xs font-bold tabular-nums text-white shadow-sm"
+                    className={`flex items-center rounded-lg px-2.5 text-xs font-bold tabular-nums text-white shadow-sm ${
+                      dense ? "h-6" : "h-8"
+                    }`}
                     style={{
                       width: `${width}%`,
                       backgroundColor: step.color,
@@ -126,6 +162,7 @@ export function PageViewsTrendChart({
   todayValue,
   weekValue,
   emptyLabel,
+  dense,
 }: {
   title: string;
   series: SeriesPoint[];
@@ -134,11 +171,12 @@ export function PageViewsTrendChart({
   todayValue: number;
   weekValue: number;
   emptyLabel: string;
+  dense?: boolean;
 }) {
   const width = 320;
-  const height = 120;
+  const height = dense ? 88 : 120;
   const padX = 8;
-  const padY = 12;
+  const padY = dense ? 8 : 12;
   const max = Math.max(...series.map((p) => p.pageViews), 1);
   const points = series.map((point, index) => {
     const x =
@@ -147,9 +185,7 @@ export function PageViewsTrendChart({
         ? width / 2
         : (index / (series.length - 1)) * (width - padX * 2));
     const y =
-      height -
-      padY -
-      (point.pageViews / max) * (height - padY * 2);
+      height - padY - (point.pageViews / max) * (height - padY * 2);
     return { ...point, x, y };
   });
   const line = points.map((p) => `${p.x},${p.y}`).join(" ");
@@ -159,25 +195,37 @@ export function PageViewsTrendChart({
       : "";
 
   return (
-    <article className="rounded-2xl border border-slate-200/90 bg-white/95 p-4 shadow-[var(--shadow-card)]">
-      <div className="flex flex-wrap items-start justify-between gap-3">
-        <h3 className="text-sm font-semibold text-slate-deep">{title}</h3>
-        <div className="flex gap-3 text-xs">
-          <span className="rounded-full bg-sky-50 px-2.5 py-1 font-semibold tabular-nums text-sky-800 ring-1 ring-inset ring-sky-600/15">
+    <article
+      className={`flex min-h-0 flex-col rounded-2xl border border-slate-200/90 bg-white/95 shadow-[var(--shadow-card)] ${
+        dense ? "p-3" : "p-4"
+      }`}
+    >
+      <div className="flex flex-wrap items-start justify-between gap-2">
+        <h3
+          className={`font-semibold text-slate-deep ${dense ? "text-xs" : "text-sm"}`}
+        >
+          {title}
+        </h3>
+        <div className="flex gap-2 text-[10px] sm:text-xs">
+          <span className="rounded-full bg-sky-50 px-2 py-0.5 font-semibold tabular-nums text-sky-800 ring-1 ring-inset ring-sky-600/15">
             {todayLabel}: {todayValue}
           </span>
-          <span className="rounded-full bg-slate-100 px-2.5 py-1 font-semibold tabular-nums text-slate-700 ring-1 ring-inset ring-slate-500/15">
+          <span className="rounded-full bg-slate-100 px-2 py-0.5 font-semibold tabular-nums text-slate-700 ring-1 ring-inset ring-slate-500/15">
             {weekLabel}: {weekValue}
           </span>
         </div>
       </div>
       {weekValue === 0 ? (
-        <p className="mt-6 text-center text-sm text-ink-muted">{emptyLabel}</p>
+        <p
+          className={`text-center text-sm text-ink-muted ${dense ? "mt-3" : "mt-6"}`}
+        >
+          {emptyLabel}
+        </p>
       ) : (
-        <div className="mt-3">
+        <div className="mt-2 min-h-0 flex-1">
           <svg
             viewBox={`0 0 ${width} ${height}`}
-            className="h-36 w-full"
+            className={`w-full ${dense ? "h-24" : "h-36"}`}
             role="img"
             aria-label={title}
           >
@@ -240,24 +288,44 @@ export function TranslationMeter({
   label,
   percent,
   tag,
+  dense,
 }: {
   label: string;
   percent: number;
   tag: string;
+  dense?: boolean;
 }) {
   const clamped = Math.max(0, Math.min(100, percent));
   return (
-    <article className="rounded-2xl border border-slate-200/90 bg-white/95 p-4 shadow-[var(--shadow-card)]">
+    <article
+      className={`rounded-xl border border-slate-200/90 bg-white/95 shadow-[var(--shadow-card)] ${
+        dense ? "px-3 py-2" : "rounded-2xl p-4"
+      }`}
+    >
       <div className="flex items-start justify-between gap-2">
-        <h3 className="text-sm font-semibold text-slate-deep">{label}</h3>
-        <span className="rounded-full bg-slate-100 px-2 py-0.5 text-[0.65rem] font-bold uppercase tracking-wide text-slate-600 ring-1 ring-inset ring-slate-500/15">
+        <h3
+          className={`font-semibold text-slate-deep ${
+            dense ? "text-[11px] text-ink-muted" : "text-sm"
+          }`}
+        >
+          {label}
+        </h3>
+        <span className="rounded-full bg-slate-100 px-2 py-0.5 text-[0.6rem] font-bold uppercase tracking-wide text-slate-600 ring-1 ring-inset ring-slate-500/15">
           {tag}
         </span>
       </div>
-      <p className="mt-2 text-3xl font-bold tabular-nums tracking-tight text-slate-deep">
+      <p
+        className={`font-bold tabular-nums tracking-tight text-slate-deep ${
+          dense ? "mt-1 text-xl" : "mt-2 text-3xl"
+        }`}
+      >
         {clamped}%
       </p>
-      <div className="mt-3 h-2 overflow-hidden rounded-full bg-slate-100">
+      <div
+        className={`overflow-hidden rounded-full bg-slate-100 ${
+          dense ? "mt-2 h-1.5" : "mt-3 h-2"
+        }`}
+      >
         <div
           className="h-full rounded-full bg-brand-600 transition-[width] duration-500"
           style={{ width: `${clamped}%` }}

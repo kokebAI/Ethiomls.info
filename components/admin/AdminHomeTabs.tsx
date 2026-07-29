@@ -3,7 +3,11 @@
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 import { DashboardMetrics } from "@/components/dashboard/DashboardMetrics";
-import { OfficeAssistantsPanel } from "@/components/admin/OfficeAssistantsPanel";
+import {
+  IntegrationsStatusPanel,
+  type OpsQueueChip,
+} from "@/components/admin/IntegrationsStatusPanel";
+import type { IntegrationStatus } from "@/lib/ops/integration-status";
 import type { DashboardMetricsData } from "@/lib/catalog/dashboard-metrics";
 import type { Dictionary } from "@/lib/i18n/getDictionary";
 
@@ -16,7 +20,7 @@ export type AdminHomeAlertItem = {
   createdAtLabel: string;
 };
 
-type AdminHomeTab = "overview" | "staff" | "alerts";
+type AdminHomeTab = "overview" | "alerts" | "services";
 
 type AdminHomeTabsProps = {
   locale: string;
@@ -24,23 +28,29 @@ type AdminHomeTabsProps = {
   metrics: DashboardMetricsData;
   welcomeName?: string | null;
   alerts: AdminHomeAlertItem[];
+  integrations: IntegrationStatus[];
+  opsChips: OpsQueueChip[];
   tabOverview: string;
-  tabStaff: string;
   tabAlerts: string;
+  tabServices: string;
   alertsTitle: string;
   alertsEmpty: string;
+  servicesTitle: string;
+  servicesOpsTitle: string;
+  servicesRefresh: string;
+  servicesRefreshing: string;
 };
 
 function tabFromHash(hash: string): AdminHomeTab {
   const id = hash.replace(/^#/, "");
-  if (id === "staff") return "staff";
   if (id === "admin-alerts" || id === "alerts") return "alerts";
+  if (id === "services") return "services";
   return "overview";
 }
 
 function hashForTab(tab: AdminHomeTab): string {
-  if (tab === "staff") return "#staff";
   if (tab === "alerts") return "#admin-alerts";
+  if (tab === "services") return "#services";
   return "#overview";
 }
 
@@ -50,11 +60,17 @@ export function AdminHomeTabs({
   metrics,
   welcomeName,
   alerts,
+  integrations,
+  opsChips,
   tabOverview,
-  tabStaff,
   tabAlerts,
+  tabServices,
   alertsTitle,
   alertsEmpty,
+  servicesTitle,
+  servicesOpsTitle,
+  servicesRefresh,
+  servicesRefreshing,
 }: AdminHomeTabsProps) {
   const base = `/${locale}`;
   const [tab, setTab] = useState<AdminHomeTab>("overview");
@@ -63,8 +79,6 @@ export function AdminHomeTabs({
     const apply = () => setTab(tabFromHash(window.location.hash));
     apply();
     window.addEventListener("hashchange", apply);
-    // Next.js client navigations to the same path with a new hash may not
-    // always fire hashchange — also re-read when the location changes.
     const onClick = (event: MouseEvent) => {
       const target = event.target as HTMLElement | null;
       const anchor = target?.closest?.("a[href]") as HTMLAnchorElement | null;
@@ -74,12 +88,11 @@ export function AdminHomeTabs({
         if (
           url.pathname === window.location.pathname &&
           url.hash &&
-          (url.hash === "#staff" ||
-            url.hash === "#admin-alerts" ||
+          (url.hash === "#admin-alerts" ||
             url.hash === "#overview" ||
-            url.hash === "#alerts")
+            url.hash === "#alerts" ||
+            url.hash === "#services")
         ) {
-          // Let the browser update the hash, then sync the tab.
           queueMicrotask(apply);
         }
       } catch {
@@ -103,16 +116,16 @@ export function AdminHomeTabs({
 
   const tabs: { id: AdminHomeTab; label: string }[] = [
     { id: "overview", label: tabOverview },
-    { id: "staff", label: tabStaff },
     { id: "alerts", label: tabAlerts },
+    { id: "services", label: tabServices },
   ];
 
   return (
-    <div className="space-y-4">
+    <div className="flex min-h-0 flex-1 flex-col gap-3">
       <div
         role="tablist"
         aria-label="Admin home"
-        className="flex flex-wrap gap-1 rounded-xl border border-slate-200/90 bg-slate-50/80 p-1"
+        className="flex shrink-0 flex-wrap gap-1 rounded-xl border border-slate-200/90 bg-slate-50/80 p-1"
       >
         {tabs.map((item) => {
           const active = tab === item.id;
@@ -144,7 +157,11 @@ export function AdminHomeTabs({
       <div
         role="tabpanel"
         aria-labelledby={`admin-home-tab-${tab}`}
-        className="min-h-[12rem]"
+        className={
+          tab === "overview"
+            ? "flex min-h-0 flex-1 flex-col overflow-hidden"
+            : "min-h-0 flex-1 overflow-y-auto"
+        }
       >
         {tab === "overview" ? (
           <DashboardMetrics
@@ -152,10 +169,9 @@ export function AdminHomeTabs({
             metrics={metrics}
             welcomeName={welcomeName}
             isAdmin
+            fitViewport
           />
         ) : null}
-
-        {tab === "staff" ? <OfficeAssistantsPanel /> : null}
 
         {tab === "alerts" ? (
           <section
@@ -207,6 +223,17 @@ export function AdminHomeTabs({
               </ul>
             )}
           </section>
+        ) : null}
+
+        {tab === "services" ? (
+          <IntegrationsStatusPanel
+            initialIntegrations={integrations}
+            opsChips={opsChips}
+            title={servicesTitle}
+            opsTitle={servicesOpsTitle}
+            refreshLabel={servicesRefresh}
+            refreshingLabel={servicesRefreshing}
+          />
         ) : null}
       </div>
     </div>

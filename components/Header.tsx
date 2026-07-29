@@ -98,7 +98,6 @@ export function Header() {
   // Profile is covered by the avatar chip — do not add it to nav tabs.
   if (user?.role === "ADMIN") {
     rawNavItems.push({ href: "/admin/audit", key: "nav.audit" });
-    rawNavItems.push({ href: "/workspace/admin#staff", key: "nav.assistants" });
     rawNavItems.push({ href: "/admin/imports", key: "nav.imports" });
     rawNavItems.push({ href: "/admin/scrape-review", key: "nav.scrapeReview" });
   } else if (user?.role === "OFFICE_ASSISTANT") {
@@ -116,6 +115,12 @@ export function Header() {
     hubHref != null && navItems.some((item) => item.href === hubHref);
   /** Role users only — skip when hub is already a nav tab; catalog users skip Browse (listings is in tabs). */
   const showHomeCta = Boolean(user && !showCatalog && !hubAlreadyInNav);
+  const isAuthPage = /\/(login|register)\/?$/.test(pathname ?? "");
+
+  // Login/register already have brand + locale chrome — hide the site header on mobile auth.
+  if (isAuthPage) {
+    return null;
+  }
 
   return (
     <header className="sticky top-0 z-40 border-b border-slate-200/80 bg-white/85 backdrop-blur-xl">

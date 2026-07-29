@@ -22,7 +22,10 @@ type AuthPanelProps = {
 };
 
 const fieldClass =
-  "rounded-xl border border-white/15 bg-white/10 px-4 py-3 text-white outline-none backdrop-blur placeholder:text-slate-400 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30";
+  "w-full min-w-0 rounded-xl border border-white/15 bg-slate-950/60 px-4 py-3 text-base text-white outline-none placeholder:text-slate-400 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30";
+
+const labelClass = "flex w-full min-w-0 flex-col gap-1.5";
+const hintClass = "text-xs leading-relaxed text-slate-400";
 
 const RESEND_COOLDOWN_SEC = 30;
 
@@ -401,10 +404,10 @@ export function AuthPanel({
   }
 
   return (
-    <div className="grid w-full gap-5">
+    <div className="flex w-full min-w-0 flex-col gap-5">
       {mode !== "reset" ? (
         <div
-          className="inline-flex w-fit gap-1 rounded-full bg-slate-100/80 p-1"
+          className="inline-flex w-fit max-w-full flex-wrap gap-1 rounded-full bg-slate-100/80 p-1"
           role="tablist"
         >
           {(["login", "register"] as const).map((tab) => (
@@ -440,14 +443,16 @@ export function AuthPanel({
       )}
 
       {step === "credentials" ? (
-        <div className="grid gap-3">
+        <div className="flex w-full min-w-0 flex-col gap-4">
           {mode === "reset" ? (
-            <p className="text-sm text-slate-300">{t("auth.reset.lede")}</p>
+            <p className="text-sm leading-relaxed text-slate-300">
+              {t("auth.reset.lede")}
+            </p>
           ) : null}
 
           {mode === "register" ? (
             <>
-              <label className="grid gap-1.5">
+              <label className={labelClass}>
                 <span className="text-sm font-medium text-slate-200">
                   {t("auth.fullName")}
                 </span>
@@ -460,11 +465,11 @@ export function AuthPanel({
                 />
               </label>
 
-              <fieldset className="grid gap-2">
+              <fieldset className="flex flex-col gap-2">
                 <legend className="text-sm font-medium text-slate-200">
                   {t("auth.role.label")}
                 </legend>
-                <p className="text-xs text-slate-400">{t("auth.role.hint")}</p>
+                <p className={hintClass}>{t("auth.role.hint")}</p>
                 <div className="grid gap-2 sm:grid-cols-2">
                   {SIGNUP_ROLE_OPTIONS.map((option) => {
                     const selected = role === option.role;
@@ -487,7 +492,7 @@ export function AuthPanel({
                         <span className="block text-sm font-semibold text-white">
                           {t(option.labelKey)}
                         </span>
-                        <span className="mt-0.5 block text-xs leading-snug text-slate-300">
+                        <span className="mt-0.5 block text-xs leading-relaxed text-slate-300">
                           {t(option.hintKey)}
                         </span>
                       </label>
@@ -497,11 +502,11 @@ export function AuthPanel({
               </fieldset>
 
               {isDeveloperSignup ? (
-                <div className="grid gap-3 rounded-xl border border-white/15 bg-white/5 p-3">
-                  <p className="text-xs text-slate-300">
+                <div className="flex flex-col gap-3 rounded-xl border border-white/15 bg-white/5 p-3">
+                  <p className="text-xs leading-relaxed text-slate-300">
                     {t("auth.developer.hint")}
                   </p>
-                  <label className="grid gap-1.5">
+                  <label className={labelClass}>
                     <span className="text-sm font-medium text-slate-200">
                       {t("auth.developer.tradeName")}
                     </span>
@@ -513,7 +518,7 @@ export function AuthPanel({
                       placeholder={t("auth.developer.tradeNamePlaceholder")}
                     />
                   </label>
-                  <label className="grid gap-1.5">
+                  <label className={labelClass}>
                     <span className="text-sm font-medium text-slate-200">
                       {t("auth.developer.tin")}
                     </span>
@@ -527,7 +532,7 @@ export function AuthPanel({
                       autoComplete="off"
                       placeholder={t("auth.developer.tinPlaceholder")}
                     />
-                    <span className="text-xs text-slate-400">
+                    <span className={hintClass}>
                       {t("auth.developer.tinHint")}{" "}
                       <a
                         href="https://etrade.gov.et/business-license-checker"
@@ -544,7 +549,7 @@ export function AuthPanel({
             </>
           ) : null}
 
-          <label className="grid gap-1.5">
+          <label className={labelClass}>
             <span className="text-sm font-medium text-slate-200">
               {mode === "login"
                 ? t("auth.identifier")
@@ -576,7 +581,7 @@ export function AuthPanel({
                     : t("auth.phonePlaceholder")
               }
             />
-            <span className="text-xs text-slate-400">
+            <span className={hintClass}>
               {mode === "login"
                 ? t("auth.identifierHint")
                 : mode === "register" && role === "BUYER_RENTER"
@@ -585,7 +590,7 @@ export function AuthPanel({
             </span>
           </label>
 
-          <label className="grid gap-1.5">
+          <label className={labelClass}>
             <span className="text-sm font-medium text-slate-200">
               {mode === "reset"
                 ? t("auth.reset.newPassword")
@@ -601,7 +606,7 @@ export function AuthPanel({
               }
               placeholder={t("auth.password.placeholder")}
             />
-            <span className="text-xs text-slate-400">
+            <span className={hintClass}>
               {mode === "reset"
                 ? t("auth.reset.passwordHint")
                 : t("auth.password.hint")}
@@ -609,7 +614,7 @@ export function AuthPanel({
           </label>
 
           {mode === "register" || mode === "reset" ? (
-            <label className="grid gap-1.5">
+            <label className={labelClass}>
               <span className="text-sm font-medium text-slate-200">
                 {t("auth.password.confirm")}
               </span>
@@ -625,7 +630,7 @@ export function AuthPanel({
           ) : null}
 
           {(mode === "register" || mode === "reset") && turnstileEnabled ? (
-            <div className="grid gap-1.5">
+            <div className={labelClass}>
               <span className="text-sm font-medium text-slate-200">
                 {t("auth.captchaLabel")}
               </span>
@@ -636,7 +641,7 @@ export function AuthPanel({
           <button
             type="button"
             disabled={credentialsDisabled()}
-            className="rounded-full bg-brand-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-brand-700 disabled:opacity-45"
+            className="mt-1 w-full rounded-full bg-brand-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-brand-700 disabled:opacity-45"
             onClick={() => {
               if (mode === "login") void loginWithPassword();
               else if (mode === "register") {
@@ -660,7 +665,7 @@ export function AuthPanel({
           {mode === "login" ? (
             <button
               type="button"
-              className="text-center text-sm font-semibold text-brand-200 underline-offset-2 hover:underline"
+              className="w-full py-1 text-center text-sm font-semibold leading-relaxed text-brand-200 underline-offset-2 hover:underline"
               onClick={() => switchMode("reset")}
             >
               {t("auth.reset.link")}
@@ -676,7 +681,7 @@ export function AuthPanel({
               </div>
               <a
                 href={googleHref()}
-                className="inline-flex items-center justify-center rounded-full border border-white/20 bg-white/10 px-5 py-3 text-sm font-semibold text-white transition hover:bg-white/15"
+                className="inline-flex w-full items-center justify-center rounded-full border border-white/20 bg-white/10 px-5 py-3 text-sm font-semibold text-white transition hover:bg-white/15"
               >
                 {t("auth.googleCta")}
               </a>
@@ -684,15 +689,15 @@ export function AuthPanel({
           ) : null}
         </div>
       ) : (
-        <div className="grid gap-3">
-          <p className="text-sm text-slate-300">
+        <div className="flex w-full min-w-0 flex-col gap-4">
+          <p className="text-sm leading-relaxed text-slate-300">
             {mode === "login"
               ? t("auth.newDeviceHint")
               : mode === "reset"
                 ? t("auth.reset.codeSent")
                 : t("auth.codeSent")}
           </p>
-          <label className="grid gap-1.5">
+          <label className={labelClass}>
             <span className="text-sm font-medium text-slate-200">
               {t("auth.otp")}
             </span>

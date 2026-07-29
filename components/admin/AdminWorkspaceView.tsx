@@ -1,9 +1,8 @@
-import Link from "next/link";
 import {
   AdminHomeTabs,
   type AdminHomeAlertItem,
 } from "@/components/admin/AdminHomeTabs";
-import { IntegrationsStatusPanel } from "@/components/admin/IntegrationsStatusPanel";
+import type { OpsQueueChip } from "@/components/admin/IntegrationsStatusPanel";
 import type { IntegrationStatus } from "@/lib/ops/integration-status";
 import type { DashboardMetricsData } from "@/lib/catalog/dashboard-metrics";
 import type { Dictionary } from "@/lib/i18n/getDictionary";
@@ -19,12 +18,9 @@ export type AdminWorkspaceCopy = {
   integrationsOpsTitle?: string;
   integrationsRefresh?: string;
   integrationsRefreshing?: string;
-  addListing: string;
-  addListingHint: string;
-  assistantsLink?: string;
   tabOverview?: string;
-  tabStaff?: string;
   tabAlerts?: string;
+  tabServices?: string;
   alertsTitle: string;
   alertsEmpty: string;
 };
@@ -62,7 +58,7 @@ export function AdminWorkspaceView({
 }: AdminWorkspaceProps) {
   const base = `/${locale}`;
 
-  const opsChips = [
+  const opsChips: OpsQueueChip[] = [
     {
       id: "pending",
       label: copy.snapshotPending.replace("{count}", String(pendingCount)),
@@ -100,43 +96,24 @@ export function AdminWorkspaceView({
   ];
 
   return (
-    <div className="relative z-10 mx-auto flex max-w-7xl flex-col gap-6 px-4 py-6 sm:px-6 lg:py-8">
-      <div className="flex flex-wrap items-center justify-end gap-2">
-        <Link
-          href={`${base}/workspace/admin#staff`}
-          className="inline-flex items-center justify-center rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-semibold text-slate-800 transition hover:border-brand-300 hover:bg-brand-50/40"
-        >
-          {copy.assistantsLink ?? copy.tabStaff ?? "Assistants"}
-        </Link>
-        <Link
-          href={`${base}/listings/new`}
-          className="inline-flex items-center justify-center rounded-full bg-brand-600 px-3 py-1 text-xs font-semibold text-white transition hover:bg-brand-700"
-          title={copy.addListingHint}
-        >
-          {copy.addListing}
-        </Link>
-      </div>
-
+    <div className="relative z-10 mx-auto flex min-h-[calc(100dvh-4.5rem)] w-full max-w-7xl flex-col px-4 py-3 sm:px-6 lg:py-4">
       <AdminHomeTabs
         locale={locale}
         dictionary={dictionary}
         metrics={metrics}
         welcomeName={welcomeName}
         alerts={alerts}
+        integrations={integrations}
+        opsChips={opsChips}
         tabOverview={copy.tabOverview ?? "Overview"}
-        tabStaff={copy.tabStaff ?? "Assistants"}
         tabAlerts={copy.tabAlerts ?? "Alerts"}
+        tabServices={copy.tabServices ?? "Services"}
         alertsTitle={copy.alertsTitle}
         alertsEmpty={copy.alertsEmpty}
-      />
-
-      <IntegrationsStatusPanel
-        initialIntegrations={integrations}
-        opsChips={opsChips}
-        title={copy.integrationsTitle ?? copy.snapshotTitle}
-        opsTitle={copy.integrationsOpsTitle ?? "Ops queues"}
-        refreshLabel={copy.integrationsRefresh ?? "Refresh"}
-        refreshingLabel={copy.integrationsRefreshing ?? "Refreshing…"}
+        servicesTitle={copy.integrationsTitle ?? copy.snapshotTitle}
+        servicesOpsTitle={copy.integrationsOpsTitle ?? "Ops queues"}
+        servicesRefresh={copy.integrationsRefresh ?? "Refresh"}
+        servicesRefreshing={copy.integrationsRefreshing ?? "Refreshing…"}
       />
     </div>
   );

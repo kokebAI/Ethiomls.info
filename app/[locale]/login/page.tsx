@@ -35,25 +35,27 @@ export default async function LoginPage({
   }
 
   return (
-    <div className="relative flex min-h-[70vh] items-center justify-center overflow-hidden rounded-[2rem] py-6">
+    <div className="relative isolate w-full py-2 sm:py-6">
       <div
-        className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_top,_rgba(217,119,6,0.22),_transparent_55%),linear-gradient(160deg,#0F172A_0%,#1E293B_55%,#0F172A_100%)]"
+        className="pointer-events-none absolute inset-0 -z-10 overflow-hidden rounded-[1.5rem] bg-[radial-gradient(ellipse_at_top,_rgba(217,119,6,0.22),_transparent_55%),linear-gradient(160deg,#0F172A_0%,#1E293B_55%,#0F172A_100%)] sm:rounded-[2rem]"
         aria-hidden
       />
-      <AddisSkylineBackdrop variant="dark" className="-z-[5]" />
-      <div className="w-full max-w-md">
-        <div className="mb-4 flex items-center justify-between gap-3 px-1">
-          <div className="flex items-center gap-3">
-            <BrandMark className="h-9 w-9" />
-            <div>
+      <AddisSkylineBackdrop variant="dark" className="-z-[5] rounded-[1.5rem] sm:rounded-[2rem]" />
+      <div className="relative z-10 mx-auto w-full max-w-md px-1">
+        <div className="mb-5 flex items-start justify-between gap-3">
+          <div className="flex min-w-0 items-center gap-3">
+            <BrandMark className="h-10 w-10 shrink-0" />
+            <div className="min-w-0">
               <p className="font-bold text-white">{dictionary.brand.name}</p>
-              <p className="text-xs text-slate-300">{dictionary.auth.accessEyebrow}</p>
+              <p className="text-xs leading-snug text-slate-300">
+                {dictionary.auth.accessEyebrow}
+              </p>
             </div>
           </div>
           <LocaleSwitcher />
         </div>
 
-        <div className="rounded-3xl border border-white/15 bg-white/10 p-6 shadow-[0_24px_80px_rgba(15,23,42,0.45)] backdrop-blur-xl sm:p-8">
+        <div className="rounded-3xl border border-white/15 bg-slate-950/80 p-5 shadow-[0_24px_80px_rgba(15,23,42,0.45)] sm:p-8">
           <h1 className="text-balance text-2xl font-bold tracking-tight text-white">
             {dictionary.auth.title}
           </h1>

@@ -62,7 +62,7 @@ export default async function LocaleLayout({
       >
         <AddisSkylineBackdrop />
         <Header />
-        <main className="relative z-10 mx-auto w-full max-w-6xl px-4 py-8 sm:px-6 sm:py-10 lg:py-12">
+        <main className="relative z-10 mx-auto w-full max-w-6xl px-4 py-6 sm:px-6 sm:py-10 lg:py-12">
           {children}
         </main>
       </div>

@@ -170,14 +170,9 @@ export default async function AdminWorkspacePage({
           integrationsOpsTitle: ws.integrationsOpsTitle,
           integrationsRefresh: ws.integrationsRefresh,
           integrationsRefreshing: ws.integrationsRefreshing,
-          addListing: ws.addListing ?? "Add listing",
-          addListingHint:
-            ws.addListingHint ??
-            "Goes to pending review — audit and verify after.",
-          assistantsLink: ws.tabStaff ?? dictionary.nav?.assistants,
           tabOverview: ws.tabOverview,
-          tabStaff: ws.tabStaff,
           tabAlerts: ws.tabAlerts,
+          tabServices: ws.tabServices,
           alertsTitle: ws.alertsTitle,
           alertsEmpty: ws.alertsEmpty,
         }}
