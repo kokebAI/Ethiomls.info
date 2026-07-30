@@ -77,6 +77,7 @@ export const ROLE_HUBS: Record<RoleHubSlug, RoleHubDef> = {
     role: UserRole.ADMIN,
     ctas: [
       { id: "workspace", href: "/workspace/admin", primary: true },
+      { id: "assistants", href: "/admin/assistants" },
       { id: "audit", href: "/admin/audit" },
       { id: "addListing", href: "/listings/new" },
       { id: "imports", href: "/admin/imports" },

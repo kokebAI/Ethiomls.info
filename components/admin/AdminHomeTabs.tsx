@@ -130,36 +130,44 @@ export function AdminHomeTabs({
 
   return (
     <div className="flex min-h-0 flex-1 flex-col gap-3">
-      <div
-        role="tablist"
-        aria-label="Admin home"
-        className="flex shrink-0 flex-wrap gap-1 rounded-xl border border-slate-200/90 bg-slate-50/80 p-1"
-      >
-        {tabs.map((item) => {
-          const active = tab === item.id;
-          return (
-            <button
-              key={item.id}
-              type="button"
-              role="tab"
-              aria-selected={active}
-              id={`admin-home-tab-${item.id}`}
-              onClick={() => selectTab(item.id)}
-              className={`rounded-lg px-3.5 py-2 text-sm font-semibold transition ${
-                active
-                  ? "bg-white text-slate-900 shadow-sm ring-1 ring-slate-200/80"
-                  : "text-slate-600 hover:bg-white/70 hover:text-slate-900"
-              }`}
-            >
-              {item.label}
-              {item.id === "alerts" && alerts.length > 0 ? (
-                <span className="ml-1.5 rounded-full bg-amber-100 px-1.5 py-0.5 text-[10px] font-bold tabular-nums text-amber-900">
-                  {alerts.length}
-                </span>
-              ) : null}
-            </button>
-          );
-        })}
+      <div className="flex shrink-0 flex-wrap items-center justify-between gap-2">
+        <div
+          role="tablist"
+          aria-label="Admin home"
+          className="flex min-w-0 flex-1 flex-wrap gap-1 rounded-xl border border-slate-200/90 bg-slate-50/80 p-1"
+        >
+          {tabs.map((item) => {
+            const active = tab === item.id;
+            return (
+              <button
+                key={item.id}
+                type="button"
+                role="tab"
+                aria-selected={active}
+                id={`admin-home-tab-${item.id}`}
+                onClick={() => selectTab(item.id)}
+                className={`rounded-lg px-3.5 py-2 text-sm font-semibold transition ${
+                  active
+                    ? "bg-white text-slate-900 shadow-sm ring-1 ring-slate-200/80"
+                    : "text-slate-600 hover:bg-white/70 hover:text-slate-900"
+                }`}
+              >
+                {item.label}
+                {item.id === "alerts" && alerts.length > 0 ? (
+                  <span className="ml-1.5 rounded-full bg-amber-100 px-1.5 py-0.5 text-[10px] font-bold tabular-nums text-amber-900">
+                    {alerts.length}
+                  </span>
+                ) : null}
+              </button>
+            );
+          })}
+        </div>
+        <Link
+          href={`${base}/admin/assistants`}
+          className="inline-flex shrink-0 items-center justify-center rounded-full bg-brand-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-brand-700"
+        >
+          {dictionary.officeAssistants?.addCta ?? "Add assistant"}
+        </Link>
       </div>
 
       <div

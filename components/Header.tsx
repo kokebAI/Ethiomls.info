@@ -98,7 +98,7 @@ export function Header() {
   // Profile is covered by the avatar chip — do not add it to nav tabs.
   if (user?.role === "ADMIN") {
     rawNavItems.push({
-      href: "/workspace/admin#staff",
+      href: "/admin/assistants",
       key: "nav.assistants",
     });
     rawNavItems.push({ href: "/admin/audit", key: "nav.audit" });
