@@ -60,10 +60,10 @@ export function LocaleSwitcher() {
   }
 
   return (
-    <div className="relative" ref={rootRef}>
+    <div className="relative shrink-0" ref={rootRef}>
       <button
         type="button"
-        className="inline-flex items-center gap-1 rounded-full border border-slate-200 bg-white px-2 py-1.5 text-left shadow-sm transition hover:border-brand-200 hover:ring-2 hover:ring-brand-100 sm:max-w-none sm:gap-2 sm:px-3"
+        className="inline-flex max-w-[9.5rem] items-center gap-1 rounded-full border border-slate-200 bg-white px-2 py-1.5 text-left shadow-sm transition hover:border-brand-200 hover:ring-2 hover:ring-brand-100 sm:max-w-none sm:gap-2 sm:px-3"
         aria-haspopup="listbox"
         aria-expanded={open}
         aria-controls={listId}
@@ -74,7 +74,7 @@ export function LocaleSwitcher() {
         <span className="inline-flex min-w-[1.75rem] shrink-0 items-center justify-center rounded-full bg-brand-100 px-1.5 py-0.5 text-[0.65rem] font-bold tracking-wide text-brand-800">
           {current.short}
         </span>
-        <span className="hidden truncate text-sm font-semibold text-slate-800 sm:inline">
+        <span className="hidden truncate text-sm font-semibold text-slate-800 lg:inline">
           {current.native}
         </span>
         <ChevronDown

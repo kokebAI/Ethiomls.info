@@ -86,10 +86,10 @@ export function HomeClient({ stats }: HomeClientProps) {
   }
 
   return (
-    <div className="flex flex-col gap-8 sm:gap-12">
+    <div className="flex w-full min-w-0 flex-col gap-8 sm:gap-12">
       <BrandMottoBanner motto={t("brand.motto")} className="animate-rise-in" />
 
-      <section className="animate-rise-in rounded-2xl border border-slate-200/90 bg-white/80 p-4 shadow-[var(--shadow-card)] sm:p-6">
+      <section className="animate-rise-in w-full min-w-0 rounded-2xl border border-slate-200/90 bg-white/80 p-4 shadow-[var(--shadow-card)] sm:p-6">
         <ConversationalFunnel onComplete={handleSearchComplete} />
       </section>
 

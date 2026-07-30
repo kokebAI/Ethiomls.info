@@ -26,7 +26,7 @@ export function BrandMottoBanner({ motto, className = "" }: BrandMottoBannerProp
           className="hidden h-10 w-px shrink-0 bg-[#D97706]/70 sm:block"
           aria-hidden="true"
         />
-        <p className="font-ethiopic text-balance text-xl font-semibold leading-snug tracking-tight text-slate-50 sm:text-2xl lg:text-[1.65rem]">
+        <p className="font-ethiopic text-balance text-lg font-semibold leading-relaxed tracking-tight text-slate-50 sm:text-2xl sm:leading-snug lg:text-[1.65rem]">
           <span className="text-[#D97706]" aria-hidden="true">
             “
           </span>

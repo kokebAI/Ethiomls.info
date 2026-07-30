@@ -127,19 +127,19 @@ export function Header() {
   }
 
   return (
-    <header className="sticky top-0 z-40 border-b border-slate-200/80 bg-white/85 backdrop-blur-xl">
-      <div className="mx-auto flex min-h-[4.5rem] w-full max-w-6xl items-center justify-between gap-3 px-4 sm:px-6">
+    <header className="sticky top-0 z-40 overflow-x-clip border-b border-slate-200/80 bg-white/85 backdrop-blur-xl">
+      <div className="mx-auto flex h-14 w-full max-w-6xl items-center justify-between gap-2 px-4 sm:h-[4.5rem] sm:gap-3 sm:px-6">
         <Link
           href={homeHref}
-          className="flex min-w-0 shrink items-center gap-3"
+          className="flex min-w-0 flex-1 items-center gap-2.5 sm:gap-3"
           onClick={() => setMobileOpen(false)}
         >
-          <BrandMark className="h-10 w-10 shrink-0" />
+          <BrandMark className="h-9 w-9 sm:h-10 sm:w-10" />
           <span className="flex min-w-0 flex-col gap-0.5">
             <span className="truncate text-base font-bold tracking-tight text-slate-deep sm:text-[1.05rem]">
               {t("brand.name")}
             </span>
-            <span className="hidden truncate text-xs leading-snug text-ink-muted sm:block lg:max-w-[18rem] xl:max-w-[22rem]">
+            <span className="hidden truncate text-xs leading-snug text-ink-muted lg:block lg:max-w-[18rem] xl:max-w-[22rem]">
               {t("brand.tagline")}
             </span>
           </span>
@@ -160,11 +160,11 @@ export function Header() {
           ))}
         </nav>
 
-        <div className="flex min-w-0 shrink items-center gap-1.5 sm:gap-3">
+        <div className="flex shrink-0 items-center gap-1.5 sm:gap-2.5">
           {authReady && user ? (
             <Link
               href={`${base}/profile`}
-              className="inline-flex max-w-[7.5rem] items-center gap-1 rounded-full border border-slate-200 bg-white px-2 py-1.5 text-sm font-semibold text-ink transition hover:bg-slate-50 sm:max-w-[11rem] sm:gap-1.5 sm:px-3 sm:py-2"
+              className="hidden max-w-[11rem] items-center gap-1.5 rounded-full border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-ink transition hover:bg-slate-50 sm:inline-flex"
               title={user.fullName}
             >
               <UserRound className="h-4 w-4 shrink-0 text-brand-600" />
@@ -200,7 +200,7 @@ export function Header() {
           ) : null}
           <button
             type="button"
-            className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-700 transition hover:bg-slate-50 lg:hidden"
+            className="inline-flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-700 transition hover:bg-slate-50 sm:h-10 sm:w-10 lg:hidden"
             aria-expanded={mobileOpen}
             aria-label={mobileOpen ? t("header.menuClose") : t("header.menuOpen")}
             onClick={() => setMobileOpen((open) => !open)}
