@@ -171,6 +171,7 @@ export default async function AdminWorkspacePage({
           integrationsRefresh: ws.integrationsRefresh,
           integrationsRefreshing: ws.integrationsRefreshing,
           tabOverview: ws.tabOverview,
+          tabAssistants: ws.tabStaff,
           tabAlerts: ws.tabAlerts,
           tabServices: ws.tabServices,
           alertsTitle: ws.alertsTitle,

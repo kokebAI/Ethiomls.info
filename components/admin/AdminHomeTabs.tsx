@@ -7,6 +7,7 @@ import {
   IntegrationsStatusPanel,
   type OpsQueueChip,
 } from "@/components/admin/IntegrationsStatusPanel";
+import { OfficeAssistantsPanel } from "@/components/admin/OfficeAssistantsPanel";
 import type { IntegrationStatus } from "@/lib/ops/integration-status";
 import type { DashboardMetricsData } from "@/lib/catalog/dashboard-metrics";
 import type { Dictionary } from "@/lib/i18n/getDictionary";
@@ -20,7 +21,7 @@ export type AdminHomeAlertItem = {
   createdAtLabel: string;
 };
 
-type AdminHomeTab = "overview" | "alerts" | "services";
+type AdminHomeTab = "overview" | "assistants" | "alerts" | "services";
 
 type AdminHomeTabsProps = {
   locale: string;
@@ -31,6 +32,7 @@ type AdminHomeTabsProps = {
   integrations: IntegrationStatus[];
   opsChips: OpsQueueChip[];
   tabOverview: string;
+  tabAssistants: string;
   tabAlerts: string;
   tabServices: string;
   alertsTitle: string;
@@ -44,12 +46,14 @@ type AdminHomeTabsProps = {
 function tabFromHash(hash: string): AdminHomeTab {
   const id = hash.replace(/^#/, "");
   if (id === "admin-alerts" || id === "alerts") return "alerts";
+  if (id === "staff" || id === "assistants") return "assistants";
   if (id === "services") return "services";
   return "overview";
 }
 
 function hashForTab(tab: AdminHomeTab): string {
   if (tab === "alerts") return "#admin-alerts";
+  if (tab === "assistants") return "#staff";
   if (tab === "services") return "#services";
   return "#overview";
 }
@@ -63,6 +67,7 @@ export function AdminHomeTabs({
   integrations,
   opsChips,
   tabOverview,
+  tabAssistants,
   tabAlerts,
   tabServices,
   alertsTitle,
@@ -91,6 +96,8 @@ export function AdminHomeTabs({
           (url.hash === "#admin-alerts" ||
             url.hash === "#overview" ||
             url.hash === "#alerts" ||
+            url.hash === "#staff" ||
+            url.hash === "#assistants" ||
             url.hash === "#services")
         ) {
           queueMicrotask(apply);
@@ -116,6 +123,7 @@ export function AdminHomeTabs({
 
   const tabs: { id: AdminHomeTab; label: string }[] = [
     { id: "overview", label: tabOverview },
+    { id: "assistants", label: tabAssistants },
     { id: "alerts", label: tabAlerts },
     { id: "services", label: tabServices },
   ];
@@ -171,6 +179,12 @@ export function AdminHomeTabs({
             isAdmin
             fitViewport
           />
+        ) : null}
+
+        {tab === "assistants" ? (
+          <div id="staff" className="scroll-mt-28">
+            <OfficeAssistantsPanel />
+          </div>
         ) : null}
 
         {tab === "alerts" ? (

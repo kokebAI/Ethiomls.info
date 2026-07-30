@@ -19,6 +19,7 @@ export type AdminWorkspaceCopy = {
   integrationsRefresh?: string;
   integrationsRefreshing?: string;
   tabOverview?: string;
+  tabAssistants?: string;
   tabAlerts?: string;
   tabServices?: string;
   alertsTitle: string;
@@ -106,6 +107,7 @@ export function AdminWorkspaceView({
         integrations={integrations}
         opsChips={opsChips}
         tabOverview={copy.tabOverview ?? "Overview"}
+        tabAssistants={copy.tabAssistants ?? "Assistants"}
         tabAlerts={copy.tabAlerts ?? "Alerts"}
         tabServices={copy.tabServices ?? "Services"}
         alertsTitle={copy.alertsTitle}
