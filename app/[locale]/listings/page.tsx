@@ -2,6 +2,16 @@ import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { PageIntro } from "@/components/PageIntro";
 import { ListingsFunnel } from "./listings-funnel";
+import { getSession } from "@/lib/auth/session";
+import {
+  allListingPhotos,
+  canViewFullListingDetails,
+  teaserCoverPhotos,
+} from "@/lib/catalog/buyer-visibility";
+import {
+  formatPriceBand,
+  priceBandSortKey,
+} from "@/lib/catalog/price-band";
 import { fetchPublishedListings } from "@/lib/catalog/queries";
 import { isLocale, type Locale } from "@/lib/i18n/config";
 import { getDictionary, translate } from "@/lib/i18n/getDictionary";
@@ -68,7 +78,11 @@ export default async function ListingsPage({
   if (toHub) redirect(toHub);
 
   const dictionary = getDictionary(locale);
-  const listings = await fetchPublishedListings();
+  const [listings, session] = await Promise.all([
+    fetchPublishedListings(),
+    getSession(),
+  ]);
+  const showFull = canViewFullListingDetails({ session });
 
   const t = (key: string) => translate(dictionary, key);
 
@@ -77,27 +91,22 @@ export default async function ListingsPage({
       ? pickLocalized(listing.subCity.name, locale) || listing.subCity.code
       : "—";
     const subCityCode = listing.subCity?.code ?? "";
-    const priceFormatted = formatMoney(
-      Number(listing.priceAmount),
-      listing.priceCurrency,
-    );
+    const amount = Number(listing.priceAmount);
+    const currency = listing.priceCurrency;
+    const priceFormatted = showFull
+      ? formatMoney(amount, currency)
+      : formatPriceBand(amount, currency, listing.listingType);
 
-    const photos = [
-      ...new Set(
-        [
-          listing.coverImageUrl,
-          ...listing.images,
-          ...listing.galleryImageUrls,
-        ].filter((url): url is string => Boolean(url)),
-      ),
-    ];
+    const photos = showFull
+      ? allListingPhotos(listing)
+      : teaserCoverPhotos(listing);
 
     return {
       id: listing.id,
       title: pickLocalized(listing.title, locale) || listing.id,
       href: `/${locale}/listings/${listing.id}`,
       imageUrl: photos[0] ?? null,
-      photoCount: photos.length,
+      photoCount: showFull ? photos.length : photos.length > 0 ? 1 : 0,
       meta: [
         subCity,
         priceFormatted,
@@ -130,8 +139,11 @@ export default async function ListingsPage({
       ],
       subCityCode,
       listingType: listing.listingType,
-      priceAmount: Number(listing.priceAmount),
-      priceCurrency: listing.priceCurrency,
+      // Guests get band midpoints only — never exact list prices in HTML props.
+      priceAmount: showFull
+        ? amount
+        : priceBandSortKey(amount, currency, listing.listingType),
+      priceCurrency: currency,
       completionPercent:
         listing.completionPercent != null
           ? Number(listing.completionPercent)

@@ -74,7 +74,11 @@ export async function POST(request: NextRequest) {
     }
 
     const brokerUser = listing.delala?.user ?? listing.owner;
-    const rawPhone = brokerUser.phone?.trim() ?? null;
+    // Prefer listing contact line (what buyers see), then broker/owner account phone.
+    const rawPhone =
+      listing.contactPhone?.trim() ||
+      brokerUser.phone?.trim() ||
+      null;
 
     if (!rawPhone) {
       return NextResponse.json(

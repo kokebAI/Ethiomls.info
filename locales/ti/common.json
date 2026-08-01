@@ -995,7 +995,7 @@
     "paymentPlan": "ውጥን ኽፍሊት",
     "downPayment": "ቅድመ ኽፍሊት",
     "milestones": "ናይ ደረጃ ክፍሊት",
-    "signUpForContact": "ንርክብ ስልኪ ንምርኣይን ምብጻሕ ንምሕታትን ብናይ ኢትዮጵያ ስልኪ ተመዝገብ።",
+    "signUpForContact": "ንርክብ ስልኪ ንምርኣይን ምብጻኅ ንምሕታትን እተው።",
     "signUpForTour": "ን360° ጉብኝት ንምኽፋት ነጻ መለለዪ ፍጠር።",
     "signUpCta": "ንምኽፋት ተመዝገብ",
     "tourComingSoon": "360° ጉብኝት ብቐረባ ክመጽእ እዩ",
@@ -1019,7 +1019,12 @@
     "progress": "ምዕባለ",
     "developer": "ዲቨሎፐር",
     "broker": "ደላላ",
-    "call": "ደውል"
+    "call": "ደውል",
+    "signUpForDetails": "ምሉእ ዋጋ፣ ኣድራሻ፣ ስእልታት፣ መግለጲን ርክብን ንምርኣይ ብነጻ እተው።",
+    "priceBandLabel": "ናይ ዋጋ ደረጃ",
+    "photosLocked": "ኩሎም {count} ስእልታት ንምርኣይ እተው።",
+    "addressLocked": "ትክክለኛ ኣድራሻ ጎደና ድሕሪ ምእታው ይክፈት።",
+    "exactPriceLocked": "ትክክለኛ ዋጋ ድሕሪ ምእታው ይክፈት።"
   },
   "pwa": {
     "installTitle": "EthioMLS ጽዓን",

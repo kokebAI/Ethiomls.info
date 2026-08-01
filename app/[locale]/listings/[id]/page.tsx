@@ -12,19 +12,26 @@ import {
   Droplets,
   Globe,
   MapPin,
-  Phone,
   Ruler,
   Shield,
   Sofa,
   Zap,
 } from "lucide-react";
 import { ListingAuditPanel } from "@/components/admin/ListingAuditPanel";
+import { ListingContactCard } from "@/components/leads/listing-contact-card";
 import { ListingGallery } from "@/components/property/ListingGallery";
 import { ShareListingButton } from "@/components/property/ShareListingButton";
+import { SignInToUnlock } from "@/components/property/sign-in-to-unlock";
 import { VrViewer } from "@/components/property/vr-viewer";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { getCurrentAdmin, getCurrentOpsStaff } from "@/lib/auth/admin";
 import { getSession } from "@/lib/auth/session";
+import {
+  allListingPhotos,
+  canViewFullListingDetails,
+  teaserCoverPhotos,
+} from "@/lib/catalog/buyer-visibility";
+import { formatPriceBand } from "@/lib/catalog/price-band";
 import { fetchListingById } from "@/lib/catalog/queries";
 import { formatMoney } from "@/lib/compliance/currency";
 import { formatConstructionStage } from "@/lib/domain/construction-stage";
@@ -58,9 +65,6 @@ export async function generateMetadata({
   if (!listing) return { title: "Listing" };
 
   const title = pickLocalized(listing.title, locale) || listing.id;
-  const description =
-    pickLocalized(listing.description, locale) ||
-    `${title} in Addis Ababa — verified on EthioMLS for diaspora and investors.`;
   const subCity = listing.subCity
     ? pickLocalized(listing.subCity.name, locale) || listing.subCity.code
     : "Addis Ababa";
@@ -75,12 +79,25 @@ export async function generateMetadata({
     listing.images[0] ||
     listing.galleryImageUrls[0] ||
     null;
+  const beds =
+    listing.bedrooms != null ? `${listing.bedrooms} bed` : null;
+  const baths =
+    listing.bathrooms != null ? `${listing.bathrooms} bath` : null;
+  // Public metadata stays teaser-safe (no exact price, street address, or full copy).
+  const teaserDescription = [
+    `${title} in ${subCity}, Addis Ababa`,
+    beds,
+    baths,
+    "Sign in on EthioMLS to see full price, photos, address, and contact.",
+  ]
+    .filter(Boolean)
+    .join(" · ");
 
   return buildPageMetadata({
     locale,
     path: `/listings/${listing.id}`,
     title: `${title} | ${subCity} ${intent}`,
-    description: description.slice(0, 320),
+    description: teaserDescription.slice(0, 320),
     image: cover,
     keywords: [
       `${subCity} property ${intent}`,
@@ -135,42 +152,59 @@ export default async function ListingDetailPage({
   }
 
   const base = `/${locale}`;
-  const isSignedIn = Boolean(session);
+  const showFull = canViewFullListingDetails({
+    session,
+    staff: Boolean(staff),
+    listing: {
+      ownerId: listing.ownerId,
+      developerUserId: listing.developer?.userId,
+    },
+  });
   const loginHref = `${base}/login?mode=register&next=${encodeURIComponent(`${base}/listings/${encodeURIComponent(listing.id)}`)}`;
+  const signInHref = `${base}/login?next=${encodeURIComponent(`${base}/listings/${listing.id}`)}`;
 
   const title = pickLocalized(listing.title, locale) || listing.id;
-  const description = pickLocalized(listing.description, locale);
+  const description = showFull
+    ? pickLocalized(listing.description, locale)
+    : null;
   const subCityName = listing.subCity
     ? pickLocalized(listing.subCity.name, locale) || listing.subCity.code
     : null;
 
-  const photos = [
-    ...new Set(
-      [
-        listing.coverImageUrl,
-        ...listing.images,
-        ...listing.galleryImageUrls,
-      ].filter((url): url is string => Boolean(url)),
-    ),
-  ];
+  const fullPhotos = allListingPhotos(listing);
+  const photos = showFull ? fullPhotos : teaserCoverPhotos(listing);
+  const lockedPhotoCount = showFull
+    ? 0
+    : Math.max(0, fullPhotos.length - photos.length);
 
-  const panoramas = [
-    ...new Set(
-      [...listing.panoramicImageUrls, listing.tourUrl].filter(
-        (url): url is string => Boolean(url),
-      ),
-    ),
-  ];
+  const panoramas = showFull
+    ? [
+        ...new Set(
+          [...listing.panoramicImageUrls, listing.tourUrl].filter(
+            (url): url is string => Boolean(url),
+          ),
+        ),
+      ]
+    : [];
+  const hasPanoramas =
+    listing.panoramicImageUrls.length > 0 || Boolean(listing.tourUrl);
 
-  const price = formatMoney(Number(listing.priceAmount), listing.priceCurrency);
+  const amount = Number(listing.priceAmount);
+  const price = showFull
+    ? formatMoney(amount, listing.priceCurrency)
+    : formatPriceBand(amount, listing.priceCurrency, listing.listingType);
   const floorArea =
-    listing.floorAreaSqm != null ? Number(listing.floorAreaSqm) : null;
+    showFull && listing.floorAreaSqm != null
+      ? Number(listing.floorAreaSqm)
+      : null;
   const plotArea =
-    listing.plotAreaSqm != null ? Number(listing.plotAreaSqm) : null;
+    showFull && listing.plotAreaSqm != null
+      ? Number(listing.plotAreaSqm)
+      : null;
   const pricePerSqm =
-    floorArea && floorArea > 0
+    showFull && floorArea && floorArea > 0
       ? formatMoney(
-          Math.round(Number(listing.priceAmount) / floorArea),
+          Math.round(amount / floorArea),
           listing.priceCurrency,
         )
       : null;
@@ -182,13 +216,17 @@ export default async function ListingDetailPage({
         ? t("listing.forRent")
         : t("listing.offPlan");
 
-  const facts: { label: string; value: string }[] = [
+  const publicFacts: { label: string; value: string }[] = [
     listing.bedrooms != null
       ? { label: t("listing.bedrooms"), value: String(listing.bedrooms) }
       : null,
     listing.bathrooms != null
       ? { label: t("listing.bathrooms"), value: String(listing.bathrooms) }
       : null,
+  ].filter((fact): fact is { label: string; value: string } => fact != null);
+
+  const fullFacts: { label: string; value: string }[] = [
+    ...publicFacts,
     floorArea != null
       ? { label: t("listing.floorArea"), value: `${floorArea} m²` }
       : null,
@@ -221,30 +259,44 @@ export default async function ListingDetailPage({
       : null,
   ].filter((fact): fact is { label: string; value: string } => fact != null);
 
-  const amenities: string[] = [
-    listing.waterAvailable ? t("listing.waterAvailability") : null,
-    listing.powerBackup ? t("listing.powerBackup") : null,
-    listing.gatedCompound ? t("listing.gatedCompound") : null,
-    listing.parking ? t("listing.parking") : null,
-    listing.elevator ? t("listing.elevator") : null,
-    listing.furnished ? t("listing.furnished") : null,
-    listing.escrowVerified ? t("listing.escrowVerified") : null,
-  ].filter((item): item is string => Boolean(item));
+  const facts = showFull ? fullFacts : publicFacts;
 
-  const developerName =
-    listing.developer?.tradeName ||
-    (listing.developer?.displayName
-      ? pickLocalized(listing.developer.displayName, locale)
-      : "") ||
-    null;
-  const developerHref = listing.developer?.id
-    ? `${base}/developers/${encodeURIComponent(listing.developer.id)}`
+  const amenities: string[] = showFull
+    ? [
+        listing.waterAvailable ? t("listing.waterAvailability") : null,
+        listing.powerBackup ? t("listing.powerBackup") : null,
+        listing.gatedCompound ? t("listing.gatedCompound") : null,
+        listing.parking ? t("listing.parking") : null,
+        listing.elevator ? t("listing.elevator") : null,
+        listing.furnished ? t("listing.furnished") : null,
+        listing.escrowVerified ? t("listing.escrowVerified") : null,
+      ].filter((item): item is string => Boolean(item))
+    : [];
+
+  const developerName = showFull
+    ? listing.developer?.tradeName ||
+      (listing.developer?.displayName
+        ? pickLocalized(listing.developer.displayName, locale)
+        : "") ||
+      null
     : null;
-  const contactName =
-    listing.contactName || developerName || listing.owner?.fullName || null;
+  const developerHref =
+    showFull && listing.developer?.id
+      ? `${base}/developers/${encodeURIComponent(listing.developer.id)}`
+      : null;
+  const contactName = showFull
+    ? listing.contactName || developerName || listing.owner?.fullName || null
+    : null;
+  const brokerPhone =
+    listing.contactPhone?.trim() || listing.owner?.phone?.trim() || "";
 
   const isOffPlan = listing.listingType === "OFF_PLAN";
   const listingUrl = absoluteUrl(`${base}/listings/${listing.id}`);
+  const seoDescription = showFull
+    ? description ||
+      `${title} in ${subCityName ?? "Addis Ababa"} — verified on EthioMLS.`
+    : `${title} in ${subCityName ?? "Addis Ababa"}. Sign in to see full details on EthioMLS.`;
+  const sharePriceText = price;
 
   return (
     <div
@@ -258,16 +310,16 @@ export default async function ListingDetailPage({
             locale,
             id: listing.id,
             title,
-            description,
+            description: seoDescription,
             url: listingUrl,
             imageUrls: photos,
-            price: Number(listing.priceAmount),
-            currency: listing.priceCurrency,
+            price: showFull ? amount : null,
+            currency: showFull ? listing.priceCurrency : null,
             listingType: listing.listingType,
             bedrooms: listing.bedrooms,
             bathrooms: listing.bathrooms,
-            floorAreaSqm: floorArea,
-            addressLine: listing.addressLine,
+            floorAreaSqm: showFull ? floorArea : null,
+            addressLine: showFull ? listing.addressLine : null,
             subCity: subCityName,
           }),
           breadcrumbJsonLd([
@@ -288,11 +340,24 @@ export default async function ListingDetailPage({
         {t("listingDetail.back")}
       </Link>
 
-      <ListingGallery
-        photos={photos}
-        title={title}
-        emptyLabel={t("listing.photoComingSoon")}
-      />
+      <div className="space-y-3">
+        <ListingGallery
+          photos={photos}
+          title={title}
+          emptyLabel={t("listing.photoComingSoon")}
+        />
+        {!showFull && lockedPhotoCount > 0 ? (
+          <SignInToUnlock
+            compact
+            message={t("listingDetail.photosLocked").replace(
+              "{count}",
+              String(lockedPhotoCount + photos.length),
+            )}
+            ctaLabel={t("listingDetail.signUpCta")}
+            loginHref={loginHref}
+          />
+        ) : null}
+      </div>
 
       {staff && auditCopy && listing.status !== "PUBLISHED" ? (
         <ListingAuditPanel
@@ -417,10 +482,17 @@ export default async function ListingDetailPage({
           </h1>
           <p className="flex items-center gap-1.5 text-sm text-slate-600">
             <MapPin className="h-4 w-4 shrink-0 text-emerald-600" aria-hidden="true" />
-            {[listing.addressLine, subCityName, "Addis Ababa"]
-              .filter(Boolean)
-              .join(", ")}
+            {showFull
+              ? [listing.addressLine, subCityName, "Addis Ababa"]
+                  .filter(Boolean)
+                  .join(", ")
+              : [subCityName, "Addis Ababa"].filter(Boolean).join(", ")}
           </p>
+          {!showFull ? (
+            <p className="text-xs text-slate-500">
+              {t("listingDetail.addressLocked")}
+            </p>
+          ) : null}
           <p className="text-xs font-medium uppercase tracking-wide text-slate-400">
             {t("listing.propertyId")}: {listing.id}
           </p>
@@ -430,16 +502,21 @@ export default async function ListingDetailPage({
           <div className="space-y-1">
             <p className="text-3xl font-bold tracking-tight text-slate-900">
               {price}
-              {listing.listingType === "RENT" ? (
+              {showFull && listing.listingType === "RENT" ? (
                 <span className="text-base font-semibold text-slate-500">
                   {" "}
                   {t("listingDetail.perMonth")}
                 </span>
               ) : null}
             </p>
-            {pricePerSqm ? (
+            {showFull && pricePerSqm ? (
               <p className="text-sm text-slate-500">
                 {pricePerSqm} / m²
+              </p>
+            ) : null}
+            {!showFull ? (
+              <p className="text-xs text-slate-500">
+                {t("listingDetail.exactPriceLocked")}
               </p>
             ) : null}
           </div>
@@ -448,8 +525,8 @@ export default async function ListingDetailPage({
             title={title}
             text={
               subCityName
-                ? `${title} · ${subCityName}, Addis Ababa · ${price}`
-                : `${title} · Addis Ababa · ${price}`
+                ? `${title} · ${subCityName}, Addis Ababa · ${sharePriceText}`
+                : `${title} · Addis Ababa · ${sharePriceText}`
             }
             className="w-full lg:ml-auto lg:w-auto"
           />
@@ -483,10 +560,20 @@ export default async function ListingDetailPage({
                 </div>
               ))}
             </dl>
+            {!showFull ? (
+              <div className="mt-4">
+                <SignInToUnlock
+                  compact
+                  message={t("listingDetail.signUpForDetails")}
+                  ctaLabel={t("listingDetail.signUpCta")}
+                  loginHref={loginHref}
+                />
+              </div>
+            ) : null}
           </section>
 
           {/* Description */}
-          {description ? (
+          {showFull && description ? (
             <section className="rounded-2xl border border-slate-200/90 bg-white p-5 shadow-[var(--shadow-card)] sm:p-6">
               <h2 className="text-sm font-bold uppercase tracking-wide text-slate-500">
                 {t("listingDetail.description")}
@@ -496,9 +583,23 @@ export default async function ListingDetailPage({
               </p>
             </section>
           ) : null}
+          {!showFull ? (
+            <section className="rounded-2xl border border-slate-200/90 bg-white p-5 shadow-[var(--shadow-card)] sm:p-6">
+              <h2 className="text-sm font-bold uppercase tracking-wide text-slate-500">
+                {t("listingDetail.description")}
+              </h2>
+              <div className="mt-4">
+                <SignInToUnlock
+                  message={t("listingDetail.signUpForDetails")}
+                  ctaLabel={t("listingDetail.signUpCta")}
+                  loginHref={loginHref}
+                />
+              </div>
+            </section>
+          ) : null}
 
           {/* Amenities */}
-          {amenities.length > 0 ? (
+          {showFull && amenities.length > 0 ? (
             <section className="rounded-2xl border border-slate-200/90 bg-white p-5 shadow-[var(--shadow-card)] sm:p-6">
               <h2 className="text-sm font-bold uppercase tracking-wide text-slate-500">
                 {t("listingDetail.amenities")}
@@ -537,7 +638,7 @@ export default async function ListingDetailPage({
           ) : null}
 
           {/* Off-plan payment terms */}
-          {isOffPlan ? (
+          {showFull && isOffPlan ? (
             <section className="rounded-2xl border border-violet-200/80 bg-violet-50/50 p-5 shadow-[var(--shadow-card)] sm:p-6">
               <h2 className="text-sm font-bold uppercase tracking-wide text-violet-700">
                 {t("listingDetail.offPlanTerms")}
@@ -580,24 +681,18 @@ export default async function ListingDetailPage({
             <h2 className="text-sm font-bold uppercase tracking-wide text-slate-500">
               {t("listing.virtualTour")}
             </h2>
-            {panoramas.length > 0 ? (
-              isSignedIn ? (
-                <div className="mt-4">
-                  <VrViewer panoramicImageUrls={panoramas} />
-                </div>
-              ) : (
-                <div className="mt-4 rounded-xl border border-dashed border-slate-300 bg-slate-50 px-4 py-8 text-center">
-                  <p className="text-sm text-slate-600">
-                    {t("listingDetail.signUpForTour")}
-                  </p>
-                  <Link
-                    href={loginHref}
-                    className="mt-3 inline-flex rounded-full bg-brand-600 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-brand-700"
-                  >
-                    {t("listingDetail.signUpCta")}
-                  </Link>
-                </div>
-              )
+            {showFull && panoramas.length > 0 ? (
+              <div className="mt-4">
+                <VrViewer panoramicImageUrls={panoramas} />
+              </div>
+            ) : !showFull && hasPanoramas ? (
+              <div className="mt-4">
+                <SignInToUnlock
+                  message={t("listingDetail.signUpForTour")}
+                  ctaLabel={t("listingDetail.signUpCta")}
+                  loginHref={loginHref}
+                />
+              </div>
             ) : (
               <div className="mt-4 flex flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-slate-300 bg-gradient-to-br from-slate-50 via-white to-emerald-50/40 px-4 py-10 text-center">
                 <p className="text-sm font-medium text-slate-600">
@@ -617,10 +712,10 @@ export default async function ListingDetailPage({
             <h2 className="text-sm font-bold uppercase tracking-wide text-slate-500">
               {t("listingDetail.contact")}
             </h2>
-            {isSignedIn ? (
-              <>
+            {showFull ? (
+              <div className="mt-3 space-y-3">
                 {contactName ? (
-                  <p className="mt-3 text-sm font-semibold text-slate-900">
+                  <p className="text-sm font-semibold text-slate-900">
                     {contactName}
                   </p>
                 ) : null}
@@ -628,28 +723,27 @@ export default async function ListingDetailPage({
                   developerHref ? (
                     <Link
                       href={developerHref}
-                      className="mt-1 flex items-center gap-1.5 text-sm font-medium text-emerald-800 underline-offset-2 hover:underline"
+                      className="flex items-center gap-1.5 text-sm font-medium text-emerald-800 underline-offset-2 hover:underline"
                     >
                       <Building2 className="h-4 w-4 text-slate-400" aria-hidden="true" />
                       {developerName}
                     </Link>
                   ) : (
-                    <p className="mt-1 flex items-center gap-1.5 text-sm text-slate-600">
+                    <p className="flex items-center gap-1.5 text-sm text-slate-600">
                       <Building2 className="h-4 w-4 text-slate-400" aria-hidden="true" />
                       {developerName}
                     </p>
                   )
                 ) : null}
-                {listing.contactPhone ? (
-                  <a
-                    href={`tel:${listing.contactPhone}`}
-                    className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-full bg-emerald-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-emerald-700"
-                  >
-                    <Phone className="h-4 w-4" aria-hidden="true" />
-                    {listing.contactPhone}
-                  </a>
+                {brokerPhone ? (
+                  <ListingContactCard
+                    listingId={listing.id}
+                    brokerPhone={brokerPhone}
+                    brokerDisplayName={contactName ?? undefined}
+                    requesterId={session?.userId}
+                  />
                 ) : (
-                  <p className="mt-4 rounded-xl bg-slate-50 px-3 py-2.5 text-center text-sm text-slate-600">
+                  <p className="rounded-xl bg-slate-50 px-3 py-2.5 text-center text-sm text-slate-600">
                     {t("listingDetail.noPhone")}
                   </p>
                 )}
@@ -658,16 +752,16 @@ export default async function ListingDetailPage({
                     href={listing.sourceUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="mt-3 block text-center text-xs font-medium text-slate-500 underline-offset-2 hover:underline"
+                    className="block text-center text-xs font-medium text-slate-500 underline-offset-2 hover:underline"
                   >
                     {t("listingDetail.sourcePost")}
                   </a>
                 ) : null}
-              </>
+              </div>
             ) : (
               <div className="mt-4 space-y-3">
                 <p className="text-sm leading-relaxed text-slate-600">
-                  {t("listingDetail.signUpForContact")}
+                  {t("listingDetail.signUpForDetails")}
                 </p>
                 <Link
                   href={loginHref}
@@ -676,7 +770,7 @@ export default async function ListingDetailPage({
                   {t("listingDetail.signUpCta")}
                 </Link>
                 <Link
-                  href={`${base}/login?next=${encodeURIComponent(`${base}/listings/${listing.id}`)}`}
+                  href={signInHref}
                   className="block text-center text-xs font-medium text-slate-500 underline-offset-2 hover:underline"
                 >
                   {t("nav.signIn")}

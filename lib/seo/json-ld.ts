@@ -70,15 +70,17 @@ export function realEstateListingJsonLd(input: {
   locale: Locale;
   id: string;
   title: string;
-  description: string;
+  description?: string | null;
   url: string;
   imageUrls: string[];
-  price: number;
-  currency: string;
+  /** Omit for anonymous teasers (lead-capture). */
+  price?: number | null;
+  currency?: string | null;
   listingType: "SALE" | "RENT" | "OFF_PLAN" | string;
   bedrooms?: number | null;
   bathrooms?: number | null;
   floorAreaSqm?: number | null;
+  /** Omit street address for anonymous teasers. */
   addressLine?: string | null;
   subCity?: string | null;
 }): JsonLd {
@@ -86,6 +88,11 @@ export function realEstateListingJsonLd(input: {
     input.listingType === "RENT"
       ? "https://schema.org/ForRent"
       : "https://schema.org/ForSale";
+
+  const hasPrice =
+    typeof input.price === "number" &&
+    Number.isFinite(input.price) &&
+    Boolean(input.currency);
 
   return {
     "@context": "https://schema.org",
@@ -99,19 +106,32 @@ export function realEstateListingJsonLd(input: {
     inLanguage: input.locale,
     datePosted: new Date().toISOString(),
     image: input.imageUrls.slice(0, 8),
-    offers: {
-      "@type": "Offer",
-      price: input.price,
-      priceCurrency: input.currency,
-      availability,
-      businessFunction:
-        input.listingType === "RENT"
-          ? "https://schema.org/LeaseOut"
-          : "https://schema.org/Sell",
-    },
+    ...(hasPrice
+      ? {
+          offers: {
+            "@type": "Offer",
+            price: input.price,
+            priceCurrency: input.currency,
+            availability,
+            businessFunction:
+              input.listingType === "RENT"
+                ? "https://schema.org/LeaseOut"
+                : "https://schema.org/Sell",
+          },
+        }
+      : {
+          offers: {
+            "@type": "Offer",
+            availability,
+            businessFunction:
+              input.listingType === "RENT"
+                ? "https://schema.org/LeaseOut"
+                : "https://schema.org/Sell",
+          },
+        }),
     address: {
       "@type": "PostalAddress",
-      streetAddress: input.addressLine || undefined,
+      ...(input.addressLine ? { streetAddress: input.addressLine } : {}),
       addressLocality: input.subCity || "Addis Ababa",
       addressRegion: "Addis Ababa",
       addressCountry: "ET",
