@@ -123,6 +123,22 @@ export default async function AdminScrapeReviewPage({
 
   return (
     <div className="mx-auto flex max-w-6xl flex-col gap-6">
+      <div
+        role="status"
+        className="rounded-2xl border border-amber-500/40 bg-amber-500/10 px-4 py-3 text-sm"
+      >
+        <strong className="font-semibold">Prefer AGT CRM scrape review</strong>{" "}
+        for new scrapes:{" "}
+        <a
+          href="https://agt-crm-chi.vercel.app/admin/scrape-review"
+          className="font-semibold underline"
+          target="_blank"
+          rel="noreferrer"
+        >
+          agt-crm-chi.vercel.app/admin/scrape-review
+        </a>
+        . This queue still shows EthioMLS-local scrape leftovers.
+      </div>
       <PageIntro
         eyebrow={dictionary.scrapeReview.eyebrow}
         title={dictionary.scrapeReview.title}

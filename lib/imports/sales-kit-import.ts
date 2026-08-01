@@ -130,5 +130,27 @@ export async function importSalesKitListings(input: {
     created += 1;
   }
 
+  if (input.account.phone && listingIds.length > 0) {
+    const { registerAgtCrmLead, agtCrmAccountTypeForRole } = await import(
+      "@/lib/crm/agt-crm-client"
+    );
+    const baseUrl = (
+      process.env.NEXT_PUBLIC_SITE_URL ??
+      process.env.NEXT_PUBLIC_APP_URL ??
+      "https://ethiomls.info"
+    ).replace(/\/$/, "");
+    void registerAgtCrmLead({
+      phoneNumber: input.account.phone,
+      companyName: input.account.label,
+      contactPerson: input.account.label,
+      ethiomlsUserId: input.account.userId,
+      ethiomlsListingId: listingIds[0],
+      source: "sales_kit",
+      accountType: agtCrmAccountTypeForRole(input.account.role),
+      listingUrl: `${baseUrl}/listings/${listingIds[0]}`,
+      internalNotes: `Sales kit import (${input.sourceLabel}): ${listingIds.length} listing(s)`,
+    });
+  }
+
   return { created, listingIds };
 }

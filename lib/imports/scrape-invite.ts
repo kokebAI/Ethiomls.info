@@ -289,6 +289,33 @@ export async function sendScrapeInviteForPhoneGroup(
     const updated = await prisma.listing.findMany({
       where: { id: { in: uniqueIds } },
     });
+
+    // Soft-fail CRM push — never block invite success.
+    const primaryListing = updated[0];
+    if (primaryListing && account) {
+      const { registerAgtCrmLead, agtCrmAccountTypeForRole } = await import(
+        "@/lib/crm/agt-crm-client"
+      );
+      const baseUrl = (
+        process.env.NEXT_PUBLIC_SITE_URL ??
+        process.env.NEXT_PUBLIC_APP_URL ??
+        "https://ethiomls.info"
+      ).replace(/\/$/, "");
+      void registerAgtCrmLead({
+        phoneNumber: primaryPhone,
+        companyName: account.label,
+        contactPerson: account.label,
+        ethiomlsUserId: account.userId,
+        ethiomlsListingId: primaryListing.id,
+        source: "scrape_invite",
+        accountType: agtCrmAccountTypeForRole(
+          account.role ?? inviteRoleForListing(primaryListing.listingType),
+        ),
+        listingUrl: `${baseUrl}/listings/${primaryListing.id}`,
+        internalNotes: `Scrape invite sent for ${uniqueIds.length} listing(s): ${uniqueIds.join(", ")}`,
+      });
+    }
+
     return {
       ok: true,
       listings: updated,

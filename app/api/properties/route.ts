@@ -141,8 +141,15 @@ export async function POST(request: NextRequest) {
         id: true,
         role: true,
         fullName: true,
+        phone: true,
+        email: true,
         developerProfile: {
-          select: { id: true, tin: true, registrationNumber: true },
+          select: {
+            id: true,
+            tin: true,
+            registrationNumber: true,
+            tradeName: true,
+          },
         },
         delalaProfile: {
           select: { id: true },
@@ -554,6 +561,39 @@ export async function POST(request: NextRequest) {
             detectedAt: new Date().toISOString(),
           },
         },
+      });
+    }
+
+    // Soft-fail CRM upsert for seller roles (never block listing create).
+    if (
+      user.phone &&
+      (user.role === UserRole.PROPERTY_OWNER ||
+        user.role === UserRole.INDEPENDENT_DELALA ||
+        user.role === UserRole.CORPORATE_DEVELOPER)
+    ) {
+      const {
+        registerAgtCrmLead,
+        agtCrmAccountTypeForRole,
+        agtCrmSubcityFromCode,
+      } = await import("@/lib/crm/agt-crm-client");
+      const baseUrl = (
+        process.env.NEXT_PUBLIC_SITE_URL ??
+        process.env.NEXT_PUBLIC_APP_URL ??
+        "https://ethiomls.info"
+      ).replace(/\/$/, "");
+      void registerAgtCrmLead({
+        phoneNumber: user.phone,
+        companyName:
+          user.developerProfile?.tradeName ?? user.fullName ?? null,
+        contactPerson: user.fullName,
+        email: user.email,
+        subcity: agtCrmSubcityFromCode(input.subCity),
+        ethiomlsUserId: user.id,
+        ethiomlsListingId: listing.id,
+        source: "listing_create",
+        accountType: agtCrmAccountTypeForRole(user.role),
+        listingUrl: `${baseUrl}/listings/${listing.id}`,
+        internalNotes: `Listing created ${listing.id} (${input.listingType})`,
       });
     }
 

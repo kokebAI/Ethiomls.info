@@ -64,6 +64,7 @@ export async function POST(request: NextRequest) {
   }
 
   let user = await prisma.user.findUnique({ where: { phone } });
+  let registeredNewSeller = false;
 
   // Password-login new-device challenge: password already verified; OTP finishes session.
   if (mode === "login") {
@@ -177,6 +178,10 @@ export async function POST(request: NextRequest) {
 
         return created;
       });
+      registeredNewSeller =
+        role === UserRole.PROPERTY_OWNER ||
+        role === UserRole.INDEPENDENT_DELALA ||
+        role === UserRole.CORPORATE_DEVELOPER;
     } catch (err) {
       if (
         err instanceof Prisma.PrismaClientKnownRequestError &&
@@ -210,6 +215,30 @@ export async function POST(request: NextRequest) {
     fullName: user.fullName,
   });
   await setTrustedDeviceCookie(user.id);
+
+  if (registeredNewSeller && user.phone) {
+    const { registerAgtCrmLead, agtCrmAccountTypeForRole } = await import(
+      "@/lib/crm/agt-crm-client"
+    );
+    let companyName = user.fullName;
+    if (user.role === UserRole.CORPORATE_DEVELOPER) {
+      const profile = await prisma.developerProfile.findUnique({
+        where: { userId: user.id },
+        select: { tradeName: true },
+      });
+      if (profile?.tradeName) companyName = profile.tradeName;
+    }
+    void registerAgtCrmLead({
+      phoneNumber: user.phone,
+      companyName,
+      contactPerson: user.fullName,
+      email: user.email,
+      ethiomlsUserId: user.id,
+      source: "signup",
+      accountType: agtCrmAccountTypeForRole(user.role),
+      internalNotes: `EthioMLS signup as ${user.role}`,
+    });
+  }
 
   return NextResponse.json({
     ok: true,
