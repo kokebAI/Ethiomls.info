@@ -81,6 +81,97 @@ export function agtCrmSubcityFromCode(
   return null;
 }
 
+export type RegisterAgtCrmAssistantInput = {
+  phoneNumber: string;
+  fullName?: string | null;
+  ethiomlsUserId?: string | null;
+  isActive?: boolean;
+  canScrapeReview?: boolean;
+  canManageLeads?: boolean;
+  agentReferralCode?: string | null;
+  agentId?: string | null;
+};
+
+export type RegisterAgtCrmAssistantResult =
+  | { ok: true; skipped: true; reason: "not_configured" | "no_phone" }
+  | {
+      ok: true;
+      skipped: false;
+      action: string;
+      agentId?: string;
+    }
+  | { ok: false; skipped: false; error: string };
+
+/**
+ * Push (or refresh) an EthioMLS OFFICE_ASSISTANT into AGT CRM agent_assistants.
+ * Never throws — logs and returns ok:false on network/API failures.
+ */
+export async function registerAgtCrmAssistant(
+  input: RegisterAgtCrmAssistantInput,
+): Promise<RegisterAgtCrmAssistantResult> {
+  const phone = input.phoneNumber?.trim();
+  if (!phone) {
+    return { ok: true, skipped: true, reason: "no_phone" };
+  }
+
+  const config = crmConfig();
+  if (!config) {
+    return { ok: true, skipped: true, reason: "not_configured" };
+  }
+
+  try {
+    const res = await fetch(
+      `${config.baseUrl}/api/crm/register-ethiomls-assistant`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-crm-api-key": config.apiKey,
+        },
+        body: JSON.stringify({
+          phoneNumber: phone,
+          fullName: input.fullName ?? null,
+          ethiomlsUserId: input.ethiomlsUserId ?? null,
+          isActive: input.isActive ?? true,
+          canScrapeReview: input.canScrapeReview ?? true,
+          canManageLeads: input.canManageLeads ?? false,
+          agentReferralCode: input.agentReferralCode ?? null,
+          agentId: input.agentId ?? null,
+        }),
+        signal: AbortSignal.timeout(12_000),
+      },
+    );
+
+    const payload = (await res.json().catch(() => ({}))) as {
+      action?: string;
+      agentId?: string;
+      message?: string;
+      error?: string;
+    };
+
+    if (!res.ok) {
+      const error =
+        payload.message ||
+        payload.error ||
+        `AGT CRM HTTP ${res.status}`;
+      console.error("[agt-crm] register assistant failed", error);
+      return { ok: false, skipped: false, error };
+    }
+
+    return {
+      ok: true,
+      skipped: false,
+      action: payload.action ?? "ok",
+      agentId: payload.agentId,
+    };
+  } catch (error) {
+    const message =
+      error instanceof Error ? error.message : "AGT CRM request failed";
+    console.error("[agt-crm] register assistant error", message);
+    return { ok: false, skipped: false, error: message };
+  }
+}
+
 /**
  * Push (or refresh) an EthioMLS seller lead in AGT CRM.
  * Never throws — logs and returns ok:false on network/API failures.
