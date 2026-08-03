@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Download, X } from "lucide-react";
+import { X } from "lucide-react";
+import { BrandMark } from "@/components/BrandMark";
 import { useTranslation } from "@/hooks/useTranslation";
 
 type BeforeInstallPromptEvent = Event & {
@@ -120,9 +121,7 @@ export function ServiceWorkerRegister() {
       aria-label={t("pwa.installTitle")}
     >
       <div className="flex items-start gap-3">
-        <div className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-slate-950 text-amber-300">
-          <Download className="h-5 w-5" aria-hidden="true" />
-        </div>
+        <BrandMark className="mt-0.5 h-10 w-10" title="EthioMLS" />
         <div className="min-w-0 flex-1">
           <p className="text-sm font-semibold text-slate-900">
             {t("pwa.installTitle")}

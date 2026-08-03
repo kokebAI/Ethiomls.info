@@ -22,7 +22,8 @@
     "scrape:developers": "tsx scripts/scrape-developers.ts",
     "scrape:projects": "tsx scripts/scrape-projects.ts",
     "scrape:offplan-ads": "tsx scripts/scrape-offplan-ads.ts",
-    "scrape:facebook": "tsx scripts/scrape-facebook-listings.ts"
+    "scrape:facebook": "tsx scripts/scrape-facebook-listings.ts",
+    "icons:pwa": "node scripts/generate-pwa-icons.mjs"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"
