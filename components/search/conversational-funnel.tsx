@@ -33,6 +33,8 @@ type ConversationalFunnelProps = {
   nbeUsdEtbRate?: number;
   onComplete?: (result: ConversationalSearchResult) => void;
   className?: string;
+  /** Compact Buy/Rent/Off-plan search shell that matches Option B. */
+  variant?: "default" | "gateway";
 };
 
 const INTENT_OPTIONS: Array<{ id: SearchIntent; labelKey: string }> = [
@@ -59,7 +61,9 @@ export function ConversationalFunnel({
   nbeUsdEtbRate,
   onComplete,
   className,
+  variant = "default",
 }: ConversationalFunnelProps) {
+  const isGateway = variant === "gateway";
   const { locale, t } = useTranslation();
   const [liveRate, setLiveRate] = useState<number | null>(null);
   const rate = useMemo(
@@ -190,34 +194,51 @@ export function ConversationalFunnel({
 
   return (
     <section
-      className={`grid w-full gap-5 ${className ?? ""}`.trim()}
-      aria-labelledby="funnel-title"
+      className={`grid w-full gap-4 ${className ?? ""}`.trim()}
+      aria-labelledby={isGateway ? undefined : "funnel-title"}
+      aria-label={isGateway ? t("search.submit") : undefined}
     >
-      <header className="max-w-2xl space-y-1.5">
-        <h2
-          id="funnel-title"
-          className="text-balance text-2xl font-bold tracking-tight text-slate-deep sm:text-3xl"
-        >
-          {t("search.title")}
-        </h2>
-        <p className="text-pretty text-sm leading-relaxed text-ink-muted sm:text-base">
-          {t("search.simpleLede")}
-        </p>
-      </header>
+      {isGateway ? null : (
+        <header className="max-w-2xl space-y-1.5">
+          <h2
+            id="funnel-title"
+            className="text-balance text-2xl font-bold tracking-tight text-slate-deep sm:text-3xl"
+          >
+            {t("search.title")}
+          </h2>
+          <p className="text-pretty text-sm leading-relaxed text-ink-muted sm:text-base">
+            {t("search.simpleLede")}
+          </p>
+        </header>
+      )}
 
-      <div className="grid gap-5 rounded-2xl border border-slate-200/90 bg-white p-4 shadow-[var(--shadow-card)] sm:p-5">
+      <div
+        className={`grid gap-4 bg-white p-4 shadow-[var(--shadow-card)] sm:p-5 ${
+          isGateway
+            ? "rounded-2xl border border-slate-200/90"
+            : "rounded-2xl border border-slate-200/90 gap-5"
+        }`}
+      >
         <fieldset className="grid gap-2">
-          <legend className="text-sm font-semibold text-slate-deep">
-            {t("search.prompts.intent")}
-          </legend>
-          <div className="flex flex-wrap gap-2">
+          {isGateway ? (
+            <legend className="sr-only">{t("search.prompts.intent")}</legend>
+          ) : (
+            <legend className="text-sm font-semibold text-slate-deep">
+              {t("search.prompts.intent")}
+            </legend>
+          )}
+          <div
+            className={`flex flex-wrap gap-2 ${isGateway ? "border-b border-slate-100 pb-3" : ""}`}
+          >
             {INTENT_OPTIONS.map((option) => (
               <button
                 key={option.id}
                 type="button"
                 className={`rounded-full px-4 py-2 text-sm font-semibold transition ${
                   intent === option.id
-                    ? "bg-slate-deep text-white"
+                    ? isGateway
+                      ? "bg-brand-700 text-white"
+                      : "bg-slate-deep text-white"
                     : "border border-slate-200 bg-white text-ink hover:border-brand-300"
                 }`}
                 onClick={() => setIntent(option.id)}
@@ -228,120 +249,138 @@ export function ConversationalFunnel({
           </div>
         </fieldset>
 
-        <label className="grid gap-1.5">
-          <span className="text-sm font-semibold text-slate-deep">
-            {t("search.prompts.cluster")}
-          </span>
-          <select
-            className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-deep outline-none transition focus:border-brand-500 focus:ring-2 focus:ring-brand-100"
-            value={clusterId}
-            onChange={(event) =>
-              setClusterId(event.target.value as SubCityClusterId)
-            }
-          >
-            {SUB_CITY_CLUSTERS.map((item) => (
-              <option key={item.id} value={item.id}>
-                {t(item.labelKey)} — {item.subCities.join(", ")}
-              </option>
-            ))}
-          </select>
-        </label>
-
-        {intent === "off_plan" ? (
+        <div
+          className={
+            isGateway
+              ? "grid gap-3 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,0.9fr)_auto] lg:items-end"
+              : "contents"
+          }
+        >
           <label className="grid gap-1.5">
             <span className="text-sm font-semibold text-slate-deep">
-              {t("search.prompts.completion")}
+              {t("search.prompts.cluster")}
             </span>
             <select
               className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-deep outline-none transition focus:border-brand-500 focus:ring-2 focus:ring-brand-100"
-              value={String(minCompletionPercent)}
+              value={clusterId}
               onChange={(event) =>
-                setMinCompletionPercent(Number(event.target.value) || 0)
+                setClusterId(event.target.value as SubCityClusterId)
               }
             >
-              <option value="0">{t("search.completion.any")}</option>
-              <option value="25">{t("search.completion.from25")}</option>
-              <option value="50">{t("search.completion.from50")}</option>
-              <option value="80">{t("search.completion.from80")}</option>
-              <option value="100">{t("search.completion.complete")}</option>
-            </select>
-            <p className="text-xs text-ink-muted">
-              {t("search.completion.hint")}
-            </p>
-          </label>
-        ) : null}
-
-        <div className="grid gap-3">
-          <div className="flex flex-wrap items-center justify-between gap-2">
-            <span className="text-sm font-semibold text-slate-deep">
-              {t("search.prompts.budget")}
-            </span>
-            <div
-              className="inline-flex gap-1 rounded-full bg-slate-100 p-1"
-              role="group"
-            >
-              {(["ETB", "USD"] as const).map((code) => (
-                <button
-                  key={code}
-                  type="button"
-                  className={`rounded-full px-3 py-1 text-xs font-bold transition ${
-                    budgetCurrency === code
-                      ? "bg-slate-deep text-white"
-                      : "text-ink-muted hover:text-slate-deep"
-                  }`}
-                  onClick={() => toggleCurrency(code)}
-                >
-                  {code}
-                </button>
+              {SUB_CITY_CLUSTERS.map((item) => (
+                <option key={item.id} value={item.id}>
+                  {t(item.labelKey)} — {item.subCities.join(", ")}
+                </option>
               ))}
-            </div>
-          </div>
-          <input
-            className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-xl font-bold text-slate-deep outline-none transition focus:border-brand-500 focus:ring-2 focus:ring-brand-100"
-            inputMode="decimal"
-            value={budgetInput}
-            onChange={(event) =>
-              setBudgetInput(formatBudgetInput(event.target.value))
-            }
-            aria-label={t("search.budgetAmount")}
-          />
-          <p className="text-xs text-ink-muted">
-            {t("search.budgetBalance")}{" "}
-            <strong className="text-slate-deep">
-              {formatMoney(
-                budgetCurrency === "ETB" ? budgetUsd : budgetEtb,
-                budgetCurrency === "ETB" ? "USD" : "ETB",
-              )}
-            </strong>
-            {" · "}
-            1 USD = {rate.usdEtb.toFixed(2)} ETB
-          </p>
-        </div>
+            </select>
+          </label>
 
-        <div className="flex flex-wrap items-center gap-3 border-t border-slate-100 pt-4">
-          <button
-            type="button"
-            className="rounded-full bg-brand-700 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-brand-800 disabled:opacity-45"
-            disabled={safeAmount <= 0}
-            onClick={submit}
-          >
-            {t("search.submit")}
-          </button>
-          <button
-            type="button"
-            className="rounded-full border border-slate-200 px-4 py-2 text-sm font-semibold text-ink transition hover:bg-slate-50"
-            onClick={() => setShowAi((v) => !v)}
-          >
-            {t("search.ai.toggle")}
-          </button>
-          {aiSummary ? (
-            <p className="text-pretty text-sm text-brand-800" role="status">
-              {aiSummary}
-            </p>
+          {intent === "off_plan" ? (
+            <label className="grid gap-1.5 lg:col-span-2">
+              <span className="text-sm font-semibold text-slate-deep">
+                {t("search.prompts.completion")}
+              </span>
+              <select
+                className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-deep outline-none transition focus:border-brand-500 focus:ring-2 focus:ring-brand-100"
+                value={String(minCompletionPercent)}
+                onChange={(event) =>
+                  setMinCompletionPercent(Number(event.target.value) || 0)
+                }
+              >
+                <option value="0">{t("search.completion.any")}</option>
+                <option value="25">{t("search.completion.from25")}</option>
+                <option value="50">{t("search.completion.from50")}</option>
+                <option value="80">{t("search.completion.from80")}</option>
+                <option value="100">{t("search.completion.complete")}</option>
+              </select>
+              <p className="text-xs text-ink-muted">
+                {t("search.completion.hint")}
+              </p>
+            </label>
           ) : null}
+
+          <div className="grid gap-3">
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <span className="text-sm font-semibold text-slate-deep">
+                {t("search.prompts.budget")}
+              </span>
+              <div
+                className="inline-flex gap-1 rounded-full bg-slate-100 p-1"
+                role="group"
+              >
+                {(["ETB", "USD"] as const).map((code) => (
+                  <button
+                    key={code}
+                    type="button"
+                    className={`rounded-full px-3 py-1 text-xs font-bold transition ${
+                      budgetCurrency === code
+                        ? "bg-slate-deep text-white"
+                        : "text-ink-muted hover:text-slate-deep"
+                    }`}
+                    onClick={() => toggleCurrency(code)}
+                  >
+                    {code}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <input
+              className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-xl font-bold text-slate-deep outline-none transition focus:border-brand-500 focus:ring-2 focus:ring-brand-100"
+              inputMode="decimal"
+              value={budgetInput}
+              onChange={(event) =>
+                setBudgetInput(formatBudgetInput(event.target.value))
+              }
+              aria-label={t("search.budgetAmount")}
+            />
+            {isGateway ? null : (
+              <p className="text-xs text-ink-muted">
+                {t("search.budgetBalance")}{" "}
+                <strong className="text-slate-deep">
+                  {formatMoney(
+                    budgetCurrency === "ETB" ? budgetUsd : budgetEtb,
+                    budgetCurrency === "ETB" ? "USD" : "ETB",
+                  )}
+                </strong>
+                {" · "}
+                1 USD = {rate.usdEtb.toFixed(2)} ETB
+              </p>
+            )}
+          </div>
+
+          <div
+            className={`flex flex-wrap items-center gap-3 ${
+              isGateway
+                ? "lg:pb-0.5"
+                : "border-t border-slate-100 pt-4"
+            }`}
+          >
+            <button
+              type="button"
+              className="rounded-full bg-brand-700 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-brand-800 disabled:opacity-45 lg:min-w-[8.5rem] lg:py-3"
+              disabled={safeAmount <= 0}
+              onClick={submit}
+            >
+              {t("search.submit")}
+            </button>
+            {isGateway ? null : (
+              <button
+                type="button"
+                className="rounded-full border border-slate-200 px-4 py-2 text-sm font-semibold text-ink transition hover:bg-slate-50"
+                onClick={() => setShowAi((v) => !v)}
+              >
+                {t("search.ai.toggle")}
+              </button>
+            )}
+            {aiSummary && !isGateway ? (
+              <p className="text-pretty text-sm text-brand-800" role="status">
+                {aiSummary}
+              </p>
+            ) : null}
+          </div>
         </div>
 
-        {showAi ? (
+        {showAi && !isGateway ? (
           <div className="grid gap-2 rounded-xl border border-brand-200/70 bg-brand-50/40 p-3">
             <textarea
               className="min-h-[4rem] w-full resize-y rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-100"

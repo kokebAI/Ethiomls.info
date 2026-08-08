@@ -38,7 +38,22 @@
       "escrow": "Escrow-backed milestones",
       "clearance": "Foreign buyer clearance"
     },
-    "emptyMarket": "Verified inventory is being prepared. Browse when ready, start a guided search, or list a property."
+    "emptyMarket": "Verified inventory is being prepared. Start a search or list a property.",
+    "gatewayHeadline": "Search verified properties.",
+    "gatewayLede": "All listings are identity-checked, document-verified, and quality-reviewed.",
+    "sealLabel": "Verified Gateway",
+    "verifiedProperties": "Verified properties",
+    "viewAll": "View all listings",
+    "banner": {
+      "guaranteeTitle": "EthioMLS guarantee",
+      "guaranteeBody": "Secure transactions and peace of mind.",
+      "identitiesTitle": "Verified identities",
+      "identitiesBody": "Agents and sellers are background-checked.",
+      "documentsTitle": "Verified documents",
+      "documentsBody": "Titles and papers are reviewed before publish.",
+      "supportTitle": "Support you can trust",
+      "supportBody": "Local support when the stakes are high."
+    }
   },
   "locale": {
     "label": "Language",

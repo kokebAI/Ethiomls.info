@@ -38,7 +38,22 @@
       "escrow": "ብኤስክሮ ዝተሓለዉ መድረኻት",
       "clearance": "ናይ ወጻኢ ዓዳጊ ፍቓድ"
     },
-    "emptyMarket": "ዝተረጋገጸ ንብረት ይድለ ኣሎ። ምስ ድልየ ክትሪኡ ትኽእሉ፣ መሪ ድለይ ጀምሩ፣ ወይ ንብረት መዝግቡ።"
+    "emptyMarket": "ዝተረጋገጸ ንብረት ይድለ ኣሎ። ድለይ ጀምሩ ወይ ንብረት መዝግቡ።",
+    "gatewayHeadline": "ዝተረጋገጸ ንብረት ድለዩ።",
+    "gatewayLede": "ኩሎም ዝርዝራት መንነት ዝተረጋገጸ፣ ሰነድ ዝተመርመረን ጽሬት ዝተፈተሸን እዮም።",
+    "sealLabel": "ዝተረጋገጸ ኣፍደገ",
+    "verifiedProperties": "ዝተረጋገጹ ንብረታት",
+    "viewAll": "ኩሉ ዝርዝራት ርአ",
+    "banner": {
+      "guaranteeTitle": "ናይ EthioMLS ውሕስነት",
+      "guaranteeBody": "ድሕንነቱ ዝተሓለወ ንግዲን ሰላም ምሕሳብን።",
+      "identitiesTitle": "ዝተረጋገጹ መንነታት",
+      "identitiesBody": "ውከላታትን ሸያጢታትን ይምርመሩ።",
+      "documentsTitle": "ዝተረጋገጹ ሰነዳት",
+      "documentsBody": "ቅድሚ ህታም ማዕረግን ሰነዳትን ይምርመሩ።",
+      "supportTitle": "እምነት ዝህበ ድጋፍ",
+      "supportBody": "ኣብ ከቢድ ውሳነ ናይ ከባቢ ድጋፍ ኣሎ።"
+    }
   },
   "locale": {
     "label": "ቋንቋ",

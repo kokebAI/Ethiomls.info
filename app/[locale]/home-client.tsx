@@ -2,42 +2,17 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
-import { ShieldCheck, Landmark, BadgeCheck } from "lucide-react";
+import { BadgeCheck, Landmark, ShieldCheck, Headphones } from "lucide-react";
 import {
   ConversationalFunnel,
   type ConversationalSearchResult,
 } from "@/components/search/conversational-funnel";
-import { BrandMark } from "@/components/BrandMark";
+import { VerifiedGatewaySeal } from "@/components/home/VerifiedGatewaySeal";
+import { HomeTeaserGrid } from "@/components/home/HomeTeaserGrid";
 import { useTranslation } from "@/hooks/useTranslation";
 import type { HomeStats } from "@/lib/catalog/home-stats";
-
-/** Animated count-up — only used when value > 0. */
-function StatNumber({ value }: { value: number }) {
-  const [display, setDisplay] = useState(0);
-  const frame = useRef<number | null>(null);
-
-  useEffect(() => {
-    if (value <= 0) {
-      setDisplay(0);
-      return;
-    }
-    const durationMs = 900;
-    const start = performance.now();
-    const tick = (now: number) => {
-      const progress = Math.min((now - start) / durationMs, 1);
-      const eased = 1 - Math.pow(1 - progress, 3);
-      setDisplay(Math.round(eased * value));
-      if (progress < 1) frame.current = requestAnimationFrame(tick);
-    };
-    frame.current = requestAnimationFrame(tick);
-    return () => {
-      if (frame.current != null) cancelAnimationFrame(frame.current);
-    };
-  }, [value]);
-
-  return <>{display.toLocaleString()}</>;
-}
+import type { HomeTeaser } from "@/lib/catalog/home-teasers";
+import type { Locale } from "@/lib/i18n/config";
 
 const INTENT_TO_LISTING_TYPE: Record<
   ConversationalSearchResult["intent"],
@@ -50,25 +25,32 @@ const INTENT_TO_LISTING_TYPE: Record<
 
 type HomeClientProps = {
   stats: HomeStats;
+  teasers: HomeTeaser[];
 };
 
-export function HomeClient({ stats }: HomeClientProps) {
+export function HomeClient({ stats, teasers }: HomeClientProps) {
   const { locale, t } = useTranslation();
   const router = useRouter();
   const base = `/${locale}`;
+  const typedLocale = locale as Locale;
 
-  const statCards = [
-    { id: "listings", label: t("home.stats.listings"), value: stats.liveListings },
-    { id: "projects", label: t("home.stats.projects"), value: stats.publishedProjects },
+  const liveProof = [
+    {
+      id: "listings",
+      label: t("home.stats.listings"),
+      value: stats.liveListings,
+    },
     {
       id: "developers",
       label: t("home.stats.developers"),
       value: stats.verifiedDevelopers,
     },
-    { id: "subCities", label: t("home.stats.subCities"), value: stats.subCities },
-  ].filter((card) => card.value > 0);
-
-  const showMarketEmpty = statCards.length === 0;
+    {
+      id: "projects",
+      label: t("home.stats.projects"),
+      value: stats.publishedProjects,
+    },
+  ].filter((item) => item.value > 0);
 
   function handleSearchComplete(result: ConversationalSearchResult) {
     const params = new URLSearchParams({
@@ -87,47 +69,45 @@ export function HomeClient({ stats }: HomeClientProps) {
   }
 
   return (
-    <div className="flex w-full min-w-0 flex-col gap-10 sm:gap-14">
-      {/* Verified Gateway — brand first, then promise, seals, CTAs */}
-      <section className="animate-rise-in grid w-full gap-6 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)] lg:items-end lg:gap-10">
+    <div className="flex w-full min-w-0 flex-col gap-10 sm:gap-12">
+      {/* Option B hero — seal + verified search promise */}
+      <section className="animate-rise-in grid w-full items-center gap-8 lg:grid-cols-[auto_minmax(0,1fr)] lg:gap-12">
+        <VerifiedGatewaySeal label={t("home.sealLabel")} />
+
         <div className="space-y-5">
-          <div className="flex items-center gap-3">
-            <BrandMark className="h-12 w-12" title={t("brand.name")} />
-            <p className="text-lg font-bold tracking-tight text-slate-deep sm:text-xl">
-              {t("brand.name")}
-            </p>
-          </div>
-
           <h1 className="text-balance text-[1.75rem] font-bold leading-tight tracking-tight text-slate-deep sm:text-4xl lg:text-5xl">
-            {t("brand.tagline")}
+            {t("home.gatewayHeadline")}
           </h1>
-
           <p className="max-w-2xl text-pretty text-sm leading-relaxed text-ink sm:text-base">
-            {t("home.lede")}
+            {t("home.gatewayLede")}
           </p>
 
-          <ul className="flex flex-wrap gap-2" aria-label={t("home.trustHeading")}>
-            <li className="inline-flex items-center gap-1.5 rounded-full bg-brand-700 px-3 py-1.5 text-xs font-semibold text-white">
-              <BadgeCheck className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
-              {t("home.trust.verified")}
-            </li>
-            <li className="inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-deep">
-              <Landmark className="h-3.5 w-3.5 shrink-0 text-brand-700" aria-hidden="true" />
-              {t("home.trust.escrow")}
-            </li>
-            <li className="inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-deep">
-              <ShieldCheck className="h-3.5 w-3.5 shrink-0 text-brand-700" aria-hidden="true" />
-              {t("home.trust.clearance")}
-            </li>
-          </ul>
+          {liveProof.length > 0 ? (
+            <ul className="flex flex-wrap gap-2">
+              {liveProof.map((item) => (
+                <li
+                  key={item.id}
+                  className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-deep"
+                >
+                  <BadgeCheck
+                    className="h-3.5 w-3.5 text-brand-700"
+                    aria-hidden="true"
+                  />
+                  <span>
+                    {item.label}: {item.value.toLocaleString()}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          ) : null}
 
-          <div className="flex flex-col gap-2.5 pt-1 sm:flex-row sm:flex-wrap sm:gap-3">
-            <Link
-              href={`${base}/listings`}
+          <div className="flex flex-col gap-2.5 sm:flex-row sm:flex-wrap sm:gap-3">
+            <a
+              href="#gateway-search"
               className="inline-flex items-center justify-center rounded-full bg-brand-700 px-5 py-3 text-sm font-semibold text-white transition hover:bg-brand-800"
             >
               {t("home.browseCta")}
-            </Link>
+            </a>
             <Link
               href={`${base}/listings/new`}
               className="inline-flex items-center justify-center rounded-full border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-ink transition hover:bg-slate-50"
@@ -136,62 +116,68 @@ export function HomeClient({ stats }: HomeClientProps) {
             </Link>
           </div>
         </div>
-
-        <aside
-          className="relative overflow-hidden rounded-2xl bg-[linear-gradient(145deg,#0F172A_0%,#1E293B_55%,#0F172A_100%)] px-5 py-6 shadow-[var(--shadow-card)] sm:px-6 sm:py-7"
-          aria-label={t("brand.motto")}
-        >
-          <div
-            className="pointer-events-none absolute inset-0 opacity-[0.16]"
-            style={{
-              backgroundImage:
-                "radial-gradient(circle at 18% 20%, #D97706 0%, transparent 42%), radial-gradient(circle at 90% 85%, #D97706 0%, transparent 36%)",
-            }}
-            aria-hidden="true"
-          />
-          <p className="relative font-ethiopic text-balance text-lg font-semibold leading-relaxed tracking-tight text-slate-50 sm:text-xl sm:leading-snug">
-            <span className="text-brand-500" aria-hidden="true">
-              “
-            </span>
-            {t("brand.motto")}
-            <span className="text-brand-500" aria-hidden="true">
-              ”
-            </span>
-          </p>
-        </aside>
       </section>
 
-      <ConversationalFunnel
-        className="animate-rise-in"
-        onComplete={handleSearchComplete}
+      <div id="gateway-search" className="scroll-mt-24">
+        <ConversationalFunnel
+          className="animate-rise-in"
+          variant="gateway"
+          onComplete={handleSearchComplete}
+        />
+      </div>
+
+      <HomeTeaserGrid
+        locale={typedLocale}
+        teasers={teasers}
+        heading={t("home.verifiedProperties")}
+        emptyMessage={t("home.emptyMarket")}
+        verifiedLabel={t("listing.verified")}
+        viewAllLabel={t("home.viewAll")}
+        typeLabels={{
+          forSale: t("listing.forSale"),
+          forRent: t("listing.forRent"),
+          offPlan: t("listing.offPlan"),
+        }}
       />
 
-      {showMarketEmpty ? (
-        <p className="animate-rise-in max-w-2xl text-sm leading-relaxed text-ink-muted">
-          {t("home.emptyMarket")}
-        </p>
-      ) : (
-        <section aria-label={t("home.statsHeading")} className="animate-rise-in">
-          <h2 className="mb-4 text-base font-bold tracking-tight text-slate-deep sm:text-lg">
-            {t("home.statsHeading")}
-          </h2>
-          <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
-            {statCards.map((card) => (
-              <article
-                key={card.id}
-                className="flex flex-col gap-1.5 rounded-2xl border border-slate-200/90 bg-white/85 p-4 shadow-[var(--shadow-card)] sm:p-5"
-              >
-                <p className="text-3xl font-bold tracking-tight text-slate-deep sm:text-4xl">
-                  <StatNumber value={card.value} />
-                </p>
-                <p className="text-xs font-semibold text-ink-muted sm:text-sm">
-                  {card.label}
-                </p>
-              </article>
-            ))}
+      <section
+        aria-label={t("home.trustHeading")}
+        className="animate-rise-in grid gap-4 rounded-2xl border border-slate-200/90 bg-white/90 p-4 shadow-[var(--shadow-card)] sm:grid-cols-2 sm:p-5 lg:grid-cols-4"
+      >
+        {[
+          {
+            icon: ShieldCheck,
+            title: t("home.banner.guaranteeTitle"),
+            body: t("home.banner.guaranteeBody"),
+          },
+          {
+            icon: BadgeCheck,
+            title: t("home.banner.identitiesTitle"),
+            body: t("home.banner.identitiesBody"),
+          },
+          {
+            icon: Landmark,
+            title: t("home.banner.documentsTitle"),
+            body: t("home.banner.documentsBody"),
+          },
+          {
+            icon: Headphones,
+            title: t("home.banner.supportTitle"),
+            body: t("home.banner.supportBody"),
+          },
+        ].map((item) => (
+          <div key={item.title} className="flex gap-3">
+            <item.icon
+              className="mt-0.5 h-5 w-5 shrink-0 text-brand-700"
+              aria-hidden="true"
+            />
+            <div className="min-w-0 space-y-1">
+              <p className="text-sm font-bold text-slate-deep">{item.title}</p>
+              <p className="text-xs leading-relaxed text-ink-muted">{item.body}</p>
+            </div>
           </div>
-        </section>
-      )}
+        ))}
+      </section>
     </div>
   );
 }

@@ -38,7 +38,22 @@
       "escrow": "Milestones escrow tiin eegaman",
       "clearance": "Hayyama bitee alaa"
     },
-    "emptyMarket": "Qabeenyi mirkanaa'e qophaa'aa jira. Yeroo qophaa'u ilaali, barbaacha qajeelfamaa jalqabi, ykn qabeenya galmeessi."
+    "emptyMarket": "Qabeenyi mirkanaa'e qophaa'aa jira. Barbaacha jalqabi ykn qabeenya galmeessi.",
+    "gatewayHeadline": "Qabeenya mirkanaa'e barbaadi.",
+    "gatewayLede": "Tarreeffamni hundi eenyummaa mirkanaa'e, sanada ilaalamee fi qulqullinaan madaalame.",
+    "sealLabel": "Karra Mirkanaa'e",
+    "verifiedProperties": "Qabeenya mirkanaa'e",
+    "viewAll": "Tarreeffama hunda ilaali",
+    "banner": {
+      "guaranteeTitle": "Wabii EthioMLS",
+      "guaranteeBody": "Daldala nageenya qabu fi nageenya sammuu.",
+      "identitiesTitle": "Eenyummaa mirkanaa'e",
+      "identitiesBody": "Agentoowwanii fi gurgurtoonni sakatta'amu.",
+      "documentsTitle": "Sanada mirkanaa'e",
+      "documentsBody": "Maxxansa dura magartii fi sanadni ilaalama.",
+      "supportTitle": "Deeggarsa amansiisaa",
+      "supportBody": "Yeroo murteessaa deeggarsi naannoo ni jira."
+    }
   },
   "locale": {
     "label": "Afaan",

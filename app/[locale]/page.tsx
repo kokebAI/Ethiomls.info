@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { HomeClient } from "./home-client";
 import { fetchHomeStats } from "@/lib/catalog/home-stats";
+import { fetchHomeTeasers } from "@/lib/catalog/home-teasers";
 import { isLocale, type Locale } from "@/lib/i18n/config";
 import { getDictionary } from "@/lib/i18n/getDictionary";
 import { nonClientCatalogRedirect } from "@/lib/roles/catalog-access";
@@ -52,7 +53,10 @@ export default async function LocaleHomePage({
   const toHub = await nonClientCatalogRedirect(locale);
   if (toHub) redirect(toHub);
 
-  const stats = await fetchHomeStats();
+  const [stats, teasers] = await Promise.all([
+    fetchHomeStats(),
+    fetchHomeTeasers(4),
+  ]);
 
-  return <HomeClient stats={stats} />;
+  return <HomeClient stats={stats} teasers={teasers} />;
 }

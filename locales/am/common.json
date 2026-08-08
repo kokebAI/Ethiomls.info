@@ -38,7 +38,22 @@
       "escrow": "በኤስክሮ የተጠበቁ ምእራፎች",
       "clearance": "የውጭ ገዥ ማጽደቅ"
     },
-    "emptyMarket": "የተረጋገጠ ንብረት በዝግጅት ላይ ነው። ሲዘጋጅ ያስሱ፣ መመሪያ ፍለጋ ይጀምሩ፣ ወይም ንብረት ያስመዝግቡ።"
+    "emptyMarket": "የተረጋገጠ ንብረት በዝግጅት ላይ ነው። ፍለጋ ይጀምሩ ወይም ንብረት ያስመዝግቡ።",
+    "gatewayHeadline": "የተረጋገጡ ንብረቶችን ይፈልጉ።",
+    "gatewayLede": "ሁሉም ዝርዝሮች ማንነት የተረጋገጠ፣ ሰነድ የተገመገመ እና ጥራት የተፈተሸ ነው።",
+    "sealLabel": "የተረጋገጠ መግቢያ",
+    "verifiedProperties": "የተረጋገጡ ንብረቶች",
+    "viewAll": "ሁሉንም ዝርዝሮች ይመልከቱ",
+    "banner": {
+      "guaranteeTitle": "የEthioMLS ዋስትና",
+      "guaranteeBody": "ደህንነቱ የተጠበቀ ግብይት እና የአእምሮ ሰላም።",
+      "identitiesTitle": "የተረጋገጡ ማንነቶች",
+      "identitiesBody": "ወኪሎችና ሻጮች ከዳራቸው ይረጋገጣሉ።",
+      "documentsTitle": "የተረጋገጡ ሰነዶች",
+      "documentsBody": "ከመታተም በፊት ማዕረግና ሰነዶች ይመረመራሉ።",
+      "supportTitle": "የሚታመን ድጋፍ",
+      "supportBody": "በከፍተኛ ውሳኔ ጊዜ የአካባቢ ድጋፍ።"
+    }
   },
   "locale": {
     "label": "ቋንቋ",
