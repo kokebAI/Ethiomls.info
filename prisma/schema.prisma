@@ -413,7 +413,7 @@ model Listing {
   /// Freehold title vs leasehold — drives lease-agreement evidence requirement
   landHoldType       LandHoldType?
   /// PostGIS Point, SRID 4326 — property geolocation for map / proximity queries
-  geoPoint           Unsupported("geometry(Point,4326)")? @map("location")
+  geoPoint           Unsupported("geometry(Point,4326)")?
   addressLine        String?
   /// Non-empty amenity / feature tags supplied at creation
   metadataTags       String[]          @default([])
