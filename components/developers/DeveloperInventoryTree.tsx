@@ -9,8 +9,7 @@ import type {
   DeveloperUnitType,
   InventoryUnitStatus,
 } from "@/lib/catalog/developer-inventory";
-import { formatUnitTypePrice } from "@/lib/catalog/developer-inventory";
-import { formatMoney } from "@/lib/compliance/currency";
+import { useCurrencyPreference } from "@/hooks/useCurrencyPreference";
 import { InventoryStatusControl } from "@/components/inventory/InventoryStatusControl";
 
 type Labels = {
@@ -83,6 +82,7 @@ function UnitRow({
   canEdit: boolean;
   onStatusChange: (id: string, status: InventoryUnitStatus) => void;
 }) {
+  const { formatListing } = useCurrencyPreference();
   return (
     <li className="flex flex-wrap items-center justify-between gap-2 rounded-lg px-2 py-2 text-sm transition hover:bg-emerald-50">
       <Link
@@ -93,7 +93,7 @@ function UnitRow({
       </Link>
       <div className="flex flex-wrap items-center gap-3">
         <span className="text-slate-600">
-          {formatMoney(unit.price, unit.currency)}
+          {formatListing(unit.price, unit.currency)}
         </span>
         {canEdit ? (
           <InventoryStatusControl
@@ -126,6 +126,7 @@ function UnitTypeRow({
   labels: Labels;
   canEdit: boolean;
 }) {
+  const { formatListing } = useCurrencyPreference();
   const [open, setOpen] = useState(false);
   const [type, setType] = useState(initialType);
 
@@ -159,7 +160,9 @@ function UnitTypeRow({
           <div className="flex flex-wrap items-baseline justify-between gap-2">
             <p className="font-semibold text-slate-900">{type.label}</p>
             <p className="text-sm text-slate-600">
-              {formatUnitTypePrice(type)}
+              {type.priceMin === type.priceMax
+                ? formatListing(type.priceMin, type.currency)
+                : `${formatListing(type.priceMin, type.currency)} – ${formatListing(type.priceMax, type.currency)}`}
             </p>
           </div>
           <StatusPills type={type} labels={labels} />

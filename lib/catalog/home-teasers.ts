@@ -1,7 +1,10 @@
 import { ListingStatus } from "@prisma/client";
 import { prisma } from "@/lib/db/prisma";
 import { teaserCoverPhotos } from "@/lib/catalog/buyer-visibility";
-import { formatPriceBand } from "@/lib/catalog/price-band";
+import type { PriceCurrency } from "@/lib/catalog/price-band";
+import { resolveNbeUsdEtbRate } from "@/lib/compliance/currency";
+import { formatListingPriceBand } from "@/lib/currency/preference";
+import { readDisplayCurrencyPreference } from "@/lib/currency/server";
 
 export type HomeTeaser = {
   id: string;
@@ -18,6 +21,9 @@ export type HomeTeaser = {
 /** Up to three published teasers for the home gateway — never crash on DB miss. */
 export async function fetchHomeTeasers(limit = 3): Promise<HomeTeaser[]> {
   try {
+    const { currency: preferredCurrency, rateUsdEtb } =
+      await readDisplayCurrencyPreference();
+    const rate = resolveNbeUsdEtbRate(rateUsdEtb);
     const listings = await prisma.listing.findMany({
       where: { status: ListingStatus.PUBLISHED },
       include: {
@@ -29,7 +35,7 @@ export async function fetchHomeTeasers(limit = 3): Promise<HomeTeaser[]> {
 
     return listings.map((listing) => {
       const amount = Number(listing.priceAmount);
-      const currency = listing.priceCurrency;
+      const currency = listing.priceCurrency as PriceCurrency;
       const photos = teaserCoverPhotos(listing);
       return {
         id: listing.id,
@@ -40,7 +46,13 @@ export async function fetchHomeTeasers(limit = 3): Promise<HomeTeaser[]> {
         priceAmount: amount,
         priceCurrency: currency,
         imageUrl: photos[0] ?? null,
-        priceBand: formatPriceBand(amount, currency, listing.listingType),
+        priceBand: formatListingPriceBand(
+          amount,
+          currency,
+          preferredCurrency,
+          listing.listingType,
+          rate,
+        ),
       };
     });
   } catch (error) {

@@ -19,6 +19,7 @@ import {
 } from "lucide-react";
 import { ListingAuditPanel } from "@/components/admin/ListingAuditPanel";
 import { ListingContactCard } from "@/components/leads/listing-contact-card";
+import { ListingDetailMap } from "@/components/maps/ListingDetailMap";
 import { ListingGallery } from "@/components/property/ListingGallery";
 import { ShareListingButton } from "@/components/property/ShareListingButton";
 import { SignInToUnlock } from "@/components/property/sign-in-to-unlock";
@@ -31,13 +32,19 @@ import {
   canViewFullListingDetails,
   teaserCoverPhotos,
 } from "@/lib/catalog/buyer-visibility";
-import { formatPriceBand } from "@/lib/catalog/price-band";
 import { fetchListingById } from "@/lib/catalog/queries";
-import { formatMoney } from "@/lib/compliance/currency";
+import {
+  formatListingMoney,
+  formatListingPriceBand,
+} from "@/lib/currency/preference";
+import { readDisplayCurrencyPreference } from "@/lib/currency/server";
+import { resolveNbeUsdEtbRate } from "@/lib/compliance/currency";
 import { formatConstructionStage } from "@/lib/domain/construction-stage";
 import { isLocale, type Locale } from "@/lib/i18n/config";
 import { getDictionary, translate } from "@/lib/i18n/getDictionary";
 import { pickLocalized } from "@/lib/i18n/pickLocalized";
+import { resolveListingCoordinates } from "@/lib/maps/addisSubcityCentroids";
+import { fetchListingLatLng } from "@/lib/maps/listingGeo";
 import { absoluteUrl } from "@/lib/seo/config";
 import { buildPageMetadata } from "@/lib/seo/build-metadata";
 import {
@@ -152,6 +159,9 @@ export default async function ListingDetailPage({
   }
 
   const base = `/${locale}`;
+  const { currency: preferredCurrency, rateUsdEtb } =
+    await readDisplayCurrencyPreference();
+  const rate = resolveNbeUsdEtbRate(rateUsdEtb);
   const showFull = canViewFullListingDetails({
     session,
     staff: Boolean(staff),
@@ -170,6 +180,17 @@ export default async function ListingDetailPage({
   const subCityName = listing.subCity
     ? pickLocalized(listing.subCity.name, locale) || listing.subCity.code
     : null;
+
+  const storedCoords = (await fetchListingLatLng([listing.id])).get(listing.id);
+  const mapCoords = showFull
+    ? resolveListingCoordinates({
+        lat: storedCoords?.lat,
+        lng: storedCoords?.lng,
+        subCityCode: listing.subCity?.code,
+      })
+    : resolveListingCoordinates({
+        subCityCode: listing.subCity?.code,
+      });
 
   const fullPhotos = allListingPhotos(listing);
   const photos = showFull ? fullPhotos : teaserCoverPhotos(listing);
@@ -191,8 +212,19 @@ export default async function ListingDetailPage({
 
   const amount = Number(listing.priceAmount);
   const price = showFull
-    ? formatMoney(amount, listing.priceCurrency)
-    : formatPriceBand(amount, listing.priceCurrency, listing.listingType);
+    ? formatListingMoney(
+        amount,
+        listing.priceCurrency,
+        preferredCurrency,
+        rate,
+      )
+    : formatListingPriceBand(
+        amount,
+        listing.priceCurrency,
+        preferredCurrency,
+        listing.listingType,
+        rate,
+      );
   const floorArea =
     showFull && listing.floorAreaSqm != null
       ? Number(listing.floorAreaSqm)
@@ -203,9 +235,11 @@ export default async function ListingDetailPage({
       : null;
   const pricePerSqm =
     showFull && floorArea && floorArea > 0
-      ? formatMoney(
+      ? formatListingMoney(
           Math.round(amount / floorArea),
           listing.priceCurrency,
+          preferredCurrency,
+          rate,
         )
       : null;
 
@@ -471,7 +505,7 @@ export default async function ListingDetailPage({
               </span>
             ) : null}
             {listing.openToForeignBuyers ? (
-              <span className="inline-flex items-center gap-1 rounded-full bg-violet-50 px-2.5 py-0.5 text-xs font-semibold text-violet-700 ring-1 ring-inset ring-violet-600/15">
+              <span className="inline-flex items-center gap-1 rounded-full bg-amber-50 px-2.5 py-0.5 text-xs font-semibold text-amber-800 ring-1 ring-inset ring-amber-600/15">
                 <Globe className="h-3.5 w-3.5" aria-hidden="true" />
                 {t("listing.openToForeignBuyers")}
               </span>
@@ -493,6 +527,16 @@ export default async function ListingDetailPage({
               {t("listingDetail.addressLocked")}
             </p>
           ) : null}
+          <ListingDetailMap
+            lat={mapCoords.lat}
+            lng={mapCoords.lng}
+            approx={mapCoords.approx}
+            title={title}
+            approxLabel={t("listingDetail.approxLocation")}
+            missingKeyLabel={t("listingDetail.mapKeyMissing")}
+            errorLabel={t("listingDetail.mapError")}
+            className="pt-2"
+          />
           <p className="text-xs font-medium uppercase tracking-wide text-slate-400">
             {t("listing.propertyId")}: {listing.id}
           </p>
@@ -616,7 +660,7 @@ export default async function ListingDetailPage({
                     ) : amenity === t("listing.parking") ? (
                       <Car className="h-3.5 w-3.5 text-slate-600" aria-hidden="true" />
                     ) : amenity === t("listing.elevator") ? (
-                      <ArrowUpDown className="h-3.5 w-3.5 text-violet-600" aria-hidden="true" />
+                      <ArrowUpDown className="h-3.5 w-3.5 text-amber-600" aria-hidden="true" />
                     ) : amenity === t("listing.furnished") ? (
                       <Sofa className="h-3.5 w-3.5 text-orange-600" aria-hidden="true" />
                     ) : amenity === t("listing.escrowVerified") ? (
@@ -639,8 +683,8 @@ export default async function ListingDetailPage({
 
           {/* Off-plan payment terms */}
           {showFull && isOffPlan ? (
-            <section className="rounded-2xl border border-violet-200/80 bg-violet-50/50 p-5 shadow-[var(--shadow-card)] sm:p-6">
-              <h2 className="text-sm font-bold uppercase tracking-wide text-violet-700">
+            <section className="rounded-2xl border border-amber-200/80 bg-amber-50/50 p-5 shadow-[var(--shadow-card)] sm:p-6">
+              <h2 className="text-sm font-bold uppercase tracking-wide text-amber-800">
                 {t("listingDetail.offPlanTerms")}
               </h2>
               <dl className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-3">

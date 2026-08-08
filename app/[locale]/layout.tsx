@@ -1,14 +1,16 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import { notFound } from "next/navigation";
-import { AddisSkylineBackdrop } from "@/components/AddisSkylineBackdrop";
+import { SiteMapBackdrop } from "@/components/SiteMapBackdrop";
 import { DocumentLocale } from "@/components/DocumentLocale";
 import { Header } from "@/components/Header";
 import { ServiceWorkerRegister } from "@/components/pwa/ServiceWorkerRegister";
 import { JsonLd } from "@/components/seo/JsonLd";
+import { CurrencyPreferenceProvider } from "@/hooks/useCurrencyPreference";
 import { TranslationProvider } from "@/hooks/useTranslation";
 import { isLocale, locales, type Locale } from "@/lib/i18n/config";
 import { getDictionary } from "@/lib/i18n/getDictionary";
+import { readDisplayCurrencyPreference } from "@/lib/currency/server";
 import { buildRootLocaleMetadata } from "@/lib/seo/build-metadata";
 import { organizationJsonLd, websiteJsonLd } from "@/lib/seo/json-ld";
 
@@ -50,23 +52,30 @@ export default async function LocaleLayout({
   const locale = raw;
   const dictionary = getDictionary(locale);
   const usesEthiopic = locale === "am" || locale === "ti";
+  const { currency, rateUsdEtb } = await readDisplayCurrencyPreference();
 
   return (
     <TranslationProvider locale={locale} dictionary={dictionary}>
-      <DocumentLocale />
-      <JsonLd data={[organizationJsonLd(), websiteJsonLd(locale)]} />
-      <div
-        className={`relative isolate min-h-screen ${usesEthiopic ? "[font-family:var(--font-ethiopic),var(--font-sans),sans-serif]" : ""}`}
-        lang={locale}
-        data-locale={locale}
+      <CurrencyPreferenceProvider
+        initialCurrency={currency}
+        initialRateUsdEtb={rateUsdEtb}
       >
-        <AddisSkylineBackdrop />
-        <Header />
-        <main className="relative z-10 mx-auto w-full max-w-6xl px-4 py-6 sm:px-6 sm:py-10 lg:py-12">
-          {children}
-        </main>
-      </div>
-      <ServiceWorkerRegister />
+        <DocumentLocale />
+        <JsonLd data={[organizationJsonLd(), websiteJsonLd(locale)]} />
+        <div
+          className={`relative isolate min-h-screen ${usesEthiopic ? "[font-family:var(--font-ethiopic),var(--font-sans),sans-serif]" : ""}`}
+          lang={locale}
+          data-locale={locale}
+          data-currency={currency}
+        >
+          <SiteMapBackdrop />
+          <Header />
+          <main className="relative z-10 mx-auto w-full max-w-6xl px-4 py-6 sm:px-6 sm:py-10 lg:py-12">
+            {children}
+          </main>
+        </div>
+        <ServiceWorkerRegister />
+      </CurrencyPreferenceProvider>
     </TranslationProvider>
   );
 }

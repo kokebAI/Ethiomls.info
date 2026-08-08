@@ -5,7 +5,7 @@ import Link from "next/link";
 import { BuildingScrollView } from "@/components/building/building-scroll-view";
 import { useTranslation } from "@/hooks/useTranslation";
 import type { Building, BuildingUnit } from "@/lib/building/types";
-import { formatMoney } from "@/lib/compliance/currency";
+import { useCurrencyPreference } from "@/hooks/useCurrencyPreference";
 
 type ProjectBuildingDetailProps = {
   building: Building;
@@ -39,6 +39,8 @@ export function ProjectBuildingDetail({
   website,
   projectAmenities = [],
 }: ProjectBuildingDetailProps) {
+  const { formatListing } = useCurrencyPreference();
+
   const { t } = useTranslation();
   const [selected, setSelected] = useState<BuildingUnit | null>(null);
 
@@ -143,7 +145,7 @@ export function ProjectBuildingDetail({
                 {t("listing.price")}
               </dt>
               <dd className="mt-0.5 text-sm font-semibold text-slate-900">
-                {formatMoney(selected.price, selected.currency)}
+                {formatListing(selected.price, selected.currency)}
               </dd>
             </div>
             <div>

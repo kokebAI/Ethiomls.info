@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { redirect } from "next/navigation";
 import { PageIntro } from "@/components/PageIntro";
 import { ListingsFunnel } from "./listings-funnel";
@@ -8,15 +9,17 @@ import {
   canViewFullListingDetails,
   teaserCoverPhotos,
 } from "@/lib/catalog/buyer-visibility";
-import {
-  formatPriceBand,
-  priceBandSortKey,
-} from "@/lib/catalog/price-band";
 import { fetchPublishedListings } from "@/lib/catalog/queries";
 import { isLocale, type Locale } from "@/lib/i18n/config";
 import { getDictionary, translate } from "@/lib/i18n/getDictionary";
 import { pickLocalized } from "@/lib/i18n/pickLocalized";
-import { formatMoney } from "@/lib/compliance/currency";
+import {
+  formatListingMoney,
+  formatListingPriceBand,
+  listingPriceSortKey,
+} from "@/lib/currency/preference";
+import { readDisplayCurrencyPreference } from "@/lib/currency/server";
+import { resolveNbeUsdEtbRate } from "@/lib/compliance/currency";
 import { countNoun } from "@/lib/i18n/plural";
 import type { DirectoryBadge } from "@/components/PageDirectory";
 import { nonClientCatalogRedirect } from "@/lib/roles/catalog-access";
@@ -83,6 +86,9 @@ export default async function ListingsPage({
     getSession(),
   ]);
   const showFull = canViewFullListingDetails({ session });
+  const { currency: preferredCurrency, rateUsdEtb } =
+    await readDisplayCurrencyPreference();
+  const rate = resolveNbeUsdEtbRate(rateUsdEtb);
 
   const t = (key: string) => translate(dictionary, key);
 
@@ -94,8 +100,14 @@ export default async function ListingsPage({
     const amount = Number(listing.priceAmount);
     const currency = listing.priceCurrency;
     const priceFormatted = showFull
-      ? formatMoney(amount, currency)
-      : formatPriceBand(amount, currency, listing.listingType);
+      ? formatListingMoney(amount, currency, preferredCurrency, rate)
+      : formatListingPriceBand(
+          amount,
+          currency,
+          preferredCurrency,
+          listing.listingType,
+          rate,
+        );
 
     const photos = showFull
       ? allListingPhotos(listing)
@@ -142,8 +154,14 @@ export default async function ListingsPage({
       // Guests get band midpoints only — never exact list prices in HTML props.
       priceAmount: showFull
         ? amount
-        : priceBandSortKey(amount, currency, listing.listingType),
-      priceCurrency: currency,
+        : listingPriceSortKey(
+            amount,
+            currency,
+            preferredCurrency,
+            listing.listingType,
+            rate,
+          ),
+      priceCurrency: preferredCurrency,
       completionPercent:
         listing.completionPercent != null
           ? Number(listing.completionPercent)
@@ -172,14 +190,22 @@ export default async function ListingsPage({
       lede={dictionary.pages.listings.lede}
       motto={dictionary.brand.motto}
     >
-      {items.length > 0 ? (
-        <p
-          className="inline-flex w-fit items-center rounded-full bg-emerald-50 px-3 py-1 text-sm font-medium text-emerald-800 ring-1 ring-emerald-600/15 ring-inset"
-          role="status"
+      <div className="mb-4 flex flex-wrap items-center gap-3">
+        {items.length > 0 ? (
+          <p
+            className="inline-flex w-fit items-center rounded-full bg-emerald-50 px-3 py-1 text-sm font-medium text-emerald-800 ring-1 ring-emerald-600/15 ring-inset"
+            role="status"
+          >
+            {translate(dictionary, "pages.recordCount", { count: items.length })}
+          </p>
+        ) : null}
+        <Link
+          href={`/${locale}/listings/map`}
+          className="inline-flex rounded-full border border-slate-200 bg-white px-3 py-1.5 text-sm font-medium text-slate-800 hover:bg-slate-50"
         >
-          {translate(dictionary, "pages.recordCount", { count: items.length })}
-        </p>
-      ) : null}
+          {translate(dictionary, "nav.listingsMap")}
+        </Link>
+      </div>
       <ListingsFunnel
         listings={items}
         subCities={subCities}

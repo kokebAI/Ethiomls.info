@@ -7,6 +7,7 @@
   "nav": {
     "home": "መእተዊ",
     "listings": "ዝርዝራት",
+    "listingsMap": "ካርታ",
     "projects": "ፕሮጀክታት",
     "developers": "ኣራጋጽቲ",
     "dashboard": "ዳሽቦርድ",
@@ -249,6 +250,19 @@
     "listings": {
       "title": "ዝርዝራት",
       "lede": "ኣብ አዲስ ኣበባ ንጡፋት ኣባይቲን ንግዳዊ ቦታታትን ረኣዩ።"
+    },
+    "listingsMap": {
+      "title": "ካርታ ዝርዝራት",
+      "lede": "ዝርጋሐ ዝርዝራት አዲስ ኣበባ ኣብ ካርታ ዳህስስ። ፒናት GPS እንተሎ ይጥቀሙ፣ እንተዘይሎ ማእከል ንኡስ ከተማ።",
+      "approx": "ግምታዊ",
+      "empty": "ንካርታ ዝተሓትመ ዝርዝር የለን።",
+      "viewListing": "ዝርዝር ርአ",
+      "backToList": "ናይ ዝርዝር ምርኢት",
+      "sale": "መሸጣ",
+      "rent": "ኪራይ",
+      "offPlan": "ኦፍ-ፕላን",
+      "mapKeyMissing": "መፍትሒ ካርታ ኣይተዳለወን",
+      "mapError": "ካርታ ምጽዓን ኣይተኽኣለን"
     },
     "projects": {
       "title": "ፕሮጀክታት",
@@ -1046,6 +1060,9 @@
     "priceBandLabel": "ናይ ዋጋ ደረጃ",
     "photosLocked": "ኩሎም {count} ስእልታት ንምርኣይ እተው።",
     "addressLocked": "ትክክለኛ ኣድራሻ ጎደና ድሕሪ ምእታው ይክፈት።",
+    "approxLocation": "ግምታዊ ቦታ (ማእከል ንኡስ ከተማ)",
+    "mapKeyMissing": "መፍትሒ ካርታ ኣይተዳለወን",
+    "mapError": "ካርታ ምጽዓን ኣይተኽኣለን",
     "exactPriceLocked": "ትክክለኛ ዋጋ ድሕሪ ምእታው ይክፈት።"
   },
   "pwa": {
@@ -1076,5 +1093,14 @@
     "loadFailed": "Could not load office assistants.",
     "saveFailed": "Could not save office assistant.",
     "updateFailed": "Could not update office assistant."
+  },
+  "currency": {
+    "label": "ብር/ዶላር",
+    "switchTo": "መቀያየሪ ቀይር",
+    "etb": "ብር ኢትዮጵያ",
+    "usd": "ዶላር ኣሜሪካ",
+    "etbHint": "ዋጋታት ብ ብር ኣርእይ",
+    "usdHint": "ዋጋታት ብ ዶላር ኣርእይ (NBE)",
+    "nbeNote": "ናይ NBE ምንዛሪ"
   }
 }

@@ -7,6 +7,7 @@
   "nav": {
     "home": "Fuula duraa",
     "listings": "Tarreewwan",
+    "listingsMap": "Kaartaa",
     "projects": "Pirojektoota",
     "developers": "Ijaartoota",
     "dashboard": "Daashboordii",
@@ -262,6 +263,19 @@
     "listings": {
       "title": "Tarreewwan",
       "lede": "Manneen fi bakka daldalaa Finfinnee keessatti argaman ilaali."
+    },
+    "listingsMap": {
+      "title": "Kaartaa tarreewwan",
+      "lede": "Tarreewwan mirkanaa'an Finfinnee kaartaa irratti qoradhu. Pinni GPS yoo jiraate fayyadama, yoo hin jiraanne giddu-galeessa magaalaa xixiqqaa.",
+      "approx": "Tilmaamaa",
+      "empty": "Tarree maxxanfamee kaartaa irratti hin jiru.",
+      "viewListing": "Tarree ilaali",
+      "backToList": "Ilaalcha tarree",
+      "sale": "Gurgurtaa",
+      "rent": "Kireeffannaa",
+      "offPlan": "Off-plan",
+      "mapKeyMissing": "Furtuun kaarthaa hin qophaa'ne",
+      "mapError": "Kaartaan fe'uu hin dandeenye"
     },
     "projects": {
       "title": "Pirojektoota",
@@ -1024,6 +1038,9 @@
     "priceBandLabel": "Gidduu gatii",
     "photosLocked": "Suuraalee {count} hunda argachuuf seeni.",
     "addressLocked": "Teessoon daandii sirrii erga seenteen bana.",
+    "approxLocation": "Iddoo tilmaamaa (giddu-galeessa magaalaa xixiqqaa)",
+    "mapKeyMissing": "Furtuun kaarthaa hin qophaa'ne",
+    "mapError": "Kaartaan fe'uu hin dandeenye",
     "exactPriceLocked": "Gatiin sirrii erga seenteen bana.",
     "tourComingSoon": "Daawwannaan 360° dhufuu qaba",
     "tourComingSoonLede": "Daawwannaan panoramaa tarree kanaaf amma hin fe'amne. Agentii yookaan developer erga dabalee booda deebi'ii ilaali.",
@@ -1076,5 +1093,14 @@
     "loadFailed": "Could not load office assistants.",
     "saveFailed": "Could not save office assistant.",
     "updateFailed": "Could not update office assistant."
+  },
+  "currency": {
+    "label": "Maallaqa",
+    "switchTo": "Maallaqa jijjiiri",
+    "etb": "Qarshii Itoophiyaa",
+    "usd": "Doolaara Ameerikaa",
+    "etbHint": "Gatii ETB n agarsiisi",
+    "usdHint": "Gatii USD n agarsiisi (NBE)",
+    "nbeNote": "Saffisa NBE"
   }
 }

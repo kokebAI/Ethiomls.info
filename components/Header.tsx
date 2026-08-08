@@ -6,6 +6,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { BrandMark } from "@/components/BrandMark";
 import { AdminAlertsBell } from "@/components/admin/AdminAlertsBell";
+import { CurrencySwitcher } from "@/components/CurrencySwitcher";
 import { LocaleSwitcher } from "@/components/LocaleSwitcher";
 import { useTranslation } from "@/hooks/useTranslation";
 import { hubPathForRole } from "@/lib/roles/hubs";
@@ -171,6 +172,7 @@ export function Header() {
               <span className="truncate">{user.fullName}</span>
             </Link>
           ) : null}
+          <CurrencySwitcher />
           <LocaleSwitcher />
           {authReady && user?.role === "ADMIN" ? <AdminAlertsBell /> : null}
           {authReady && user ? (

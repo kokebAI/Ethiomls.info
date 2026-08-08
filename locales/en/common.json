@@ -7,6 +7,7 @@
   "nav": {
     "home": "Home",
     "listings": "Listings",
+    "listingsMap": "Map",
     "projects": "Projects",
     "developers": "Developers",
     "dashboard": "Dashboard",
@@ -671,6 +672,9 @@
     "priceBandLabel": "Price range",
     "photosLocked": "Sign in to see all {count} photos.",
     "addressLocked": "Exact street address unlocks after you sign in.",
+    "approxLocation": "Approximate location (sub-city center)",
+    "mapKeyMissing": "Map key not configured",
+    "mapError": "Map failed to load",
     "exactPriceLocked": "Exact price unlocks after you sign in.",
     "tourComingSoon": "360° tour coming soon",
     "tourComingSoonLede": "A panoramic walkthrough has not been uploaded for this listing yet. Check back after the agent or developer adds one.",
@@ -974,6 +978,19 @@
       "title": "Listings",
       "lede": "Browse verified homes and commercial spaces for sale or rent across Addis Ababa — built for diaspora buyers and investors worldwide."
     },
+    "listingsMap": {
+      "title": "Listings map",
+      "lede": "Explore verified Addis Ababa listings on the map. Pins use GPS when available, otherwise the sub-city center.",
+      "approx": "Approximate",
+      "empty": "No published listings to map yet.",
+      "viewListing": "View listing",
+      "backToList": "List view",
+      "sale": "Sale",
+      "rent": "Rent",
+      "offPlan": "Off-plan",
+      "mapKeyMissing": "Map key not configured",
+      "mapError": "Map failed to load"
+    },
     "projects": {
       "title": "Projects",
       "lede": "Track escrow-backed off-plan and under-construction projects in Addis Ababa with clear unit inventory.",
@@ -1043,5 +1060,14 @@
     "dismiss": "Not now",
     "iosHint": "On iPhone: tap Share, then Add to Home Screen.",
     "chromeMenuHint": "Open the browser menu (⋮) and choose Install app / Add to Home screen."
+  },
+  "currency": {
+    "label": "Currency",
+    "switchTo": "Switch currency",
+    "etb": "Ethiopian birr",
+    "usd": "US dollar",
+    "etbHint": "Show prices in ETB",
+    "usdHint": "Show prices in USD (NBE day rate)",
+    "nbeNote": "NBE indicative rate"
   }
 }

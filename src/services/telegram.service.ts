@@ -3,6 +3,10 @@ import {
   formatMoney,
   resolveNbeUsdEtbRate,
 } from "@/lib/compliance/currency";
+import {
+  parseDisplayCurrency,
+  type DisplayCurrency,
+} from "@/lib/currency/preference";
 
 export type TelegramInlineButton = {
   text: string;
@@ -46,8 +50,15 @@ export class TelegramBotService {
     titleAm?: string;
     photo?: Buffer | null;
     filename?: string;
+    /** Lead currency for dual-price lines (sitewide / channel default). */
+    displayCurrency?: DisplayCurrency;
   }): TelegramBroadcastCard {
     const rate = resolveNbeUsdEtbRate();
+    const preferred = parseDisplayCurrency(
+      input.displayCurrency ??
+        process.env.TELEGRAM_DISPLAY_CURRENCY ??
+        process.env.CURRENCY_PREF,
+    );
     const etb =
       input.priceCurrency === "ETB"
         ? input.priceAmount
@@ -56,6 +67,17 @@ export class TelegramBotService {
       input.priceCurrency === "USD"
         ? input.priceAmount
         : convertBudget(input.priceAmount, "ETB", "USD", rate);
+    const primary =
+      preferred === "USD"
+        ? formatMoney(usd, "USD")
+        : formatMoney(etb, "ETB");
+    const secondary =
+      preferred === "USD"
+        ? formatMoney(etb, "ETB")
+        : formatMoney(usd, "USD");
+    const secondaryEnLabel = preferred === "USD" ? "Local" : "Diaspora";
+    const secondaryAmLabel =
+      preferred === "USD" ? "አገር ውስጥ" : "ዲያስፖራ";
 
     const site = (
       process.env.NEXT_PUBLIC_SITE_URL ?? "https://ethiomls.info"
@@ -76,13 +98,13 @@ export class TelegramBotService {
       "",
       `<b>EN</b> ${input.titleEn ?? input.propertyType}`,
       `Type: ${input.propertyType}`,
-      `Price: ${formatMoney(etb, "ETB")} · Diaspora ${formatMoney(usd, "USD")}`,
+      `Price: ${primary} · ${secondaryEnLabel} ${secondary}`,
       `Sub-city: ${input.subCity}`,
       `Water: ${waterEn} · Power: ${powerEn}`,
       "",
       `<b>\u12A0\u121B</b> ${input.titleAm ?? input.propertyType}`,
       `\u12D3\u12ED\u1290\u1275\u1361 ${input.propertyType}`,
-      `\u12CB\u130B\u1361 ${formatMoney(etb, "ETB")} · \u12F2\u12EB\u1235\u1356\u122B ${formatMoney(usd, "USD")}`,
+      `ዋጋ፡ ${primary} · ${secondaryAmLabel} ${secondary}`,
       `\u12AD\u134D\u1208 \u12A8\u1270\u121B\u1361 ${input.subCity}`,
       `\u12CD\u1203\u1361 ${waterAm} · \u1203\u12ED\u120D\u1361 ${powerAm}`,
     ].join("\n");

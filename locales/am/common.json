@@ -7,6 +7,7 @@
   "nav": {
     "home": "መነሻ",
     "listings": "ዝርዝሮች",
+    "listingsMap": "ካርታ",
     "projects": "ፕሮጀክቶች",
     "developers": "ገንቢዎች",
     "dashboard": "ዳሽቦርድ",
@@ -249,6 +250,19 @@
     "listings": {
       "title": "ዝርዝሮች",
       "lede": "በአዲስ አበባ ክፍለ ከተሞች ያሉ ንቁ ቤቶችን እና የንግድ ቦታዎችን ይመልከቱ።"
+    },
+    "listingsMap": {
+      "title": "የዝርዝሮች ካርታ",
+      "lede": "የተረጋገጡ የአዲስ አበባ ዝርዝሮችን በካርታ ያስሱ። ፒኖች GPS ሲኖር ይጠቀማሉ፣ ካልሆነ ንዑስ ከተማ ማዕከል።",
+      "approx": "ግምታዊ",
+      "empty": "ለካርታ ምንም የታተመ ዝርዝር የለም።",
+      "viewListing": "ዝርዝር ይመልከቱ",
+      "backToList": "የዝርዝር እይታ",
+      "sale": "ሽያጭ",
+      "rent": "ኪራይ",
+      "offPlan": "ኦፍ-ፕላን",
+      "mapKeyMissing": "የካርታ ቁልፍ አልተዋቀረም",
+      "mapError": "ካርታ መጫን አልተሳካም"
     },
     "projects": {
       "title": "ፕሮጀክቶች",
@@ -1002,6 +1016,9 @@
     "priceBandLabel": "የዋጋ ክልል",
     "photosLocked": "ሁሉንም {count} ፎቶዎች ለማየት ይግቡ።",
     "addressLocked": "ትክክለኛ የመንገድ አድራሻ ከመግባት በኋላ ይከፈታል።",
+    "approxLocation": "ግምታዊ አካባቢ (ንዑስ ከተማ ማዕከል)",
+    "mapKeyMissing": "የካርታ ቁልፍ አልተዋቀረም",
+    "mapError": "ካርታ መጫን አልተሳካም",
     "exactPriceLocked": "ትክክለኛ ዋጋ ከመግባት በኋላ ይከፈታል።",
     "tourComingSoon": "360° ጉብኝት በቅርብ ይመጣል",
     "tourComingSoonLede": "ለዚህ ዝርዝር የፓኖራማ ጉብኝት ገና አልተጫነም። ወኪሉ ወይም ገንቢው ካከለ በኋላ ይመልከቱ።",
@@ -1043,5 +1060,14 @@
     "loadFailed": "የቢሮ ረዳቶችን መጫን አልተሳካም።",
     "saveFailed": "የቢሮ ረዳትን ማስቀመጥ አልተሳካም።",
     "updateFailed": "የቢሮ ረዳትን ማዘመን አልተሳካም።"
+  },
+  "currency": {
+    "label": "ምንዛሬ",
+    "switchTo": "ምንዛሬ ቀይር",
+    "etb": "የኢትዮጵያ ብር",
+    "usd": "የአሜሪካ ዶላር",
+    "etbHint": "ዋጋዎችን በብር አሳይ",
+    "usdHint": "ዋጋዎችን በዶላር አሳይ (NBE)",
+    "nbeNote": "የብሔራዊ ባንክ መመሪያ ምንዛሬ"
   }
 }

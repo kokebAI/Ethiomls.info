@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { useCurrencyPreference } from "@/hooks/useCurrencyPreference";
 import { useTranslation } from "@/hooks/useTranslation";
 import {
   convertBudget,
@@ -92,7 +93,9 @@ export function ConversationalFunnel({
 
   const [intent, setIntent] = useState<SearchIntent>("buy");
   const [clusterId, setClusterId] = useState<SubCityClusterId>("east");
-  const [budgetCurrency, setBudgetCurrency] = useState<BudgetCurrency>("ETB");
+  const { currency: preferredCurrency, setCurrency: setPreferredCurrency } =
+    useCurrencyPreference();
+  const [budgetCurrency, setBudgetCurrency] = useState<BudgetCurrency>(preferredCurrency);
   const [budgetInput, setBudgetInput] = useState("5,000,000");
   const [minCompletionPercent, setMinCompletionPercent] = useState(0);
   const [aiQuery, setAiQuery] = useState("");
@@ -107,10 +110,31 @@ export function ConversationalFunnel({
   const budgetUsd = convertBudget(safeAmount, budgetCurrency, "USD", rate);
   const cluster = SUB_CITY_CLUSTERS.find((item) => item.id === clusterId)!;
 
+  useEffect(() => {
+    if (preferredCurrency === budgetCurrency) return;
+    const converted = convertBudget(
+      safeAmount,
+      budgetCurrency,
+      preferredCurrency,
+      rate,
+    );
+    setBudgetCurrency(preferredCurrency);
+    setBudgetInput(
+      formatBudgetInput(
+        preferredCurrency === "ETB"
+          ? Math.round(converted)
+          : Math.round(converted * 100) / 100,
+      ),
+    );
+    // Only react to header currency changes; amount conversion uses latest inputs.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [preferredCurrency]);
+
   function toggleCurrency(next: BudgetCurrency) {
     if (next === budgetCurrency) return;
     const converted = convertBudget(safeAmount, budgetCurrency, next, rate);
     setBudgetCurrency(next);
+    setPreferredCurrency(next);
     setBudgetInput(
       formatBudgetInput(
         next === "ETB"
@@ -166,6 +190,7 @@ export function ConversationalFunnel({
       setIntent(data.intent);
       setClusterId(data.clusterId);
       setBudgetCurrency(data.budgetCurrency);
+      setPreferredCurrency(data.budgetCurrency);
       setBudgetInput(
         formatBudgetInput(
           data.budgetCurrency === "ETB"

@@ -1,4 +1,4 @@
-import { AddisSkylineBackdrop } from "@/components/AddisSkylineBackdrop";
+import { SiteMapBackdrop } from "@/components/SiteMapBackdrop";
 import { BrandMark } from "@/components/BrandMark";
 import { AuthPanel } from "@/components/auth/AuthPanel";
 import { LocaleSwitcher } from "@/components/LocaleSwitcher";
@@ -40,7 +40,10 @@ export default async function LoginPage({
         className="pointer-events-none absolute inset-0 -z-10 overflow-hidden rounded-[1.5rem] bg-[radial-gradient(ellipse_at_top,_rgba(217,119,6,0.22),_transparent_55%),linear-gradient(160deg,#0F172A_0%,#1E293B_55%,#0F172A_100%)] sm:rounded-[2rem]"
         aria-hidden
       />
-      <AddisSkylineBackdrop variant="dark" className="-z-[5] rounded-[1.5rem] sm:rounded-[2rem]" />
+      <SiteMapBackdrop
+        variant="dark"
+        className="-z-[5] rounded-[1.5rem] sm:rounded-[2rem]"
+      />
       <div className="relative z-10 mx-auto w-full max-w-md px-1">
         <div className="mb-5 flex items-start justify-between gap-3">
           <div className="flex min-w-0 items-center gap-3">

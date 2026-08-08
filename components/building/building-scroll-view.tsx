@@ -9,7 +9,7 @@ import {
   useState,
 } from "react";
 import { useTranslation } from "@/hooks/useTranslation";
-import { formatMoney } from "@/lib/compliance/currency";
+import { useCurrencyPreference } from "@/hooks/useCurrencyPreference";
 import {
   countAvailableUnits,
   sortFloorsTopDown,
@@ -38,6 +38,7 @@ function UnitSubCard({
   onSelect?: (unit: BuildingUnit) => void;
 }) {
   const { t } = useTranslation();
+  const { formatListing } = useCurrencyPreference();
   return (
     <button
       type="button"
@@ -77,7 +78,7 @@ function UnitSubCard({
             {unit.sizeM2} m²
           </span>
         ) : null}
-        <span>{formatMoney(unit.price, unit.currency)}</span>
+        <span>{formatListing(unit.price, unit.currency)}</span>
       </div>
     </button>
   );
