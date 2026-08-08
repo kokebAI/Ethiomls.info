@@ -3,20 +3,31 @@ import { ListingStatus } from "@prisma/client";
 /** Tag written by POST /api/crm/ingest-listing — marks CRM scrape activations. */
 export const CRM_PUBLIC_SCRAPE_TAG = "agt-crm-activation";
 
+/** Tag on prisma seed demo-grid rows (PENDING_REVIEW personas). */
+export const DEMO_PUBLIC_UNVERIFIED_TAG = "demo-grid";
+
 export type CrmScrapeListingRef = {
   status: string;
   metadataTags?: string[] | null;
 };
 
-/** CRM-ingested scrapes that may appear on the public catalog while unverified. */
+function hasPublicUnverifiedTag(tags: string[] | null | undefined): boolean {
+  const list = tags ?? [];
+  return (
+    list.includes(CRM_PUBLIC_SCRAPE_TAG) ||
+    list.includes(DEMO_PUBLIC_UNVERIFIED_TAG)
+  );
+}
+
+/** Unverified rows allowed on the public catalog (CRM scrapes + demo seed grid). */
 export function isPublicCrmUnverifiedScrape(
   listing: CrmScrapeListingRef,
 ): boolean {
   if (listing.status !== ListingStatus.PENDING_REVIEW) return false;
-  return (listing.metadataTags ?? []).includes(CRM_PUBLIC_SCRAPE_TAG);
+  return hasPublicUnverifiedTag(listing.metadataTags);
 }
 
-/** Prisma `where` for public catalog listings (published + CRM unverified scrapes). */
+/** Prisma `where` for public catalog listings (published + public unverified). */
 export function publicCatalogListingWhere() {
   return {
     OR: [
@@ -24,6 +35,10 @@ export function publicCatalogListingWhere() {
       {
         status: ListingStatus.PENDING_REVIEW,
         metadataTags: { has: CRM_PUBLIC_SCRAPE_TAG },
+      },
+      {
+        status: ListingStatus.PENDING_REVIEW,
+        metadataTags: { has: DEMO_PUBLIC_UNVERIFIED_TAG },
       },
     ],
   };
