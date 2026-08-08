@@ -97,7 +97,8 @@
     "offPlan": "ቅድሚ ውጥን",
     "propertyId": "MLS ID",
     "telegram": "Telegram",
-    "website": "Website"
+    "website": "Website",
+    "unverifiedScrape": "ዘይተረጋገጸ"
   },
   "filters": {
     "title": "መጣረያታት",

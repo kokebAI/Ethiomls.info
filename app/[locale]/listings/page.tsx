@@ -9,6 +9,7 @@ import {
   canViewFullListingDetails,
   teaserCoverPhotos,
 } from "@/lib/catalog/buyer-visibility";
+import { isPublicCrmUnverifiedScrape } from "@/lib/catalog/crm-public-scrape";
 import { fetchPublishedListings } from "@/lib/catalog/queries";
 import { isLocale, type Locale } from "@/lib/i18n/config";
 import { getDictionary, translate } from "@/lib/i18n/getDictionary";
@@ -99,7 +100,10 @@ export default async function ListingsPage({
     const subCityCode = listing.subCity?.code ?? "";
     const amount = Number(listing.priceAmount);
     const currency = listing.priceCurrency;
-    const priceFormatted = showFull
+    const unverifiedScrape = isPublicCrmUnverifiedScrape(listing);
+    // CRM unverified scrapes always use price bands on the public catalog.
+    const showExactPrice = showFull && !unverifiedScrape;
+    const priceFormatted = showExactPrice
       ? formatListingMoney(amount, currency, preferredCurrency, rate)
       : formatListingPriceBand(
           amount,
@@ -109,16 +113,33 @@ export default async function ListingsPage({
           rate,
         );
 
-    const photos = showFull
+    const photos = showExactPrice
       ? allListingPhotos(listing)
       : teaserCoverPhotos(listing);
+
+    const badges: DirectoryBadge[] = [
+      listingBadge(listing.listingType, t),
+      {
+        label:
+          listing.listingScope === "PROPERTY"
+            ? t("listing.scopeProperty")
+            : t("listing.scopeSingle"),
+        tone: listing.listingScope === "PROPERTY" ? "amber" : "slate",
+      },
+    ];
+    if (unverifiedScrape) {
+      badges.push({
+        label: t("listing.unverifiedScrape"),
+        tone: "amber",
+      });
+    }
 
     return {
       id: listing.id,
       title: pickLocalized(listing.title, locale) || listing.id,
       href: `/${locale}/listings/${listing.id}`,
       imageUrl: photos[0] ?? null,
-      photoCount: showFull ? photos.length : photos.length > 0 ? 1 : 0,
+      photoCount: showExactPrice ? photos.length : photos.length > 0 ? 1 : 0,
       meta: [
         subCity,
         priceFormatted,
@@ -139,20 +160,11 @@ export default async function ListingsPage({
       ]
         .filter(Boolean)
         .join(" · "),
-      badges: [
-        listingBadge(listing.listingType, t),
-        {
-          label:
-            listing.listingScope === "PROPERTY"
-              ? t("listing.scopeProperty")
-              : t("listing.scopeSingle"),
-          tone: listing.listingScope === "PROPERTY" ? "amber" : "slate",
-        } as DirectoryBadge,
-      ],
+      badges,
       subCityCode,
       listingType: listing.listingType,
-      // Guests get band midpoints only — never exact list prices in HTML props.
-      priceAmount: showFull
+      // Guests / unverified scrapes get band midpoints only — never exact list prices.
+      priceAmount: showExactPrice
         ? amount
         : listingPriceSortKey(
             amount,

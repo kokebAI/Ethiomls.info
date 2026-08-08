@@ -97,7 +97,8 @@
     "offPlan": "ከቀድሞ እቅድ",
     "propertyId": "የMLS መለያ",
     "telegram": "ቴሌግራም",
-    "website": "ድረ-ገጽ"
+    "website": "ድረ-ገጽ",
+    "unverifiedScrape": "ያልተረጋገጠ"
   },
   "filters": {
     "title": "ማጣሪያዎች",

@@ -1,4 +1,5 @@
 import { ListingStatus } from "@prisma/client";
+import { publicCatalogListingWhere } from "@/lib/catalog/crm-public-scrape";
 import { prisma } from "@/lib/db/prisma";
 
 /**
@@ -160,7 +161,7 @@ export async function fetchProjectById(
 export async function fetchPublishedListings() {
   try {
     return await prisma.listing.findMany({
-      where: { status: ListingStatus.PUBLISHED },
+      where: publicCatalogListingWhere(),
       include: {
         subCity: {
           select: { code: true, name: true },
@@ -169,6 +170,7 @@ export async function fetchPublishedListings() {
           select: { tradeName: true, displayName: true },
         },
       },
+      // Keep verified/published inventory first, then newest CRM scrapes.
       orderBy: [{ publishedAt: "desc" }, { createdAt: "desc" }],
     });
   } catch (error) {
@@ -186,7 +188,7 @@ export async function fetchListingById(
     return await prisma.listing.findFirst({
       where: opts?.allowUnpublished
         ? { id: listingId }
-        : { id: listingId, status: ListingStatus.PUBLISHED },
+        : { id: listingId, AND: [publicCatalogListingWhere()] },
       include: {
         subCity: {
           select: { code: true, name: true },

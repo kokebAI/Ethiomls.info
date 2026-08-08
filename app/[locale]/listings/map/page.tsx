@@ -8,6 +8,7 @@ import {
 } from "@/components/maps/ListingsBrowseMap";
 import { getSession } from "@/lib/auth/session";
 import { getCurrentOpsStaff } from "@/lib/auth/admin";
+import { isPublicCrmUnverifiedScrape } from "@/lib/catalog/crm-public-scrape";
 import { fetchPublishedListings } from "@/lib/catalog/queries";
 import { isLocale, type Locale } from "@/lib/i18n/config";
 import { getDictionary, translate } from "@/lib/i18n/getDictionary";
@@ -63,10 +64,13 @@ export default async function ListingsMapPage({
   const coordsById = await fetchListingLatLng(ids);
 
   const pins: MapListingPin[] = listings.map((listing) => {
-    // Same privacy rule as listing detail: guests only see sub-city centroids.
-    const showFull = Boolean(session || staff);
+    const publicCrmUnverified = isPublicCrmUnverifiedScrape(listing);
+    // Guests and public CRM scrapes only see sub-city centroids (staff excepted).
+    const showExactCoords = publicCrmUnverified
+      ? Boolean(staff)
+      : Boolean(session || staff);
     const stored = coordsById.get(listing.id);
-    const resolved = showFull
+    const resolved = showExactCoords
       ? resolveListingCoordinates({
           lat: stored?.lat,
           lng: stored?.lng,

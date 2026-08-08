@@ -32,6 +32,7 @@ import {
   canViewFullListingDetails,
   teaserCoverPhotos,
 } from "@/lib/catalog/buyer-visibility";
+import { isPublicCrmUnverifiedScrape } from "@/lib/catalog/crm-public-scrape";
 import { fetchListingById } from "@/lib/catalog/queries";
 import {
   formatListingMoney,
@@ -149,8 +150,10 @@ export default async function ListingDetailPage({
       listing.developer?.userId &&
       session.userId === listing.developer.userId,
   );
+  const publicCrmUnverified = isPublicCrmUnverifiedScrape(listing);
   if (
     listing.status !== "PUBLISHED" &&
+    !publicCrmUnverified &&
     !staff &&
     !isOwner &&
     !isDeveloperOwner
@@ -162,14 +165,20 @@ export default async function ListingDetailPage({
   const { currency: preferredCurrency, rateUsdEtb } =
     await readDisplayCurrencyPreference();
   const rate = resolveNbeUsdEtbRate(rateUsdEtb);
-  const showFull = canViewFullListingDetails({
-    session,
-    staff: Boolean(staff),
-    listing: {
-      ownerId: listing.ownerId,
-      developerUserId: listing.developer?.userId,
-    },
-  });
+  const elevated =
+    Boolean(staff) || isOwner || isDeveloperOwner;
+  // Public CRM scrapes stay teaser/band until staff/owner elevates them.
+  const showFull =
+    elevated ||
+    (!publicCrmUnverified &&
+      canViewFullListingDetails({
+        session,
+        staff: Boolean(staff),
+        listing: {
+          ownerId: listing.ownerId,
+          developerUserId: listing.developer?.userId,
+        },
+      }));
   const loginHref = `${base}/login?mode=register&next=${encodeURIComponent(`${base}/listings/${encodeURIComponent(listing.id)}`)}`;
   const signInHref = `${base}/login?next=${encodeURIComponent(`${base}/listings/${listing.id}`)}`;
 
@@ -498,6 +507,11 @@ export default async function ListingDetailPage({
             <span className="inline-flex items-center rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-semibold text-slate-700 ring-1 ring-inset ring-slate-500/15">
               {prettyEnum(listing.category)}
             </span>
+            {publicCrmUnverified ? (
+              <span className="inline-flex items-center rounded-full bg-amber-50 px-2.5 py-0.5 text-xs font-semibold text-amber-800 ring-1 ring-inset ring-amber-600/15">
+                {t("listing.unverifiedScrape")}
+              </span>
+            ) : null}
             {listing.adminAuditApprovedAt ? (
               <span className="inline-flex items-center gap-1 rounded-full bg-sky-50 px-2.5 py-0.5 text-xs font-semibold text-sky-700 ring-1 ring-inset ring-sky-600/15">
                 <BadgeCheck className="h-3.5 w-3.5" aria-hidden="true" />

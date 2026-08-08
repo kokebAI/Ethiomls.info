@@ -97,7 +97,8 @@
     "offPlan": "Karoora duraatiin",
     "propertyId": "ID MLS",
     "telegram": "Telegram",
-    "website": "Weebsaayitii"
+    "website": "Weebsaayitii",
+    "unverifiedScrape": "Hin mirkaneessamne"
   },
   "filters": {
     "title": "Filtaroota",

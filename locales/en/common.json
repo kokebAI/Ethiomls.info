@@ -97,7 +97,8 @@
     "offPlan": "Off-plan",
     "propertyId": "MLS ID",
     "telegram": "Telegram",
-    "website": "Website"
+    "website": "Website",
+    "unverifiedScrape": "Unverified"
   },
   "filters": {
     "title": "Filters",
