@@ -7,6 +7,7 @@ import {
   ListingAuditEnrichPanel,
   type AuditEnrichCopy,
 } from "@/components/admin/ListingAuditEnrichPanel";
+import { isDemoPersona } from "@/lib/auth/demo-personas";
 
 const CHECKLIST_KEYS = [
   "sellerIdentity",
@@ -252,7 +253,11 @@ export function ListingAuditPanel({
       accounts.map((account) => ({
         ...account,
         optionLabel: `${account.label} · ${roleLabel(account.role, copy.attach)}${
-          account.phone ? ` · ${account.phone}` : ""
+          isDemoPersona({ phone: account.phone })
+            ? ""
+            : account.phone
+              ? ` · ${account.phone}`
+              : ""
         } (${account.listingCount})`,
       })),
     [accounts, copy.attach],

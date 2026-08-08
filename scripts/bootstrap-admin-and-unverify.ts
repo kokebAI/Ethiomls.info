@@ -1,7 +1,7 @@
 /**
  * One-shot ops script:
  * - Mark marketplace listings unverified (clear audit + queue for review)
- * - Ensure admin account for support@agtplc.com (SMS phone +251911000001)
+ * - Ensure admin account for support@agtplc.com (email login Demo123!)
  *
  * Usage: npx tsx scripts/bootstrap-admin-and-unverify.ts
  */
@@ -114,8 +114,7 @@ async function main() {
         admin: {
           id: adminId,
           email: ADMIN_EMAIL,
-          phone: ADMIN_PHONE,
-          loginHint: "SMS OTP with 0911000001 (email is profile contact only)",
+          loginHint: `Sign in with ${ADMIN_EMAIL} and password Demo123!`,
         },
       },
       null,

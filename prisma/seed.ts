@@ -1,8 +1,11 @@
 import { randomUUID } from "node:crypto";
 import {
   ConstructionStage,
+  CurrencyCode,
+  ListingScope,
   ListingStatus,
   ListingType,
+  LandHoldType,
   Prisma,
   PrismaClient,
   PropertyCategory,
@@ -329,6 +332,13 @@ const DEMO_USERS: DemoUserSeed[] = [
       hqCode: "bole",
     },
   },
+  {
+    email: "assistant@ethiomls.local",
+    phone: "+251911000006",
+    fullName: "Demo Office Assistant",
+    role: UserRole.OFFICE_ASSISTANT,
+    localePrefs: ["en", "am"],
+  },
 ];
 
 async function seedDemoUsers() {
@@ -336,25 +346,64 @@ async function seedDemoUsers() {
   const byCode = new Map(subCities.map((s) => [s.code, s.id]));
 
   for (const demo of DEMO_USERS) {
-    const user = await prisma.user.upsert({
+    const byPhone = await prisma.user.findUnique({
       where: { phone: demo.phone },
-      update: {
-        email: demo.email,
-        fullName: demo.fullName,
-        passwordHash: DEMO_PASSWORD_HASH,
-        role: demo.role,
-        isActive: true,
-        localePrefs: demo.localePrefs,
-      },
-      create: {
-        email: demo.email,
-        phone: demo.phone,
-        passwordHash: DEMO_PASSWORD_HASH,
-        fullName: demo.fullName,
-        role: demo.role,
-        localePrefs: demo.localePrefs,
-      },
+      select: { id: true },
     });
+    const byEmail = await prisma.user.findUnique({
+      where: { email: demo.email },
+      select: { id: true, phone: true },
+    });
+
+    let userId: string;
+    if (byPhone) {
+      if (byEmail && byEmail.id !== byPhone.id) {
+        // Free the email on the other row so this persona owns it.
+        await prisma.user.update({
+          where: { id: byEmail.id },
+          data: { email: null },
+        });
+      }
+      const user = await prisma.user.update({
+        where: { id: byPhone.id },
+        data: {
+          email: demo.email,
+          fullName: demo.fullName,
+          passwordHash: DEMO_PASSWORD_HASH,
+          role: demo.role,
+          isActive: true,
+          localePrefs: demo.localePrefs,
+        },
+      });
+      userId = user.id;
+    } else if (byEmail) {
+      const user = await prisma.user.update({
+        where: { id: byEmail.id },
+        data: {
+          phone: demo.phone,
+          fullName: demo.fullName,
+          passwordHash: DEMO_PASSWORD_HASH,
+          role: demo.role,
+          isActive: true,
+          localePrefs: demo.localePrefs,
+        },
+      });
+      userId = user.id;
+    } else {
+      const user = await prisma.user.create({
+        data: {
+          email: demo.email,
+          phone: demo.phone,
+          passwordHash: DEMO_PASSWORD_HASH,
+          fullName: demo.fullName,
+          role: demo.role,
+          localePrefs: demo.localePrefs,
+        },
+      });
+      userId = user.id;
+    }
+
+    const user = { id: userId };
 
     if (demo.delala) {
       const operatingSubCityId = byCode.get(demo.delala.operatingSubCityCode);
@@ -418,7 +467,12 @@ async function seedDemoUsers() {
     }
   }
 
-  console.log(`Seeded ${DEMO_USERS.length} demo persona users (password: Demo123!).`);
+  for (const demo of DEMO_USERS) {
+    console.log(`  demo login: ${demo.email} (${demo.role})`);
+  }
+  console.log(
+    `Seeded ${DEMO_USERS.length} demo persona users (password: Demo123! — email login; phones hidden).`,
+  );
 }
 
 async function seedSubCities() {
@@ -717,12 +771,234 @@ async function seedSubCityListings() {
   console.log(`Seeded ${subCities.length} published sub-city listings.`);
 }
 
+const DEMO_LISTING_TYPES = [
+  ListingType.SALE,
+  ListingType.RENT,
+  ListingType.OFF_PLAN,
+] as const;
+
+const DEMO_CATEGORIES = [
+  PropertyCategory.RESIDENTIAL,
+  PropertyCategory.COMMERCIAL,
+  PropertyCategory.MIXED_USE,
+  PropertyCategory.LAND,
+] as const;
+
+const DEMO_COVER =
+  "https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=1200&q=80";
+
+function categoryTitleBits(category: PropertyCategory): {
+  en: string;
+  am: string;
+  om: string;
+} {
+  switch (category) {
+    case PropertyCategory.COMMERCIAL:
+      return { en: "Commercial suite", am: "የንግድ ቦታ", om: "Bakka daldalaa" };
+    case PropertyCategory.MIXED_USE:
+      return { en: "Mixed-use property", am: "ድብልቅ አጠቃቀም", om: "Fayyadama makaa" };
+    case PropertyCategory.LAND:
+      return { en: "Land plot", am: "መሬት", om: "Lafa" };
+    default:
+      return { en: "Residence", am: "መኖሪያ", om: "Mana jireenyaa" };
+  }
+}
+
+function typeTitleBits(listingType: ListingType): {
+  en: string;
+  am: string;
+  om: string;
+} {
+  switch (listingType) {
+    case ListingType.RENT:
+      return { en: "For rent", am: "ለኪራይ", om: "Kireeffachuuf" };
+    case ListingType.OFF_PLAN:
+      return { en: "Off-plan", am: "ቅድመ ግንባታ", om: "Dursee ijaarama" };
+    default:
+      return { en: "For sale", am: "ለሽያጭ", om: "Gurguruuf" };
+  }
+}
+
+async function seedDemoTypeCategoryGrid() {
+  const subCities = await prisma.subCity.findMany({
+    orderBy: { sortOrder: "asc" },
+  });
+  if (subCities.length === 0) {
+    throw new Error("Seed sub-cities before demo listing grid.");
+  }
+
+  const owner = await prisma.user.findUnique({
+    where: { phone: "+251911000004" },
+  });
+  const broker = await prisma.user.findUnique({
+    where: { phone: "+251911000003" },
+    include: { delalaProfile: true },
+  });
+  const developerUser = await prisma.user.findUnique({
+    where: { phone: "+251911000005" },
+    include: { developerProfile: true },
+  });
+
+  if (!owner || !broker || !developerUser?.developerProfile) {
+    throw new Error(
+      "Seed demo owner, broker, and developer personas before listing grid.",
+    );
+  }
+
+  let created = 0;
+  let cell = 0;
+
+  for (const listingType of DEMO_LISTING_TYPES) {
+    for (const category of DEMO_CATEGORIES) {
+      for (const n of [1, 2] as const) {
+        const seedKey = `seed:demo:grid:${listingType}:${category}:${n}`;
+        const subCity = subCities[cell % subCities.length];
+        cell += 1;
+        const name =
+          subCity.name &&
+          typeof subCity.name === "object" &&
+          !Array.isArray(subCity.name)
+            ? (subCity.name as Record<string, string>)
+            : { en: subCity.code, am: subCity.code, om: subCity.code };
+
+        const typeBits = typeTitleBits(listingType);
+        const catBits = categoryTitleBits(category);
+        const variant = n === 1 ? "A" : "B";
+
+        const useDeveloper = listingType === ListingType.OFF_PLAN;
+        const useBroker =
+          !useDeveloper && (category !== PropertyCategory.RESIDENTIAL || n === 2);
+        const listingOwnerId = useDeveloper
+          ? developerUser.id
+          : useBroker
+            ? broker.id
+            : owner.id;
+        const developerId = useDeveloper
+          ? developerUser.developerProfile!.id
+          : null;
+        const delalaId =
+          useBroker && broker.delalaProfile ? broker.delalaProfile.id : null;
+
+        const basePrice =
+          listingType === ListingType.RENT
+            ? 35_000 + n * 5_000 + (category === PropertyCategory.LAND ? 20_000 : 0)
+            : listingType === ListingType.OFF_PLAN
+              ? 3_200_000 + n * 400_000
+              : 4_800_000 + n * 550_000;
+        const priceAmount =
+          category === PropertyCategory.COMMERCIAL
+            ? basePrice * 1.25
+            : category === PropertyCategory.LAND
+              ? basePrice * 0.85
+              : basePrice;
+
+        const isLand = category === PropertyCategory.LAND;
+        const bedrooms = isLand ? null : 2 + n;
+        const bathrooms = isLand ? null : Math.max(1, (bedrooms ?? 1) - 1);
+        const floorAreaSqm = isLand ? null : 90 + n * 15 + cell * 2;
+        const plotAreaSqm = isLand ? 250 + n * 50 : null;
+
+        const existingListing = await prisma.listing.findFirst({
+          where: { metadataTags: { has: seedKey } },
+          select: { id: true },
+        });
+        const listingId =
+          existingListing?.id ?? (await allocateUniquePropertyId(prisma));
+
+        const listingPayload: Prisma.ListingUncheckedCreateInput = {
+          id: listingId,
+          title: {
+            en: `${name.en} ${catBits.en} ${variant} · ${typeBits.en}`,
+            am: `${name.am} ${catBits.am} ${variant} · ${typeBits.am}`,
+            om: `${name.om} ${catBits.om} ${variant} · ${typeBits.om}`,
+          },
+          description: {
+            en: `Demo ${listingType.toLowerCase()} ${category.toLowerCase()} listing in ${name.en}. Contact via listing owner email — seed phones stay internal.`,
+            am: `በ${name.am} የማሳያ ${typeBits.am} ${catBits.am} ዝርዝር።`,
+            om: `Tarree fakkeenyaa ${name.om} keessatti.`,
+          },
+          titleEn: `${name.en} ${catBits.en} ${variant} · ${typeBits.en}`,
+          titleAm: `${name.am} ${catBits.am} ${variant} · ${typeBits.am}`,
+          descriptionEn: `Demo ${listingType.toLowerCase()} ${category.toLowerCase()} listing in ${name.en}. Full fields populated for UI demos; status remains pending review.`,
+          descriptionAm: `በ${name.am} የማሳያ ዝርዝር — ሙሉ መረጃ፣ ገና ሳይረጋገጥ።`,
+          status: ListingStatus.PENDING_REVIEW,
+          publishedAt: null,
+          adminAuditApprovedAt: null,
+          adminAuditedById: null,
+          adminAuditNotes: null,
+          adminAuditChecklist: Prisma.DbNull,
+          subCityId: subCity.id,
+          ownerId: listingOwnerId,
+          developerId,
+          delalaId,
+          priceAmount,
+          priceCurrency: CurrencyCode.ETB,
+          bedrooms,
+          bathrooms,
+          floorAreaSqm,
+          plotAreaSqm,
+          landHoldType: isLand ? LandHoldType.FREEHOLD : null,
+          listingType,
+          category,
+          listingScope:
+            category === PropertyCategory.LAND ||
+            listingType === ListingType.OFF_PLAN
+              ? ListingScope.PROPERTY
+              : ListingScope.SINGLE,
+          constructionStage:
+            listingType === ListingType.OFF_PLAN
+              ? ConstructionStage.SUPERSTRUCTURE
+              : null,
+          completionPercent:
+            listingType === ListingType.OFF_PLAN ? 35 + n * 10 : null,
+          addressLine: `${name.en} demo corridor · Block ${variant}`,
+          coverImageUrl: DEMO_COVER,
+          galleryImageUrls: [DEMO_COVER],
+          images: [DEMO_COVER],
+          metadataTags: [
+            seedKey,
+            "demo-grid",
+            listingType.toLowerCase(),
+            category.toLowerCase(),
+            "parking",
+            "security",
+            `pid:${listingId}`,
+          ],
+          ...amenityFlagsFromTags(
+            isLand
+              ? ["security"]
+              : ["parking", "security", "water", n === 1 ? "elevator" : ""],
+          ),
+        };
+
+        if (existingListing) {
+          const { id: _id, ...updateData } = listingPayload;
+          await prisma.listing.update({
+            where: { id: listingId },
+            data: updateData,
+          });
+        } else {
+          await prisma.listing.create({
+            data: listingPayload,
+          });
+        }
+        created += 1;
+      }
+    }
+  }
+
+  console.log(
+    `Seeded ${created} unverified demo listings (2 × ListingType × PropertyCategory).`,
+  );
+}
+
 async function main() {
   await seedSubCities();
   await seedDemoUsers();
   await seedMockDevelopers();
   await seedMockProjects();
   await seedSubCityListings();
+  await seedDemoTypeCategoryGrid();
 }
 
 main()

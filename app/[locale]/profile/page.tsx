@@ -4,6 +4,7 @@ import { ChangePasswordForm } from "@/components/auth/ChangePasswordForm";
 import { LogoutButton } from "@/components/auth/LogoutButton";
 import { ProfileForm } from "@/components/auth/ProfileForm";
 import { isPlaceholderPasswordHash } from "@/lib/auth/password";
+import { isDemoPersona } from "@/lib/auth/demo-personas";
 import { getSession } from "@/lib/auth/session";
 import { roleLabelKey } from "@/lib/auth/signup-roles";
 import { prisma } from "@/lib/db/prisma";
@@ -77,6 +78,7 @@ export default async function ProfilePage({
           initialEmail={user.email}
           phone={user.phone}
           roleLabel={roleLabel}
+          hidePhone={isDemoPersona({ email: user.email, phone: user.phone })}
         />
       </section>
 

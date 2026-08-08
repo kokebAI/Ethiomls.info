@@ -9,6 +9,8 @@ type ProfileFormProps = {
   initialEmail: string | null;
   phone: string | null;
   roleLabel: string;
+  /** Hide phone for seeded demo personas (email login only). */
+  hidePhone?: boolean;
 };
 
 export function ProfileForm({
@@ -16,6 +18,7 @@ export function ProfileForm({
   initialEmail,
   phone,
   roleLabel,
+  hidePhone = false,
 }: ProfileFormProps) {
   const { t } = useTranslation();
   const router = useRouter();
@@ -58,19 +61,21 @@ export function ProfileForm({
 
   return (
     <form onSubmit={save} className="grid max-w-xl gap-5">
-      <label>
-        <span className="text-sm font-semibold text-slate-700">
-          {t("profile.phone")}
-        </span>
-        <input
-          value={phone ?? ""}
-          readOnly
-          className={`${fieldClass} bg-slate-50 font-mono text-slate-600`}
-        />
-        <span className="mt-1 block text-xs text-slate-500">
-          {t("profile.phoneLocked")}
-        </span>
-      </label>
+      {!hidePhone ? (
+        <label>
+          <span className="text-sm font-semibold text-slate-700">
+            {t("profile.phone")}
+          </span>
+          <input
+            value={phone ?? ""}
+            readOnly
+            className={`${fieldClass} bg-slate-50 font-mono text-slate-600`}
+          />
+          <span className="mt-1 block text-xs text-slate-500">
+            {t("profile.phoneLocked")}
+          </span>
+        </label>
+      ) : null}
 
       <label>
         <span className="text-sm font-semibold text-slate-700">
