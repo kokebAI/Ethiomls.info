@@ -10,6 +10,7 @@ import {
 import { ensureBilingualListingCopy } from "@/lib/ai/translate-listing";
 import { allocateUniquePropertyId } from "@/lib/db/allocatePropertyId";
 import { prisma } from "@/lib/db/prisma";
+import { sanitizeListingImageUrls } from "@/lib/imports/listing-images";
 import { isAddisSubCityCode } from "@/lib/properties/subCities";
 import { normalizeEthiopiaPhone } from "@/lib/auth/otp";
 
@@ -118,12 +119,9 @@ export async function POST(request: NextRequest) {
       })
     : null;
 
-  const images = Array.isArray(body.imageUrls)
-    ? (body.imageUrls as unknown[])
-        .map((u) => String(u))
-        .filter((u) => /^https?:\/\//i.test(u))
-        .slice(0, 12)
-    : [];
+  const images = sanitizeListingImageUrls(
+    Array.isArray(body.imageUrls) ? body.imageUrls : [],
+  );
 
   const priceAmount = Math.max(1, Number(body.priceAmount) || 1);
   const listingType = parseListingType(body.listingType);

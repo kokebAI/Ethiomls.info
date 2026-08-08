@@ -50,6 +50,7 @@ export function ListingGallery({
           src={photos[safeActive]}
           alt={`${title} — ${usableIndexes.indexOf(safeActive) + 1}/${usableIndexes.length}`}
           className="h-full w-full object-cover"
+          referrerPolicy="no-referrer"
           onError={() =>
             setFailed((prev) => ({ ...prev, [safeActive]: true }))
           }
@@ -100,6 +101,7 @@ export function ListingGallery({
                 alt=""
                 loading="lazy"
                 className="h-full w-full object-cover"
+                referrerPolicy="no-referrer"
                 onError={() =>
                   setFailed((prev) => ({ ...prev, [index]: true }))
                 }

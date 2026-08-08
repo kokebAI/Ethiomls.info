@@ -26,6 +26,7 @@ export function DirectoryCover({
           src={imageUrl!}
           alt=""
           loading="lazy"
+          referrerPolicy="no-referrer"
           onError={() => setFailed(true)}
           className="h-full w-full object-cover transition duration-300 group-hover:scale-[1.03]"
         />
