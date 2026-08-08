@@ -1,5 +1,6 @@
 import { ListingStatus } from "@prisma/client";
 import { publicCatalogListingWhere } from "@/lib/catalog/crm-public-scrape";
+import { publicCatalogProjectWhere } from "@/lib/catalog/seed-public-project";
 import { prisma } from "@/lib/db/prisma";
 
 /**
@@ -85,8 +86,8 @@ export async function fetchPublishedProjectsByDeveloper(developerId: string) {
   try {
     return await prisma.project.findMany({
       where: {
-        status: ListingStatus.PUBLISHED,
         developerId,
+        AND: [publicCatalogProjectWhere()],
       },
       include: {
         subCity: {
@@ -104,7 +105,7 @@ export async function fetchPublishedProjectsByDeveloper(developerId: string) {
 export async function fetchPublishedProjects() {
   try {
     return await prisma.project.findMany({
-      where: { status: ListingStatus.PUBLISHED },
+      where: publicCatalogProjectWhere(),
       include: {
         developer: {
           select: { tradeName: true, displayName: true },
@@ -129,7 +130,7 @@ export async function fetchProjectById(
     return await prisma.project.findFirst({
       where: opts?.allowUnpublished
         ? { id }
-        : { id, status: ListingStatus.PUBLISHED },
+        : { id, AND: [publicCatalogProjectWhere()] },
       include: {
         developer: {
           select: {

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { PageDirectory, type DirectoryBadge } from "@/components/PageDirectory";
 import { PageIntro } from "@/components/PageIntro";
+import { isPublicUnverifiedSeedProject } from "@/lib/catalog/seed-public-project";
 import { fetchPublishedProjects } from "@/lib/catalog/queries";
 import { formatConstructionStage } from "@/lib/domain/construction-stage";
 import { isLocale, type Locale } from "@/lib/i18n/config";
@@ -61,11 +62,18 @@ export default async function ProjectsPage({
       : "—";
     const stageLabel = formatConstructionStage(project.constructionStage);
     const completion = `${Number(project.completionPercent)}%`;
+    const unverified = isPublicUnverifiedSeedProject(project);
 
     const badges: DirectoryBadge[] = [
       { label: stageLabel, tone: "violet" },
       { label: completion, tone: "emerald" },
     ];
+    if (unverified) {
+      badges.push({
+        label: translate(dictionary, "listing.unverifiedScrape"),
+        tone: "amber",
+      });
+    }
 
     return {
       id: project.id,

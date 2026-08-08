@@ -11,6 +11,7 @@ import {
   projectWalkthroughMeta,
 } from "@/lib/catalog/project-building";
 import { resolveInventoryStatus } from "@/lib/catalog/inventory-status";
+import { isPublicUnverifiedSeedProject } from "@/lib/catalog/seed-public-project";
 import { fetchProjectById } from "@/lib/catalog/queries";
 import { formatConstructionStage } from "@/lib/domain/construction-stage";
 import { isLocale, type Locale } from "@/lib/i18n/config";
@@ -55,7 +56,13 @@ export default async function ProjectDetailPage({
   );
   const canEditInventory = Boolean(admin || isDeveloperOwner);
 
-  if (!staff && !isDeveloperOwner && project.status !== "PUBLISHED") {
+  const publicUnverifiedSeed = isPublicUnverifiedSeedProject(project);
+  if (
+    !staff &&
+    !isDeveloperOwner &&
+    project.status !== "PUBLISHED" &&
+    !publicUnverifiedSeed
+  ) {
     notFound();
   }
 
