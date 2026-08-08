@@ -11,10 +11,9 @@ export async function fetchVerifiedDevelopers() {
   try {
     return await prisma.developerProfile.findMany({
       where: {
-        isVerified: true,
         OR: [
-          { listings: { some: { status: ListingStatus.PUBLISHED } } },
-          { projects: { some: { status: ListingStatus.PUBLISHED } } },
+          { listings: { some: publicCatalogListingWhere() } },
+          { projects: { some: publicCatalogProjectWhere() } },
         ],
       },
       include: {
@@ -23,8 +22,8 @@ export async function fetchVerifiedDevelopers() {
         },
         _count: {
           select: {
-            listings: { where: { status: ListingStatus.PUBLISHED } },
-            projects: { where: { status: ListingStatus.PUBLISHED } },
+            listings: { where: publicCatalogListingWhere() },
+            projects: { where: publicCatalogProjectWhere() },
           },
         },
       },
@@ -56,8 +55,8 @@ export async function fetchPublishedListingsByDeveloper(developerId: string) {
   try {
     return await prisma.listing.findMany({
       where: {
-        status: ListingStatus.PUBLISHED,
         developerId,
+        AND: [publicCatalogListingWhere()],
       },
       include: {
         subCity: {

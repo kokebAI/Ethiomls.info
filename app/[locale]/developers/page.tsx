@@ -62,6 +62,11 @@ export default async function DevelopersPage({
         label: translate(dictionary, "common.verified"),
         tone: "amber",
       });
+    } else {
+      badges.push({
+        label: translate(dictionary, "listing.unverifiedScrape"),
+        tone: "amber",
+      });
     }
     badges.push({
       label: translate(dictionary, "pages.developers.listingCount", {

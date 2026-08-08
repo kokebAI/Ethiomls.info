@@ -558,7 +558,7 @@ async function seedMockDevelopers() {
         tin: dev.tin,
         website: dev.website,
         headquartersSubCityId: hqId,
-        isVerified: true,
+        isVerified: false,
         userId: user.id,
       },
       create: {
@@ -570,13 +570,15 @@ async function seedMockDevelopers() {
         tin: dev.tin,
         website: dev.website,
         headquartersSubCityId: hqId,
-        isVerified: true,
+        isVerified: false,
         licenseExpiresAt: new Date("2028-12-31T00:00:00.000Z"),
       },
     });
   }
 
-  console.log(`Seeded ${MOCK_DEVELOPERS.length} mock corporate developers.`);
+  console.log(
+    `Seeded ${MOCK_DEVELOPERS.length} mock corporate developers (unverified demos).`,
+  );
 }
 
 const MOCK_PROJECTS: Array<{
