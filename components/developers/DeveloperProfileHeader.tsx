@@ -23,7 +23,8 @@ const badgeTone: Record<
   string
 > = {
   amber: "bg-amber-50 text-amber-800 ring-amber-600/15",
-  emerald: "bg-emerald-50 text-emerald-800 ring-emerald-600/15",
+  brand: "bg-brand-50 text-brand-800 ring-brand-600/15",
+  emerald: "bg-brand-50 text-brand-800 ring-brand-600/15",
   violet: "bg-violet-50 text-violet-800 ring-violet-600/15",
   slate: "bg-slate-100 text-slate-700 ring-slate-500/15",
 };
@@ -81,7 +82,7 @@ export function DeveloperProfileHeader({
                     {...(fact.external
                       ? { target: "_blank", rel: "noreferrer" }
                       : {})}
-                    className="inline-flex items-center gap-1.5 text-emerald-800 underline-offset-2 hover:underline"
+                    className="inline-flex items-center gap-1.5 text-brand-800 underline-offset-2 hover:underline"
                   >
                     {fact.kind === "hq" ? (
                       <MapPin className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />

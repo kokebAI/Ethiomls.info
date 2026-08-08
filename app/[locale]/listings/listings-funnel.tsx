@@ -171,7 +171,7 @@ export function ListingsFunnel({
         {hasActiveFilters ? (
           <button
             type="button"
-            className="text-xs font-semibold text-emerald-700 hover:text-emerald-800"
+            className="text-xs font-semibold text-brand-700 hover:text-brand-800"
             onClick={resetFilters}
           >
             {t("filters.reset")}
@@ -184,7 +184,7 @@ export function ListingsFunnel({
           {t("listing.subCity")}
         </span>
         <select
-          className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-800 shadow-sm outline-none transition focus:border-emerald-400 focus:ring-2 focus:ring-emerald-100"
+          className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-800 shadow-sm outline-none transition focus:border-brand-500 focus:ring-2 focus:ring-brand-100"
           value={subCityCode}
           onChange={(event) => setSubCityCode(event.target.value)}
         >
@@ -202,7 +202,7 @@ export function ListingsFunnel({
           {t("listing.listingType")}
         </span>
         <select
-          className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-800 shadow-sm outline-none transition focus:border-emerald-400 focus:ring-2 focus:ring-emerald-100"
+          className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-800 shadow-sm outline-none transition focus:border-brand-500 focus:ring-2 focus:ring-brand-100"
           value={listingType}
           onChange={(event) => setListingType(event.target.value)}
         >
@@ -221,7 +221,7 @@ export function ListingsFunnel({
             {t("filters.minCompletion")}
           </span>
           <select
-            className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-800 shadow-sm outline-none transition focus:border-emerald-400 focus:ring-2 focus:ring-emerald-100"
+            className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-800 shadow-sm outline-none transition focus:border-brand-500 focus:ring-2 focus:ring-brand-100"
             value={minCompletion}
             onChange={(event) => setMinCompletion(event.target.value)}
           >
@@ -244,7 +244,7 @@ export function ListingsFunnel({
             inputMode="numeric"
             min={0}
             placeholder="0"
-            className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-800 shadow-sm outline-none transition focus:border-emerald-400 focus:ring-2 focus:ring-emerald-100"
+            className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-800 shadow-sm outline-none transition focus:border-brand-500 focus:ring-2 focus:ring-brand-100"
             value={minPrice}
             onChange={(event) => setMinPrice(event.target.value)}
           />
@@ -258,7 +258,7 @@ export function ListingsFunnel({
             inputMode="numeric"
             min={0}
             placeholder="∞"
-            className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-800 shadow-sm outline-none transition focus:border-emerald-400 focus:ring-2 focus:ring-emerald-100"
+            className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-800 shadow-sm outline-none transition focus:border-brand-500 focus:ring-2 focus:ring-brand-100"
             value={maxPrice}
             onChange={(event) => setMaxPrice(event.target.value)}
           />
@@ -270,7 +270,7 @@ export function ListingsFunnel({
           {t("filters.sortBy")}
         </span>
         <select
-          className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-800 shadow-sm outline-none transition focus:border-emerald-400 focus:ring-2 focus:ring-emerald-100"
+          className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-800 shadow-sm outline-none transition focus:border-brand-500 focus:ring-2 focus:ring-brand-100"
           value={sortBy}
           onChange={(event) =>
             setSortBy(event.target.value as typeof sortBy)

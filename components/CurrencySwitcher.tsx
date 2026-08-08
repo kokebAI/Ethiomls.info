@@ -64,7 +64,7 @@ export function CurrencySwitcher() {
         disabled={pending}
         onClick={() => setOpen((value) => !value)}
       >
-        <span className="inline-flex min-w-[2.25rem] shrink-0 items-center justify-center rounded-full bg-emerald-100 px-1.5 py-0.5 text-xs font-bold tracking-wide text-emerald-900">
+        <span className="inline-flex min-w-[2.25rem] shrink-0 items-center justify-center rounded-full bg-brand-100 px-1.5 py-0.5 text-xs font-bold tracking-wide text-brand-800">
           {current.short}
         </span>
         <span className="hidden truncate text-sm font-semibold text-slate-800 lg:inline">
@@ -91,7 +91,7 @@ export function CurrencySwitcher() {
                   type="button"
                   className={`flex w-full flex-col items-start gap-0.5 rounded-xl px-3 py-2.5 text-left transition ${
                     selected
-                      ? "bg-emerald-50 text-emerald-900"
+                      ? "bg-brand-50 text-brand-800"
                       : "text-slate-800 hover:bg-slate-50"
                   }`}
                   onClick={() => selectCurrency(option.code)}

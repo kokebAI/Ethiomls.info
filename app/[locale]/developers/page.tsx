@@ -72,14 +72,14 @@ export default async function DevelopersPage({
       label: translate(dictionary, "pages.developers.listingCount", {
         count: listingCount,
       }),
-      tone: "emerald",
+      tone: "brand",
     });
     if (projectCount > 0) {
       badges.push({
         label: translate(dictionary, "pages.developers.projectCount", {
           count: projectCount,
         }),
-        tone: "violet",
+        tone: "slate",
       });
     }
 
@@ -102,7 +102,7 @@ export default async function DevelopersPage({
     >
       {items.length > 0 ? (
         <p
-          className="inline-flex w-fit items-center rounded-full bg-emerald-50 px-3 py-1 text-sm font-medium text-emerald-800 ring-1 ring-emerald-600/15 ring-inset"
+          className="inline-flex w-fit items-center rounded-full bg-brand-50 px-3 py-1 text-sm font-medium text-brand-800 ring-1 ring-brand-600/15 ring-inset"
           role="status"
         >
           {translate(dictionary, "pages.recordCount", { count: items.length })}

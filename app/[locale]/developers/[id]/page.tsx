@@ -176,8 +176,8 @@ export default async function DeveloperDetailPage({
       meta: [subCity, stageLabel, completion].join(" · "),
       imageUrl: project.coverImageUrl || undefined,
       badges: [
-        { label: stageLabel, tone: "violet" as const },
-        { label: completion, tone: "emerald" as const },
+        { label: stageLabel, tone: "slate" as const },
+        { label: completion, tone: "brand" as const },
       ],
     };
   });
@@ -195,7 +195,7 @@ export default async function DeveloperDetailPage({
     >
       <Link
         href={`${base}/developers`}
-        className="inline-flex w-fit items-center gap-1.5 text-sm font-semibold text-emerald-700 transition hover:text-emerald-800"
+        className="inline-flex w-fit items-center gap-1.5 text-sm font-semibold text-brand-700 transition hover:text-brand-800"
       >
         <ArrowLeft className="h-4 w-4" aria-hidden="true" />
         {t("pages.developers.back")}
@@ -212,7 +212,7 @@ export default async function DeveloperDetailPage({
             label: t("pages.developers.listingCount", {
               count: listings.length,
             }),
-            tone: "emerald" as const,
+            tone: "brand" as const,
           },
           ...(projects.length > 0
             ? [
@@ -220,7 +220,7 @@ export default async function DeveloperDetailPage({
                   label: t("pages.developers.projectCount", {
                     count: projects.length,
                   }),
-                  tone: "violet" as const,
+                  tone: "slate" as const,
                 },
               ]
             : []),

@@ -54,7 +54,7 @@ function StatusPills({
 }) {
   return (
     <div className="flex flex-wrap gap-1.5 text-xs font-medium">
-      <span className="rounded-full bg-emerald-50 px-2 py-0.5 text-emerald-800 ring-1 ring-emerald-600/15 ring-inset">
+      <span className="rounded-full bg-brand-50 px-2 py-0.5 text-brand-800 ring-1 ring-brand-600/15 ring-inset">
         {labels.available}: {type.available}
       </span>
       {type.reserved > 0 ? (
@@ -84,10 +84,10 @@ function UnitRow({
 }) {
   const { formatListing } = useCurrencyPreference();
   return (
-    <li className="flex flex-wrap items-center justify-between gap-2 rounded-lg px-2 py-2 text-sm transition hover:bg-emerald-50">
+    <li className="flex flex-wrap items-center justify-between gap-2 rounded-lg px-2 py-2 text-sm transition hover:bg-brand-50">
       <Link
         href={unit.href}
-        className="min-w-0 flex-1 font-medium text-slate-800 hover:text-emerald-800 hover:underline"
+        className="min-w-0 flex-1 font-medium text-slate-800 hover:text-brand-800 hover:underline"
       >
         {unit.label}
       </Link>
@@ -232,7 +232,7 @@ export function DeveloperInventoryTree({
               {parent.href ? (
                 <Link
                   href={parent.href}
-                  className="text-lg font-semibold text-slate-900 hover:text-emerald-800 hover:underline"
+                  className="text-lg font-semibold text-slate-900 hover:text-brand-800 hover:underline"
                 >
                   {parent.title}
                 </Link>
@@ -243,7 +243,7 @@ export function DeveloperInventoryTree({
               )}
               <p className="text-sm text-slate-600">{parent.meta}</p>
             </div>
-            <p className="text-sm font-semibold text-emerald-800">
+            <p className="text-sm font-semibold text-brand-800">
               {labels.unitTypes}: {parent.unitTypes.length}
             </p>
           </div>

@@ -103,7 +103,7 @@ export function ShareListingButton({
   }
 
   const itemClass =
-    "flex w-full items-center gap-2.5 rounded-lg px-3 py-2.5 text-left text-sm font-medium text-slate-800 transition hover:bg-emerald-50 hover:text-emerald-900";
+    "flex w-full items-center gap-2.5 rounded-lg px-3 py-2.5 text-left text-sm font-medium text-slate-800 transition hover:bg-brand-50 hover:text-brand-800";
 
   return (
     <div ref={rootRef} className={`relative ${className}`}>
@@ -113,7 +113,7 @@ export function ShareListingButton({
         aria-controls={menuId}
         aria-haspopup="menu"
         onClick={() => setOpen((value) => !value)}
-        className="inline-flex w-full items-center justify-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-800 shadow-sm transition hover:border-emerald-300 hover:bg-emerald-50 hover:text-emerald-900 lg:w-auto"
+        className="inline-flex w-full items-center justify-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-800 shadow-sm transition hover:border-brand-200 hover:bg-brand-50 hover:text-brand-800 lg:w-auto"
       >
         <Share2 className="h-4 w-4" aria-hidden="true" />
         {t("listingDetail.share")}
@@ -132,7 +132,7 @@ export function ShareListingButton({
             className={itemClass}
             onClick={openWhatsApp}
           >
-            <MessageCircle className="h-4 w-4 text-emerald-600" aria-hidden="true" />
+            <MessageCircle className="h-4 w-4 text-brand-600" aria-hidden="true" />
             {t("listingDetail.shareWhatsApp")}
           </button>
           <button
@@ -160,7 +160,7 @@ export function ShareListingButton({
             onClick={() => void copyLink()}
           >
             {copied ? (
-              <Check className="h-4 w-4 text-emerald-600" aria-hidden="true" />
+              <Check className="h-4 w-4 text-brand-600" aria-hidden="true" />
             ) : (
               <Copy className="h-4 w-4 text-slate-500" aria-hidden="true" />
             )}

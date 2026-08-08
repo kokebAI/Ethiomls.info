@@ -29,11 +29,11 @@ import { buildPageMetadata } from "@/lib/seo/build-metadata";
 function listingBadge(type: string, t: (key: string) => string): DirectoryBadge {
   switch (type) {
     case "SALE":
-      return { label: t("listing.forSale"), tone: "emerald" };
+      return { label: t("listing.forSale"), tone: "brand" };
     case "RENT":
-      return { label: t("listing.forRent"), tone: "sky" };
+      return { label: t("listing.forRent"), tone: "slate" };
     case "OFF_PLAN":
-      return { label: t("listing.offPlan"), tone: "violet" };
+      return { label: t("listing.offPlan"), tone: "slate" };
     default:
       return { label: type.replaceAll("_", " "), tone: "slate" };
   }
@@ -205,7 +205,7 @@ export default async function ListingsPage({
       <div className="mb-4 flex flex-wrap items-center gap-3">
         {items.length > 0 ? (
           <p
-            className="inline-flex w-fit items-center rounded-full bg-emerald-50 px-3 py-1 text-sm font-medium text-emerald-800 ring-1 ring-emerald-600/15 ring-inset"
+            className="inline-flex w-fit items-center rounded-full bg-brand-50 px-3 py-1 text-sm font-medium text-brand-800 ring-1 ring-brand-600/15 ring-inset"
             role="status"
           >
             {translate(dictionary, "pages.recordCount", { count: items.length })}

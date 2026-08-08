@@ -26,7 +26,7 @@ export function ListingGallery({
   if (photos.length === 0 || usableIndexes.length === 0) {
     return (
       <div
-        className="mx-auto flex aspect-[16/9] w-1/2 max-w-sm flex-col items-center justify-center gap-1.5 rounded-xl border border-dashed border-slate-300 bg-gradient-to-br from-slate-50 via-white to-emerald-50/50 text-slate-400"
+        className="mx-auto flex aspect-[16/9] w-1/2 max-w-sm flex-col items-center justify-center gap-1.5 rounded-xl border border-dashed border-slate-300 bg-gradient-to-br from-slate-50 via-white to-brand-50/50 text-slate-400"
         role="img"
         aria-label={emptyLabel}
       >
@@ -90,7 +90,7 @@ export function ListingGallery({
               aria-current={index === safeActive}
               className={`relative aspect-[4/3] w-24 shrink-0 overflow-hidden rounded-xl border-2 transition sm:w-28 ${
                 index === safeActive
-                  ? "border-emerald-500"
+                  ? "border-brand-500"
                   : "border-transparent opacity-75 hover:opacity-100"
               }`}
               onClick={() => setActive(index)}

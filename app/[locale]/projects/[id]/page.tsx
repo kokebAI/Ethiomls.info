@@ -122,7 +122,7 @@ export default async function ProjectDetailPage({
       <p className="text-sm">
         <Link
           href={`/${locale}/projects`}
-          className="font-medium text-emerald-800 underline-offset-2 hover:underline"
+          className="font-medium text-brand-800 underline-offset-2 hover:underline"
         >
           ← {dictionary.pages.projects.title}
         </Link>

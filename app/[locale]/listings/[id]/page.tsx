@@ -377,7 +377,7 @@ export default async function ListingDetailPage({
       />
       <Link
         href={`${base}/listings`}
-        className="inline-flex w-fit items-center gap-1.5 text-sm font-semibold text-emerald-700 transition hover:text-emerald-800"
+        className="inline-flex w-fit items-center gap-1.5 text-sm font-semibold text-brand-700 transition hover:text-brand-800"
       >
         <ArrowLeft className="h-4 w-4" aria-hidden="true" />
         {t("listingDetail.back")}
@@ -501,7 +501,7 @@ export default async function ListingDetailPage({
       <section className="flex flex-col gap-4 rounded-2xl border border-slate-200/90 bg-white p-5 shadow-[var(--shadow-card)] sm:p-6 lg:flex-row lg:items-start lg:justify-between">
         <div className="min-w-0 space-y-2.5">
           <div className="flex flex-wrap items-center gap-1.5">
-            <span className="inline-flex items-center rounded-full bg-emerald-50 px-2.5 py-0.5 text-xs font-semibold text-emerald-700 ring-1 ring-inset ring-emerald-600/15">
+            <span className="inline-flex items-center rounded-full bg-brand-50 px-2.5 py-0.5 text-xs font-semibold text-brand-700 ring-1 ring-inset ring-brand-600/15">
               {typeLabel}
             </span>
             <span className="inline-flex items-center rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-semibold text-slate-700 ring-1 ring-inset ring-slate-500/15">
@@ -529,7 +529,7 @@ export default async function ListingDetailPage({
             {title}
           </h1>
           <p className="flex items-center gap-1.5 text-sm text-slate-600">
-            <MapPin className="h-4 w-4 shrink-0 text-emerald-600" aria-hidden="true" />
+            <MapPin className="h-4 w-4 shrink-0 text-brand-600" aria-hidden="true" />
             {showFull
               ? [listing.addressLine, subCityName, "Addis Ababa"]
                   .filter(Boolean)
@@ -606,12 +606,12 @@ export default async function ListingDetailPage({
                   </dt>
                   <dd className="flex items-center gap-1.5 text-sm font-semibold text-slate-900">
                     {fact.label === t("listing.bedrooms") ? (
-                      <BedDouble className="h-4 w-4 text-emerald-600" aria-hidden="true" />
+                      <BedDouble className="h-4 w-4 text-brand-600" aria-hidden="true" />
                     ) : fact.label === t("listing.bathrooms") ? (
-                      <Bath className="h-4 w-4 text-emerald-600" aria-hidden="true" />
+                      <Bath className="h-4 w-4 text-brand-600" aria-hidden="true" />
                     ) : fact.label === t("listing.floorArea") ||
                       fact.label === t("listing.plotArea") ? (
-                      <Ruler className="h-4 w-4 text-emerald-600" aria-hidden="true" />
+                      <Ruler className="h-4 w-4 text-brand-600" aria-hidden="true" />
                     ) : null}
                     {fact.value}
                   </dd>
@@ -670,7 +670,7 @@ export default async function ListingDetailPage({
                     ) : amenity === t("listing.powerBackup") ? (
                       <Zap className="h-3.5 w-3.5 text-amber-500" aria-hidden="true" />
                     ) : amenity === t("listing.gatedCompound") ? (
-                      <Shield className="h-3.5 w-3.5 text-emerald-600" aria-hidden="true" />
+                      <Shield className="h-3.5 w-3.5 text-brand-600" aria-hidden="true" />
                     ) : amenity === t("listing.parking") ? (
                       <Car className="h-3.5 w-3.5 text-slate-600" aria-hidden="true" />
                     ) : amenity === t("listing.elevator") ? (
@@ -678,7 +678,7 @@ export default async function ListingDetailPage({
                     ) : amenity === t("listing.furnished") ? (
                       <Sofa className="h-3.5 w-3.5 text-orange-600" aria-hidden="true" />
                     ) : amenity === t("listing.escrowVerified") ? (
-                      <BadgeCheck className="h-3.5 w-3.5 text-emerald-600" aria-hidden="true" />
+                      <BadgeCheck className="h-3.5 w-3.5 text-brand-600" aria-hidden="true" />
                     ) : null;
 
                   return (
@@ -752,7 +752,7 @@ export default async function ListingDetailPage({
                 />
               </div>
             ) : (
-              <div className="mt-4 flex flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-slate-300 bg-gradient-to-br from-slate-50 via-white to-emerald-50/40 px-4 py-10 text-center">
+              <div className="mt-4 flex flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-slate-300 bg-gradient-to-br from-slate-50 via-white to-brand-50/40 px-4 py-10 text-center">
                 <p className="text-sm font-medium text-slate-600">
                   {t("listingDetail.tourComingSoon")}
                 </p>
@@ -781,7 +781,7 @@ export default async function ListingDetailPage({
                   developerHref ? (
                     <Link
                       href={developerHref}
-                      className="flex items-center gap-1.5 text-sm font-medium text-emerald-800 underline-offset-2 hover:underline"
+                      className="flex items-center gap-1.5 text-sm font-medium text-brand-800 underline-offset-2 hover:underline"
                     >
                       <Building2 className="h-4 w-4 text-slate-400" aria-hidden="true" />
                       {developerName}
@@ -823,7 +823,7 @@ export default async function ListingDetailPage({
                 </p>
                 <Link
                   href={loginHref}
-                  className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-emerald-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-emerald-700"
+                  className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-brand-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-brand-700"
                 >
                   {t("listingDetail.signUpCta")}
                 </Link>
@@ -840,12 +840,12 @@ export default async function ListingDetailPage({
           {listing.project ? (
             <Link
               href={`${base}/projects/${listing.project.id}`}
-              className="block rounded-2xl border border-slate-200/90 bg-white p-5 shadow-[var(--shadow-card)] transition hover:border-emerald-200"
+              className="block rounded-2xl border border-slate-200/90 bg-white p-5 shadow-[var(--shadow-card)] transition hover:border-brand-200"
             >
               <p className="text-xs font-bold uppercase tracking-wide text-slate-500">
                 {t("listingDetail.partOfProject")}
               </p>
-              <p className="mt-1.5 text-sm font-semibold text-emerald-700">
+              <p className="mt-1.5 text-sm font-semibold text-brand-700">
                 {pickLocalized(listing.project.title, locale) ||
                   listing.project.id}
               </p>

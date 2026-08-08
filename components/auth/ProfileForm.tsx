@@ -126,7 +126,7 @@ export function ProfileForm({
           role="status"
           className={`rounded-xl px-4 py-3 text-sm font-medium ${
             message.tone === "success"
-              ? "bg-emerald-50 text-emerald-800"
+              ? "bg-brand-50 text-brand-800"
               : "bg-red-50 text-red-700"
           }`}
         >

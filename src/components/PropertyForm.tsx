@@ -680,7 +680,7 @@ export function PropertyForm({
   }
 
   const fieldClass =
-    "mt-1.5 w-full rounded-xl border border-slate-300 bg-white px-3.5 py-3 text-sm text-slate-950 shadow-sm outline-none transition placeholder:text-slate-400 focus:border-amber-500 focus:ring-2 focus:ring-amber-500/15";
+    "mt-1.5 w-full rounded-xl border border-slate-300 bg-white px-3.5 py-3 text-sm text-slate-950 shadow-sm outline-none transition placeholder:text-slate-400 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/15";
   const labelClass = "text-sm font-semibold text-slate-700";
 
   return (
@@ -731,7 +731,7 @@ export function PropertyForm({
                   >
                     <span className="inline-flex items-center gap-2 text-sm font-medium text-slate-800">
                       {done ? (
-                        <CheckCircle2 className="h-4 w-4 text-emerald-600" />
+                        <CheckCircle2 className="h-4 w-4 text-brand-600" />
                       ) : (
                         <Circle className="h-4 w-4 text-slate-300" />
                       )}
@@ -760,7 +760,7 @@ export function PropertyForm({
               <li className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-slate-200 bg-white px-3 py-2.5">
                 <span className="inline-flex items-center gap-2 text-sm font-medium text-slate-800">
                   {galleryCount >= MIN_GALLERY_PHOTOS ? (
-                    <CheckCircle2 className="h-4 w-4 text-emerald-600" />
+                    <CheckCircle2 className="h-4 w-4 text-brand-600" />
                   ) : (
                     <Circle className="h-4 w-4 text-slate-300" />
                   )}
@@ -789,7 +789,7 @@ export function PropertyForm({
               <li className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-slate-200 bg-white px-3 py-2.5">
                 <span className="inline-flex items-center gap-2 text-sm font-medium text-slate-800">
                   {hasFayda ? (
-                    <CheckCircle2 className="h-4 w-4 text-emerald-600" />
+                    <CheckCircle2 className="h-4 w-4 text-brand-600" />
                   ) : (
                     <Circle className="h-4 w-4 text-slate-300" />
                   )}
@@ -874,8 +874,8 @@ export function PropertyForm({
               onDrop={handleDrop}
               className={`group flex min-h-52 cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed p-6 text-center transition ${
                 isDragging
-                  ? "border-amber-500 bg-amber-50"
-                  : "border-slate-300 bg-slate-50 hover:border-amber-500 hover:bg-amber-50/50"
+                  ? "border-brand-500 bg-brand-50"
+                  : "border-slate-300 bg-slate-50 hover:border-brand-500 hover:bg-brand-50/50"
               }`}
             >
               <input
@@ -1264,7 +1264,7 @@ export function PropertyForm({
                   onChange={(event) =>
                     update("constructionPermitVerified", event.target.checked)
                   }
-                  className="h-4 w-4 rounded border-slate-300 text-amber-600 focus:ring-amber-500"
+                  className="h-4 w-4 rounded border-slate-300 text-amber-600 focus:ring-brand-500"
                 />
                 <span className="text-sm font-medium text-slate-800">
                   Permit ID is verified (Proc. 1357 / MUD serial)
@@ -1291,7 +1291,7 @@ export function PropertyForm({
             role="status"
             className={`rounded-xl px-4 py-3 text-sm font-medium ${
               message.tone === "success"
-                ? "bg-emerald-50 text-emerald-800"
+                ? "bg-brand-50 text-brand-800"
                 : "bg-red-50 text-red-700"
             }`}
           >

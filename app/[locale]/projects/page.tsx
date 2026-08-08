@@ -65,8 +65,8 @@ export default async function ProjectsPage({
     const unverified = isPublicUnverifiedSeedProject(project);
 
     const badges: DirectoryBadge[] = [
-      { label: stageLabel, tone: "violet" },
-      { label: completion, tone: "emerald" },
+      { label: stageLabel, tone: "slate" },
+      { label: completion, tone: "brand" },
     ];
     if (unverified) {
       badges.push({
@@ -93,7 +93,7 @@ export default async function ProjectsPage({
     >
       {items.length > 0 ? (
         <p
-          className="inline-flex w-fit items-center rounded-full bg-emerald-50 px-3 py-1 text-sm font-medium text-emerald-800 ring-1 ring-emerald-600/15 ring-inset"
+          className="inline-flex w-fit items-center rounded-full bg-brand-50 px-3 py-1 text-sm font-medium text-brand-800 ring-1 ring-brand-600/15 ring-inset"
           role="status"
         >
           {translate(dictionary, "pages.recordCount", { count: items.length })}

@@ -4,7 +4,7 @@ import { DirectoryCover } from "@/components/DirectoryCover";
 
 export type DirectoryBadge = {
   label: string;
-  tone?: "emerald" | "sky" | "violet" | "amber" | "slate";
+  tone?: "brand" | "emerald" | "sky" | "violet" | "amber" | "slate";
 };
 
 export type DirectoryItem = {
@@ -30,10 +30,11 @@ type PageDirectoryProps = {
 };
 
 const BADGE_TONES: Record<NonNullable<DirectoryBadge["tone"]>, string> = {
-  emerald: "bg-emerald-50 text-emerald-700 ring-emerald-600/15",
-  sky: "bg-sky-50 text-sky-700 ring-sky-600/15",
-  violet: "bg-violet-50 text-violet-700 ring-violet-600/15",
-  amber: "bg-amber-50 text-amber-800 ring-amber-600/15",
+  brand: "bg-brand-50 text-brand-800 ring-brand-600/15",
+  emerald: "bg-brand-50 text-brand-800 ring-brand-600/15",
+  sky: "bg-slate-100 text-slate-700 ring-slate-500/15",
+  violet: "bg-slate-obsidian/10 text-slate-deep ring-slate-deep/15",
+  amber: "bg-brand-50 text-brand-800 ring-brand-600/15",
   slate: "bg-slate-100 text-slate-700 ring-slate-500/15",
 };
 
@@ -46,7 +47,7 @@ export function PageDirectory({
   if (items.length === 0) {
     return (
       <p
-        className="rounded-2xl border border-dashed border-slate-300 bg-white/70 px-4 py-8 text-center text-sm leading-relaxed text-slate-600"
+        className="rounded-2xl border border-dashed border-slate-300 bg-white/80 px-4 py-8 text-center text-sm leading-relaxed text-ink-muted"
         role="status"
       >
         {emptyMessage}
@@ -63,7 +64,7 @@ export function PageDirectory({
     <ul className={`${gridClass} m-0 list-none p-0`}>
       {items.map((item) => {
         const cardClass =
-          "group overflow-hidden rounded-2xl border border-slate-200/90 bg-white shadow-[var(--shadow-card)] transition duration-200 hover:-translate-y-0.5 hover:border-emerald-200 hover:shadow-[var(--shadow-card-hover)]";
+          "group overflow-hidden rounded-2xl border border-slate-200/90 bg-white shadow-[var(--shadow-card)] transition duration-200 hover:-translate-y-0.5 hover:border-brand-500/40 hover:shadow-[var(--shadow-card-hover)]";
         const body = (
           <>
             <div className="space-y-2 px-3 pt-3 sm:px-4 sm:pt-4">
@@ -72,7 +73,7 @@ export function PageDirectory({
                   {item.badges.map((badge) => (
                     <span
                       key={`${item.id}-${badge.label}`}
-                      className={`inline-flex max-w-full items-center rounded-full px-2 py-0.5 text-[0.65rem] font-semibold leading-snug ring-1 ring-inset ${
+                      className={`inline-flex max-w-full items-center rounded-full px-2 py-0.5 text-xs font-semibold leading-snug ring-1 ring-inset ${
                         BADGE_TONES[badge.tone ?? "slate"]
                       }`}
                     >
@@ -81,7 +82,7 @@ export function PageDirectory({
                   ))}
                 </div>
               ) : null}
-              <h2 className="line-clamp-2 text-balance text-base font-semibold leading-snug text-slate-900 group-hover:text-emerald-900 sm:text-[1.05rem]">
+              <h2 className="line-clamp-2 text-balance text-base font-bold leading-snug text-slate-deep group-hover:text-brand-700">
                 {item.title}
               </h2>
             </div>
@@ -95,7 +96,7 @@ export function PageDirectory({
             </div>
 
             <div className="space-y-2 px-3 py-3 sm:px-4 sm:py-4">
-              <p className="line-clamp-3 text-pretty text-sm leading-relaxed text-slate-600">
+              <p className="line-clamp-3 text-pretty text-sm leading-relaxed text-ink-muted">
                 {item.meta}
               </p>
               {item.footer ? <div>{item.footer}</div> : null}

@@ -19,7 +19,7 @@ export function DirectoryCover({
   const showImage = Boolean(imageUrl) && !failed;
 
   return (
-    <div className="relative aspect-[4/3] w-full overflow-hidden bg-gradient-to-br from-slate-100 via-slate-50 to-emerald-50/40">
+    <div className="relative aspect-[4/3] w-full overflow-hidden bg-gradient-to-br from-slate-100 via-slate-50 to-brand-50/40">
       {showImage ? (
         // eslint-disable-next-line @next/next/no-img-element -- remote listing photos from arbitrary hosts
         <img

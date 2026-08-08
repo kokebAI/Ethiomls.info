@@ -17,12 +17,12 @@ export function PageIntro({
   children,
 }: PageIntroProps) {
   return (
-    <div className="flex flex-col gap-8">
+    <div className="flex w-full min-w-0 flex-col gap-8 sm:gap-10">
       <header className="animate-rise-in max-w-3xl space-y-3">
-        <h1 className="text-balance text-3xl font-bold leading-tight tracking-tight text-slate-deep sm:text-4xl">
+        <h1 className="text-balance text-[1.75rem] font-bold leading-tight tracking-tight text-slate-deep sm:text-4xl">
           {title}
         </h1>
-        <p className="max-w-2xl text-pretty text-base leading-relaxed text-ink-muted sm:text-lg">
+        <p className="max-w-2xl text-pretty text-sm leading-relaxed text-ink sm:text-base">
           {lede}
         </p>
       </header>
