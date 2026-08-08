@@ -1,0 +1,162 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-08-08T11:40:00.000Z",
+  "title": "Design System: EthioMLS",
+  "extensions": {
+    "colorMeta": {
+      "accent-gold": {
+        "role": "primary",
+        "displayName": "Imperial Gold",
+        "canonical": "#d97706",
+        "tonalRamp": ["#78350f", "#92400e", "#b45309", "#d97706", "#f59e0b", "#fbbf24", "#fde68a", "#fffbeb"]
+      },
+      "slate-deep": {
+        "role": "neutral",
+        "displayName": "Deep Slate",
+        "canonical": "#0f172a",
+        "tonalRamp": ["#020617", "#0f172a", "#1e293b", "#334155", "#64748b", "#94a3b8", "#e2e8f0", "#f8fafc"]
+      },
+      "surface": {
+        "role": "neutral",
+        "displayName": "Surface White",
+        "canonical": "#ffffff",
+        "tonalRamp": ["#e2e8f0", "#f1f5f9", "#f8fafc", "#ffffff", "#ffffff", "#ffffff", "#ffffff", "#ffffff"]
+      },
+      "ink": {
+        "role": "neutral",
+        "displayName": "Ink",
+        "canonical": "#334155",
+        "tonalRamp": ["#0f172a", "#1e293b", "#334155", "#475569", "#64748b", "#94a3b8", "#cbd5e1", "#f1f5f9"]
+      }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Display", "purpose": "Hero and major hub titles." },
+      "headline": { "displayName": "Headline", "purpose": "Section and listing titles." },
+      "title": { "displayName": "Title", "purpose": "Subheads and row titles." },
+      "body": { "displayName": "Body", "purpose": "Descriptions and helper copy." },
+      "label": { "displayName": "Label", "purpose": "Buttons, chips, metadata." }
+    },
+    "shadows": [
+      {
+        "name": "card",
+        "value": "0 1px 3px rgb(15 23 42 / 0.06), 0 8px 24px rgb(15 23 42 / 0.06)",
+        "purpose": "Default elevated cards and filter shells."
+      },
+      {
+        "name": "card-hover",
+        "value": "0 4px 12px rgb(15 23 42 / 0.08), 0 16px 40px rgb(15 23 42 / 0.1)",
+        "purpose": "Interactive catalog card lift."
+      }
+    ],
+    "motion": [
+      {
+        "name": "rise-in",
+        "value": "420ms ease",
+        "purpose": "Entrance presence for panels and locale menus (locale-rise uses 160ms)."
+      }
+    ],
+    "breakpoints": [
+      { "name": "sm", "value": "640px" },
+      { "name": "lg", "value": "1024px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Imperial gold pill CTA for primary search and publish actions.",
+      "html": "<button class=\"ds-btn-primary\" type=\"button\">Search</button>",
+      "css": ".ds-btn-primary { background: #d97706; color: #ffffff; padding: 0.625rem 1.25rem; border: none; border-radius: 9999px; font: 600 0.875rem/1.3 Manrope, \"Noto Sans Ethiopic\", sans-serif; cursor: pointer; transition: background 0.15s ease; } .ds-btn-primary:hover { background: #b45309; } .ds-btn-primary:focus-visible { outline: 2px solid #d97706; outline-offset: 2px; }"
+    },
+    {
+      "name": "Authority Button",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "Deep slate pill for admin/ops emphasis without spending gold.",
+      "html": "<button class=\"ds-btn-authority\" type=\"button\">Save changes</button>",
+      "css": ".ds-btn-authority { background: #0f172a; color: #ffffff; padding: 0.75rem 1.25rem; border: none; border-radius: 9999px; font: 600 0.875rem/1.3 Manrope, \"Noto Sans Ethiopic\", sans-serif; cursor: pointer; transition: background 0.15s ease; } .ds-btn-authority:hover { background: #1e293b; } .ds-btn-authority:focus-visible { outline: 2px solid #0f172a; outline-offset: 2px; }"
+    },
+    {
+      "name": "Ghost Button",
+      "kind": "button",
+      "refersTo": "button-ghost",
+      "description": "Outlined secondary action for cancel / more filters.",
+      "html": "<button class=\"ds-btn-ghost\" type=\"button\">More filters</button>",
+      "css": ".ds-btn-ghost { background: #ffffff; color: #334155; padding: 0.5rem 1rem; border: 1px solid #e2e8f0; border-radius: 9999px; font: 600 0.875rem/1.3 Manrope, \"Noto Sans Ethiopic\", sans-serif; cursor: pointer; } .ds-btn-ghost:hover { background: #f8fafc; } .ds-btn-ghost:focus-visible { outline: 2px solid #d97706; outline-offset: 2px; }"
+    },
+    {
+      "name": "Verified Chip",
+      "kind": "chip",
+      "refersTo": "chip-verified",
+      "description": "Gateway trust seal for verified listings.",
+      "html": "<span class=\"ds-chip-verified\">VERIFIED</span>",
+      "css": ".ds-chip-verified { display: inline-flex; align-items: center; background: #d97706; color: #ffffff; padding: 0.25rem 0.625rem; border-radius: 9999px; font: 700 0.6875rem/1 Manrope, \"Noto Sans Ethiopic\", sans-serif; letter-spacing: 0.04em; }"
+    },
+    {
+      "name": "Filter Chip",
+      "kind": "chip",
+      "refersTo": "chip-filter",
+      "description": "Marketplace filter pill (unselected).",
+      "html": "<button class=\"ds-chip-filter\" type=\"button\">ቤት</button>",
+      "css": ".ds-chip-filter { background: #f8fafc; color: #334155; padding: 0.5rem 1rem; border: 1px solid #e2e8f0; border-radius: 9999px; font: 600 0.875rem/1.3 Manrope, \"Noto Sans Ethiopic\", sans-serif; cursor: pointer; } .ds-chip-filter:hover { background: #ffffff; } .ds-chip-filter[aria-pressed=\"true\"] { background: #0f172a; color: #ffffff; border-color: #0f172a; }"
+    },
+    {
+      "name": "Listing Card",
+      "kind": "card",
+      "refersTo": "card-surface",
+      "description": "Elevated catalog card on paper canvas.",
+      "html": "<article class=\"ds-card\"><div class=\"ds-card-media\"></div><h3 class=\"ds-card-title\">Modern apartment in Bole</h3><p class=\"ds-card-meta\">Bole · 3 bed · 120 m²</p><p class=\"ds-card-price\">ETB 12,500,000</p></article>",
+      "css": ".ds-card { background: #ffffff; color: #334155; border: 1px solid rgb(226 232 240 / 0.9); border-radius: 1rem; padding: 1rem; box-shadow: 0 1px 3px rgb(15 23 42 / 0.06), 0 8px 24px rgb(15 23 42 / 0.06); font-family: Manrope, \"Noto Sans Ethiopic\", sans-serif; } .ds-card-media { height: 7.5rem; border-radius: 0.75rem; background: #1e293b; margin-bottom: 0.75rem; } .ds-card-title { margin: 0; font-size: 1rem; font-weight: 700; color: #0f172a; } .ds-card-meta { margin: 0.25rem 0 0; font-size: 0.75rem; color: #64748b; } .ds-card-price { margin: 0.5rem 0 0; font-size: 0.875rem; font-weight: 700; color: #0f172a; }"
+    },
+    {
+      "name": "Text Field",
+      "kind": "input",
+      "refersTo": "input-field",
+      "description": "Default bordered field with gold focus ring.",
+      "html": "<label class=\"ds-field\"><span class=\"ds-field-label\">Location</span><input class=\"ds-input\" type=\"text\" placeholder=\"Addis Ababa\" /></label>",
+      "css": ".ds-field { display: grid; gap: 0.375rem; font-family: Manrope, \"Noto Sans Ethiopic\", sans-serif; } .ds-field-label { font-size: 0.75rem; font-weight: 600; color: #64748b; } .ds-input { background: #ffffff; color: #0f172a; border: 1px solid #e2e8f0; border-radius: 0.75rem; padding: 0.75rem 1rem; font: 400 0.875rem/1.4 Manrope, \"Noto Sans Ethiopic\", sans-serif; } .ds-input:focus { outline: none; border-color: #d97706; box-shadow: 0 0 0 3px rgb(217 119 6 / 0.2); }"
+    },
+    {
+      "name": "Brand Mark",
+      "kind": "custom",
+      "refersTo": null,
+      "description": "Deep slate tile with pale house and imperial gold plinth/door.",
+      "html": "<svg class=\"ds-brand\" width=\"40\" height=\"40\" viewBox=\"0 0 40 40\" xmlns=\"http://www.w3.org/2000/svg\" role=\"img\" aria-label=\"EthioMLS\"><rect width=\"40\" height=\"40\" rx=\"10\" fill=\"#0F172A\"/><path d=\"M8 28.5h24v2.5H8V28.5Z\" fill=\"#D97706\"/><path d=\"M11 28.5V18.2L20 11l9 7.2v10.3h-3.2V19.6L20 14.4l-5.8 5.2v8.9H11Z\" fill=\"#F8FAFC\"/><path d=\"M18.6 28.5V22.8h2.8v5.7h-2.8Z\" fill=\"#D97706\"/></svg>",
+      "css": ".ds-brand { display: block; border-radius: 10px; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Verified Gateway",
+    "overview": "EthioMLS looks like a secured entrance into Addis inventory: a deep-slate civic frame, a warm imperial-gold trust signal, and a marketplace-dense catalog beyond the gate. The product sells confidence (verified listings, escrow/clearance framing), so the UI reads as authoritative without becoming a dark dashboard—paper-light canvases carry most screens; slate and gold mark brand chrome and verification moments.\n\nDensity favors scan-and-act property work: compact pills, tight filter clusters, listing cards that pack specs before flourish. Motion stays short and purposeful (rise-in ~420ms ease)—presence, not decoration.",
+    "keyCharacteristics": [
+      "Imperial gold on deep slate as the brand spine",
+      "Marketplace-dense controls and listing density",
+      "Hybrid depth: soft card lift on catalogs; flatter marketing canvases",
+      "Ethiopic-capable type stack (Manrope + Noto Sans Ethiopic)",
+      "VERIFIED / trust seals as first-class visual language, not afterthought badges"
+    ],
+    "rules": [
+      { "name": "The Gateway Seal Rule", "body": "Gold marks verification and primary action. If a screen uses gold as large fill decoration unrelated to trust or CTA, it has left the Gateway.", "section": "colors" },
+      { "name": "The Paper Beyond the Gate Rule", "body": "Catalog and form work live on light surfaces; deep slate is the gate frame, not the default page fill.", "section": "colors" },
+      { "name": "The Dual-Script Rule", "body": "Any text surface that can render Amharic (or other Ethiopic locales) must include Noto Sans Ethiopic in the stack—never Manrope alone.", "section": "typography" },
+      { "name": "The Dense Catalog Rule", "body": "Prefer compact pills and multi-field filter rows over sparse marketing whitespace on browse/search surfaces.", "section": "layout" },
+      { "name": "The Flat Canvas / Lifted Card Rule", "body": "Page backgrounds do not cast shadows; discrete cards and filter shells do.", "section": "elevation" },
+      { "name": "The Pill Action Rule", "body": "Primary and secondary CTAs and filter chips share pill geometry so action language stays consistent across hubs.", "section": "shapes" }
+    ],
+    "dos": [
+      "Do use Imperial Gold for primary CTAs and verification seals.",
+      "Do keep listing/search UI marketplace-dense with pill filters.",
+      "Do load Manrope + Noto Sans Ethiopic together on every user-facing surface.",
+      "Do lift cards with --shadow-card; keep page washes flat.",
+      "Do preserve guest-teaser vs signed-in unlock as IA (visual tease is allowed; fabricating unlocked data is not)."
+    ],
+    "donts": [
+      "Don't flood screens with gold panels or purple/indigo SaaS gradients.",
+      "Don't replace the type stack with Inter/Roboto/Arial as the brand voice.",
+      "Don't nest card-in-card decoration that adds chrome without new information.",
+      "Don't use elastic/bounce motion—keep ease rise-ins short.",
+      "Don't invent testimonials, partner logos, or proof seals that are not in the product evidence set."
+    ]
+  }
+}

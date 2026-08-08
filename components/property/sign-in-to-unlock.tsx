@@ -41,7 +41,7 @@ export function SignInToUnlock({
       </p>
       <Link
         href={loginHref}
-        className={`mt-3 inline-flex items-center justify-center rounded-full bg-brand-600 font-semibold text-white transition hover:bg-brand-700 ${
+        className={`mt-3 inline-flex items-center justify-center rounded-full bg-brand-700 font-semibold text-white transition hover:bg-brand-800 ${
           compact ? "px-4 py-2 text-xs" : "px-5 py-2.5 text-sm"
         }`}
       >

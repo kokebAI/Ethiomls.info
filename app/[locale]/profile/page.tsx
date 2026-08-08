@@ -58,9 +58,6 @@ export default async function ProfilePage({
   return (
     <div className="mx-auto flex max-w-2xl flex-col gap-6">
       <header className="space-y-2">
-        <p className="text-xs font-bold uppercase tracking-[0.14em] text-brand-600">
-          {dictionary.profile.eyebrow}
-        </p>
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
             <h1 className="text-balance text-2xl font-bold tracking-tight text-slate-deep sm:text-3xl">

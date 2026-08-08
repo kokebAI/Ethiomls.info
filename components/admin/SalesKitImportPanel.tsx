@@ -368,7 +368,7 @@ export function SalesKitImportPanel() {
           type="button"
           disabled={importing || drafts.length === 0}
           onClick={() => void importListings()}
-          className="inline-flex items-center gap-2 rounded-full bg-brand-600 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-brand-700 disabled:opacity-45"
+          className="inline-flex items-center gap-2 rounded-full bg-brand-700 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-brand-800 disabled:opacity-45"
         >
           {importing ? (
             <LoaderCircle className="h-4 w-4 animate-spin" />

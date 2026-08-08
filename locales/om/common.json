@@ -31,7 +31,14 @@
       "projects": "Pirojektoota maxxanfaman",
       "developers": "Ijaartota mirkanaa'an",
       "subCities": "Kutaalee magaalaa Finfinnee"
-    }
+    },
+    "trustHeading": "Maaliif EthioMLS",
+    "trust": {
+      "verified": "Tarreeffama mirkanaa'e",
+      "escrow": "Milestones escrow tiin eegaman",
+      "clearance": "Hayyama bitee alaa"
+    },
+    "emptyMarket": "Qabeenyi mirkanaa'e qophaa'aa jira. Yeroo qophaa'u ilaali, barbaacha qajeelfamaa jalqabi, ykn qabeenya galmeessi."
   },
   "locale": {
     "label": "Afaan",

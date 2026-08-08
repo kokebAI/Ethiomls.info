@@ -54,15 +54,11 @@ function CompactStat({
       }`}
     >
       <div className="flex items-start justify-between gap-2">
-        <h3
-          className={`font-semibold leading-snug text-ink-muted ${
-            dense ? "text-[11px]" : "text-xs"
-          }`}
-        >
+        <h3 className="text-xs font-semibold leading-snug text-ink-muted">
           {card.label}
         </h3>
         <span
-          className={`inline-flex shrink-0 rounded-full px-2 py-0.5 text-[0.6rem] font-bold uppercase tracking-wide ring-1 ring-inset ${toneClass(card.tone)}`}
+          className={`inline-flex shrink-0 rounded-full px-2 py-0.5 text-xs font-bold uppercase tracking-wide ring-1 ring-inset ${toneClass(card.tone)}`}
         >
           {card.tag}
         </span>
@@ -158,7 +154,7 @@ export function DashboardMetrics({
               : dictionary.dashboard.title}
           </h2>
           {isAdmin && admin ? (
-            <p className="font-mono text-[10px] text-slate-400">
+            <p className="font-mono text-xs text-slate-400">
               v{admin.version.appVersion} · {admin.version.commitShort} ·{" "}
               {admin.version.environment}
             </p>
@@ -263,9 +259,6 @@ export function DashboardMetrics({
       aria-labelledby="home-dashboard-title"
     >
       <header className="space-y-1.5">
-        <p className="text-xs font-bold uppercase tracking-[0.14em] text-brand-600">
-          {dictionary.dashboard.eyebrow}
-        </p>
         <h2
           id="home-dashboard-title"
           className="text-balance text-xl font-bold tracking-tight text-slate-deep sm:text-2xl"

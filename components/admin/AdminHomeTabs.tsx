@@ -164,7 +164,7 @@ export function AdminHomeTabs({
         </div>
         <Link
           href={`${base}/admin/assistants`}
-          className="inline-flex shrink-0 items-center justify-center rounded-full bg-brand-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-brand-700"
+          className="inline-flex shrink-0 items-center justify-center rounded-full bg-brand-700 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-brand-800"
         >
           {dictionary.officeAssistants?.addCta ?? "Add assistant"}
         </Link>

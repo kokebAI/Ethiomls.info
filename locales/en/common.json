@@ -31,7 +31,14 @@
       "projects": "Published projects",
       "developers": "Verified developers",
       "subCities": "Addis sub-cities"
-    }
+    },
+    "trustHeading": "Why EthioMLS",
+    "trust": {
+      "verified": "Verified listings",
+      "escrow": "Escrow-backed milestones",
+      "clearance": "Foreign buyer clearance"
+    },
+    "emptyMarket": "Verified inventory is being prepared. Browse when ready, start a guided search, or list a property."
   },
   "locale": {
     "label": "Language",

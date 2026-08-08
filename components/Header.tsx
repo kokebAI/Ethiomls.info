@@ -193,7 +193,7 @@ export function Header() {
           {showHomeCta && hubHref ? (
             <Link
               href={`${base}${hubHref}`}
-              className="hidden rounded-full bg-brand-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:-translate-y-px hover:bg-brand-700 md:inline-flex"
+              className="hidden rounded-full bg-brand-700 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:-translate-y-px hover:bg-brand-800 md:inline-flex"
             >
               {t("nav.home")}
             </Link>
@@ -263,7 +263,7 @@ export function Header() {
               <li className="pt-1">
                 <Link
                   href={`${base}${hubHref}`}
-                  className="flex w-full items-center justify-center rounded-full bg-brand-600 px-4 py-2.5 text-sm font-semibold text-white"
+                  className="flex w-full items-center justify-center rounded-full bg-brand-700 px-4 py-2.5 text-sm font-semibold text-white"
                   onClick={() => setMobileOpen(false)}
                 >
                   {t("nav.home")}

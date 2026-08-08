@@ -80,7 +80,7 @@ export function DeveloperWorkspaceView({
           <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
             <Link
               href={`${base}/listings/new?type=OFF_PLAN`}
-              className="inline-flex items-center justify-center rounded-full bg-brand-600 px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-brand-700"
+              className="inline-flex items-center justify-center rounded-full bg-brand-700 px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-brand-800"
             >
               {copy.addInventory}
             </Link>
@@ -172,7 +172,7 @@ export function DeveloperWorkspaceView({
             </ul>
             <Link
               href={`${base}/listings/new?type=OFF_PLAN`}
-              className="mt-6 inline-flex items-center justify-center rounded-full bg-brand-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-brand-700"
+              className="mt-6 inline-flex items-center justify-center rounded-full bg-brand-700 px-5 py-3 text-sm font-semibold text-white transition hover:bg-brand-800"
             >
               {copy.packCta}
             </Link>

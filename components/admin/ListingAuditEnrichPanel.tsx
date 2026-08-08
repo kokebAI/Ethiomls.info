@@ -365,7 +365,7 @@ export function ListingAuditEnrichPanel({
                 type="button"
                 disabled={applying || editReason.trim().length < 10}
                 onClick={() => void applyDraft()}
-                className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-brand-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-brand-700 disabled:opacity-50"
+                className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-brand-700 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-brand-800 disabled:opacity-50"
               >
                 {applying ? (
                   <LoaderCircle className="h-4 w-4 animate-spin" />

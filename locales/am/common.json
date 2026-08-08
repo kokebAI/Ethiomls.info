@@ -31,7 +31,14 @@
       "projects": "የታተሙ ፕሮጀክቶች",
       "developers": "የተረጋገጡ አልሚዎች",
       "subCities": "የአዲስ አበባ ክፍለ ከተሞች"
-    }
+    },
+    "trustHeading": "ለምን EthioMLS",
+    "trust": {
+      "verified": "የተረጋገጡ ዝርዝሮች",
+      "escrow": "በኤስክሮ የተጠበቁ ምእራፎች",
+      "clearance": "የውጭ ገዥ ማጽደቅ"
+    },
+    "emptyMarket": "የተረጋገጠ ንብረት በዝግጅት ላይ ነው። ሲዘጋጅ ያስሱ፣ መመሪያ ፍለጋ ይጀምሩ፣ ወይም ንብረት ያስመዝግቡ።"
   },
   "locale": {
     "label": "ቋንቋ",

@@ -71,7 +71,7 @@ export function LocaleSwitcher() {
         disabled={pending}
         onClick={() => setOpen((value) => !value)}
       >
-        <span className="inline-flex min-w-[1.75rem] shrink-0 items-center justify-center rounded-full bg-brand-100 px-1.5 py-0.5 text-[0.65rem] font-bold tracking-wide text-brand-800">
+        <span className="inline-flex min-w-[1.75rem] shrink-0 items-center justify-center rounded-full bg-brand-100 px-1.5 py-0.5 text-xs font-bold tracking-wide text-brand-800">
           {current.short}
         </span>
         <span className="hidden truncate text-sm font-semibold text-slate-800 lg:inline">

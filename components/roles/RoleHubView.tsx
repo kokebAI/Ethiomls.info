@@ -30,7 +30,7 @@ export function RoleHubView({ locale, hub, dictionary }: RoleHubViewProps) {
               <Link
                 key={cta.id}
                 href={href}
-                className="inline-flex items-center justify-center rounded-full bg-brand-600 px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-brand-700"
+                className="inline-flex items-center justify-center rounded-full bg-brand-700 px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-brand-800"
               >
                 {label}
               </Link>

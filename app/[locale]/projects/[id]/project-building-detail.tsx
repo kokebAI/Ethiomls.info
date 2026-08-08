@@ -108,7 +108,7 @@ export function ProjectBuildingDetail({
         >
           <div className="flex flex-wrap items-start justify-between gap-3">
             <div>
-              <p className="text-xs font-bold uppercase tracking-[0.12em] text-brand-600">
+              <p className="text-xs font-semibold text-ink-muted">
                 {t("listing.propertyId")}
               </p>
               <p className="mt-1 font-mono text-sm font-semibold text-slate-900 sm:text-base">

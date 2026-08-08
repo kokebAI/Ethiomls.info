@@ -2,7 +2,8 @@ import type { ReactNode } from "react";
 import { BrandMottoBanner } from "@/components/BrandMottoBanner";
 
 type PageIntroProps = {
-  eyebrow: string;
+  /** @deprecated Kickers are banned — accepted for call-site compatibility but never rendered. */
+  eyebrow?: string;
   title: string;
   lede: string;
   motto?: string;
@@ -10,7 +11,6 @@ type PageIntroProps = {
 };
 
 export function PageIntro({
-  eyebrow,
   title,
   lede,
   motto,
@@ -18,11 +18,7 @@ export function PageIntro({
 }: PageIntroProps) {
   return (
     <div className="flex flex-col gap-8">
-      {motto ? <BrandMottoBanner motto={motto} className="animate-rise-in" /> : null}
       <header className="animate-rise-in max-w-3xl space-y-3">
-        <p className="text-xs font-bold uppercase tracking-[0.14em] text-brand-600">
-          {eyebrow}
-        </p>
         <h1 className="text-balance text-3xl font-bold leading-tight tracking-tight text-slate-deep sm:text-4xl">
           {title}
         </h1>
@@ -31,6 +27,9 @@ export function PageIntro({
         </p>
       </header>
       {children}
+      {motto ? (
+        <BrandMottoBanner motto={motto} className="animate-rise-in" />
+      ) : null}
     </div>
   );
 }

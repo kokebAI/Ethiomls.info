@@ -302,7 +302,7 @@ export function ProjectAuditPanel({
             type="button"
             disabled={busy !== null || !canPublish}
             onClick={() => void publish()}
-            className="inline-flex items-center gap-2 rounded-full bg-brand-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-brand-700 disabled:opacity-45"
+            className="inline-flex items-center gap-2 rounded-full bg-brand-700 px-4 py-2.5 text-sm font-semibold text-white hover:bg-brand-800 disabled:opacity-45"
           >
             {busy === "publish" ? (
               <LoaderCircle className="h-4 w-4 animate-spin" />

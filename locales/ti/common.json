@@ -31,7 +31,14 @@
       "projects": "ዝተሓትሙ ፕሮጀክትታት",
       "developers": "ዝተረጋገጹ ሃነጽቲ",
       "subCities": "ክፍለ ከተማታት ኣዲስ ኣበባ"
-    }
+    },
+    "trustHeading": "ስለምንታይ EthioMLS",
+    "trust": {
+      "verified": "ዝተረጋገጹ ዝርዝራት",
+      "escrow": "ብኤስክሮ ዝተሓለዉ መድረኻት",
+      "clearance": "ናይ ወጻኢ ዓዳጊ ፍቓድ"
+    },
+    "emptyMarket": "ዝተረጋገጸ ንብረት ይድለ ኣሎ። ምስ ድልየ ክትሪኡ ትኽእሉ፣ መሪ ድለይ ጀምሩ፣ ወይ ንብረት መዝግቡ።"
   },
   "locale": {
     "label": "ቋንቋ",

@@ -11,6 +11,8 @@ type BeforeInstallPromptEvent = Event & {
 };
 
 const DISMISS_KEY = "ethiomls-pwa-install-dismissed";
+/** Wait until first paint settles and user can hit the primary CTA. */
+const SHOW_DELAY_MS = 28_000;
 
 function isStandaloneDisplay(): boolean {
   if (typeof window === "undefined") return false;
@@ -28,8 +30,7 @@ function isIos(): boolean {
 
 /**
  * Registers the service worker and shows an on-page Install control.
- * Chrome no longer auto-shows an install banner — apps must use
- * `beforeinstallprompt` (or the browser ⋮ menu) for install UX.
+ * Deferred so it does not cover the first-viewport primary CTA.
  */
 export function ServiceWorkerRegister() {
   const { t } = useTranslation();
@@ -39,6 +40,7 @@ export function ServiceWorkerRegister() {
   const [visible, setVisible] = useState(false);
   const [iosHint, setIosHint] = useState(false);
   const [installing, setInstalling] = useState(false);
+  const [eligible, setEligible] = useState(false);
 
   useEffect(() => {
     if (!("serviceWorker" in navigator)) return;
@@ -62,29 +64,38 @@ export function ServiceWorkerRegister() {
     const onBeforeInstallPrompt = (event: Event) => {
       event.preventDefault();
       setDeferred(event as BeforeInstallPromptEvent);
-      setVisible(true);
       setIosHint(false);
     };
 
     window.addEventListener("beforeinstallprompt", onBeforeInstallPrompt);
 
-    let timer: number | undefined;
+    if (isIos()) setIosHint(true);
 
-    if (isIos()) {
-      setIosHint(true);
-      setVisible(true);
-    } else {
-      // Chromium may delay BIP; still show where to install from the ⋮ menu.
-      timer = window.setTimeout(() => {
-        setVisible((current) => current || true);
-      }, 4000);
-    }
+    const timer = window.setTimeout(() => {
+      setEligible(true);
+    }, SHOW_DELAY_MS);
+
+    const onScroll = () => {
+      if (window.scrollY > 280) setEligible(true);
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
 
     return () => {
       window.removeEventListener("beforeinstallprompt", onBeforeInstallPrompt);
-      if (timer) window.clearTimeout(timer);
+      window.removeEventListener("scroll", onScroll);
+      window.clearTimeout(timer);
     };
   }, []);
+
+  useEffect(() => {
+    if (!eligible) return;
+    if (isStandaloneDisplay()) return;
+    if (sessionStorage.getItem(DISMISS_KEY) === "1") return;
+    // Only surface when we have a install path or platform hint.
+    if (deferred || iosHint || !isIos()) {
+      setVisible(true);
+    }
+  }, [eligible, deferred, iosHint]);
 
   if (!visible) return null;
 
@@ -116,7 +127,7 @@ export function ServiceWorkerRegister() {
 
   return (
     <div
-      className="fixed inset-x-3 bottom-[max(0.75rem,env(safe-area-inset-bottom))] z-[80] mx-auto w-auto max-w-md rounded-2xl border border-slate-200/90 bg-white/95 p-3 shadow-[0_18px_50px_rgba(15,23,42,0.22)] backdrop-blur sm:inset-x-auto sm:right-4 sm:left-auto sm:bottom-4"
+      className="fixed inset-x-3 bottom-[max(0.75rem,env(safe-area-inset-bottom))] z-[80] mx-auto w-auto max-w-md rounded-2xl border border-slate-200/90 bg-white/95 p-3 shadow-[var(--shadow-card-hover)] backdrop-blur sm:inset-x-auto sm:bottom-4 sm:left-auto sm:right-4"
       role="dialog"
       aria-label={t("pwa.installTitle")}
     >
@@ -133,7 +144,7 @@ export function ServiceWorkerRegister() {
                 type="button"
                 onClick={() => void onInstall()}
                 disabled={installing}
-                className="rounded-full bg-brand-600 px-3.5 py-1.5 text-xs font-semibold text-white transition hover:bg-brand-700 disabled:opacity-60"
+                className="rounded-full bg-brand-700 px-3.5 py-1.5 text-xs font-semibold text-white transition hover:bg-brand-800 disabled:opacity-60"
               >
                 {installing ? t("pwa.installing") : t("pwa.installAction")}
               </button>

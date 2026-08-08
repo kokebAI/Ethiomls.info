@@ -641,7 +641,7 @@ export function AuthPanel({
           <button
             type="button"
             disabled={credentialsDisabled()}
-            className="mt-1 w-full rounded-full bg-brand-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-brand-700 disabled:opacity-45"
+            className="mt-1 w-full rounded-full bg-brand-700 px-5 py-3 text-sm font-semibold text-white transition hover:bg-brand-800 disabled:opacity-45"
             onClick={() => {
               if (mode === "login") void loginWithPassword();
               else if (mode === "register") {
@@ -721,7 +721,7 @@ export function AuthPanel({
             <button
               type="button"
               disabled={busy || code.length !== 6}
-              className="rounded-full bg-brand-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-brand-700 disabled:opacity-45"
+              className="rounded-full bg-brand-700 px-5 py-3 text-sm font-semibold text-white transition hover:bg-brand-800 disabled:opacity-45"
               onClick={() => void verifyOtp()}
             >
               {busy
