@@ -122,6 +122,8 @@ type FormValues = {
   sizeM2: string;
   description: string;
   addressLine: string;
+  gpsLatitude: string;
+  gpsLongitude: string;
   listingType: "SALE" | "RENT" | "OFF_PLAN";
   listingScope: "SINGLE" | "PROPERTY";
   propertyType: "RESIDENTIAL" | "COMMERCIAL" | "MIXED_USE" | "LAND";
@@ -163,6 +165,8 @@ const EMPTY_FORM: FormValues = {
   sizeM2: "",
   description: "",
   addressLine: "",
+  gpsLatitude: "",
+  gpsLongitude: "",
   listingType: "SALE",
   listingScope: "SINGLE",
   propertyType: "RESIDENTIAL",
@@ -300,6 +304,8 @@ export function PropertyForm({
     ...EMPTY_FORM,
     listingType: defaultListingType ?? EMPTY_FORM.listingType,
   }));
+  const [gpsStatus, setGpsStatus] = useState<string | null>(null);
+  const [gpsBusy, setGpsBusy] = useState(false);
   const [projectId, setProjectId] = useState("");
   const [isDragging, setIsDragging] = useState(false);
   const [isParsing, setIsParsing] = useState(false);
@@ -582,6 +588,12 @@ export function PropertyForm({
           ...(needsFullPack ? ["developer-full-pack"] : []),
         ],
         ...(values.addressLine ? { addressLine: values.addressLine } : {}),
+        ...(values.gpsLatitude.trim() && values.gpsLongitude.trim()
+          ? {
+              gpsLatitude: Number(values.gpsLatitude),
+              gpsLongitude: Number(values.gpsLongitude),
+            }
+          : {}),
       };
 
       if (values.listingType === "OFF_PLAN" || needsFullPack) {
@@ -1013,6 +1025,74 @@ export function PropertyForm({
               placeholder="Street or landmark"
             />
           </label>
+          <div className="sm:col-span-2 space-y-3 rounded-xl border border-slate-200 bg-slate-50/80 p-4">
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <div>
+                <p className={labelClass}>Map location (optional)</p>
+                <p className="mt-1 text-xs text-slate-500">
+                  Exact GPS improves map pins. Without it, the sub-city center is used.
+                </p>
+              </div>
+              <button
+                type="button"
+                disabled={gpsBusy}
+                onClick={() => {
+                  if (!navigator.geolocation) {
+                    setGpsStatus("Device GPS unavailable");
+                    return;
+                  }
+                  setGpsBusy(true);
+                  setGpsStatus("Locating…");
+                  navigator.geolocation.getCurrentPosition(
+                    (pos) => {
+                      setValues((current) => ({
+                        ...current,
+                        gpsLatitude: String(pos.coords.latitude),
+                        gpsLongitude: String(pos.coords.longitude),
+                      }));
+                      setGpsStatus("GPS captured");
+                      setGpsBusy(false);
+                    },
+                    () => {
+                      setGpsStatus("Could not read device GPS");
+                      setGpsBusy(false);
+                    },
+                    { enableHighAccuracy: true, timeout: 15000 },
+                  );
+                }}
+                className="rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-50 disabled:opacity-50"
+              >
+                {gpsBusy ? "Locating…" : "Use device GPS"}
+              </button>
+            </div>
+            <div className="grid gap-3 sm:grid-cols-2">
+              <label>
+                <span className={labelClass}>Latitude</span>
+                <input
+                  type="number"
+                  step="any"
+                  value={values.gpsLatitude}
+                  onChange={(event) => update("gpsLatitude", event.target.value)}
+                  className={fieldClass}
+                  placeholder="8.9942"
+                />
+              </label>
+              <label>
+                <span className={labelClass}>Longitude</span>
+                <input
+                  type="number"
+                  step="any"
+                  value={values.gpsLongitude}
+                  onChange={(event) => update("gpsLongitude", event.target.value)}
+                  className={fieldClass}
+                  placeholder="38.7895"
+                />
+              </label>
+            </div>
+            {gpsStatus ? (
+              <p className="text-xs font-medium text-slate-600">{gpsStatus}</p>
+            ) : null}
+          </div>
           <label>
             <span className={labelClass}>Bedrooms</span>
             <input

@@ -80,6 +80,8 @@ export const createPropertySchema = z
     panoramicImageUrls: nonEmptyStringArray.optional(),
     galleryImageUrls: nonEmptyStringArray.optional(),
     addressLine: z.string().trim().min(1).optional(),
+    gpsLatitude: z.number().finite().min(-90).max(90).optional(),
+    gpsLongitude: z.number().finite().min(-180).max(180).optional(),
     developerId: z.string().min(1).optional(),
     delalaId: z.string().min(1).optional(),
     projectId: z.string().min(1).optional(),

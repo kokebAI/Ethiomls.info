@@ -37,6 +37,7 @@ import {
   canCreateListings,
 } from "@/lib/properties/listing-roles";
 import { validateCreatePropertyPayload } from "@/lib/properties/validation";
+import { parseOptionalGpsPair, setListingLatLng } from "@/lib/maps/listingGeo";
 
 export const runtime = "nodejs";
 
@@ -543,6 +544,18 @@ export async function POST(request: NextRequest) {
     }
 
     if (!listing) throw lastError ?? new Error("Failed to create property");
+
+    const gps = parseOptionalGpsPair({
+      gpsLatitude: input.gpsLatitude,
+      gpsLongitude: input.gpsLongitude,
+    });
+    if (gps) {
+      try {
+        await setListingLatLng(listing.id, gps.lat, gps.lng);
+      } catch (geoError) {
+        console.error("[POST /api/properties] setListingLatLng failed", geoError);
+      }
+    }
 
     if (collision.collided && collision.alertId) {
       await prisma.adminAlert.update({
