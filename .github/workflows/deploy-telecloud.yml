@@ -1,0 +1,32 @@
+name: Deploy to Telecloud
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-telecloud-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - name: Deploy EthioMLS on Telecloud ECS
+        env:
+          HOST: ${{ secrets.TELECLOUD_HOST }}
+          USER: ${{ secrets.TELECLOUD_USER }}
+          KEY: ${{ secrets.TELECLOUD_SSH_KEY }}
+        run: |
+          set -euo pipefail
+          USER="${USER:-root}"
+          test -n "$HOST"
+          test -n "$KEY"
+          install -d -m 700 ~/.ssh
+          printf '%s\n' "$KEY" > ~/.ssh/telecloud
+          chmod 600 ~/.ssh/telecloud
+          ssh-keyscan -T 10 -H "$HOST" >> ~/.ssh/known_hosts 2>/dev/null || true
+          ssh -i ~/.ssh/telecloud -o StrictHostKeyChecking=yes \
+            "${USER}@${HOST}" '/usr/local/bin/telecloud-deploy-ethiomls.sh'
