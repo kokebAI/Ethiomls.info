@@ -212,7 +212,7 @@ export default async function DeveloperDetailPage({
             label: t("pages.developers.listingCount", {
               count: listings.length,
             }),
-            tone: "brand" as const,
+            tone: "emerald" as const,
           },
           ...(projects.length > 0
             ? [
