@@ -23,7 +23,6 @@ const badgeTone: Record<
   string
 > = {
   amber: "bg-amber-50 text-amber-800 ring-amber-600/15",
-  brand: "bg-brand-50 text-brand-800 ring-brand-600/15",
   emerald: "bg-brand-50 text-brand-800 ring-brand-600/15",
   violet: "bg-violet-50 text-violet-800 ring-violet-600/15",
   slate: "bg-slate-100 text-slate-700 ring-slate-500/15",
