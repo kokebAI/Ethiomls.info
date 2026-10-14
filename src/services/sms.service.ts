@@ -5,7 +5,15 @@ import {
   type SmsTemplateId,
 } from "@/src/services/sms.templates";
 
-export type SmsProvider = "hahu" | "afromessage" | "smsethiopia" | "mock";
+export type SmsProvider = "gateway" | "mock";
+
+export type EthioMlsSmsPurpose =
+  | "register_otp"
+  | "reset_otp"
+  | "login_otp"
+  | "scrape_invite"
+  | "listing_lifecycle"
+  | "secure_route";
 
 export type SmsSendResult = {
   ok: boolean;
@@ -22,48 +30,39 @@ type SmsUserPrefs = {
 };
 
 /**
- * Unified SMS transport (Hahu.io primary) with locale-aware templates.
+ * Unified SMS transport via shared Python push gateway (AfroMessage on host).
  */
 export class SmsNotificationEngine {
   private readonly provider: SmsProvider;
-  private readonly from: string;
   private readonly siteBase: string;
 
   constructor() {
-    const configured = (process.env.SMS_PROVIDER ?? "mock").toLowerCase();
+    const configured = (process.env.SMS_PROVIDER ?? "gateway").toLowerCase();
     const requested: SmsProvider =
-      configured === "hahu" ||
-      configured === "afromessage" ||
-      configured === "smsethiopia"
-        ? configured
-        : "mock";
+      configured === "gateway" || configured === "afromessage"
+        ? "gateway"
+        : configured === "mock"
+          ? "mock"
+          : "gateway";
     this.provider = SmsNotificationEngine.hasCredentials(requested)
       ? requested
       : "mock";
-    if (this.provider !== requested) {
+    if (this.provider !== requested && requested === "gateway") {
       console.warn(
-        `[sms] SMS_PROVIDER="${requested}" is missing credentials — falling back to mock mode (OTP codes are echoed to the client).`,
+        `[sms] SMS_PROVIDER=gateway is missing SMS_PUSH_URL/SMS_PUSH_APP_KEY — falling back to mock mode (OTP codes are echoed to the client).`,
       );
     }
-    this.from = process.env.SMS_FROM ?? "EthioMLS";
     this.siteBase = (
       process.env.NEXT_PUBLIC_SITE_URL ?? "https://ethiomls.info"
     ).replace(/\/$/, "");
   }
 
-  /** A provider is usable only when its required env credentials are set. */
   private static hasCredentials(provider: SmsProvider): boolean {
-    if (provider === "hahu") {
+    if (provider === "gateway") {
       return Boolean(
-        (process.env.HAHU_API_SECRET ?? process.env.HAHU_API_KEY)?.trim() &&
-          process.env.HAHU_DEVICE_ID?.trim(),
+        (process.env.SMS_PUSH_URL ?? "http://127.0.0.1:8091").trim() &&
+          process.env.SMS_PUSH_APP_KEY?.trim(),
       );
-    }
-    if (provider === "afromessage") {
-      return Boolean(process.env.AFROMESSAGE_API_KEY?.trim());
-    }
-    if (provider === "smsethiopia") {
-      return Boolean(process.env.SMSETHIOPIA_API_KEY?.trim());
     }
     return true;
   }
@@ -95,19 +94,27 @@ export class SmsNotificationEngine {
     locale?: SmsLocale;
     url?: string;
     kind?: "mesob" | "escrow";
+    purpose?: EthioMlsSmsPurpose;
   }): Promise<SmsSendResult> {
     const locale = input.locale ?? this.detectLocale(input.user);
     const body = this.render(input.templateId, locale, {
       url: input.url,
       kind: input.kind,
     });
-    return this.sendRaw({ toE164: input.toE164, body, locale });
+    const purpose =
+      input.purpose ??
+      (String(input.templateId).includes("secure")
+        ? "secure_route"
+        : "listing_lifecycle");
+    return this.sendRaw({ toE164: input.toE164, body, locale, purpose });
   }
 
   async sendRaw(input: {
     toE164: string;
     body: string;
     locale: SmsLocale;
+    purpose: EthioMlsSmsPurpose;
+    code?: string;
   }): Promise<SmsSendResult> {
     const to = input.toE164.trim();
     if (!/^\+[1-9]\d{7,14}$/.test(to)) {
@@ -122,17 +129,19 @@ export class SmsNotificationEngine {
     }
 
     try {
-      if (this.provider === "hahu") {
-        return await this.sendViaHahu(to, input.body, input.locale);
-      }
-      if (this.provider === "afromessage") {
-        return await this.sendViaAfroMessage(to, input.body, input.locale);
-      }
-      if (this.provider === "smsethiopia") {
-        return await this.sendViaSmsEthiopia(to, input.body, input.locale);
+      if (this.provider === "gateway") {
+        return await this.sendViaGateway(
+          to,
+          input.body,
+          input.locale,
+          input.purpose,
+          input.code,
+        );
       }
 
-      console.info(`[sms:mock] → ${to} (${input.locale}): ${input.body}`);
+      console.info(
+        `[sms:mock] → ${to} (${input.locale}/${input.purpose}): ${input.body}`,
+      );
       return {
         ok: true,
         provider: "mock",
@@ -154,162 +163,56 @@ export class SmsNotificationEngine {
   }
 
   /**
-   * Hahu.io Android SMS gateway — https://hahu.io/api/send/sms
-   * Requires linked Android device (HAHU_DEVICE_ID) + API secret.
+   * Shared Python SMS push on the host (AfroMessage).
+   * POST {SMS_PUSH_URL}/v1/send
    */
-  private async sendViaHahu(
+  private async sendViaGateway(
     to: string,
     body: string,
     locale: SmsLocale,
+    purpose: EthioMlsSmsPurpose,
+    code?: string,
   ): Promise<SmsSendResult> {
-    const secret = process.env.HAHU_API_SECRET ?? process.env.HAHU_API_KEY;
-    const device = process.env.HAHU_DEVICE_ID;
-    const sim = process.env.HAHU_SIM ?? "1";
-    const priority = process.env.HAHU_PRIORITY ?? "1";
-    const endpoint =
-      process.env.HAHU_API_URL ?? "https://hahu.io/api/send/sms";
+    const base = (
+      process.env.SMS_PUSH_URL ?? "http://127.0.0.1:8091"
+    ).replace(/\/$/, "");
+    const appKey = process.env.SMS_PUSH_APP_KEY?.trim();
+    if (!appKey) throw new Error("SMS_PUSH_APP_KEY is not configured");
 
-    if (!secret) throw new Error("HAHU_API_SECRET is not configured");
-    if (!device) throw new Error("HAHU_DEVICE_ID is not configured");
-
-    const url = new URL(endpoint);
-    // Prefer POST form body so newlines and long Unicode invites are preserved.
-    // Cold-onboarding bilingual SMS is multipart; keep a high ceiling.
-    const maxChars = Number(process.env.HAHU_SMS_MAX_CHARS ?? "4000");
-    const safeMax =
-      Number.isFinite(maxChars) && maxChars > 0
-        ? Math.min(Math.trunc(maxChars), 6000)
-        : 4000;
-    const message = [...body].slice(0, safeMax).join("");
-    const form = new URLSearchParams({
-      secret,
-      mode: "devices",
-      device,
-      sim,
-      priority,
+    const payload: Record<string, string> = {
+      app: "ethiomls",
+      purpose,
       phone: to,
-      message,
-    });
+      message: body,
+    };
+    if (code?.trim()) payload.code = code.trim();
 
-    const response = await fetch(url.toString(), {
+    const response = await fetch(`${base}/v1/send`, {
       method: "POST",
       headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
+        Authorization: `Bearer ${appKey}`,
+        "Content-Type": "application/json",
       },
-      body: form.toString(),
+      body: JSON.stringify(payload),
     });
+
     const data = (await response.json().catch(() => ({}))) as {
-      status?: number | string;
-      message?: string;
-      data?: { id?: string | number; messageId?: string };
-      id?: string | number;
+      ok?: boolean;
+      error?: string;
+      detail?: string;
+      body?: { response?: { message_id?: string; id?: string } };
     };
 
-    const statusOk =
-      response.ok &&
-      (data.status === undefined ||
-        data.status === 200 ||
-        data.status === "200" ||
-        data.status === 1 ||
-        data.status === "success");
-
-    if (!statusOk) {
+    if (!response.ok || data.ok === false) {
       throw new Error(
-        data.message ?? `Hahu.io HTTP ${response.status}`,
+        data.detail ?? data.error ?? `SMS push HTTP ${response.status}`,
       );
     }
 
     return {
       ok: true,
-      provider: "hahu",
-      messageId: String(
-        data.data?.messageId ?? data.data?.id ?? data.id ?? "",
-      ) || undefined,
-      to,
-      body,
-      locale,
-    };
-  }
-
-  private async sendViaAfroMessage(
-    to: string,
-    body: string,
-    locale: SmsLocale,
-  ): Promise<SmsSendResult> {
-    const token = process.env.AFROMESSAGE_API_KEY;
-    const sender = process.env.AFROMESSAGE_IDENTIFIER_ID ?? this.from;
-    if (!token) throw new Error("AFROMESSAGE_API_KEY is not configured");
-
-    const response = await fetch("https://api.afromessage.com/api/send", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        from: sender,
-        sender,
-        to,
-        message: body,
-      }),
-    });
-
-    if (!response.ok) {
-      throw new Error(`AfroMessage HTTP ${response.status}`);
-    }
-
-    const data = (await response.json().catch(() => ({}))) as {
-      acknowledge?: string;
-      response?: { message_id?: string; id?: string };
-    };
-
-    return {
-      ok: true,
-      provider: "afromessage",
-      messageId: data.response?.message_id ?? data.response?.id,
-      to,
-      body,
-      locale,
-    };
-  }
-
-  private async sendViaSmsEthiopia(
-    to: string,
-    body: string,
-    locale: SmsLocale,
-  ): Promise<SmsSendResult> {
-    const apiKey = process.env.SMSETHIOPIA_API_KEY;
-    const endpoint =
-      process.env.SMSETHIOPIA_API_URL ??
-      "https://api.smsethiopia.et/v1/messages";
-    if (!apiKey) throw new Error("SMSETHIOPIA_API_KEY is not configured");
-
-    const response = await fetch(endpoint, {
-      method: "POST",
-      headers: {
-        "X-API-Key": apiKey,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        from: this.from,
-        to,
-        text: body,
-      }),
-    });
-
-    if (!response.ok) {
-      throw new Error(`SMSEthiopia HTTP ${response.status}`);
-    }
-
-    const data = (await response.json().catch(() => ({}))) as {
-      id?: string;
-      messageId?: string;
-    };
-
-    return {
-      ok: true,
-      provider: "smsethiopia",
-      messageId: data.messageId ?? data.id,
+      provider: "gateway",
+      messageId: data.body?.response?.message_id ?? data.body?.response?.id,
       to,
       body,
       locale,

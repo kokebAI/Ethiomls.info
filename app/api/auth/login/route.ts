@@ -181,6 +181,8 @@ export async function POST(request: NextRequest) {
   const sms = await smsNotificationEngine.sendRaw({
     toE164: user.phone,
     locale,
+    purpose: "login_otp",
+    code,
     body: `EthioMLS code: ${code}. Valid ${Math.floor(ttlSec / 60)} min.`,
   });
 

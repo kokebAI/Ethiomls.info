@@ -100,6 +100,8 @@ export async function POST(request: NextRequest) {
   const sms = await smsNotificationEngine.sendRaw({
     toE164: phone,
     locale,
+    purpose: "reset_otp",
+    code,
     body: `EthioMLS reset code: ${code}. Valid ${Math.floor(ttlSec / 60)} min.`,
   });
 

@@ -274,6 +274,7 @@ export async function sendScrapeInviteForPhoneGroup(
     toE164: primaryPhone,
     body: messagePreview,
     locale: "am",
+    purpose: "scrape_invite",
   });
 
   if (result.ok) {
