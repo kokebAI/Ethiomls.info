@@ -82,10 +82,11 @@ export default async function ListingsPage({
   if (toHub) redirect(toHub);
 
   const dictionary = getDictionary(locale);
-  const [listings, session] = await Promise.all([
+  const [listingRead, session] = await Promise.all([
     fetchPublishedListings(),
     getSession(),
   ]);
+  const listings = listingRead.rows;
   const showFull = canViewFullListingDetails({ session });
   const { currency: preferredCurrency, rateUsdEtb } =
     await readDisplayCurrencyPreference();
@@ -221,7 +222,12 @@ export default async function ListingsPage({
       <ListingsFunnel
         listings={items}
         subCities={subCities}
-        emptyMessage={translate(dictionary, "pages.emptyDirectory")}
+        emptyMessage={translate(
+          dictionary,
+          listingRead.unavailable
+            ? "pages.catalogUnavailable"
+            : "pages.emptyDirectory",
+        )}
         imagePlaceholder={t("listing.photoComingSoon")}
       />
     </PageIntro>

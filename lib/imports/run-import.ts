@@ -36,6 +36,7 @@ import {
   registerAgtCrmEthiomlsListing,
   scrapeDestinationIsCrm,
 } from "@/lib/crm/register-ethiomls-listing";
+import { mirrorRegisteredScrapeToCatalog } from "@/lib/crm/mirror-registered-listing";
 import { generatePropertyId } from "@/src/utils/generateId";
 
 const TELEGRAM_POST_RE =
@@ -118,15 +119,19 @@ function defaultContactFallback(source: ImportSource, candidate: ScrapedCandidat
 }
 
 /**
- * Default destination: AGT CRM Review (not live mls.et).
- * Local EthioMLS listing upsert remains only when SCRAPE_DESTINATION=local.
+ * Default destination: AGT CRM Review, then a local public-catalog mirror.
+ * SCRAPE_DESTINATION=local|ethiomls keeps the legacy EthioMLS-only upsert.
  */
 async function upsertCandidate(input: {
   source: ImportSource;
   runId: string;
   ownerId: string;
   candidate: ScrapedCandidate;
-}): Promise<{ result: "created" | "updated" | "skipped"; listingId?: string }> {
+}): Promise<{
+  result: "created" | "updated" | "skipped";
+  listingId?: string;
+  mirrorError?: string;
+}> {
   const { source, runId, ownerId, candidate } = input;
   // Post age is mandatory for all scrapes.
   if (
@@ -151,11 +156,24 @@ async function upsertCandidate(input: {
       );
       return { result: "skipped" };
     }
+    const mirrored = await mirrorRegisteredScrapeToCatalog({
+      payload,
+      crmPropertyId: crm.crmPropertyId,
+    });
     const action = (crm.action ?? "").toLowerCase();
-    if (action.includes("update") || action === "updated") {
-      return { result: "updated", listingId: crm.crmPropertyId };
+    const result =
+      action.includes("update") || action === "updated" ? "updated" : "created";
+    if (!mirrored.ok) {
+      console.error(
+        `[scrape→catalog] ${candidate.externalId}: ${mirrored.error}`,
+      );
+      return {
+        result,
+        listingId: crm.crmPropertyId,
+        mirrorError: mirrored.error,
+      };
     }
-    return { result: "created", listingId: crm.crmPropertyId };
+    return { result, listingId: mirrored.listingId };
   }
 
   // Legacy local path (SCRAPE_DESTINATION=local|ethiomls) — EthioMLS PENDING_REVIEW.
@@ -275,7 +293,7 @@ export async function ingestScrapedText(input: {
   notificationStatus: NotificationStatus;
   inviteError?: string;
   messagePreview: string;
-  destination?: "agt-crm-review" | "ethiomls-local";
+  destination?: "agt-crm-review" | "agt-crm-review+catalog" | "ethiomls-local";
 }> {
   const text = input.text.trim();
   if (text.length < 20) {
@@ -357,15 +375,22 @@ export async function ingestScrapedText(input: {
     if (crm.skipped) {
       throw new Error("AGT CRM is not configured");
     }
-    const created =
-      !(crm.action ?? "").toLowerCase().includes("update") &&
-      (crm.action ?? "").toLowerCase() !== "updated";
+    const mirrored = await mirrorRegisteredScrapeToCatalog({
+      payload,
+      crmPropertyId: crm.crmPropertyId,
+    });
+    if (!mirrored.ok) {
+      throw new Error(
+        `AGT CRM accepted the scrape, but mls.et could not store it: ${mirrored.error}`,
+      );
+    }
+    const created = mirrored.action === "created";
     return {
-      listingId: crm.crmPropertyId ?? externalId,
+      listingId: mirrored.listingId,
       created,
       notificationStatus: NotificationStatus.NOT_APPLICABLE,
       messagePreview: payload.title,
-      destination: "agt-crm-review",
+      destination: "agt-crm-review+catalog",
     };
   }
 
@@ -580,6 +605,7 @@ export async function runImportSource(input: {
     let skipped = 0;
     let invitesSent = 0;
     let invitesFailed = 0;
+    let mirrorFailures = 0;
     const upsertedIds: string[] = [];
 
     if (corridorFilter || input.filters?.saleOrRentOnly) {
@@ -587,7 +613,7 @@ export async function runImportSource(input: {
     }
 
     for (const candidate of candidates) {
-      const { result, listingId } = await upsertCandidate({
+      const { result, listingId, mirrorError } = await upsertCandidate({
         source,
         runId: run.id,
         ownerId: input.adminUserId,
@@ -596,6 +622,7 @@ export async function runImportSource(input: {
       if (result === "created") created += 1;
       else if (result === "updated") updated += 1;
       else skipped += 1;
+      if (mirrorError) mirrorFailures += 1;
       if (listingId) upsertedIds.push(listingId);
     }
 
@@ -608,7 +635,7 @@ export async function runImportSource(input: {
     }
 
     const status =
-      created + updated === 0
+      created + updated === 0 || mirrorFailures > 0
         ? ScrapeRunStatus.PARTIAL
         : ScrapeRunStatus.SUCCEEDED;
 
@@ -624,7 +651,8 @@ export async function runImportSource(input: {
         summary: {
           sourceType: source.sourceType,
           url: source.normalizedUrl,
-          destination: toCrm ? "agt-crm-review" : "ethiomls-local",
+          destination: toCrm ? "agt-crm-review+catalog" : "ethiomls-local",
+          mirrorFailures,
           corridorOffPlanOnly: Boolean(corridorFilter),
           eastOffPlanOnly: Boolean(input.filters?.eastOffPlanOnly),
           saleOrRentOnly: Boolean(input.filters?.saleOrRentOnly),

@@ -1,5 +1,6 @@
 import type { MetadataRoute } from "next";
-import { ListingStatus } from "@prisma/client";
+import { publicCatalogListingWhere } from "@/lib/catalog/crm-public-scrape";
+import { publicCatalogProjectWhere } from "@/lib/catalog/seed-public-project";
 import { locales } from "@/lib/i18n/config";
 import { prisma } from "@/lib/db/prisma";
 import { absoluteUrl } from "@/lib/seo/config";
@@ -9,6 +10,9 @@ const STATIC_PATHS = [
   "/listings",
   "/projects",
   "/developers",
+  "/about",
+  "/terms",
+  "/privacy",
 ] as const;
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
@@ -29,21 +33,21 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   try {
     const [listings, projects, developers] = await Promise.all([
       prisma.listing.findMany({
-        where: { status: ListingStatus.PUBLISHED },
+        where: publicCatalogListingWhere(),
         select: { id: true, updatedAt: true },
         take: 5000,
         orderBy: { updatedAt: "desc" },
       }),
       prisma.project.findMany({
-        where: { status: ListingStatus.PUBLISHED },
+        where: publicCatalogProjectWhere(),
         select: { id: true, updatedAt: true },
         take: 2000,
         orderBy: { updatedAt: "desc" },
       }),
       prisma.developerProfile.findMany({
-        where: { isVerified: true },
         select: { id: true, updatedAt: true },
         take: 1000,
+        orderBy: { tradeName: "asc" },
       }),
     ]);
 

@@ -59,6 +59,11 @@ function normalizeCrmContactPhone(raw: string): string | null {
   if (/^251\d{8,10}$/.test(digits)) return `+${digits}`;
   if (/^\d{8,12}$/.test(digits)) return `+${digits}`;
 
+  // CRM register uses these when a post has no mobile (Telegram/Facebook/site).
+  if (/^(telegram|website|facebook|source):.+/i.test(trimmed)) {
+    return trimmed.slice(0, 120);
+  }
+
   return null;
 }
 
@@ -103,9 +108,10 @@ export async function ingestAgtCrmListing(
     };
   }
 
+  const rawSubCity = body.subCityCode ?? body.subcityCode;
   const subCityCode =
-    typeof body.subCityCode === "string" && isAddisSubCityCode(body.subCityCode)
-      ? body.subCityCode
+    typeof rawSubCity === "string" && isAddisSubCityCode(rawSubCity)
+      ? rawSubCity
       : null;
   const subCity = subCityCode
     ? await prisma.subCity.findUnique({

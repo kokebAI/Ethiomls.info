@@ -3,19 +3,35 @@ import { publicCatalogListingWhere } from "@/lib/catalog/crm-public-scrape";
 import { publicCatalogProjectWhere } from "@/lib/catalog/seed-public-project";
 import { prisma } from "@/lib/db/prisma";
 
+export type CatalogRead<T> = {
+  rows: T;
+  /** True when Postgres threw (missing migrate, bad DATABASE_URL). Not an empty table. */
+  unavailable: boolean;
+};
+
 /**
  * Catalog reads must not crash `next build` / SSG when Postgres is unreachable
- * (common on Vercel preview builds or local builds without Docker).
+ * (common on preview builds or local builds without Docker).
+ * Callers must show `unavailable` separately from an empty directory.
  */
-export async function fetchVerifiedDevelopers() {
+async function readCatalog<T>(
+  label: string,
+  query: () => Promise<T>,
+  empty: T,
+): Promise<CatalogRead<T>> {
   try {
-    return await prisma.developerProfile.findMany({
-      where: {
-        OR: [
-          { listings: { some: publicCatalogListingWhere() } },
-          { projects: { some: publicCatalogProjectWhere() } },
-        ],
-      },
+    return { rows: await query(), unavailable: false };
+  } catch (error) {
+    console.error(`[catalog] ${label} failed:`, error);
+    return { rows: empty, unavailable: true };
+  }
+}
+
+export async function fetchVerifiedDevelopers() {
+  return readCatalog(
+    "fetchVerifiedDevelopers",
+    () =>
+      prisma.developerProfile.findMany({
       include: {
         headquartersSubCity: {
           select: { code: true, name: true },
@@ -27,12 +43,10 @@ export async function fetchVerifiedDevelopers() {
           },
         },
       },
-      orderBy: { tradeName: "asc" },
-    });
-  } catch (error) {
-    console.error("[catalog] fetchVerifiedDevelopers failed:", error);
-    return [];
-  }
+      orderBy: [{ isVerified: "desc" }, { tradeName: "asc" }],
+    }),
+    [],
+  );
 }
 
 export async function fetchDeveloperById(id: string) {
@@ -102,23 +116,23 @@ export async function fetchPublishedProjectsByDeveloper(developerId: string) {
 }
 
 export async function fetchPublishedProjects() {
-  try {
-    return await prisma.project.findMany({
-      where: publicCatalogProjectWhere(),
-      include: {
-        developer: {
-          select: { tradeName: true, displayName: true },
+  return readCatalog(
+    "fetchPublishedProjects",
+    () =>
+      prisma.project.findMany({
+        where: publicCatalogProjectWhere(),
+        include: {
+          developer: {
+            select: { tradeName: true, displayName: true },
+          },
+          subCity: {
+            select: { code: true, name: true },
+          },
         },
-        subCity: {
-          select: { code: true, name: true },
-        },
-      },
-      orderBy: [{ completionPercent: "desc" }, { updatedAt: "desc" }],
-    });
-  } catch (error) {
-    console.error("[catalog] fetchPublishedProjects failed:", error);
-    return [];
-  }
+        orderBy: [{ completionPercent: "desc" }, { updatedAt: "desc" }],
+      }),
+    [],
+  );
 }
 
 export async function fetchProjectById(
@@ -159,24 +173,27 @@ export async function fetchProjectById(
 }
 
 export async function fetchPublishedListings() {
-  try {
-    return await prisma.listing.findMany({
-      where: publicCatalogListingWhere(),
-      include: {
-        subCity: {
-          select: { code: true, name: true },
+  return readCatalog(
+    "fetchPublishedListings",
+    () =>
+      prisma.listing.findMany({
+        where: publicCatalogListingWhere(),
+        include: {
+          subCity: {
+            select: { code: true, name: true },
+          },
+          developer: {
+            select: { tradeName: true, displayName: true },
+          },
         },
-        developer: {
-          select: { tradeName: true, displayName: true },
-        },
-      },
-      // Keep verified/published inventory first, then newest CRM scrapes.
-      orderBy: [{ publishedAt: "desc" }, { createdAt: "desc" }],
-    });
-  } catch (error) {
-    console.error("[catalog] fetchPublishedListings failed:", error);
-    return [];
-  }
+        // Published rows (publishedAt set) first, then newest CRM/seed scrapes.
+        orderBy: [
+          { publishedAt: { sort: "desc", nulls: "last" } },
+          { createdAt: "desc" },
+        ],
+      }),
+    [],
+  );
 }
 
 export async function fetchListingById(

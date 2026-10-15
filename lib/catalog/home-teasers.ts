@@ -1,5 +1,5 @@
-import { ListingStatus } from "@prisma/client";
 import { prisma } from "@/lib/db/prisma";
+import { publicCatalogListingWhere } from "@/lib/catalog/crm-public-scrape";
 import { teaserCoverPhotos } from "@/lib/catalog/buyer-visibility";
 import type { PriceCurrency } from "@/lib/catalog/price-band";
 import { resolveNbeUsdEtbRate } from "@/lib/compliance/currency";
@@ -18,22 +18,30 @@ export type HomeTeaser = {
   priceBand: string;
 };
 
-/** Up to three published teasers for the home gateway — never crash on DB miss. */
-export async function fetchHomeTeasers(limit = 3): Promise<HomeTeaser[]> {
+/**
+ * Home gateway teasers. Same public set as /listings (published, CRM
+ * activations, and demo-grid seed rows) so a CRM mirror is visible on /.
+ */
+export async function fetchHomeTeasers(
+  limit = 3,
+): Promise<{ teasers: HomeTeaser[]; unavailable: boolean }> {
   try {
     const { currency: preferredCurrency, rateUsdEtb } =
       await readDisplayCurrencyPreference();
     const rate = resolveNbeUsdEtbRate(rateUsdEtb);
     const listings = await prisma.listing.findMany({
-      where: { status: ListingStatus.PUBLISHED },
+      where: publicCatalogListingWhere(),
       include: {
         subCity: { select: { code: true, name: true } },
       },
-      orderBy: [{ publishedAt: "desc" }, { createdAt: "desc" }],
+      orderBy: [
+        { publishedAt: { sort: "desc", nulls: "last" } },
+        { createdAt: "desc" },
+      ],
       take: limit,
     });
 
-    return listings.map((listing) => {
+    const teasers = listings.map((listing) => {
       const amount = Number(listing.priceAmount);
       const currency = listing.priceCurrency as PriceCurrency;
       const photos = teaserCoverPhotos(listing);
@@ -55,8 +63,9 @@ export async function fetchHomeTeasers(limit = 3): Promise<HomeTeaser[]> {
         ),
       };
     });
+    return { teasers, unavailable: false };
   } catch (error) {
     console.error("[home-teasers] falling back to empty:", error);
-    return [];
+    return { teasers: [], unavailable: true };
   }
 }

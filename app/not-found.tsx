@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { BrandMark } from "@/components/BrandMark";
+import { operatorFooterLine } from "@/lib/legal/operator";
 
 export const metadata: Metadata = {
   title: "Page not found · EthioMLS",
@@ -33,6 +34,9 @@ export default function RootNotFound() {
           Browse listings
         </Link>
       </div>
+      <p className="mt-8 text-pretty text-sm leading-relaxed text-ink">
+        {operatorFooterLine()}
+      </p>
     </main>
   );
 }

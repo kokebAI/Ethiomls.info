@@ -10,12 +10,16 @@
  *   npm run scrape:seed-from-crm -- --dry-run
  *   npm run scrape:seed-from-crm -- --limit=20
  *   npm run scrape:seed-from-crm -- --path=/api/admin/scrape-properties
+ *   npm run scrape:seed-from-crm -- --local
+ *
+ * --local writes through Prisma on this host (needs DATABASE_URL and an
+ * active user). The default POSTs to ETHIOMLS_BASE_URL /api/crm/ingest-listing.
  *
  * Env:
  *   AGT_CRM_BASE_URL=https://agtplc.et
- *   AGT_CRM_API_KEY=…          # CRM ADMIN_API_KEY for GET scrape-properties
+ *   CRM_APP_API_KEY=…          # or AGT_CRM_API_KEY; admin key for GET scrape-properties
  *   ETHIOMLS_BASE_URL=https://mls.et
- *   CRM_INGEST_API_KEY=…       # must match EthioMLS ingest auth (or AGT_CRM_API_KEY)
+ *   CRM_INGEST_API_KEY=…       # optional; CRM_APP_API_KEY is accepted for HTTP ingest
  */
 
 import { readFileSync } from "node:fs";
@@ -54,6 +58,7 @@ function loadEnvFile(filePath: string) {
 
 type CliOptions = {
   dryRun: boolean;
+  local: boolean;
   limit: number | null;
   path: string | undefined;
   ethiomlsBase: string | undefined;
@@ -62,12 +67,14 @@ type CliOptions = {
 function parseArgs(argv: string[]): CliOptions {
   const options: CliOptions = {
     dryRun: false,
+    local: false,
     limit: null,
     path: undefined,
     ethiomlsBase: undefined,
   };
   for (const arg of argv) {
     if (arg === "--dry-run") options.dryRun = true;
+    else if (arg === "--local") options.local = true;
     else if (arg.startsWith("--limit=")) {
       const n = Number(arg.slice("--limit=".length));
       options.limit = Number.isFinite(n) && n > 0 ? Math.floor(n) : null;
@@ -79,6 +86,19 @@ function parseArgs(argv: string[]): CliOptions {
     }
   }
   return options;
+}
+
+async function ingestLocal(row: AgtCrmScrapeRow) {
+  const { ingestAgtCrmListing } = await import("../lib/crm/ingest-listing");
+  const result = await ingestAgtCrmListing(row);
+  if (!result.ok) {
+    return { ok: false as const, error: result.error, status: result.status };
+  }
+  return {
+    ok: true as const,
+    listingId: result.listingId,
+    action: result.action,
+  };
 }
 
 function rowLabel(row: AgtCrmScrapeRow): string {
@@ -102,7 +122,11 @@ async function main() {
   console.log("Pulling scrapes from AGT CRM…");
   let scrapes = await fetchAllAgtCrmScrapes({ path: options.path });
   console.log(`Fetched ${scrapes.length} scrape row(s) from CRM`);
-  console.log(`Ingest route: POST ${ethiomlsBase}/api/crm/ingest-listing`);
+  console.log(
+    options.local
+      ? "Ingest: local Prisma (agt-crm-activation)"
+      : `Ingest route: POST ${ethiomlsBase}/api/crm/ingest-listing`,
+  );
 
   if (options.limit != null) {
     scrapes = scrapes.slice(0, options.limit);
@@ -128,9 +152,11 @@ async function main() {
     }
 
     try {
-      const result = await postEthiomlsIngestListing(row, {
-        baseUrl: ethiomlsBase,
-      });
+      const result = options.local
+        ? await ingestLocal(row)
+        : await postEthiomlsIngestListing(row, {
+            baseUrl: ethiomlsBase,
+          });
       if (!result.ok) {
         failed += 1;
         console.error(

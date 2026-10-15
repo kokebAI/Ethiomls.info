@@ -54,11 +54,12 @@ export default async function ListingsMapPage({
   const t = (key: string) => translate(dictionary, key);
   const base = `/${locale}`;
 
-  const [session, staff, listings] = await Promise.all([
+  const [session, staff, listingRead] = await Promise.all([
     getSession(),
     getCurrentOpsStaff(),
     fetchPublishedListings(),
   ]);
+  const listings = listingRead.rows;
 
   const ids = listings.map((l) => l.id);
   const coordsById = await fetchListingLatLng(ids);
@@ -114,7 +115,9 @@ export default async function ListingsMapPage({
         focusId={focus?.trim() || undefined}
         labels={{
           approx: t("pages.listingsMap.approx"),
-          empty: t("pages.listingsMap.empty"),
+          empty: listingRead.unavailable
+            ? t("pages.catalogUnavailable")
+            : t("pages.listingsMap.empty"),
           viewListing: t("pages.listingsMap.viewListing"),
           sale: t("pages.listingsMap.sale"),
           rent: t("pages.listingsMap.rent"),

@@ -311,7 +311,8 @@
     "comingOnline": "ዝርዝር ኣብ መስመር ይመጽእ ኣሎ — ናሙና ኣብ ታሕቲ።",
     "emptyHint": "ምሉእ ካታሎግ PostgreSQL ዳታቤዝ ምስ ተተሓሓዘ ይርከብ።",
     "recordCount": "{count} ቀጥታ መዝገባት ካብ ዳታቤዝኩም።",
-    "emptyDirectory": "ዝተለገቡ መዝገባት የለን። ናይ ምርኢት ክምችት ንምምላእ `npx prisma db seed` ገይርኩም።"
+    "emptyDirectory": "ዝተለገቡ መዝገባት የለን። ናይ ምርኢት ክምችት ንምምላእ `npx prisma db seed` ገይርኩም።",
+    "catalogUnavailable": "ናይ ዝርዝር ዳታቤዝ ኣይተረኽበን። ኣብ ሰርቨር `npx prisma migrate deploy` ገብሩ።"
   },
   "consent": {
     "title": "ምስ ደላላ ንምርካብ ፍቓድ",
@@ -1120,5 +1121,28 @@
     "notLive": "ዝተሓትመ ዝርዝር ጥራይ እዩ ክሕደስ ዝኽእል።",
     "forbidden": "ነዚ ዝርዝር ክሕድስ ዝኽእል ወናኒ እቲ ዝርዝር ወይ ሰራሕተኛታት EthioMLS ጥራይ እዩ።",
     "back": "ናብ ዝርዝር ተመለስ"
+  },
+  "legal": {
+    "navLabel": "ትካል",
+    "about": "ብዛዕባና",
+    "terms": "ኩነታት ኣገልግሎት",
+    "privacy": "ፖሊሲ ውልቂ",
+    "templateBanner": "እዚ ጽሑፍ ነቲ ወናኒ ንምግማር ዝተዳለወ ናይ ጊዜያዊ ቅዳሕ እዩ። ናይ መወዳእታ ሕጋዊ ምኽሪ ኣይኮነን። ATITEGEB GENERAL TRADING PLC እቲ ቃል ክሳብ ዘጽድቖ ናይ መወዳእታ መግለጺ ኣይኮነን።",
+    "pendingTranslation": "እቶም ኣብ ታሕቲ ዘለዉ ሓረጋት ክሳብ ሕጂ ናይ እንግሊዝኛ ቅዳሕ እዮም፤ ንትርጉም ምልክት ተገይሩሎም።",
+    "aboutTitle": "ብዛዕባ እዚ መርበብ",
+    "aboutLede": "mls.et ብ ATITEGEB GENERAL TRADING PLC (ናይ ንግዲ ስም kokeb AI tech) እዩ ዝመሓደር።",
+    "aboutBody": "ኢትዮMLS ኣብ ኣዲስ ኣበባ ገዛውቲን ናይ ንግዲ ቦታታትን ይዘርዝር። እቲ ኣብ ታሕቲ ዝተጠቕሰ ትካል መለለዪታት፡ ዝርዝራትን ሕቶታትን ሓዊሱ ነዚ ኣገልግሎት ይመርሕ።",
+    "factsHeading": "ዝርዝር ትካል",
+    "legalName": "ሕጋዊ ስም",
+    "tradeName": "ናይ ንግዲ ስም",
+    "tin": "TIN",
+    "license": "ፍቓድ ንግዲ",
+    "tradeReg": "ምዝገባ ናይ ንግዲ ስም",
+    "address": "ኣድራሻ",
+    "phone": "ተሌፎን",
+    "termsTitle": "ኩነታት ኣገልግሎት",
+    "termsLede": "ን mls.et ንምጥቃም ሕግታት። ነቲ ኣገልግሎት ዘመሓድር ATITEGEB GENERAL TRADING PLC እዩ።",
+    "privacyTitle": "ፖሊሲ ውልቂ",
+    "privacyLede": "ATITEGEB GENERAL TRADING PLC ኣብ mls.et ሓበሬታ ብኸመይ ከም ዝሕዞ።"
   }
 }

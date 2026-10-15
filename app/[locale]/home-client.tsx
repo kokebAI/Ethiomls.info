@@ -26,9 +26,14 @@ const INTENT_TO_LISTING_TYPE: Record<
 type HomeClientProps = {
   stats: HomeStats;
   teasers: HomeTeaser[];
+  catalogUnavailable?: boolean;
 };
 
-export function HomeClient({ stats, teasers }: HomeClientProps) {
+export function HomeClient({
+  stats,
+  teasers,
+  catalogUnavailable = false,
+}: HomeClientProps) {
   const { locale, t } = useTranslation();
   const router = useRouter();
   const base = `/${locale}`;
@@ -130,7 +135,11 @@ export function HomeClient({ stats, teasers }: HomeClientProps) {
         locale={typedLocale}
         teasers={teasers}
         heading={t("home.verifiedProperties")}
-        emptyMessage={t("home.emptyMarket")}
+        emptyMessage={
+          catalogUnavailable
+            ? t("pages.catalogUnavailable")
+            : t("home.emptyMarket")
+        }
         verifiedLabel={t("listing.verified")}
         viewAllLabel={t("home.viewAll")}
         typeLabels={{
