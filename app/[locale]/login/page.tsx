@@ -6,6 +6,7 @@ import { googleOAuthConfigured } from "@/lib/auth/oauth";
 import { getSession } from "@/lib/auth/session";
 import { isLocale, type Locale } from "@/lib/i18n/config";
 import { getDictionary } from "@/lib/i18n/getDictionary";
+import { safeInternalPath } from "@/lib/auth/safe-next";
 import { hubPathForRole } from "@/lib/roles/hubs";
 import { prisma } from "@/lib/db/prisma";
 import { redirect } from "next/navigation";
@@ -24,8 +25,9 @@ export default async function LoginPage({
   const query = await searchParams;
   const session = await getSession();
   if (session) {
-    if (query.next?.startsWith("/")) {
-      redirect(query.next);
+    const next = safeInternalPath(query.next);
+    if (next) {
+      redirect(next);
     }
     const user = await prisma.user.findUnique({
       where: { id: session.userId },

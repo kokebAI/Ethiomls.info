@@ -6,6 +6,9 @@ import {
   isGeminiConfigured,
 } from "@/lib/ai/gemini";
 import { mapGeminiError } from "@/lib/ai/gemini-errors";
+import { getSession } from "@/lib/auth/session";
+import { prisma } from "@/lib/db/prisma";
+import { canCreateListings } from "@/lib/properties/listing-roles";
 import { ADDIS_SUB_CITY_CODES, ADDIS_SUB_CITY_SET } from "@/lib/properties/subCities";
 
 export const runtime = "nodejs";
@@ -89,6 +92,27 @@ function resolveMime(file: File): string {
 
 export async function POST(request: Request) {
   try {
+    const session = await getSession();
+    if (!session) {
+      return NextResponse.json(
+        { error: "Unauthorized", message: "Sign in required" },
+        { status: 401 },
+      );
+    }
+    const user = await prisma.user.findFirst({
+      where: { id: session.userId, isActive: true },
+      select: { role: true },
+    });
+    if (!user || !canCreateListings(user.role)) {
+      return NextResponse.json(
+        {
+          error: "Forbidden",
+          message: "Only listing accounts can parse documents",
+        },
+        { status: 403 },
+      );
+    }
+
     if (!isGeminiConfigured()) {
       return NextResponse.json(
         {

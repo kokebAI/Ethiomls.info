@@ -1,3 +1,4 @@
+import { getSiteUrl } from "@/lib/seo/config";
 import {
   renderSmsTemplate,
   resolveSmsLocale,
@@ -52,9 +53,7 @@ export class SmsNotificationEngine {
         `[sms] SMS_PROVIDER=gateway is missing SMS_PUSH_URL/SMS_PUSH_APP_KEY — falling back to mock mode (OTP codes are echoed to the client).`,
       );
     }
-    this.siteBase = (
-      process.env.NEXT_PUBLIC_SITE_URL ?? "https://ethiomls.info"
-    ).replace(/\/$/, "");
+    this.siteBase = getSiteUrl();
   }
 
   private static hasCredentials(provider: SmsProvider): boolean {

@@ -1,8 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
 import { LeadStatus } from "@prisma/client";
+import { z } from "zod";
+import { getSession } from "@/lib/auth/session";
 import { prisma } from "@/lib/db/prisma";
-import { isConsentAccepted, maskE164Phone } from "@/lib/leads/phoneMask";
+import { maskE164Phone } from "@/lib/leads/phoneMask";
 import { smsNotificationEngine } from "@/src/services/sms.service";
+
+const leadSchema = z.object({
+  listingId: z.string().trim().min(1).max(64),
+  message: z.string().trim().max(2000).optional(),
+  consentAccepted: z.literal(true),
+});
 
 export const runtime = "nodejs";
 
@@ -14,28 +22,46 @@ export const runtime = "nodejs";
  */
 export async function POST(request: NextRequest) {
   try {
-    const body = (await request.json()) as Record<string, unknown>;
-    const listingId = String(body.listingId ?? "").trim();
-    const requesterId =
-      typeof body.requesterId === "string" && body.requesterId.trim()
-        ? body.requesterId.trim()
-        : null;
-    const message =
-      typeof body.message === "string" && body.message.trim()
-        ? body.message.trim().slice(0, 2000)
-        : null;
-    const consentAccepted = isConsentAccepted(body.consentAccepted);
+    const session = await getSession();
+    if (!session) {
+      return NextResponse.json(
+        { error: "Unauthorized", message: "Sign in required", statusCode: 401 },
+        { status: 401 },
+      );
+    }
 
-    if (!listingId) {
+    let raw: unknown;
+    try {
+      raw = await request.json();
+    } catch {
       return NextResponse.json(
         {
-          error: "ValidationError",
-          message: "listingId is required",
+          error: "InvalidJson",
+          message: "Request body must be valid JSON",
           statusCode: 400,
         },
         { status: 400 },
       );
     }
+
+    const parsed = leadSchema.safeParse(raw);
+    if (!parsed.success) {
+      return NextResponse.json(
+        {
+          error: "ValidationError",
+          message:
+            parsed.error.issues[0]?.message ??
+            "listingId and consentAccepted are required",
+          statusCode: 400,
+          issues: parsed.error.issues,
+        },
+        { status: 400 },
+      );
+    }
+
+    const listingId = parsed.data.listingId;
+    const requesterId = session.userId;
+    const message = parsed.data.message ?? null;
 
     const listing = await prisma.listing.findUnique({
       where: { id: listingId },
@@ -92,24 +118,6 @@ export async function POST(request: NextRequest) {
     }
 
     const maskedPhone = maskE164Phone(rawPhone);
-
-    if (!consentAccepted) {
-      return NextResponse.json(
-        {
-          error: "ConsentRequired",
-          message:
-            "Broker telephone indices stay masked until the Consent Gate checkbox is confirmed",
-          statusCode: 403,
-          consentRequired: true,
-          contact: {
-            maskedPhone,
-            revealedPhone: null,
-            brokerDisplayName: brokerUser.fullName,
-          },
-        },
-        { status: 403 },
-      );
-    }
 
     const lead = await prisma.lead.create({
       data: {

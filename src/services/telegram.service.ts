@@ -7,6 +7,7 @@ import {
   parseDisplayCurrency,
   type DisplayCurrency,
 } from "@/lib/currency/preference";
+import { getSiteUrl, listingPublicPath } from "@/lib/seo/config";
 
 export type TelegramInlineButton = {
   text: string;
@@ -79,10 +80,7 @@ export class TelegramBotService {
     const secondaryAmLabel =
       preferred === "USD" ? "አገር ውስጥ" : "ዲያስፖራ";
 
-    const site = (
-      process.env.NEXT_PUBLIC_SITE_URL ?? "https://ethiomls.info"
-    ).replace(/\/$/, "");
-    const listingUrl = `${site}/listing/${input.listingId}`;
+    const listingUrl = `${getSiteUrl()}${listingPublicPath(input.listingId)}`;
 
     const waterEn = input.waterAvailable ? "Reliable" : "Limited";
     const powerEn = input.powerBackup ? "Backup available" : "No backup flagged";
@@ -116,7 +114,7 @@ export class TelegramBotService {
       buttons: [
         [
           {
-            text: `🌐 View 360° Walkthrough & Owner Contacts: ethiomls.info/listing/${input.listingId}`,
+            text: "View listing on mls.et",
             url: listingUrl,
           },
         ],

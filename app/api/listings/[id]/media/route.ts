@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { ListingEvidenceKind, ListingStatus } from "@prisma/client";
 import { getCurrentAdmin } from "@/lib/auth/admin";
+import { getSiteUrl } from "@/lib/seo/config";
 import { prisma } from "@/lib/db/prisma";
 import {
   EVIDENCE_KIND_LABELS,
@@ -119,9 +120,7 @@ export async function POST(
     );
   }
 
-  const site =
-    process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") ||
-    "https://ethiomls.info";
+  const site = getSiteUrl();
 
   const uploaded: Array<{
     id: string;

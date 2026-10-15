@@ -1,5 +1,6 @@
 import type { Locale } from "@/lib/i18n/config";
 import { isLocale } from "@/lib/i18n/config";
+import { getSiteUrl } from "@/lib/seo/config";
 
 export type SmsLocale = Locale;
 
@@ -84,7 +85,7 @@ const TI_ARCHIVED = u([
 ]);
 
 function fill(template: string, params: TemplateParams): string {
-  return template.replaceAll("{url}", params.url ?? "https://ethiomls.info");
+  return template.replaceAll("{url}", params.url ?? getSiteUrl());
 }
 
 export function renderSmsTemplate(

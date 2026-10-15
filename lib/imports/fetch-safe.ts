@@ -1,5 +1,6 @@
 import { lookup } from "node:dns/promises";
 import { isIP } from "node:net";
+import { getSiteUrl } from "@/lib/seo/config";
 
 const BLOCKED_HOSTS = new Set([
   "localhost",
@@ -66,7 +67,7 @@ export async function fetchPublicText(
       signal: controller.signal,
       headers: {
         Accept: "text/html,application/xhtml+xml",
-        "User-Agent": "EthioMLSImportBot/1.0 (+https://ethiomls.info)",
+        "User-Agent": `EthioMLSImportBot/1.0 (+${getSiteUrl()})`,
         ...(init?.headers ?? {}),
       },
     });

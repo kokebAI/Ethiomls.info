@@ -12,7 +12,7 @@ Equal marketplace for Addis Ababa property: **buyer/renter clients**, **property
 
 ## Product Purpose
 
-EthioMLS (ethiomls.info) is an Ethiopian Multiple Listing Service centered on Addis Ababa: homes and commercial space for buy, rent, and off-plan. Success means participants can discover or publish **verified** inventory with confidence—not another unverified classifieds feed.
+EthioMLS (https://mls.et) is an Ethiopian Multiple Listing Service centered on Addis Ababa: homes and commercial space for buy, rent, and off-plan. Success means participants can discover or publish **verified** inventory with confidence—not another unverified classifieds feed.
 
 ## Positioning
 

@@ -1103,5 +1103,22 @@
     "etbHint": "Gatii ETB n agarsiisi",
     "usdHint": "Gatii USD n agarsiisi (NBE)",
     "nbeNote": "Saffisa NBE"
+  },
+  "notFound": {
+    "title": "Fuulli hin argamne",
+    "body": "Teessoon kun mls.et irratti hin jiru. Gara manaatti deebi'i yookaan tarree ilaali.",
+    "home": "Gara manaatti",
+    "listings": "Tarree ilaali"
+  },
+  "renew": {
+    "title": "Tarree haaressi",
+    "lede": "Tarreewwan maxxanfaman guyyaa haaressa dhumaa irraa kaasee guyyaa 30 tura. Sa'aatii sana deebisanii jalqabsiisuuf mirkaneessi.",
+    "confirm": "Tarree kana haaressi",
+    "doneTitle": "Tarree haaressameera",
+    "doneBody": "Guyyaan 30 har'a irraa deebi'ee jalqaba.",
+    "viewListing": "Tarree ilaali",
+    "notLive": "Tarree maxxanfame qofa haaressuun danda'ama.",
+    "forbidden": "Abbaan tarree yookaan hojjattoonni EthioMLS qofa tarree kana haaressuu danda'u.",
+    "back": "Gara tarreetti deebi'i"
   }
 }

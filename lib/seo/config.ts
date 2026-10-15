@@ -1,14 +1,27 @@
 import type { Locale } from "@/lib/i18n/config";
 import { locales } from "@/lib/i18n/config";
 
+/** Public production origin. Hosting is Telecloud (mls.et), not Vercel. */
+export const CANONICAL_SITE_ORIGIN = "https://mls.et";
+
 /** Canonical public origin for absolute URLs in sitemap / Open Graph. */
 export function getSiteUrl(): string {
   const raw =
     process.env.NEXT_PUBLIC_SITE_URL?.trim() ||
-    process.env.VERCEL_PROJECT_PRODUCTION_URL?.trim() ||
-    "https://mls.et";
+    process.env.NEXT_PUBLIC_APP_URL?.trim() ||
+    CANONICAL_SITE_ORIGIN;
   const withProtocol = raw.startsWith("http") ? raw : `https://${raw}`;
   return withProtocol.replace(/\/$/, "");
+}
+
+/** Locale-less listing path. The proxy prefixes the visitor's locale. */
+export function listingPublicPath(listingId: string): string {
+  return `/listings/${encodeURIComponent(listingId)}`;
+}
+
+/** Owner freshness link from expiry SMS. Confirmed on the renew page. */
+export function listingRenewPath(listingId: string): string {
+  return `${listingPublicPath(listingId)}/renew`;
 }
 
 export function absoluteUrl(path: string): string {

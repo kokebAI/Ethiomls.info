@@ -13,7 +13,7 @@ export async function POST(request: NextRequest) {
       {
         error: "AiNotConfigured",
         message:
-          "Gemini is not configured. Enable Netlify AI Gateway (and deploy once), or set GEMINI_API_KEY for local development.",
+          "Gemini is not configured. Set GEMINI_API_KEY on the Telecloud host.",
         statusCode: 503,
       },
       { status: 503 },
@@ -83,12 +83,8 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(
       {
         error: mapped.code,
-        message:
-          error instanceof Error && error.message.length < 500
-            ? error.message
-            : mapped.message,
+        message: mapped.message,
         statusCode: mapped.statusCode,
-        runtime: describeGeminiRuntime(),
       },
       { status: mapped.statusCode },
     );

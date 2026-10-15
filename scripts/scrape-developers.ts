@@ -26,7 +26,7 @@ import { PrismaClient, UserRole } from "@prisma/client";
 loadEnvFile(path.join(process.cwd(), ".env"));
 
 const USER_AGENT =
-  "EthioMLSDeveloperImporter/1.0 (+https://ethiomls.info; directory research; contact=ops@ethiomls.info)";
+  "EthioMLSDeveloperImporter/1.0 (+https://mls.et; directory research; contact=ops@mls.et)";
 const DEFAULT_JSON = path.join(
   process.cwd(),
   "data/developers/addis-developers.json",

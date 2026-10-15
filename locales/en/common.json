@@ -1070,5 +1070,22 @@
     "etbHint": "Show prices in ETB",
     "usdHint": "Show prices in USD (NBE day rate)",
     "nbeNote": "NBE indicative rate"
+  },
+  "notFound": {
+    "title": "Page not found",
+    "body": "That address is not on mls.et. Go back to the home page or browse listings.",
+    "home": "Back to home",
+    "listings": "Browse listings"
+  },
+  "renew": {
+    "title": "Refresh listing",
+    "lede": "Published listings stay live for 30 days after the last refresh. Confirm to restart that clock.",
+    "confirm": "Refresh this listing",
+    "doneTitle": "Listing refreshed",
+    "doneBody": "The 30-day freshness window starts again today.",
+    "viewListing": "View listing",
+    "notLive": "Only a published listing can be refreshed.",
+    "forbidden": "Only the listing owner or EthioMLS staff can refresh this listing.",
+    "back": "Back to listing"
   }
 }

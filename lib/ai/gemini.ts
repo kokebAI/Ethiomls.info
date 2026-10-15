@@ -75,7 +75,7 @@ export function createGeminiClient(): GoogleGenAI {
 
   if (!apiKey && !baseUrl) {
     throw new Error(
-      "GEMINI_API_KEY is not set. Add it in Vercel/Netlify env (or .env.local), or enable the AI Gateway.",
+      "GEMINI_API_KEY is not set. Add it on the Telecloud host (or .env.local), or enable an AI Gateway.",
     );
   }
 

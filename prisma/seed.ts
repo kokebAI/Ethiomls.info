@@ -328,7 +328,7 @@ const DEMO_USERS: DemoUserSeed[] = [
       registrationNumber: "ET-RE-DEMO-00005",
       licenseNumber: "MUD-RE-DEMO-0005",
       tin: "0005999005",
-      website: "https://ethiomls.info",
+      website: "https://mls.et",
       hqCode: "bole",
     },
   },

@@ -1,5 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
+import { getCurrentOpsStaff } from "@/lib/auth/admin";
 import { notifyListingVerification } from "@/src/services/listing-lifecycle.service";
+
+const bodySchema = z.object({
+  kind: z.enum(["mesob", "escrow"]).default("mesob"),
+});
 
 export const runtime = "nodejs";
 
@@ -12,9 +18,33 @@ export async function POST(
   context: { params: Promise<{ id: string }> },
 ) {
   try {
+    const staff = await getCurrentOpsStaff();
+    if (!staff) {
+      return NextResponse.json(
+        { error: "Forbidden", message: "Staff access required", statusCode: 403 },
+        { status: 403 },
+      );
+    }
+
     const { id } = await context.params;
-    const body = (await request.json()) as { kind?: string };
-    const kind = body.kind === "escrow" ? "escrow" : "mesob";
+    let raw: unknown = {};
+    try {
+      raw = await request.json();
+    } catch {
+      raw = {};
+    }
+    const parsed = bodySchema.safeParse(raw);
+    if (!parsed.success) {
+      return NextResponse.json(
+        {
+          error: "ValidationError",
+          message: "kind must be mesob or escrow",
+          statusCode: 400,
+        },
+        { status: 400 },
+      );
+    }
+    const kind = parsed.data.kind;
 
     if (!id?.trim()) {
       return NextResponse.json(

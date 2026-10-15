@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { googleOAuthConfigured, googleRedirectUri } from "@/lib/auth/oauth";
+import { safeInternalPath } from "@/lib/auth/safe-next";
 import { newOAuthState } from "@/lib/auth/session";
 import { isLocale } from "@/lib/i18n/config";
 
@@ -22,15 +23,14 @@ export async function GET(request: NextRequest) {
     url.search = "";
     url.searchParams.set(
       "error",
-      "Gmail sign-in is not configured. Set GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET on Vercel.",
+      "Gmail sign-in is not configured. Set GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET on the Telecloud host.",
     );
     return NextResponse.redirect(url);
   }
 
   const modeRaw = request.nextUrl.searchParams.get("mode") ?? "login";
   const mode = modeRaw === "register" ? "register" : "login";
-  const nextRaw = request.nextUrl.searchParams.get("next") ?? "";
-  const next = nextRaw.startsWith("/") ? nextRaw.slice(0, 200) : "";
+  const next = safeInternalPath(request.nextUrl.searchParams.get("next")) ?? "";
   // New Google accounts are always clients; admin must already exist by email.
   const role = "BUYER_RENTER";
 
