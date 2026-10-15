@@ -6,7 +6,7 @@ export function getSiteUrl(): string {
   const raw =
     process.env.NEXT_PUBLIC_SITE_URL?.trim() ||
     process.env.VERCEL_PROJECT_PRODUCTION_URL?.trim() ||
-    "https://ethiomls.info";
+    "https://mls.et";
   const withProtocol = raw.startsWith("http") ? raw : `https://${raw}`;
   return withProtocol.replace(/\/$/, "");
 }

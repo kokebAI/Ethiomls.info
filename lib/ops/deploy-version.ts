@@ -9,11 +9,13 @@ export type DeployVersionInfo = {
 
 /**
  * App version + deploy identity from package.json and host env
- * (Vercel / Netlify / local).
+ * (Telecloud ECS / Vercel / Netlify / local).
  */
 export function getDeployVersion(): DeployVersionInfo {
   const sha =
     process.env.VERCEL_GIT_COMMIT_SHA?.trim() ||
+    process.env.COMMIT_SHA?.trim() ||
+    process.env.DEPLOY_SHA?.trim() ||
     process.env.COMMIT_REF?.trim() ||
     process.env.NETLIFY_COMMIT_REF?.trim() ||
     process.env.CF_PAGES_COMMIT_SHA?.trim() ||
@@ -22,6 +24,7 @@ export function getDeployVersion(): DeployVersionInfo {
   const environment =
     process.env.VERCEL_ENV?.trim() ||
     process.env.CONTEXT?.trim() ||
+    process.env.TELECLOUD_ENV?.trim() ||
     process.env.NODE_ENV?.trim() ||
     "development";
 

@@ -17,16 +17,58 @@ jobs:
       - name: Deploy EthioMLS on Telecloud ECS
         env:
           HOST: ${{ secrets.TELECLOUD_HOST }}
-          USER: ${{ secrets.TELECLOUD_USER }}
+          SSH_USER: ${{ secrets.TELECLOUD_USER }}
           KEY: ${{ secrets.TELECLOUD_SSH_KEY }}
+          DEPLOY_SHA: ${{ github.sha }}
+          HEALTH_URL: https://mls.et/en
         run: |
           set -euo pipefail
-          USER="${USER:-root}"
-          test -n "$HOST"
-          test -n "$KEY"
+
+          # Official public host is mls.et (Telecloud ECS). Override via TELECLOUD_HOST if needed.
+          HOST="${HOST:-mls.et}"
+          SSH_USER="${SSH_USER:-root}"
+
+          if [ -z "${KEY:-}" ]; then
+            echo "::error::Missing secret TELECLOUD_SSH_KEY. Add the ECS deploy private key under Settings → Secrets and variables → Actions."
+            exit 1
+          fi
+
           install -d -m 700 ~/.ssh
-          printf '%s\n' "$KEY" > ~/.ssh/telecloud
+
+          # Normalize private key: strip CR; expand literal \n (common when pasting into Actions secrets).
+          KEY_NORMALIZED="$(printf '%s' "$KEY" | tr -d '\r')"
+          case "$KEY_NORMALIZED" in
+            *$'\n'*) ;;
+            *) KEY_NORMALIZED="${KEY_NORMALIZED//\\n/$'\n'}" ;;
+          esac
+          printf '%s\n' "$KEY_NORMALIZED" > ~/.ssh/telecloud
           chmod 600 ~/.ssh/telecloud
-          ssh-keyscan -T 10 -H "$HOST" >> ~/.ssh/known_hosts 2>/dev/null || true
-          ssh -i ~/.ssh/telecloud -o StrictHostKeyChecking=yes \
-            "${USER}@${HOST}" '/usr/local/bin/telecloud-deploy-ethiomls.sh'
+
+          if ! ssh-keygen -y -f ~/.ssh/telecloud >/dev/null 2>&1; then
+            echo "::error::TELECLOUD_SSH_KEY is not a valid OpenSSH/PEM private key. Re-paste the full key including BEGIN/END lines (real newlines, not quoted \\n)."
+            exit 1
+          fi
+
+          echo "Deploying ${DEPLOY_SHA} to ${SSH_USER}@${HOST}…"
+
+          # accept-new avoids the old StrictHostKeyChecking=yes + silent keyscan failure trap
+          # that left known_hosts empty and made SSH exit 1 after ~1m.
+          ssh -i ~/.ssh/telecloud \
+            -o IdentitiesOnly=yes \
+            -o StrictHostKeyChecking=accept-new \
+            -o ConnectTimeout=20 \
+            -o ServerAliveInterval=15 \
+            -o ServerAliveCountMax=4 \
+            "${SSH_USER}@${HOST}" \
+            "export DEPLOY_SHA='${DEPLOY_SHA}'; export COMMIT_SHA='${DEPLOY_SHA}'; /usr/local/bin/telecloud-deploy-ethiomls.sh"
+
+          echo "Smoke-checking ${HEALTH_URL}…"
+          for _ in $(seq 1 10); do
+            if curl -fsS -o /dev/null --max-time 15 -A "EthioMLS-deploy-health/1.0" "$HEALTH_URL"; then
+              echo "Health check OK: ${HEALTH_URL}"
+              exit 0
+            fi
+            sleep 6
+          done
+          echo "::error::Remote deploy finished but ${HEALTH_URL} did not respond OK within ~60s."
+          exit 1

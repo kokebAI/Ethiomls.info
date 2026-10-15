@@ -23,6 +23,7 @@
     "scrape:projects": "tsx scripts/scrape-projects.ts",
     "scrape:offplan-ads": "tsx scripts/scrape-offplan-ads.ts",
     "scrape:facebook": "tsx scripts/scrape-facebook-listings.ts",
+    "scrape:seed-from-crm": "tsx scripts/seed-scrapes-from-agt-crm.ts",
     "icons:pwa": "node scripts/generate-pwa-icons.mjs"
   },
   "prisma": {

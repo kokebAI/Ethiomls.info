@@ -40,19 +40,37 @@ export default async function AdminImportsPage({
         role="status"
         className="rounded-2xl border border-amber-500/40 bg-amber-500/10 px-4 py-3 text-sm"
       >
-        <strong className="font-semibold">Scrape hub moved to AGT CRM.</strong>{" "}
-        Use{" "}
+        <strong className="font-semibold">
+          EthioMLS scrapes push to AGT CRM Review
+        </strong>{" "}
+        (not live mls.et). Review:{" "}
         <a
-          href="https://agt-crm-chi.vercel.app/admin/imports"
+          href="https://agtplc.et/agent/leads/review"
           className="font-semibold underline"
           target="_blank"
           rel="noreferrer"
         >
-          AGT CRM → Imports
-        </a>{" "}
-        and Scrape review for new Telegram / Facebook / website scrapes. Activate
-        EthioMLS from CRM when a listing should enter audit. This EthioMLS page
-        remains for sales kits and legacy sources until cutover is complete.
+          agent leads
+        </a>
+        {" · "}
+        <a
+          href="https://agtplc.et/admin/scrape-review"
+          className="font-semibold underline"
+          target="_blank"
+          rel="noreferrer"
+        >
+          admin scrape-review
+        </a>
+        . Sources:{" "}
+        <a
+          href="https://agtplc.et/admin/imports"
+          className="font-semibold underline"
+          target="_blank"
+          rel="noreferrer"
+        >
+          CRM Imports
+        </a>
+        . This page remains for sales kits and legacy local sources.
       </div>
       <PageIntro
         eyebrow={dictionary.imports.eyebrow}

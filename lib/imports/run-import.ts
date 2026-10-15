@@ -29,6 +29,13 @@ import {
 import { scrapeTelegramChannel } from "@/lib/imports/telegram-scraper";
 import type { ScrapedCandidate } from "@/lib/imports/telegram-scraper";
 import { scrapeWebsite } from "@/lib/imports/website-scraper";
+import {
+  buildAgtCrmEthiomlsListingPayload,
+  isAgtCrmListingRegisterConfigured,
+  looksLikeHoaOnly,
+  registerAgtCrmEthiomlsListing,
+  scrapeDestinationIsCrm,
+} from "@/lib/crm/register-ethiomls-listing";
 import { generatePropertyId } from "@/src/utils/generateId";
 
 const TELEGRAM_POST_RE =
@@ -110,6 +117,10 @@ function defaultContactFallback(source: ImportSource, candidate: ScrapedCandidat
   return null;
 }
 
+/**
+ * Default destination: AGT CRM Review (not live mls.et).
+ * Local EthioMLS listing upsert remains only when SCRAPE_DESTINATION=local.
+ */
 async function upsertCandidate(input: {
   source: ImportSource;
   runId: string;
@@ -118,9 +129,36 @@ async function upsertCandidate(input: {
 }): Promise<{ result: "created" | "updated" | "skipped"; listingId?: string }> {
   const { source, runId, ownerId, candidate } = input;
   // Post age is mandatory for all scrapes.
-  if (!(candidate.postedAt instanceof Date) || Number.isNaN(candidate.postedAt.getTime())) {
+  if (
+    !(candidate.postedAt instanceof Date) ||
+    Number.isNaN(candidate.postedAt.getTime())
+  ) {
     return { result: "skipped" };
   }
+  if (looksLikeHoaOnly(candidate.text)) {
+    return { result: "skipped" };
+  }
+
+  if (scrapeDestinationIsCrm()) {
+    const payload = buildAgtCrmEthiomlsListingPayload({ source, candidate });
+    const crm = await registerAgtCrmEthiomlsListing(payload);
+    if (crm.ok && crm.skipped) {
+      return { result: "skipped" };
+    }
+    if (!crm.ok) {
+      console.error(
+        `[scrape→crm] ${candidate.externalId}: ${crm.error}`,
+      );
+      return { result: "skipped" };
+    }
+    const action = (crm.action ?? "").toLowerCase();
+    if (action.includes("update") || action === "updated") {
+      return { result: "updated", listingId: crm.crmPropertyId };
+    }
+    return { result: "created", listingId: crm.crmPropertyId };
+  }
+
+  // Legacy local path (SCRAPE_DESTINATION=local|ethiomls) — EthioMLS PENDING_REVIEW.
   const contactPhone = defaultContactFallback(source, candidate);
   if (!contactPhone) return { result: "skipped" };
 
@@ -211,10 +249,16 @@ async function upsertCandidate(input: {
   return { result: "created", listingId };
 }
 
+function inferManualImportSourceType(sourceUrl: string): ImportSourceType {
+  if (/t\.me|telegram\.me/i.test(sourceUrl)) return ImportSourceType.TELEGRAM;
+  if (/facebook\.com|fb\.com/i.test(sourceUrl)) return ImportSourceType.FACEBOOK;
+  return ImportSourceType.WEBSITE;
+}
+
 /**
  * Ingest a single free-text scrape payload (Telegram / Facebook paste).
- * Parses heuristically, runs Gemini bilingual fill, saves as PENDING_REVIEW
- * (or SENT when autoSend succeeds).
+ * Default: push to AGT CRM Review. Local EthioMLS PENDING_REVIEW only when
+ * SCRAPE_DESTINATION=local.
  */
 export async function ingestScrapedText(input: {
   text: string;
@@ -231,10 +275,16 @@ export async function ingestScrapedText(input: {
   notificationStatus: NotificationStatus;
   inviteError?: string;
   messagePreview: string;
+  destination?: "agt-crm-review" | "ethiomls-local";
 }> {
   const text = input.text.trim();
   if (text.length < 20) {
     throw new Error("Scraped text is too short to ingest");
+  }
+  if (looksLikeHoaOnly(text)) {
+    throw new Error(
+      "HOA / building-admin posts are skipped on the EthioMLS listing path",
+    );
   }
 
   const sourcePostedAt = await resolveMandatorySourcePostedAt({
@@ -253,10 +303,6 @@ export async function ingestScrapedText(input: {
     ...(input.contactPhone ? [input.contactPhone] : []),
     ...extractEthiopiaPhones(text),
   ];
-  const contactPhone = contactPhones[0] ?? null;
-  if (!contactPhone) {
-    throw new Error("A contact phone is required to ingest this scrape");
-  }
 
   let importSource: ImportSource | null = null;
   if (input.importSourceId) {
@@ -264,6 +310,68 @@ export async function ingestScrapedText(input: {
       where: { id: input.importSourceId },
     });
     if (!importSource) throw new Error("Import source not found");
+  }
+
+  const toCrm = scrapeDestinationIsCrm();
+  if (toCrm) {
+    if (!isAgtCrmListingRegisterConfigured()) {
+      throw new Error(
+        "Scrapes target AGT CRM Review but CRM is not configured. Set AGT_CRM_BASE_URL and CRM_APP_API_KEY.",
+      );
+    }
+    const sourceForCrm: ImportSource =
+      importSource ??
+      ({
+        id: "manual-ingest",
+        label: input.contactName?.trim() || "Manual scrape",
+        sourceType: inferManualImportSourceType(sourceUrl),
+        url: sourceUrl,
+        normalizedUrl: sourceUrl,
+        telegramHandle: sourceUrl.match(/t\.me\/([^/?]+)/i)?.[1] ?? null,
+        notes: "manual-ingest",
+        isActive: true,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        lastRunAt: null,
+        lastSuccessAt: null,
+        createdById: input.ownerId,
+      } as ImportSource);
+
+    const candidate: ScrapedCandidate = {
+      externalId,
+      sourceUrl,
+      text,
+      imageUrls: [],
+      contactPhones,
+      parsed,
+      postedAt: sourcePostedAt,
+    };
+    const payload = buildAgtCrmEthiomlsListingPayload({
+      source: sourceForCrm,
+      candidate,
+    });
+    const crm = await registerAgtCrmEthiomlsListing(payload);
+    if (!crm.ok) {
+      throw new Error(crm.error);
+    }
+    if (crm.skipped) {
+      throw new Error("AGT CRM is not configured");
+    }
+    const created =
+      !(crm.action ?? "").toLowerCase().includes("update") &&
+      (crm.action ?? "").toLowerCase() !== "updated";
+    return {
+      listingId: crm.crmPropertyId ?? externalId,
+      created,
+      notificationStatus: NotificationStatus.NOT_APPLICABLE,
+      messagePreview: payload.title,
+      destination: "agt-crm-review",
+    };
+  }
+
+  const contactPhone = contactPhones[0] ?? null;
+  if (!contactPhone) {
+    throw new Error("A contact phone is required to ingest this scrape");
   }
 
   const bilingual = await ensureBilingualListingCopy({
@@ -354,6 +462,7 @@ export async function ingestScrapedText(input: {
       notificationStatus: invite.listing.notificationStatus,
       inviteError: invite.error,
       messagePreview: invite.messagePreview,
+      destination: "ethiomls-local",
     };
   }
 
@@ -365,6 +474,7 @@ export async function ingestScrapedText(input: {
     created,
     notificationStatus: NotificationStatus.PENDING_REVIEW,
     messagePreview: buildScrapeInviteMessage(listing),
+    destination: "ethiomls-local",
   };
 }
 
@@ -407,10 +517,18 @@ export async function runImportSource(input: {
   if (!source) throw new Error("Import source not found");
   if (!source.isActive) throw new Error("Import source is inactive");
 
+  const toCrm = scrapeDestinationIsCrm();
+  if (toCrm && !isAgtCrmListingRegisterConfigured()) {
+    throw new Error(
+      "Scrapes target AGT CRM Review but CRM is not configured. Set AGT_CRM_BASE_URL and CRM_APP_API_KEY (or AGT_CRM_API_KEY). Set SCRAPE_DESTINATION=local only for legacy EthioMLS PENDING_REVIEW upserts.",
+    );
+  }
+
   // Recover runs killed by platform timeouts (left RUNNING forever).
   await failStaleRunningScrapeRuns({ importSourceId: source.id });
 
-  const autoSend = Boolean(input.autoSend);
+  // Invites apply only to local EthioMLS listings — never for CRM Review pushes.
+  const autoSend = Boolean(input.autoSend) && !toCrm;
   const run = await prisma.scrapeRun.create({
     data: {
       importSourceId: source.id,
@@ -506,6 +624,7 @@ export async function runImportSource(input: {
         summary: {
           sourceType: source.sourceType,
           url: source.normalizedUrl,
+          destination: toCrm ? "agt-crm-review" : "ethiomls-local",
           corridorOffPlanOnly: Boolean(corridorFilter),
           eastOffPlanOnly: Boolean(input.filters?.eastOffPlanOnly),
           saleOrRentOnly: Boolean(input.filters?.saleOrRentOnly),

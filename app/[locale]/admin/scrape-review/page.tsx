@@ -127,17 +127,28 @@ export default async function AdminScrapeReviewPage({
         role="status"
         className="rounded-2xl border border-amber-500/40 bg-amber-500/10 px-4 py-3 text-sm"
       >
-        <strong className="font-semibold">Prefer AGT CRM scrape review</strong>{" "}
-        for new scrapes:{" "}
+        <strong className="font-semibold">Listing scrapes land in AGT CRM Review</strong>
+        {" — "}
+        agents:{" "}
         <a
-          href="https://agt-crm-chi.vercel.app/admin/scrape-review"
+          href="https://agtplc.et/agent/leads/review"
           className="font-semibold underline"
           target="_blank"
           rel="noreferrer"
         >
-          agt-crm-chi.vercel.app/admin/scrape-review
+          /agent/leads/review
         </a>
-        . This queue still shows EthioMLS-local scrape leftovers.
+        {" · "}
+        admin:{" "}
+        <a
+          href="https://agtplc.et/admin/scrape-review"
+          className="font-semibold underline"
+          target="_blank"
+          rel="noreferrer"
+        >
+          /admin/scrape-review
+        </a>
+        . Take still requires a real +251. This page is legacy EthioMLS-local leftovers only.
       </div>
       <PageIntro
         eyebrow={dictionary.scrapeReview.eyebrow}
