@@ -324,7 +324,8 @@
     "comingOnline": "Tarreewwan online ta'aa jiru — fakkeenya armaan gadii.",
     "emptyHint": "Kataloogiin guutuu yeroo PostgreSQL database qunnamu ni argama.",
     "recordCount": "Galmeewwan kallattii {count} kuusaa keessan irraa.",
-    "emptyDirectory": "Galmeewwan maxxanfaman hin jiru. Kuusaa fakkeenyaa guutuuf `npx prisma db seed` hordofaa."
+    "emptyDirectory": "Galmeewwan maxxanfaman hin jiru. Kuusaa fakkeenyaa guutuuf `npx prisma db seed` hordofaa.",
+    "catalogUnavailable": "Kuusaan tarreewwanii hin argamne. Sarvarrii irratti `npx prisma migrate deploy` hojjedhaa."
   },
   "auth": {
     "accessEyebrow": "Seensa nageenyaa",
@@ -1103,5 +1104,45 @@
     "etbHint": "Gatii ETB n agarsiisi",
     "usdHint": "Gatii USD n agarsiisi (NBE)",
     "nbeNote": "Saffisa NBE"
+  },
+  "notFound": {
+    "title": "Fuulli hin argamne",
+    "body": "Teessoon kun mls.et irratti hin jiru. Gara manaatti deebi'i yookaan tarree ilaali.",
+    "home": "Gara manaatti",
+    "listings": "Tarree ilaali"
+  },
+  "renew": {
+    "title": "Tarree haaressi",
+    "lede": "Tarreewwan maxxanfaman guyyaa haaressa dhumaa irraa kaasee guyyaa 30 tura. Sa'aatii sana deebisanii jalqabsiisuuf mirkaneessi.",
+    "confirm": "Tarree kana haaressi",
+    "doneTitle": "Tarree haaressameera",
+    "doneBody": "Guyyaan 30 har'a irraa deebi'ee jalqaba.",
+    "viewListing": "Tarree ilaali",
+    "notLive": "Tarree maxxanfame qofa haaressuun danda'ama.",
+    "forbidden": "Abbaan tarree yookaan hojjattoonni EthioMLS qofa tarree kana haaressuu danda'u.",
+    "back": "Gara tarreetti deebi'i"
+  },
+  "legal": {
+    "navLabel": "Dhaabbata",
+    "about": "Waa'ee keenya",
+    "terms": "Haala tajaajila",
+    "privacy": "Imaammata iccitii",
+    "templateBanner": "Barreeffamni kun abbaan qabeenyaa akka ilaaluuf qophaa'e. Gorsa seeraa xumuraa miti. ATITEGEB GENERAL TRADING PLC jecha kana hin mirkaneessin beeksisa xumuraa miti.",
+    "pendingTranslation": "Keewwanni armaan gadii ammayyuu qajeelfama Afaan Ingilizii ti. Hiikkaaf mallattaa'aniiru.",
+    "aboutTitle": "Waa'ee marsariitii kanaa",
+    "aboutLede": "mls.et kan hojjetu ATITEGEB GENERAL TRADING PLC, maqaa daldalaa kokeb AI tech, dha.",
+    "aboutBody": "EthioMLS manneen fi bakka daldalaa Finfinnee irratti tarreessa. Dhaabbanni maqaan isaa armaan gaditti caqafame akkaawuntii, tarree, fi gaaffii marsariitii kanaa bulcha.",
+    "factsHeading": "Bal'ina dhaabbataa",
+    "legalName": "Maqaa seeraa",
+    "tradeName": "Maqaa daldalaa",
+    "tin": "TIN",
+    "license": "Heeyyama daldalaa",
+    "tradeReg": "Galmee maqaa daldalaa",
+    "address": "Teessoo",
+    "phone": "Bilbila",
+    "termsTitle": "Haala tajaajila",
+    "termsLede": "Seera mls.et fayyadamuuf. Tajaajilicha kan hojjetu ATITEGEB GENERAL TRADING PLC dha.",
+    "privacyTitle": "Imaammata iccitii",
+    "privacyLede": "ATITEGEB GENERAL TRADING PLC odeeffannoo mls.et irratti akkamitti akka qabatu."
   }
 }

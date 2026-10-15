@@ -3,6 +3,8 @@
  * (Business License Checker: api/Registration/GetRegistrationInfoByTin).
  */
 
+import { getSiteUrl } from "@/lib/seo/config";
+
 export const ETRADE_LICENSE_CHECKER_URL =
   "https://etrade.gov.et/business-license-checker";
 
@@ -105,7 +107,7 @@ export async function verifyTinOnEtrade(
         Referer: ETRADE_LICENSE_CHECKER_URL,
         Origin: "https://etrade.gov.et",
         "User-Agent":
-          "EthioMLS/1.0 (+https://ethiomls.info; developer-signup-tin-check)",
+          `EthioMLS/1.0 (+${getSiteUrl()}; developer-signup-tin-check)`,
       },
       signal: AbortSignal.timeout(12_000),
       cache: "no-store",

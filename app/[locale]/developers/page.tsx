@@ -46,7 +46,8 @@ export default async function DevelopersPage({
   const { locale: raw } = await params;
   const locale = (isLocale(raw) ? raw : "en") as Locale;
   const dictionary = getDictionary(locale);
-  const developers = await fetchVerifiedDevelopers();
+  const developerRead = await fetchVerifiedDevelopers();
+  const developers = developerRead.rows;
 
   const items = developers.map((developer) => {
     const hq = developer.headquartersSubCity
@@ -110,7 +111,12 @@ export default async function DevelopersPage({
       ) : null}
       <PageDirectory
         items={items}
-        emptyMessage={translate(dictionary, "pages.emptyDirectory")}
+        emptyMessage={translate(
+          dictionary,
+          developerRead.unavailable
+            ? "pages.catalogUnavailable"
+            : "pages.emptyDirectory",
+        )}
         layout="grid"
       />
     </PageIntro>

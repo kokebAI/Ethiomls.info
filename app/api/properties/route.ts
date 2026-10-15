@@ -24,6 +24,7 @@ import {
   isEscrowComplianceException,
 } from "@/lib/errors/EscrowComplianceException";
 import { getSession } from "@/lib/auth/session";
+import { getSiteUrl, listingPublicPath } from "@/lib/seo/config";
 import { trackDuplicateCollisions } from "@/lib/properties/duplicateCollision";
 import {
   EVIDENCE_KIND_LABELS,
@@ -500,9 +501,7 @@ export async function POST(request: NextRequest) {
           }
 
           if (uploads.length > 0) {
-            const site =
-              process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") ||
-              "https://ethiomls.info";
+            const site = getSiteUrl();
             for (const u of uploads) {
               const row = await tx.listingEvidence.create({
                 data: {
@@ -589,11 +588,7 @@ export async function POST(request: NextRequest) {
         agtCrmAccountTypeForRole,
         agtCrmSubcityFromCode,
       } = await import("@/lib/crm/agt-crm-client");
-      const baseUrl = (
-        process.env.NEXT_PUBLIC_SITE_URL ??
-        process.env.NEXT_PUBLIC_APP_URL ??
-        "https://ethiomls.info"
-      ).replace(/\/$/, "");
+      const baseUrl = getSiteUrl();
       void registerAgtCrmLead({
         phoneNumber: user.phone,
         companyName:
@@ -605,7 +600,7 @@ export async function POST(request: NextRequest) {
         ethiomlsListingId: listing.id,
         source: "listing_create",
         accountType: agtCrmAccountTypeForRole(user.role),
-        listingUrl: `${baseUrl}/listings/${listing.id}`,
+        listingUrl: `${baseUrl}${listingPublicPath(listing.id)}`,
         internalNotes: `Listing created ${listing.id} (${input.listingType})`,
       });
     }

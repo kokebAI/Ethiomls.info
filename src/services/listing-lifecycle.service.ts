@@ -1,5 +1,6 @@
 import { ListingStatus, type Prisma } from "@prisma/client";
 import { prisma } from "@/lib/db/prisma";
+import { listingPublicPath } from "@/lib/seo/config";
 import { PropertyStatus, toListingStatus } from "@/src/domain/property-status";
 import { enqueueListingBroadcast } from "@/src/services/broadcast.queue";
 import { smsNotificationEngine } from "@/src/services/sms.service";
@@ -112,6 +113,6 @@ export async function notifyListingVerification(
     templateId: "verification_update",
     user: listing.owner,
     kind,
-    url: `/listing/${listing.id}`,
+    url: listingPublicPath(listing.id),
   });
 }

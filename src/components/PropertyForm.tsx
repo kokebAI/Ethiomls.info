@@ -180,6 +180,51 @@ const EMPTY_FORM: FormValues = {
   landHoldType: "FREEHOLD",
 };
 
+function wholeNumber(value: string): number | null {
+  if (!/^\d+$/.test(value.trim())) return null;
+  return Number(value);
+}
+
+/** Client checks that match the server create-property schema. */
+function validateListingForm(values: FormValues): string | null {
+  if (values.title.trim().length < 1) return "Enter a title.";
+  if (values.description.trim().length < 1) return "Enter a description.";
+  if (!values.subCity.trim()) return "Choose an Addis Ababa sub-city.";
+  const price = Number(values.price);
+  if (!Number.isFinite(price) || price <= 0) {
+    return "Enter a price greater than zero.";
+  }
+  const size = wholeNumber(values.sizeM2);
+  if (size == null || size <= 0) {
+    return "Size must be a whole number of square meters greater than zero.";
+  }
+  if (wholeNumber(values.bedrooms) == null) {
+    return "Bedrooms must be a whole number.";
+  }
+  if (wholeNumber(values.bathrooms) == null) {
+    return "Bathrooms must be a whole number.";
+  }
+  const hasLat = values.gpsLatitude.trim().length > 0;
+  const hasLng = values.gpsLongitude.trim().length > 0;
+  if (hasLat || hasLng) {
+    const lat = Number(values.gpsLatitude);
+    const lng = Number(values.gpsLongitude);
+    if (
+      !hasLat ||
+      !hasLng ||
+      !Number.isFinite(lat) ||
+      !Number.isFinite(lng) ||
+      lat < -90 ||
+      lat > 90 ||
+      lng < -180 ||
+      lng > 180
+    ) {
+      return "Enter both GPS coordinates as a valid latitude and longitude, or leave both blank.";
+    }
+  }
+  return null;
+}
+
 export type PropertyFormProps = {
   ownerId: string;
   role?: string | null;
@@ -556,6 +601,12 @@ export function PropertyForm({
         tone: "error",
         text: "Complete the developer checklist (documents, photos, Fayda, and escrow fields) before submitting.",
       });
+      return;
+    }
+
+    const clientError = validateListingForm(values);
+    if (clientError) {
+      setMessage({ tone: "error", text: clientError });
       return;
     }
 

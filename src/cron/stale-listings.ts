@@ -1,6 +1,7 @@
 import cron from "node-cron";
 import { ListingStatus } from "@prisma/client";
 import { prisma } from "@/lib/db/prisma";
+import { listingRenewPath } from "@/lib/seo/config";
 import {
   EXPIRY_REMINDER_LEAD_DAYS,
   PropertyStatus,
@@ -47,7 +48,7 @@ export async function dispatchExpiryReminders(): Promise<number> {
       toE164: phone,
       templateId: "listing_expiry_reminder",
       user: listing.owner,
-      url: `/listing/${listing.id}/renew`,
+      url: listingRenewPath(listing.id),
     });
 
     if (result.ok) {
@@ -91,7 +92,7 @@ export async function archiveStaleListings(): Promise<number> {
         toE164: listing.owner.phone,
         templateId: "listing_archived",
         user: listing.owner,
-        url: `/listing/${listing.id}/renew`,
+        url: listingRenewPath(listing.id),
       });
     }
   }

@@ -4,6 +4,7 @@
  */
 
 import type { AgtCrmListingIngestInput } from "@/lib/crm/ingest-listing";
+import { crmIngestApiKey } from "@/lib/crm/ingest-auth";
 
 /**
  * Default CRM path for scrape inventory (ECS AGT CRM admin API).
@@ -237,18 +238,13 @@ export async function postEthiomlsIngestListing(
     .trim()
     .replace(/\/$/, "");
 
-  const apiKey = (
-    options?.apiKey ||
-    process.env.CRM_INGEST_API_KEY ||
-    process.env.AGT_CRM_API_KEY ||
-    ""
-  ).trim();
+  const apiKey = (options?.apiKey || crmIngestApiKey()).trim();
 
   if (!apiKey) {
     return {
       ok: false,
       error:
-        "CRM_INGEST_API_KEY (or AGT_CRM_API_KEY) required to POST /api/crm/ingest-listing",
+        "CRM_INGEST_API_KEY, AGT_CRM_API_KEY, or CRM_APP_API_KEY required to POST /api/crm/ingest-listing",
     };
   }
 

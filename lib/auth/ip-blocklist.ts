@@ -79,7 +79,7 @@ async function syncVercelFirewallBlock(ip: string, reason: string) {
     body: JSON.stringify({
       ip,
       action: "deny",
-      hostname: "ethiomls.info",
+      hostname: "mls.et",
       notes: reason.slice(0, 200),
     }),
   });

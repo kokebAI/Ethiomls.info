@@ -8,6 +8,7 @@ import {
 } from "@prisma/client";
 import { allocateUniquePropertyId } from "@/lib/db/allocatePropertyId";
 import { prisma } from "@/lib/db/prisma";
+import { getSiteUrl, listingPublicPath } from "@/lib/seo/config";
 import type { SalesKitListingDraft } from "@/lib/imports/sales-kit-parse";
 import type { RoleAccountSummary } from "@/lib/imports/resolve-role-account";
 
@@ -134,11 +135,7 @@ export async function importSalesKitListings(input: {
     const { registerAgtCrmLead, agtCrmAccountTypeForRole } = await import(
       "@/lib/crm/agt-crm-client"
     );
-    const baseUrl = (
-      process.env.NEXT_PUBLIC_SITE_URL ??
-      process.env.NEXT_PUBLIC_APP_URL ??
-      "https://ethiomls.info"
-    ).replace(/\/$/, "");
+    const baseUrl = getSiteUrl();
     void registerAgtCrmLead({
       phoneNumber: input.account.phone,
       companyName: input.account.label,
@@ -147,7 +144,7 @@ export async function importSalesKitListings(input: {
       ethiomlsListingId: listingIds[0],
       source: "sales_kit",
       accountType: agtCrmAccountTypeForRole(input.account.role),
-      listingUrl: `${baseUrl}/listings/${listingIds[0]}`,
+      listingUrl: `${baseUrl}${listingPublicPath(listingIds[0]!)}`,
       internalNotes: `Sales kit import (${input.sourceLabel}): ${listingIds.length} listing(s)`,
     });
   }

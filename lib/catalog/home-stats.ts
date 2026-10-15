@@ -1,5 +1,6 @@
-import { ListingStatus } from "@prisma/client";
 import { prisma } from "@/lib/db/prisma";
+import { publicCatalogListingWhere } from "@/lib/catalog/crm-public-scrape";
+import { publicCatalogProjectWhere } from "@/lib/catalog/seed-public-project";
 
 export type HomeStats = {
   liveListings: number;
@@ -15,28 +16,29 @@ const EMPTY_STATS: HomeStats = {
   subCities: 0,
 };
 
-/** Homepage counters — must never crash the page when Postgres is unreachable. */
-export async function fetchHomeStats(): Promise<HomeStats> {
+/**
+ * Homepage counters — same public sets as the directory pages.
+ * Must never crash the page when Postgres is unreachable.
+ */
+export async function fetchHomeStats(): Promise<{
+  stats: HomeStats;
+  unavailable: boolean;
+}> {
   try {
     const [liveListings, publishedProjects, verifiedDevelopers, subCities] =
       await Promise.all([
-        prisma.listing.count({ where: { status: ListingStatus.PUBLISHED } }),
-        prisma.project.count({ where: { status: ListingStatus.PUBLISHED } }),
-        prisma.developerProfile.count({
-          where: {
-            isVerified: true,
-            OR: [
-              { listings: { some: { status: ListingStatus.PUBLISHED } } },
-              { projects: { some: { status: ListingStatus.PUBLISHED } } },
-            ],
-          },
-        }),
+        prisma.listing.count({ where: publicCatalogListingWhere() }),
+        prisma.project.count({ where: publicCatalogProjectWhere() }),
+        prisma.developerProfile.count(),
         prisma.subCity.count({ where: { isActive: true } }),
       ]);
 
-    return { liveListings, publishedProjects, verifiedDevelopers, subCities };
+    return {
+      stats: { liveListings, publishedProjects, verifiedDevelopers, subCities },
+      unavailable: false,
+    };
   } catch (error) {
     console.error("[home-stats] falling back to empty stats:", error);
-    return EMPTY_STATS;
+    return { stats: EMPTY_STATS, unavailable: true };
   }
 }

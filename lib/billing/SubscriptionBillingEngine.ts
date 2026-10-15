@@ -29,6 +29,26 @@ export type BillingProcessResult = {
 export const DELALA_STANDARD_UPFRONT_ETB = 499;
 
 /**
+ * Production rejects the public dev secret and `mock:` signatures.
+ * Local development still accepts them when the env var is unset.
+ */
+function verifyBillingSignature(
+  envName: "TELEBIRR_WEBHOOK_SECRET" | "CBE_BIRR_WEBHOOK_SECRET",
+  devFallback: string,
+  signatureHeader: string | null,
+  transactionId: string,
+): boolean {
+  if (!signatureHeader) return false;
+  const configured = process.env[envName]?.trim();
+  const production = process.env.NODE_ENV === "production";
+  if (!production && signatureHeader === `mock:${transactionId}`) return true;
+  const secret = configured || (production ? "" : devFallback);
+  if (!secret) return false;
+  if (production && secret === devFallback) return false;
+  return signatureHeader === `sha256=${secret}`;
+}
+
+/**
  * Automates Telebirr + CBE Birr subscription verification and pilot exemptions.
  */
 export class SubscriptionBillingEngine {
@@ -60,23 +80,24 @@ export class SubscriptionBillingEngine {
     payload: Record<string, unknown>,
     signatureHeader: string | null,
   ): boolean {
-    // Mock verifier — accept explicit test signatures or configured secret echo.
-    const secret = process.env.TELEBIRR_WEBHOOK_SECRET ?? "telebirr-dev-secret";
-    if (!signatureHeader) return false;
-    if (signatureHeader === `sha256=${secret}`) return true;
-    const txn = String(payload.transactionId ?? payload.trxId ?? "");
-    return signatureHeader === `mock:${txn}`;
+    return verifyBillingSignature(
+      "TELEBIRR_WEBHOOK_SECRET",
+      "telebirr-dev-secret",
+      signatureHeader,
+      String(payload.transactionId ?? payload.trxId ?? ""),
+    );
   }
 
   static verifyCbeBirrSignature(
     payload: Record<string, unknown>,
     signatureHeader: string | null,
   ): boolean {
-    const secret = process.env.CBE_BIRR_WEBHOOK_SECRET ?? "cbe-birr-dev-secret";
-    if (!signatureHeader) return false;
-    if (signatureHeader === `sha256=${secret}`) return true;
-    const txn = String(payload.ftNumber ?? payload.transactionId ?? "");
-    return signatureHeader === `mock:${txn}`;
+    return verifyBillingSignature(
+      "CBE_BIRR_WEBHOOK_SECRET",
+      "cbe-birr-dev-secret",
+      signatureHeader,
+      String(payload.ftNumber ?? payload.transactionId ?? ""),
+    );
   }
 
   async processWebhook(input: BillingWebhookInput): Promise<BillingProcessResult> {

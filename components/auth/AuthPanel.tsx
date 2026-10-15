@@ -6,6 +6,7 @@ import { useCallback, useEffect, useState } from "react";
 import { TurnstileWidget } from "@/components/auth/TurnstileWidget";
 import { useTranslation } from "@/hooks/useTranslation";
 import { looksLikeEmail } from "@/lib/auth/identifier";
+import { safeInternalPath } from "@/lib/auth/safe-next";
 import {
   SIGNUP_ROLE_OPTIONS,
   type SignupRole,
@@ -64,7 +65,7 @@ export function AuthPanel({
     setCaptchaToken(token);
   }, []);
 
-  const next = searchParams.get("next");
+  const next = safeInternalPath(searchParams.get("next"));
   const isDeveloperSignup =
     mode === "register" && role === "CORPORATE_DEVELOPER";
   const showGoogle =
@@ -88,15 +89,12 @@ export function AuthPanel({
       locale,
       mode: mode === "register" ? "register" : "login",
     });
-    if (next?.startsWith("/")) params.set("next", next);
+    if (next) params.set("next", next);
     return `/api/auth/google?${params.toString()}`;
   }
 
   function goToHub(roleName?: string) {
-    const destination =
-      next && next.startsWith("/")
-        ? next
-        : `/${locale}${hubPathForRole(roleName)}`;
+    const destination = next ?? `/${locale}${hubPathForRole(roleName)}`;
     router.push(destination);
     router.refresh();
   }

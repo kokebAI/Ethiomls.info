@@ -4,6 +4,7 @@ import {
   translateListingText,
   type TranslateTargetLanguage,
 } from "@/lib/ai/translate-listing";
+import { getSession } from "@/lib/auth/session";
 
 export const runtime = "nodejs";
 export const maxDuration = 30;
@@ -20,6 +21,14 @@ const bodySchema = z.object({
  */
 export async function POST(request: Request) {
   try {
+    const session = await getSession();
+    if (!session) {
+      return NextResponse.json(
+        { error: "Unauthorized", message: "Sign in required" },
+        { status: 401 },
+      );
+    }
+
     let body: unknown;
     try {
       body = await request.json();

@@ -4,6 +4,7 @@ import { getSession } from "@/lib/auth/session";
 import { completeFaydaOidcHandshake } from "@/lib/auth/fayda";
 import { prisma } from "@/lib/db/prisma";
 import { isLiveFaydaConfigured } from "@/lib/properties/evidence";
+import { getSiteUrl } from "@/lib/seo/config";
 
 export const runtime = "nodejs";
 
@@ -29,7 +30,7 @@ export async function POST(request: NextRequest) {
     const clientId = process.env.FAYDA_CLIENT_ID!.trim();
     const redirectUri =
       process.env.FAYDA_REDIRECT_URI?.trim() ||
-      `${process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") || "https://ethiomls.info"}/api/auth/fayda/callback`;
+      `${getSiteUrl()}/api/auth/fayda/callback`;
     const state = randomBytes(16).toString("hex");
     const url = new URL(authorize);
     url.searchParams.set("client_id", clientId);

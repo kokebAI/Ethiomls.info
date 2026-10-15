@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { redirect } from "next/navigation";
 import { LogoutButton } from "@/components/auth/LogoutButton";
 import { DashboardMetrics } from "@/components/dashboard/DashboardMetrics";
 import { getCurrentAdmin } from "@/lib/auth/admin";
@@ -18,7 +19,7 @@ export async function generateMetadata({
   const { locale: raw } = await params;
   const locale = (isLocale(raw) ? raw : "en") as Locale;
   const dictionary = getDictionary(locale);
-  return { title: dictionary.dashboard.title };
+  return { title: dictionary.dashboard.title, robots: { index: false, follow: false } };
 }
 
 export default async function DashboardPage({
@@ -30,6 +31,11 @@ export default async function DashboardPage({
   const locale = (isLocale(raw) ? raw : "en") as Locale;
   const dictionary = getDictionary(locale);
   const [session, admin] = await Promise.all([getSession(), getCurrentAdmin()]);
+  if (!session) {
+    redirect(
+      `/${locale}/login?next=${encodeURIComponent(`/${locale}/dashboard`)}`,
+    );
+  }
   const isAdmin = Boolean(admin);
   const metrics = await fetchDashboardMetrics({ includeAdmin: isAdmin });
 

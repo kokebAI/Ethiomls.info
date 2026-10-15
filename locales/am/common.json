@@ -311,7 +311,8 @@
     "comingOnline": "ማውጫው በመስመር ላይ እየመጣ ነው — ከታች ናሙና እቃዎች።",
     "emptyHint": "ሙሉ ካታሎግ የ PostgreSQL ዳታቤዝ ሲገናኝ ይገኛል።",
     "recordCount": "{count} ቀጥታ መዝገቦች ከዳታቤዝዎ።",
-    "emptyDirectory": "የታተሙ መዝገቦች የሉም። የማሳያ ክምችት ለመሙላት `npx prisma db seed` ያሂዱ።"
+    "emptyDirectory": "የታተሙ መዝገቦች የሉም። የማሳያ ክምችት ለመሙላት `npx prisma db seed` ያሂዱ።",
+    "catalogUnavailable": "የዝርዝር ዳታቤዝ አልተገኘም። በሰርቨሩ ላይ `npx prisma migrate deploy` ያሂዱ።"
   },
   "consent": {
     "title": "ደላላን ለማግኘት ፈቃድ",
@@ -1070,5 +1071,45 @@
     "etbHint": "ዋጋዎችን በብር አሳይ",
     "usdHint": "ዋጋዎችን በዶላር አሳይ (NBE)",
     "nbeNote": "የብሔራዊ ባንክ መመሪያ ምንዛሬ"
+  },
+  "notFound": {
+    "title": "ገጹ አልተገኘም",
+    "body": "ይህ አድራሻ በ mls.et ላይ የለም። ወደ መነሻ ይመለሱ ወይም ዝርዝሮችን ይመልከቱ።",
+    "home": "ወደ መነሻ",
+    "listings": "ዝርዝሮችን ይመልከቱ"
+  },
+  "renew": {
+    "title": "ዝርዝር አድስ",
+    "lede": "የታተሙ ዝርዝሮች ከመጨረሻው እድሳት ጀምሮ ለ30 ቀን ይቆያሉ። ሰዓቱን እንደገና ለመጀመር ያረጋግጡ።",
+    "confirm": "ይህን ዝርዝር አድስ",
+    "doneTitle": "ዝርዝሩ ታድሷል",
+    "doneBody": "የ30 ቀን ቆጠራ ከዛሬ እንደገና ይጀምራል።",
+    "viewListing": "ዝርዝሩን ይመልከቱ",
+    "notLive": "የታተሙ ዝርዝሮች ብቻ ሊታደሱ ይችላሉ።",
+    "forbidden": "ይህን ዝርዝር ማደስ የሚችሉት ባለቤቱ ወይም የኢትዮMLS ሰራተኞች ብቻ ናቸው።",
+    "back": "ወደ ዝርዝሩ ተመለስ"
+  },
+  "legal": {
+    "navLabel": "ኩባንያ",
+    "about": "ስለ እኛ",
+    "terms": "የአገልግሎት ውል",
+    "privacy": "የግላዊነት መመሪያ",
+    "templateBanner": "ይህ ጽሑፍ ባለቤቱ እንዲገመግመው የተዘጋጀ ረቂቅ ነው። የመጨረሻ የህግ ምክር አይደለም፤ ATITEGEB GENERAL TRADING PLC ቃላቱን እስኪያጸድቅ ድረስ የተጠናቀቀ ማስታወቂያ አይደለም።",
+    "pendingTranslation": "ከታች ያሉት አንቀጾች እስካሁን የእንግሊዝኛ ረቂቅ ናቸው፤ ለትርጉም ምልክት ተደርጎባቸዋል።",
+    "aboutTitle": "ስለዚህ ጣቢያ",
+    "aboutLede": "mls.et የሚተዳደረው በ ATITEGEB GENERAL TRADING PLC (የንግድ ስም kokeb AI tech) ነው።",
+    "aboutBody": "ኢትዮMLS በአዲስ አበባ ቤቶችን እና የንግድ ቦታዎችን ይዘረዝራል። ከታች የተጠቀሰው ኩባንያ መለያዎችን፣ ዝርዝሮችን እና ጥያቄዎችን ጨምሮ ይህን አገልግሎት ያስተዳድራል።",
+    "factsHeading": "የኩባንያ ዝርዝር",
+    "legalName": "ሕጋዊ ስም",
+    "tradeName": "የንግድ ስም",
+    "tin": "TIN",
+    "license": "የንግድ ፈቃድ",
+    "tradeReg": "የንግድ ስም ምዝገባ",
+    "address": "አድራሻ",
+    "phone": "ስልክ",
+    "termsTitle": "የአገልግሎት ውል",
+    "termsLede": "mls.etን ለመጠቀም ህጎች። አገልግሎቱን የሚያስተዳድረው ATITEGEB GENERAL TRADING PLC ነው።",
+    "privacyTitle": "የግላዊነት መመሪያ",
+    "privacyLede": "ATITEGEB GENERAL TRADING PLC በ mls.et ላይ መረጃን እንዴት እንደሚይዝ።"
   }
 }

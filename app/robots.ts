@@ -17,10 +17,11 @@ export default function robots(): MetadataRoute.Robots {
           "/*/dashboard",
           "/*/admin/",
           "/*/listings/new",
+          "/*/listings/*/renew",
         ],
       },
     ],
     sitemap: `${site}/sitemap.xml`,
-    host: site,
+    host: new URL(site).host,
   };
 }

@@ -5,6 +5,7 @@ import {
 } from "@prisma/client";
 import { normalizeEthiopiaPhone } from "@/lib/auth/otp";
 import { prisma } from "@/lib/db/prisma";
+import { getSiteUrl, listingPublicPath } from "@/lib/seo/config";
 import {
   resolveOrCreateRoleAccount,
   getRoleAccountByUserId,
@@ -297,11 +298,7 @@ export async function sendScrapeInviteForPhoneGroup(
       const { registerAgtCrmLead, agtCrmAccountTypeForRole } = await import(
         "@/lib/crm/agt-crm-client"
       );
-      const baseUrl = (
-        process.env.NEXT_PUBLIC_SITE_URL ??
-        process.env.NEXT_PUBLIC_APP_URL ??
-        "https://ethiomls.info"
-      ).replace(/\/$/, "");
+      const baseUrl = getSiteUrl();
       void registerAgtCrmLead({
         phoneNumber: primaryPhone,
         companyName: account.label,
@@ -312,7 +309,7 @@ export async function sendScrapeInviteForPhoneGroup(
         accountType: agtCrmAccountTypeForRole(
           account.role ?? inviteRoleForListing(primaryListing.listingType),
         ),
-        listingUrl: `${baseUrl}/listings/${primaryListing.id}`,
+        listingUrl: `${baseUrl}${listingPublicPath(primaryListing.id)}`,
         internalNotes: `Scrape invite sent for ${uniqueIds.length} listing(s): ${uniqueIds.join(", ")}`,
       });
     }

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { ListingEvidenceKind } from "@prisma/client";
 import { getSession } from "@/lib/auth/session";
+import { getSiteUrl } from "@/lib/seo/config";
 import { prisma } from "@/lib/db/prisma";
 import {
   MAX_EVIDENCE_FILE_BYTES,
@@ -106,9 +107,7 @@ export async function POST(request: NextRequest) {
       bytes,
     });
 
-    const site =
-      process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") ||
-      "https://ethiomls.info";
+    const site = getSiteUrl();
 
     const row = await prisma.evidenceUpload.create({
       data: {

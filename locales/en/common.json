@@ -1038,7 +1038,8 @@
     "comingOnline": "Directory coming online — sample inventory below.",
     "emptyHint": "Full catalogue connects when your PostgreSQL database is linked.",
     "recordCount": "{count} live records from your database.",
-    "emptyDirectory": "No published records yet. Run `npx prisma db seed` to populate demo inventory."
+    "emptyDirectory": "No published records yet. Run `npx prisma db seed` to populate demo inventory.",
+    "catalogUnavailable": "The listing database could not be reached. On the Telecloud host, run `npx prisma migrate deploy`."
   },
   "consent": {
     "title": "Consent to contact broker",
@@ -1070,5 +1071,45 @@
     "etbHint": "Show prices in ETB",
     "usdHint": "Show prices in USD (NBE day rate)",
     "nbeNote": "NBE indicative rate"
+  },
+  "notFound": {
+    "title": "Page not found",
+    "body": "That address is not on mls.et. Go back to the home page or browse listings.",
+    "home": "Back to home",
+    "listings": "Browse listings"
+  },
+  "renew": {
+    "title": "Refresh listing",
+    "lede": "Published listings stay live for 30 days after the last refresh. Confirm to restart that clock.",
+    "confirm": "Refresh this listing",
+    "doneTitle": "Listing refreshed",
+    "doneBody": "The 30-day freshness window starts again today.",
+    "viewListing": "View listing",
+    "notLive": "Only a published listing can be refreshed.",
+    "forbidden": "Only the listing owner or EthioMLS staff can refresh this listing.",
+    "back": "Back to listing"
+  },
+  "legal": {
+    "navLabel": "Company",
+    "about": "About",
+    "terms": "Terms of Service",
+    "privacy": "Privacy Policy",
+    "templateBanner": "Template for the owner to review. This is not legal advice, and it is not a final company notice until ATITEGEB GENERAL TRADING PLC approves the wording.",
+    "pendingTranslation": "The clauses below are still the English template and are marked for translation.",
+    "aboutTitle": "About this site",
+    "aboutLede": "mls.et is operated by ATITEGEB GENERAL TRADING PLC, trade name kokeb AI tech.",
+    "aboutBody": "EthioMLS lists homes and commercial space in Addis Ababa. The company named below runs the service, including accounts, listings, and enquiries on this site.",
+    "factsHeading": "Company details",
+    "legalName": "Legal name",
+    "tradeName": "Trade name",
+    "tin": "TIN",
+    "license": "Business license",
+    "tradeReg": "Trade name registration",
+    "address": "Address",
+    "phone": "Telephone",
+    "termsTitle": "Terms of Service",
+    "termsLede": "Rules for using mls.et, operated by ATITEGEB GENERAL TRADING PLC.",
+    "privacyTitle": "Privacy Policy",
+    "privacyLede": "How ATITEGEB GENERAL TRADING PLC handles information on mls.et."
   }
 }

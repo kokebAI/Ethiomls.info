@@ -12,34 +12,46 @@ export type SessionPayload = {
   exp: number;
 };
 
-function sessionSecret(): string {
-  return (
-    process.env.AUTH_SESSION_SECRET?.trim() ||
-    process.env.GEMINI_API_KEY?.trim() ||
-    "ethiomls-dev-session-secret-change-me"
-  );
+const DEV_SESSION_SECRET = "ethiomls-dev-session-secret-change-me";
+
+/**
+ * Production must set AUTH_SESSION_SECRET on the Telecloud host.
+ * The old fallbacks (a public string, or GEMINI_API_KEY) are not used:
+ * a secret that ships in this public repo can forge session cookies.
+ * When unset in production, reads fail closed (no session) and writes throw.
+ */
+function sessionSecret(): string | null {
+  const configured = process.env.AUTH_SESSION_SECRET?.trim();
+  if (configured) return configured;
+  if (process.env.NODE_ENV === "production") return null;
+  return DEV_SESSION_SECRET;
 }
 
-function sign(payloadJson: string): string {
-  return createHmac("sha256", sessionSecret())
-    .update(payloadJson)
-    .digest("base64url");
+function sign(payloadJson: string, secret: string): string {
+  return createHmac("sha256", secret).update(payloadJson).digest("base64url");
 }
 
 export function encodeSession(payload: Omit<SessionPayload, "exp">): string {
+  const secret = sessionSecret();
+  if (!secret) {
+    throw new Error(
+      "AUTH_SESSION_SECRET is required in production. Set a long random value on the Telecloud host before sign-in.",
+    );
+  }
   const body: SessionPayload = {
     ...payload,
     exp: Math.floor(Date.now() / 1000) + MAX_AGE_SEC,
   };
   const json = Buffer.from(JSON.stringify(body), "utf8").toString("base64url");
-  return `${json}.${sign(json)}`;
+  return `${json}.${sign(json, secret)}`;
 }
 
 export function decodeSession(token: string | undefined | null): SessionPayload | null {
-  if (!token) return null;
+  const secret = sessionSecret();
+  if (!secret || !token) return null;
   const [json, sig] = token.split(".");
   if (!json || !sig) return null;
-  const expected = sign(json);
+  const expected = sign(json, secret);
   try {
     const a = Buffer.from(sig);
     const b = Buffer.from(expected);

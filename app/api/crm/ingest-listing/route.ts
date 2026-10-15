@@ -1,15 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
+import { crmIngestApiKey } from "@/lib/crm/ingest-auth";
 import { ingestAgtCrmListing } from "@/lib/crm/ingest-listing";
 
 export const runtime = "nodejs";
 
 function assertCrmIngestAuth(req: NextRequest): NextResponse | null {
-  const expected =
-    process.env.CRM_INGEST_API_KEY?.trim() ||
-    process.env.AGT_CRM_API_KEY?.trim();
+  const expected = crmIngestApiKey();
   if (!expected) {
     return NextResponse.json(
-      { error: "CRM_INGEST_API_KEY is not configured" },
+      {
+        error:
+          "CRM ingest is not configured. Set CRM_INGEST_API_KEY or CRM_APP_API_KEY.",
+      },
       { status: 500 },
     );
   }
@@ -27,7 +29,8 @@ function assertCrmIngestAuth(req: NextRequest): NextResponse | null {
 /**
  * POST /api/crm/ingest-listing
  * AGT CRM product activation → EthioMLS listing (PENDING_REVIEW).
- * Auth: x-crm-api-key or Bearer = CRM_INGEST_API_KEY (or AGT_CRM_API_KEY).
+ * Auth: x-crm-api-key or Bearer = CRM_INGEST_API_KEY, AGT_CRM_API_KEY,
+ * or CRM_APP_API_KEY (the key already set on Telecloud).
  */
 export async function POST(request: NextRequest) {
   const unauthorized = assertCrmIngestAuth(request);

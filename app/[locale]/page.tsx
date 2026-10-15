@@ -53,10 +53,16 @@ export default async function LocaleHomePage({
   const toHub = await nonClientCatalogRedirect(locale);
   if (toHub) redirect(toHub);
 
-  const [stats, teasers] = await Promise.all([
+  const [statsResult, teaserResult] = await Promise.all([
     fetchHomeStats(),
     fetchHomeTeasers(4),
   ]);
 
-  return <HomeClient stats={stats} teasers={teasers} />;
+  return (
+    <HomeClient
+      stats={statsResult.stats}
+      teasers={teaserResult.teasers}
+      catalogUnavailable={statsResult.unavailable || teaserResult.unavailable}
+    />
+  );
 }

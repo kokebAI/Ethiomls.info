@@ -1,4 +1,5 @@
 import type { Locale } from "@/lib/i18n/config";
+import { SITE_OPERATOR } from "@/lib/legal/operator";
 import { absoluteUrl, getSiteUrl } from "@/lib/seo/config";
 
 type JsonLd = Record<string, unknown>;
@@ -10,6 +11,10 @@ export function organizationJsonLd(): JsonLd {
     "@type": "RealEstateAgent",
     "@id": `${site}/#organization`,
     name: "EthioMLS",
+    legalName: SITE_OPERATOR.legalName,
+    alternateName: SITE_OPERATOR.tradeName,
+    taxID: SITE_OPERATOR.tin,
+    telephone: SITE_OPERATOR.phoneTel,
     url: site,
     description:
       "Verified property listings for buying and renting in Addis Ababa — built for Ethiopian diaspora and global investors.",
@@ -23,7 +28,8 @@ export function organizationJsonLd(): JsonLd {
     },
     address: {
       "@type": "PostalAddress",
-      addressLocality: "Addis Ababa",
+      streetAddress: "Woreda 08",
+      addressLocality: "Yeka Sub City, Addis Ababa",
       addressCountry: "ET",
     },
     knowsAbout: [

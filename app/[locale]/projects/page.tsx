@@ -54,7 +54,8 @@ export default async function ProjectsPage({
   if (toHub) redirect(toHub);
 
   const dictionary = getDictionary(locale);
-  const projects = await fetchPublishedProjects();
+  const projectRead = await fetchPublishedProjects();
+  const projects = projectRead.rows;
 
   const items = projects.map((project) => {
     const subCity = project.subCity
@@ -101,7 +102,12 @@ export default async function ProjectsPage({
       ) : null}
       <PageDirectory
         items={items}
-        emptyMessage={translate(dictionary, "pages.emptyDirectory")}
+        emptyMessage={translate(
+          dictionary,
+          projectRead.unavailable
+            ? "pages.catalogUnavailable"
+            : "pages.emptyDirectory",
+        )}
         layout="grid"
       />
     </PageIntro>
