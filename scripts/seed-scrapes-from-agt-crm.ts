@@ -9,7 +9,11 @@
  *   npm run scrape:seed-from-crm
  *   npm run scrape:seed-from-crm -- --dry-run
  *   npm run scrape:seed-from-crm -- --limit=20
+ *   npm run scrape:seed-from-crm -- --all-sources
  *   npm run scrape:seed-from-crm -- --path=/api/admin/scrape-properties
+ *
+ * Default path filters CRM to EthioMLS unit listings only
+ * (TELEGRAM|FACEBOOK|WEBSITE, needs_listing, not HOA/Places).
  *
  * Env:
  *   AGT_CRM_BASE_URL=https://agtplc.et
@@ -22,6 +26,7 @@ import { readFileSync } from "node:fs";
 import path from "node:path";
 import {
   fetchAllAgtCrmScrapes,
+  isEthiomlsUnitListingScrape,
   postEthiomlsIngestListing,
   type AgtCrmScrapeRow,
 } from "../lib/crm/agt-crm-client";
@@ -57,6 +62,9 @@ type CliOptions = {
   limit: number | null;
   path: string | undefined;
   ethiomlsBase: string | undefined;
+  /** Include Places/HOA rows (default false — unit listings only). */
+  allSources: boolean;
+  requireImages: boolean;
 };
 
 function parseArgs(argv: string[]): CliOptions {
@@ -65,9 +73,13 @@ function parseArgs(argv: string[]): CliOptions {
     limit: null,
     path: undefined,
     ethiomlsBase: undefined,
+    allSources: false,
+    requireImages: false,
   };
   for (const arg of argv) {
     if (arg === "--dry-run") options.dryRun = true;
+    else if (arg === "--all-sources") options.allSources = true;
+    else if (arg === "--require-images") options.requireImages = true;
     else if (arg.startsWith("--limit=")) {
       const n = Number(arg.slice("--limit=".length));
       options.limit = Number.isFinite(n) && n > 0 ? Math.floor(n) : null;
@@ -79,6 +91,15 @@ function parseArgs(argv: string[]): CliOptions {
     }
   }
   return options;
+}
+
+function defaultUnitListingsPath(): string {
+  return "/api/admin/scrape-properties?listingOnly=1&invite=any&limit=500";
+}
+
+function hasUsableImages(row: AgtCrmScrapeRow): boolean {
+  const urls = row.imageUrls;
+  return Array.isArray(urls) && urls.some((u) => String(u ?? "").startsWith("http"));
 }
 
 function rowLabel(row: AgtCrmScrapeRow): string {
@@ -99,9 +120,30 @@ async function main() {
     .trim()
     .replace(/\/$/, "");
 
+  const path =
+    options.path ||
+    (options.allSources
+      ? undefined
+      : defaultUnitListingsPath());
+
   console.log("Pulling scrapes from AGT CRM…");
-  let scrapes = await fetchAllAgtCrmScrapes({ path: options.path });
+  console.log(`CRM path: ${path ?? "(default scrape-properties)"}`);
+  let scrapes = await fetchAllAgtCrmScrapes({ path });
   console.log(`Fetched ${scrapes.length} scrape row(s) from CRM`);
+
+  if (!options.allSources) {
+    const before = scrapes.length;
+    scrapes = scrapes.filter(isEthiomlsUnitListingScrape);
+    console.log(
+      `Unit-listing filter: ${before} → ${scrapes.length} (TELEGRAM|FACEBOOK|WEBSITE, needs_listing, not HOA)`,
+    );
+  }
+  if (options.requireImages) {
+    const before = scrapes.length;
+    scrapes = scrapes.filter(hasUsableImages);
+    console.log(`Require images: ${before} → ${scrapes.length}`);
+  }
+
   console.log(`Ingest route: POST ${ethiomlsBase}/api/crm/ingest-listing`);
 
   if (options.limit != null) {

@@ -10,6 +10,7 @@ import {
   teaserCoverPhotos,
 } from "@/lib/catalog/buyer-visibility";
 import { isPublicCrmUnverifiedScrape } from "@/lib/catalog/crm-public-scrape";
+import { resolveListingCoverUrl } from "@/lib/catalog/listing-cover";
 import { fetchPublishedListings } from "@/lib/catalog/queries";
 import { isLocale, type Locale } from "@/lib/i18n/config";
 import { getDictionary, translate } from "@/lib/i18n/getDictionary";
@@ -116,6 +117,17 @@ export default async function ListingsPage({
     const photos = showExactPrice
       ? allListingPhotos(listing)
       : teaserCoverPhotos(listing);
+    const imageUrl =
+      photos[0] ??
+      resolveListingCoverUrl({
+        id: listing.id,
+        listingType: listing.listingType,
+        category: listing.category,
+        bedrooms: listing.bedrooms,
+        coverImageUrl: listing.coverImageUrl,
+        images: listing.images,
+        galleryImageUrls: listing.galleryImageUrls,
+      });
 
     const badges: DirectoryBadge[] = [
       listingBadge(listing.listingType, t),
@@ -138,8 +150,10 @@ export default async function ListingsPage({
       id: listing.id,
       title: pickLocalized(listing.title, locale) || listing.id,
       href: `/${locale}/listings/${listing.id}`,
-      imageUrl: photos[0] ?? null,
-      photoCount: showExactPrice ? photos.length : photos.length > 0 ? 1 : 0,
+      imageUrl,
+      photoCount: showExactPrice
+        ? Math.max(photos.length, 1)
+        : 1,
       meta: [
         subCity,
         priceFormatted,

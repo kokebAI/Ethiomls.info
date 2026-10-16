@@ -42,6 +42,10 @@ export function mapCrmPropertyToIngestRow(
     return undefined;
   };
 
+  const imageUrls = normalizeCrmImageUrls(
+    pick("imageUrls", "image_urls"),
+  );
+
   const row: AgtCrmScrapeRow = {
     crmPropertyId: pick("crmPropertyId", "id"),
     title: pick("title"),
@@ -58,14 +62,73 @@ export function mapCrmPropertyToIngestRow(
     floorAreaSqm: pick("floorAreaSqm", "floor_area_sqm"),
     addressLine: pick("addressLine", "address_line"),
     subCityCode: pick("subCityCode", "subcity_code", "sub_city_code"),
-    imageUrls: pick("imageUrls", "image_urls"),
+    imageUrls,
     sourceUrl: pick("sourceUrl", "source_url"),
     sourcePostedAt: pick("sourcePostedAt", "source_posted_at", "created_at"),
+    // Filter hints (not written by ingest-listing; used by seed script).
+    needsListing: pick("needsListing", "needs_listing"),
+    needsHoa: pick("needsHoa", "needs_hoa"),
+    sourceType: pick("sourceType", "source_type"),
   };
 
   return Object.fromEntries(
     Object.entries(row).filter(([, v]) => v !== undefined),
   ) as AgtCrmScrapeRow;
+}
+
+const UNIT_SOURCE_TYPES = new Set(["TELEGRAM", "FACEBOOK", "WEBSITE"]);
+
+/** Absolute-ize CRM-relative photo proxies; drop Places-only paths for MLS. */
+export function normalizeCrmImageUrls(raw: unknown): string[] {
+  if (!Array.isArray(raw)) return [];
+  const crmBase = (
+    process.env.AGT_CRM_BASE_URL ?? "https://agtplc.et"
+  )
+    .trim()
+    .replace(/\/$/, "");
+  const out: string[] = [];
+  for (const entry of raw) {
+    let url = String(entry ?? "").trim().replace(/\\\//g, "/");
+    if (!url) continue;
+    if (url.startsWith("/api/scrape/places-photo")) {
+      // Places photos belong to HOA/building inventory — skip for EthioMLS units.
+      continue;
+    }
+    if (url.startsWith("/") && crmBase) {
+      url = `${crmBase}${url}`;
+    }
+    if (!/^https?:\/\//i.test(url)) continue;
+    out.push(url);
+  }
+  return out;
+}
+
+/**
+ * Keep SALE/RENT/OFF_PLAN unit posts from Telegram/Facebook/website.
+ * Drops Places / HOA / Kokeb building-only inventory.
+ */
+export function isEthiomlsUnitListingScrape(row: AgtCrmScrapeRow): boolean {
+  const needsHoa = Boolean(row.needsHoa);
+  const needsListing = row.needsListing == null ? true : Boolean(row.needsListing);
+  if (needsHoa && !needsListing) return false;
+  if (needsListing === false) return false;
+
+  const sourceType = String(row.sourceType ?? "")
+    .trim()
+    .toUpperCase();
+  if (sourceType && !UNIT_SOURCE_TYPES.has(sourceType)) return false;
+
+  // Guard: Places photo proxies or maps URLs are not unit listings.
+  const sourceUrl = String(row.sourceUrl ?? "").toLowerCase();
+  if (
+    sourceUrl.includes("google.com/maps") ||
+    sourceUrl.includes("maps.google") ||
+    sourceUrl.includes("places.googleapis")
+  ) {
+    return false;
+  }
+
+  return true;
 }
 
 export type AgtCrmLeadSource =

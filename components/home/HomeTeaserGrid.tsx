@@ -86,6 +86,8 @@ export function HomeTeaserGrid({
                   <img
                     src={teaser.imageUrl}
                     alt=""
+                    loading="lazy"
+                    referrerPolicy="no-referrer"
                     className="h-full w-full object-cover transition duration-300 group-hover:scale-[1.03]"
                   />
                 ) : (
